@@ -4,3 +4,5 @@ node_modules
 start_server.sh
 cosas
 .idea/*
+app
+vendor
