@@ -5,4 +5,5 @@ start_server.sh
 cosas
 .idea/*
 app
+!ruteando-ng/src/app/
 vendor
