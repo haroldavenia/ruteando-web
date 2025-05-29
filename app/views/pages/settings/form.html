@@ -1,0 +1,212 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">{{ "settings.form.title" | translate }}</div>
+                        <div class="panel-body">
+                            <form role="form" name="settingsForm" novalidate="" ng-submit="submitForm()" class="form-horizontal">
+                                <fieldset class="mb-sm pb-sm">
+                                    <div class="mb-sm clearfix">
+                                        <label class="col-md-2 control-label">{{ "settings.form.label.TRAVEL_MODE" | translate }}</label>
+                                        <div ng-class="{&quot;has-error&quot;: travelMode_required}" class="col-md-6">
+                                            <select name="travelMode" ng-model="setting.model.travelMode" required="" ng-options="mode for mode in travelsMode" class="form-control"></select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-sm clearfix">
+                                        <label class="col-md-2 control-label">{{ "settings.form.label.DESCRIPTION" | translate }}</label>
+                                        <div ng-class="{&quot;has-error&quot; : description_required }" class="col-md-6">
+                                            <input type="text" ng-model="setting.model.description" required="" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-sm clearfix">
+                                        <div class="checkbox c-checkbox col-sm-4 col-sm-offset-2">
+                                            <label>
+                                                <input type="checkbox" ng-model="setting.model.backToStartPoint" />
+                                                <span class="fa fa-check"></span>
+                                            </label>{{ "settings.form.label.BACK_TO_START_POINT" | translate }}</div>
+                                    </div>
+                                    <div class="mb-sm clearfix">
+                                        <label class="col-md-2 control-label">{{ "settings.form.label.LENGTH_OF_STAY" | translate }}</label>
+                                        <div class="col-md-3">
+                                            <div class="radio c-radio">
+                                                <label>
+                                                    <input type="radio" name="type_length_of_stay" value="{{ TYPE_LENGTH_OF_STAY.FIXED }}" checked="" ng-model="setting.model.typeLengthOfStay" />
+                                                    <span class="fa fa-circle"></span>{{ "settings.form.label.FIXED" | translate }}</label>
+                                            </div>
+                                            <div class="radio c-radio">
+                                                <label>
+                                                    <input type="radio" name="type_length_of_stay" value="{{ TYPE_LENGTH_OF_STAY.DEFINE_ITINERARY }}" ng-model="setting.model.typeLengthOfStay" />
+                                                    <span class="fa fa-circle"></span>{{ "settings.form.label.DEFINE_ITINERARY" | translate }}</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div ng-show="setting.model.typeLengthOfStay == TYPE_LENGTH_OF_STAY.FIXED" ng-class="{&quot;has-error&quot; : lengthOfStay_required}" class="input-group">
+                                                <input type="number" ng-model="setting.model.lengthOfStay" min="0" class="form-control" />
+                                                <span class="input-group-addon">min</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset class="mb-sm pb-sm">
+                                    <div class="mb-sm clearfix">
+                                        <label class="col-md-2 control-label">{{ "settings.form.label.RESTRICTION_ROUTE_CALCULATION" | translate }}</label>
+                                        <div class="col-md-6">
+                                            <div class="radio c-radio">
+                                                <label>
+                                                    <input type="radio" name="restriction" value="{{ RESTRICTION_FIXED_ROUTES }}" ng-model="setting.model.roadRestrictionType" />
+                                                    <span class="fa fa-circle"></span>{{ "settings.form.label.FIXED_ROUTES" | translate }}</label>
+                                            </div>
+                                            <div class="radio c-radio">
+                                                <label>
+                                                    <input type="radio" name="restriction" value="{{ RESTRICTION_TIME }}" ng-model="setting.model.roadRestrictionType" />
+                                                    <span class="fa fa-circle"></span>{{ "settings.form.label.TIME" | translate }}</label>
+                                            </div>
+                                            <div class="radio c-radio">
+                                                <label>
+                                                    <input type="radio" name="restriction" value="{{ RESTRICTION_RESOURCE_TIME }}" ng-model="setting.model.roadRestrictionType" />
+                                                    <span class="fa fa-circle"></span>{{ "settings.form.label.RESOURCE_VS_TIME" | translate }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset class="mb-sm pb-sm">
+                                    <div ng-show="(setting.model.roadRestrictionType == RESTRICTION_FIXED_ROUTES)" class="mb-sm clearfix">
+                                        <label class="col-md-2 control-label">{{ "settings.form.label.FIXED_ROUTES" | translate }}</label>
+                                        <div ng-class="{&quot;has-error&quot; : fixedRoutes_required}" class="col-md-2">
+                                            <input type="number" ng-model="setting.model.fixedRoutes" required="" class="form-control" />
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset ng-show="(setting.model.roadRestrictionType == RESTRICTION_RESOURCE_TIME )" class="mb-sm pb-sm">
+                                    <legend class="mb-sm">{{ "settings.form.legend.EVALUATE" | translate }}</legend>
+                                    <div class="form-group">
+                                        <div ng-class="{&quot;has-error&quot;: evaluateWeight_required}" class="col-sm-2 col-sm-offset-1">
+                                            <div class="checkbox c-checkbox">
+                                                <label>
+                                                    <input type="checkbox" ng-model="setting.model.evaluateWeight" />
+                                                    <span class="fa fa-check"></span>
+                                                </label>{{ "settings.form.label.EVALUATE_WEIGHT" | translate }}</div>
+                                        </div>
+                                        <div ng-class="{&quot;has-error&quot;: evaluateVolume_required}" class="col-sm-2">
+                                            <div class="checkbox c-checkbox">
+                                                <label>
+                                                    <input type="checkbox" ng-model="setting.model.evaluateVolume" />
+                                                    <span class="fa fa-check"></span>
+                                                </label>{{ "settings.form.label.EVALUATE_VOLUME" | translate }}</div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="checkbox c-checkbox">
+                                                <label>
+                                                    <input type="checkbox" ng-model="setting.model.evaluateItineraryZone" />
+                                                    <span class="fa fa-check"></span>
+                                                </label>{{ "settings.form.label.EVALUATE_ITINERARY_ZONE" | translate }}</div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="checkbox c-checkbox">
+                                                <label>
+                                                    <input type="checkbox" ng-model="setting.model.evaluateRestrictionPackage" />
+                                                    <span class="fa fa-check"></span>
+                                                </label>{{ "settings.form.label.EVALUATE_PACKAGE" | translate }}</div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <fieldset class="mb-sm pb-sm">
+                                    <legend class="mb-sm">{{ "settings.form.legend.TIME" | translate }}</legend>
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">{{ "settings.form.label.TIME_FROM" | translate }}</label>
+                                        <div class="col-md-3">
+                                            <div class="input-group">
+                                                <timepicker ng-model="setting.model.initTime" hour-step="1" minute-step="1" show-meridian="true"></timepicker>
+                                            </div>
+                                        </div>
+                                        <div ng-hide="(setting.model.roadRestrictionType == RESTRICTION_FIXED_ROUTES)" class="col-md-5">
+                                            <label class="col-md-4 control-label">{{ "settings.form.label.TIME_TO" | translate }}</label>
+                                            <div class="col-md-8">
+                                                <div class="input-group">
+                                                    <timepicker ng-model="setting.model.finishTime" hour-step="1" minute-step="1" show-meridian="true"></timepicker>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <div ng-show="(setting.model.roadRestrictionType == RESTRICTION_RESOURCE_TIME)" class="div">
+                                    <legend>{{ "settings.form.legend.RESOURCES" | translate }}</legend>
+                                    <div class="mb-sm clearfix">
+                                        <label class="col-sm-2 control-label">{{ 'settings.form.label.VEHICLE_TYPE' | translate }}</label>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <select ng-model="setting.resources.model.typeVehicle" ng-options="vehicleType.name for vehicleType in vehicleTypes.data" class="form-control input-sm"></select>
+                                                <span tooltip="{{ 'settings.LINKS.ADD_VEHICLETYPES' | translate }}" tooltip-placement="bottom" ng-click="vehicleTypes.add()" class="input-group-addon input-sm btn-primary">
+                                                    <em class="icon-plus"></em>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <label class="col-sm-1 control-label">{{ "settings.form.label.QUANTITY" | translate }}</label>
+                                        <div class="col-sm-2">
+                                            <div class="input-group">
+                                                <input type="number" ng-model="setting.resources.model.quantity" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" ng-click="setting.resources.add()" class="btn btn-labeled btn-primary">
+                                                <span class="btn-label"><i class="fa fa-plus"></i>
+                                                </span>{{ "settings.form.button.ADD" | translate }}</button>
+                                        </div>
+                                        <span ng-show="setting.resources.error" class="col-sm-6 col-sm-offset-2 text-danger">{{ setting.resources.errorMessage}}</span>
+                                    </div>
+                                </div>
+                                <fieldset ng-show="setting.model.roadRestrictionType == RESTRICTION_RESOURCE_TIME" class="mb-sm pb-sm">
+                                    <div class="form-group">
+                                        <div class="col-sm-6 responsive">
+                                            <table class="table table-hover table-condensed">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Tipo De Vehículo</th>
+                                                        <th>Cantidad</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="item in setting.resources.data">
+                                                        <td class="wd-xxs">
+                                                            <em ng-class="{true:'icon-check text-success',false:'icon-close text-danger'}[item.status]"></em>
+                                                        </td>
+                                                        <td>
+                                                            <div class="ph">
+                                                                <h4 class="media-heading">{{ item.typeVehicle.name }}</h4>
+                                                                <small ng-hide="item.status" class="text-danger">{{ item.errorMessage }}</small>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ item.quantity }}</td>
+                                                        <td class="wd-sm">
+                                                            <div class="ph m0 text-muted text-danger visible-inline pull-right">
+                                                                <em ng-click="setting.resources.remove(item)" class="icon-trash mr"></em>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row text-center">
+                                <button ng-click="setting.save()" class="btn btn-labeled btn-success">
+                                    <span class="btn-label"><i class="fa fa-check"></i>
+                                    </span>{{ "settings.form.button.ACEPT" | translate }}</button>
+                                <button type="button" ng-click="setting.cancel()" class="btn btn-labeled btn-danger">
+                                    <span class="btn-label"><i class="fa fa-times"></i>
+                                    </span>{{ "settings.form.button.CANCEL" | translate }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

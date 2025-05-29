@@ -1,0 +1,144 @@
+h3.mt-sm.mb-sm.lead {{ Journey }}
+div
+   .container-fluid
+      .row
+        .col-md-12.col-sm-12
+          .row
+            .col-md-12.col-sm-12
+              .panel.panel-primary
+                .panel-heading {{ "package.form.TITLE" | translate }}
+                .panel-body
+                  form.form-horizontal(role='form', name='packageForm', ng-submit='package.send()', novalidate='novalidate')
+                    fieldset.mb-sm.pb-sm
+                      .mb-sm
+                        label.col-sm-2.control-label {{ "package.form.label.GUIDE_NUMBER" | translate }}
+                        .col-sm-2.pl-sm
+                          input.form-control(type='text', name='guideNumber', required=true, ng-model='package.model.guideNumber')
+                          span.text-danger(ng-show='packageForm.guideNumber.$dirty && packageForm.guideNumber.$error.required') {{ "address.form.validation.RECIPIENT_GUIDE_REQUIRED" | translate }}
+                          span.text-danger(ng-show='packageForm.guideNumber.$dirty && packageForm.guideNumber.$error.minlength') {{ "address.form.validation.RECIPIENT_GUIDE_LENGTH" | translate }}
+                        label.col-sm-1.control-label {{ "package.form.label.ZONE" | translate }}
+                        .col-sm-3
+                          input.form-control(type='text', name='zone', required, ng-model='package.model.zone')
+                          span.text-danger(ng-show='packageForm.zone.$dirty && packageForm.zone.$error.required') {{ "address.form.validation.RECIPIENT_GUIDE_REQUIRED" | translate }}
+                          span.text-danger(ng-show='packageForm.zone.$dirty && packageForm.zone.$error.minlength') {{ "address.form.validation.RECIPIENT_GUIDE_LENGTH" | translate }}
+                      .clearfix.mb-sm
+                      .form-group.mb-sm
+                        label.col-sm-2.control-label {{ "package.form.label.ADDRESS" | translate }}
+                        .col-sm-6
+                          .input-group.mr-sm
+                            input.form-control(type='text', name='address', required='required', readonly='readonly', ng-model='package.model.address')
+                            span.text-danger(ng-show='packageForm.address.$dirty && packageForm.address.$error.required') {{ "address.form.validation.ADDRESS_REQUIRED" | translate }}
+                            span.text-danger(ng-show='packageForm.address.$dirty && packageForm.address.$error.minlength') {{ "address.form.validation.ADDRESS_LENGTH" | translate }}
+                            span.input-group-addon.input-sm.btn-primary(tooltip="{{ 'package.form.tooltip.GEOCODING' | translate }}", tooltip-placement='bottom', ng-click='package.geocoding("address")')
+                              em.icon-pencil
+                            span.input-group-addon.input-sm.btn-primary(tooltip="{{ 'package.form.tooltip.MAP' | translate }}", tooltip-placement='bottom', ng-click='package.goToMap("address")')
+                              em.icon-map
+                        .col-sm-6.col-sm-offset-2.text-success(ng-show='package.model.longitude != 0 && package.model.latitude != 0' style='padding-left: 30px;'){{ package.model.longitude }} , {{ package.model.latitude }}
+                      .mb-sm
+                        label.col-sm-2.control-label {{ "package.form.label.TIME_OF_STAY" | translate }}
+                        .col-sm-2.pl-sm
+                          .input-group
+                            input.form-control(type='number', name='timeState', required='required', ng-model='package.model.timeState', min='1')
+                            span.input-group-addon min
+                          span.text-danger(ng-show='packageForm.timeState.$dirty && packageForm.timeState.$error.required') {{ "package.form.validation.LENGTH_OF_STAY_REQUIRED" | translate }}
+                        label.col-sm-2.control-label {{ "package.form.label.PIECE_NUMBER" | translate }}
+                        .col-sm-2
+                          .input-group
+                            input.form-control(type='number', name='pieceNumber', required='required', ng-model='package.model.pieceNumber')
+                            span.input-group-addon und
+                          span.text-danger(ng-show='packageForm.pieceNumber.$dirty && packageForm.pieceNumber.$error.required') {{ "package.form.validation.PIECE_NUMBER_REQUIRED" | translate }}
+                    .form-group.mb-sm
+                        label.col-sm-1.control-label {{ "package.form.label.WEIGHT" | translate }}
+                        .col-sm-2
+                          .input-group
+                            input.form-control(type='number', name='wigth', required='required', ng-model='package.model.weigth', min='0')
+                            span.input-group-addon gr
+                          span.text-danger(ng-show='packageForm.weight.$dirty && packageForm.weight.$error.required') {{ "package.form.validation.WEIGHT_REQUIRED" | translate }}
+                    .form-group.mb-sm
+                        label.col-md-1.control-label {{ 'package.form.label.CAPACITY' | translate }}
+                        .col-md-2
+                          select.form-control(name='account', ng-model='package.model.capability')
+                            option(value='volume') En Volumen
+                            option(value='measure') En Medidas
+                        div(ng-if="package.model.capability == 'volume'")
+                          label.col-sm-1.control-label {{ "package.form.label.VOLUME" | translate }}
+                          .col-sm-2
+                            .input-group
+                              input.form-control(type='number', name='volume', required='required', ng-model='package.model.volume', min='0')
+                              span.input-group-addon cm3
+                            span.text-danger(ng-show='packageForm.volume.$dirty && packageForm.volume.$error.required') {{ "package.form.validation.VOLUME_REQUIRED" | translate }}
+                      .clearfix.mb-sm
+                    .form-group.mb-sm(ng-if="package.model.capability == 'measure'")
+                        label.col-sm-1.control-label {{ "package.form.label.WIDTH" | translate }}
+                        .col-sm-2
+                          .input-group
+                            input.form-control(type='number', ng-model='package.model.measure.width', name='width', min='0', onkeyup="this.value=this.value.replace(/[^0-9]/g,'');")
+                            span.input-group-addon cm
+                          span.text-danger(ng-show='packageForm.width.$dirty && packageForm.width.$error.required') {{ "package.form.validation.WIDTH_REQUIRED" | translate }}
+                        label.col-sm-1.control-label {{ 'package.form.label.HEIGHT' | translate }}
+                        .col-sm-2
+                          .input-group
+                            input.form-control(type='number', ng-model='package.model.measure.height', name='height', min='0', onkeyup="this.value=this.value.replace(/[^0-9]/g,'');")
+                            span.input-group-addon cm
+                          span.text-danger(ng-show='packageForm.height.$dirty && packageForm.height.$error.required') {{ "package.form.validation.HIGH_REQUIRED" | translate }}    
+                        label.col-sm-1.control-label {{ 'package.form.label.DEPTH' | translate }}
+                        .col-sm-2
+                          .input-group
+                            input.form-control(type='number', ng-model='package.model.measure.depth', name='depth', min='0', onkeyup="this.value=this.value.replace(/[^0-9]/g,'');")
+                            span.input-group-addon cm
+                        span.text-danger(ng-show='packageForm.depth.$dirty && packageForm.depth.$error.required') {{ "package.form.validation.DEPTH_REQUIRED" | translate }}
+                    fieldset.mb-sm.pb-sm
+                      legend.mb-sm {{ "package.form.legend.SENDER" | translate }}
+                      .form-group.mb-sm
+                        label.col-sm-2.control-label {{ "package.form.label.ADDRESS" | translate }}
+                        .col-sm-6
+                          .input-group
+                            input.form-control(type='text', name='sender_address', required='required', readonly='readonly', ng-model='package.model.sender.address')
+                            span.text-danger(ng-show='packageForm.address.$dirty && packageForm.sender_address.$error.required') {{ "address.form.validation.ADDRESS_REQUIRED" | translate }}
+                            span.text-danger(ng-show='packageForm.address.$dirty && packageForm.sender_address.$error.minlength') {{ "address.form.validation.ADDRESS_LENGTH" | translate }}
+                            span.input-group-addon.input-sm.btn-primary(tooltip="{{ 'package.form.tooltip.GEOCODING' | translate }}", tooltip-placement='bottom', ng-click='package.geocoding("sender")')
+                              em.icon-pencil
+                            span.input-group-addon.input-sm.btn-primary(tooltip="{{ 'package.form.tooltip.MAP' | translate }}", tooltip-placement='bottom', ng-click='package.goToMap("sender")')
+                              em.icon-map
+                      .form-group.mb-sm
+                        label.col-sm-2.control-label {{ "package.form.label.PHONE_NUMBER" | translate }}
+                        .col-sm-4
+                          .input-group
+                            input.form-control(type='text', name='sender_phoneNumber', ng-model='package.model.sender.phoneNumber')
+                    fieldset.mb-sm.pb-sm
+                      legend.mb-sm {{ "package.form.legend.RECEIVER" | translate }}
+                      .form-group.mb-sm
+                        label.col-sm-2.control-label {{ "package.form.label.ADDRESS" | translate }}
+                        .col-sm-6
+                          .input-group
+                            input.form-control(type='text', name='receiver_address', required='required', readonly='readonly', ng-model='package.model.receiver.address')
+                            span.text-danger(ng-show='packageForm.address.$dirty && packageForm.receiver_address.$error.required') {{ "address.form.validation.ADDRESS_REQUIRED" | translate }}
+                            span.text-danger(ng-show='packageForm.address.$dirty && packageForm.receiver_address.$error.minlength') {{ "address.form.validation.ADDRESS_LENGTH" | translate }}
+                            span.input-group-addon.input-sm.btn-primary(tooltip="{{ 'package.form.tooltip.GEOCODING' | translate }}", tooltip-placement='bottom', ng-click='package.geocoding("receiver")')
+                              em.icon-pencil
+                            span.input-group-addon.input-sm.btn-primary(tooltip="{{ 'package.form.tooltip.MAP' | translate }}", tooltip-placement='bottom', ng-click='package.goToMap("receiver")')
+                              em.icon-map
+                      .form-group.mb-sm
+                        label.col-sm-2.control-label {{ "package.form.label.PHONE_NUMBER" | translate }}
+                        .col-sm-4
+                          .input-group
+                            input.form-control(type='text', name='receiver_phoneNumber', ng-model='package.model.receiver.phoneNumber')
+                    fieldset.mb-sm.pb-sm
+                      .form-group.mb-sm
+                        label.col-md-2.control-label {{ "package.form.label.OBSERVATIONS" | translate }}
+                        .col-md-3
+                          textarea.form-control(name='observations', ng-model='package.model.observations', rows='4', placeholder='...')
+                        label.col-md-1.control-label {{ "package.form.label.DELIVERY_TIME" | translate }}
+                        .col-md-2
+                          .input-group
+                            timepicker(name='deliveryTime', ng-model='package.model.deliveryTime', hour-step='1', minute-step='1', show-meridian='true')
+                    .row
+                      .col-sm-8.text-right
+                        button.btn.btn-labeled.btn-success(type='submit')
+                          span.btn-label
+                            i.fa.fa-check
+                          |   {{ "package.form.button.ACEPT" | translate }}
+                        button.btn.btn-labeled.btn-danger(type='button', ng-click='package.cancel()')
+                          span.btn-label
+                            i.fa.fa-times
+                          |   {{ "package.form.button.CANCEL" | translate }}

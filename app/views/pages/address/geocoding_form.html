@@ -1,0 +1,53 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">{{ "geocoding.form.TITLE" | translate }}</div>
+                        <div class="panel-body">
+                            <form role="form" name="geocodingForm" novalidate="novalidate" class="form-horizontal">
+                                <fieldset class="mb-sm pb-sm">
+                                    <div class="form-group mb-sm">
+                                        <label class="col-md-2 control-label">{{ "geocoding.form.label.ADDRESS" | translate }}</label>
+                                        <div ng-class="{'has-success': geocoding.status == CORRECT, 'has-error': geocoding.status == INCORRECT }" class="col-md-6">
+                                            <input type="text" name="address" required="required" ng-minlength="2" ng-model="geocoding.model.address" class="form-control" />
+                                            <span ng-show="geocoding.status == CORRECT" class="text-success">{{ geocoding.model.location.x }} , {{ geocoding.model.location.y }} precisión: {{ geocoding.model.score }}%</span>
+                                            <em ng-class="{'MATCH':'icon-check text-success','UNMATCH':'icon-close text-danger','MEAN':'icon-check text-mean-geo','MANUAL':'icon-check text-manual-geo'}[geocoding.model.status]"></em>
+                                            <span ng-show="address_required" class="text-danger">{{ "geocoding.form.validation.ADDRESS_REQUIRED" | translate }}</span>
+                                            <span ng-show="geocoding.status == INCORRECT" class="text-danger">{{ "geocoding.form.validation.ADDRESS_NOFOUND" | translate }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-sm">
+                                        <label class="col-md-2 control-label">{{ "geocoding.form.label.CITY" | translate }}</label>
+                                        <div ng-class="{'has-success': geocoding.status == CORRECT, 'has-error': geocoding.status == INCORRECT }" class="col-md-6">
+                                            <input type="text" name="city" required="required" ng-minlength="2" ng-model="geocoding.model.city" class="form-control" />
+                                            <span ng-show="city_required" class="text-danger">{{ "geocoding.form.validation.CITY_REQUIRED" | translate }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-sm">
+                                        <label class="col-md-2 control-label">{{ "geocoding.form.label.COUNTRY" | translate }}</label>
+                                        <div ng-class="{'has-success': geocoding.status == CORRECT, 'has-error': geocoding.status == INCORRECT }" class="col-md-6">
+                                            <input type="text" name="country" required="required" ng-minlength="2" ng-model="geocoding.model.country" class="form-control" />
+                                            <span ng-show="country_required" class="text-danger">{{ "geocoding.form.validation.COUNTRY_REQUIRED" | translate }}</span>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row text-center">
+                                <button ng-click="geocoding.send()" class="btn btn-labeled btn-success">
+                                    <span class="btn-label"><i class="fa fa-check"></i>
+                                    </span>{{ "geocoding.form.button.ACEPT" | translate }}</button>
+                                <button type="button" ng-click="geocoding.cancel()" class="btn btn-labeled btn-danger">
+                                    <span class="btn-label"><i class="fa fa-times"></i>
+                                    </span>{{ "geocoding.form.button.CANCEL" | translate }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

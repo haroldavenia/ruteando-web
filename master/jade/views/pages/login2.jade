@@ -1,0 +1,59 @@
+.bgCity
+.row(ng-controller="LoginController")
+    .col-md-12
+      .pull-right
+        form.form-inline.pt-lg.pr-lg.pb-sm(role='form', ng-submit="login()", name='loginForm', novalidate='')
+          .form-group.has-feedback
+            input.form-control.input-sm(type="email", name="username", placeholder='{{ "access.login.placeholder.USERNAME" | translate }}', autocomplete="off", ng-model="account.username")
+            span.fa.fa-user.form-control-feedback.text-muted
+          .form-group.has-feedback
+            input.form-control.input-sm(type="password", name="account_password", placeholder='{{ "access.login.placeholder.PASSWORD" | translate }}', ng-model="account.password")
+            span.fa.fa-lock.form-control-feedback.text-muted
+          button.btn.btn-sm.btn-primary.button-loading(type='submit', data-loading-text="Autenticando...", loading-status="account.loading") Iniciar Sesión
+            span.fa.fa-key
+        .checkbox.c-checkbox.pull-left.mt0.ml-xl.mb0
+          label.text-sm.text-white
+            input(type='checkbox', value='', name="account_remember", ng-model="account.remember")
+            span.fa.fa-check
+            |  {{ "access.login.REMENBER" | translate }}
+        a.text-muted.pull-right.mr-xl.text-white(ui-sref="access.recovery") {{ "access.login.FORGOT_PASSWORD" | translate }}
+.block-center.mt-xl.wd-xl(ng-controller="RegisterController")
+      // START panel
+      .panel.panel-flat.bg-white-65
+          .panel-heading.text-center
+              a(href="#")
+                  img.block-center.img-rounded.img-responsive(src='app/img/logo_ruteando2.png', alt='Image')
+          .panel-body
+              h3.text-center.mt0.lead {{ 'access.register.TITLE' | translate }}
+              form.form-validate.mb-lg(role='form', name="registerForm", novalidate='', ng-submit="account.register()")
+                  .form-group.has-feedback
+                      input.form-control(type='email', name="account_email", autocomplete="off", ng-model="account.model.username", ng-required="true", required="", placeholder='{{ "access.register.EMAIL_LABEL" | translate }}')
+                      span.fa.fa-envelope.form-control-feedback.text-muted
+                      span.text-danger(ng-show="registerForm.account_email.$dirty && registerForm.account_email.$error.required") Campo requerido
+                      span.text-danger(ng-show="registerForm.account_email.$dirty && registerForm.account_email.$error.email") no es correo electronico valido
+                  .form-group.has-feedback
+                      input#id-password.form-control(type='password', name="account_password", ng-model="account.model.password", ng-pattern="/^[a-zA-Z0-9]{6,10}$/", ng-required="true", placeholder='{{ "access.register.PASS_LABEL" | translate }}')
+                      span.fa.fa-lock.form-control-feedback.text-muted
+                      span.text-danger(ng-show="registerForm.account_password.$dirty && registerForm.account_password.$error.required") Campo requerido
+                      span.text-danger(ng-show="registerForm.account_password.$dirty && registerForm.account_password.$error.pattern") debe contener 'a-zA-Z0-9' y de 6-10 caracteres
+                  .form-group.has-feedback
+                      input.form-control(type='password', name="account_password_confirm", ng-model="account.model.password_repeat", ui-validate="'$value==account.model.password'" ui-validate-watch="'password'", ng-required="true", placeholder='{{ "access.register.REPIT_PASS_LABEL" | translate }}')
+                      span.fa.fa-lock.form-control-feedback.text-muted
+                      span.text-danger(ng-show="registerForm.account_password_confirm.$dirty && registerForm.account_password_confirm.$error.validator") Contraseñas no coinciden
+                  .clearfix
+                      .checkbox.c-checkbox.pull-left.mt0
+                          label
+                              input(type='checkbox', required='', name="account_agreed", ng-model="account.agreed")
+                              span.fa.fa-check
+                              |  {{ "access.register.AGGRE_TERM" | translate }} 
+                  .text-danger(ng-show="registerForm.account_agreed.$dirty && registerForm.account_agreed.$error.required") 
+                  button.btn.btn-block.btn-success(type='submit', id="btn_submit", ng-disabled="registerForm.account_email.$dirty && (registerForm.account_email.$error.required || registerForm.account_email.$error.email) || registerForm.account_password.$dirty && (registerForm.account_password.$error.pattern || registerForm.account_password.$error.required )|| registerForm.account_password_confirm.$dirty && ( registerForm.account_password_confirm.$error.validator || registerForm.account_password_confirm.$error.required )") {{ "access.register.CREATE_ACCOUNT" | translate }}
+              .alert.alert-danger.text-center(ng-show='authMsg') {{authMsg}}      
+              h4.text-center {{ "access.register.INIT_WITH_SERVICE" | translate }}
+              div.text-center
+                .btn.btn-primary.btn-sm(type='button' ng-click="clickLogin('facebook')", ng-disabled="account.loading")
+                  span.fa.fa-facebook
+                .btn.btn-danger.btn-sm(type='button' ng-click="clickLogin('google')", ng-disabled="account.loading")
+                  span.fa.fa-google-plus
+                .btn.btn-info.btn-sm(type="button" ng-click="clickLogin('linkedin')", ng-disabled="account.loading")
+                  span.fa.fa-linkedin

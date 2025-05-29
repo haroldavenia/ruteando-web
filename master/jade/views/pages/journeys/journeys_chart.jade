@@ -1,0 +1,20 @@
+.row
+    .col-lg-6
+      #panelChart2.panel.panel-default
+        .panel-heading
+          paneltool(tool-collapse, tool-dismiss)
+          .panel-title Journey Chart 1
+        .panel-wrapper(collapse="panelChart2")
+          .panel-body
+            flot(dataset='barData', options='barOptions', height="300px")
+    .col-lg-6
+      #panelChart3.panel.panel-default
+        .panel-heading
+          paneltool(tool-collapse, tool-dismiss)
+          .panel-title Journey Chart 2
+        .panel-wrapper(collapse="panelChart3")
+          .panel-body
+            .indicator.show
+              span.spinner
+            flot(dataset='barStackeData', options='barStackedOptions', height="300px")
+  // END row

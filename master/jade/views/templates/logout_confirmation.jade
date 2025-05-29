@@ -1,0 +1,7 @@
+.ngdialog-message
+  p.text-center.text-lg.mb-xs
+    em.fa.fa-exclamation-triangle.text-warning
+  p.lead.text-center ¿Realmente desea salir de la aplicación?
+  p.text-right
+    button.btn.btn-primary.mr(type='button', ng-click='confirm()') Salir
+    button.btn.btn-default(type='button', ng-click="closeThisDialog('button')") Cancelar

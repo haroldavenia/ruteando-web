@@ -1,0 +1,56 @@
+[
+  {
+    "text": "Maps",
+    "sref": "app.maps.index",
+    "icon": "icon-map",
+    "translate": "sidebar.nav.MAPS"
+  },
+  {
+    "text": "Settings",
+    "sref": "app.settings.list",
+    "icon": "fa fa-cogs",
+    "translate": "sidebar.nav.SETTINGS"
+  },
+  {
+    "text": "Journeys",
+    "sref": "app.journeys.list",
+    "icon": "icon-compass",
+    "translate": "sidebar.nav.JOURNEYS"
+  },
+  {
+    "text": "Routes",
+    "sref": "app.routes.list",
+    "icon": "fa fa-location-arrow",
+    "translate": "sidebar.nav.ROUTES"
+  },
+  {
+    "text": "Places",
+    "sref": "app.places.list",
+    "icon": "fa fa-map-marker",
+    "translate": "sidebar.nav.PLACES"
+  },
+  {
+    "text": "Vehicle types",
+    "sref": "app.vehicleTypes.list",
+    "icon": "fa fa-truck fa-cog",
+    "translate": "sidebar.nav.VEHICLE_TYPE"
+  },
+  {
+    "text": "Vehicles",
+    "sref": "app.vehicles.list",
+    "icon": "fa fa-car",
+    "translate": "sidebar.nav.VEHICLES"
+  },
+  {
+    "text": "Drivers",
+    "sref": "app.drivers.list",
+    "icon": "fa fa-users",
+    "translate": "sidebar.nav.DRIVERS"
+  },
+  {
+    "text": "catalog",
+    "sref": "app.catalogs.list",
+    "icon": "fa fa-pencil-square-o",
+    "translate": "sidebar.nav.CATALOG"
+  }
+]

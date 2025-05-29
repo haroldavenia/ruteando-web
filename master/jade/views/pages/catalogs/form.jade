@@ -1,0 +1,35 @@
+.col-lg-12
+  .panel.panel-default
+    .panel-heading
+      | CATALOGO
+    .panel-body
+      form.form-horizontal(role='form', name='catalogForm', novalidate)
+        .form-group
+            label.col-md-2.control-label(for='input-id-2') {{ 'catalogs.label.name' | translate }}
+            .col-md-4
+              input#input-id-1.form-control(type='text', name='name', required, ng-model='catalog.model.name')
+              span.text-danger(ng-show='catalogForm.name.$dirty && catalogForm.name.$error.required') {{ "catalogs.form.validation.NAME_REQUIRED" | translate }}
+              span.text-danger(ng-show='catalogForm.name.$dirty && catalogForm.name.$error.minlength') {{ "catalogs.form.validation.NAME_LENGTH" | translate }}
+          .form-group
+            label.col-sm-2.control-label {{ 'catalogs.label.parent' | translate }} 
+            .col-sm-4
+               select.form-control.input-sm( name='parent', ng-model="catalog.model.parent", ng-options="catalog for catalog in catalogs.data")
+        .form-group
+          label.col-sm-2.control-label {{ 'catalogs.label.ancestors' | translate }} 
+          .col-sm-4
+              ui-select(multiple='', ng-model='catalog.model.ancestors', theme='bootstrap', ng-disabled='disabled')
+                ui-select-match(placeholder='Agregar') {{$item}}
+                ui-select-choices(repeat='item in catalogs.data | filter:$select.search') {{item}}
+        .form-group
+          .col-sm-12
+            p {{ ancestors.current }}
+    .panel-footer
+      .row.text-center
+        button.btn.btn-labeled.btn-success(type='button', ng-click="catalog.save()")
+          span.btn-label
+            i.fa.fa-check
+          |           {{ "app.ACEPT" | translate }}
+        button.btn.btn-labeled.btn-danger(ng-click='catalog.cancel()')
+          span.btn-label
+            i.fa.fa-times
+          |           {{ "app.CANCEL" | translate }}

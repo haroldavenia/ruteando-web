@@ -1,0 +1,82 @@
+<div class="panel col-lg-12 clearfix pb">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="input-group m0 col-xs-6 col-sm-3 pull-left">
+                <span class="input-group-addon input-sm">
+                    <em class="icon-magnifier"></em>
+                </span>
+                <input type="text" ng-change="Settings.filter()" ng-model="Settings.filterText" class="form-control input-sm" />
+            </div>
+            <div class="form-group m0 col-xs-6 col-sm-9">
+                <div class="pull-right">
+                    <button type="button" ng-click="Settings.add()" class="btn btn-sm btn-primary">
+                        <span>
+                            <em class="icon-plus"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.ADD' | translate }}</span>
+                    </button>
+                    <button type="button" ng-click="Settings.selectAll()" class="btn btn-sm btn-default">
+                        <span>
+                            <em class="text-primary icon-check"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.SELECT' | translate }}</span>
+                    </button>
+                    <button type="button" ng-click="Settings.remove()" class="btn btn-sm btn-default">
+                        <span>
+                            <em class="text-danger icon-trash"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.DELETE' | translate }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body p0">
+        <div class="table-responsive table-bordered">
+            <table class="table table-hover wd-wide">
+                <tbody>
+                    <td colspan="1" ng-show="Settings.loading" class="height-lg">
+                        <p class="text-center"><i class="fa fa-spinner fa-spin fa-2x text-muted"></i>
+                        </p>
+                        <p class="text-center lead text-primary">{{ 'app.LOADING_TEXT' | translate }}</p>
+                    </td>
+                    <td colspan="1" ng-show="Settings.noData" class="height-lg">
+                        <p class="text-center lead text-primary">{{ 'app.NO_DATA' | translate }}</p>
+                    </td>
+                    <tr ng-repeat="item in Settings.data" ng-class="{true: 'active'}[item.check]">
+                        <td class="wd-xxs">
+                            <div class="checkbox c-checkbox m0">
+                                <label>
+                                    <input type="checkbox" ng-model="item.check" />
+                                    <span class="fa fa-check"></span>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ph">
+                                <h4 class="media-heading">{{item.description}}</h4>
+                                <small class="text-muted">{{ "settings.form.label.LENGTH_OF_STAY" | translate }} :
+                                    <span ng-show="item.typeLengthOfStay == 'FIXED'">{{ item.lengthOfStay }} min</span>
+                                    <span ng-show="item.typeLengthOfStay == 'DEFINE_ITINERARY'">{{ "settings.form.label.DEFINE_ITINERARY" | translate }}</span>
+                                </small>
+                            </div>
+                        </td>
+                        <td>{{ item.travelMode }}</td>
+                        <td class="wd-sm">
+                            <div class="ph m0 text-muted visible-inline pull-right">
+                                <em tooltip="{{ 'settings.LINKS.EDIT' | translate }}" tooltip-placement="bottom" ng-click="Settings.edit(item)" class="icon-pencil mr"></em>
+                                <em tooltip="{{ 'settings.LINKS.DELETE' | translate }}" tooltip-placement="bottom" ng-click="Settings.removeItem(item)" class="icon-trash mr"></em>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div ng-hide="Settings.paginations.numPages == 1" class="col-lg-12">
+                <pagination total-items="Settings.paginations.totalItems" ng-model="Settings.paginations.currentPage" max-size="Settings.paginations.maxSize" boundary-links="true" rotate="false" items-per-page="Settings.paginations.itemsPerPage" previous-text="‹"
+                next-text="›" num-pages="Settings.paginations.numPages" ng-change="Settings.changePage()" first-text="«" last-text="»" class="m pagination-sm pull-right"></pagination>
+            </div>
+        </div>
+    </div>
+</div>

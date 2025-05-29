@@ -1,0 +1,156 @@
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-md-12 col-sm-12">
+         <div class="row">
+            <div class="col-md-12 col-sm-12">
+               <div class="panel panel-primary">
+                  <div class="panel-heading">{{ "settings.form.title" | translate }}</div>
+                  <div class="panel-body">
+                     <form role="form" name="settingsForm" novalidate="" ng-submit="submitForm()" class="form-horizontal">
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">{{ "settings.form.label.TRAVEL_MODE" | translate }}</label>
+                              <div class="col-md-6">
+                                 <select name="travelMode" ng-model="travelMode" required="" ng-options="mode for mode in travelsMode" class="form-control">
+                                    <option value="">Seleccione...</option>
+                                 </select>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">{{ "settings.form.label.LENGTH_OF_STAY" | translate }}</label>
+                              <div class="col-md-6">
+                                 <div class="input-group">
+                                    <input type="number" ng-model="lengthOfStay" min="5" max="200" required="" class="form-control" />
+                                    <span class="input-group-addon">min</span>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">{{ "settings.form.label.RESTRICTION_ROUTE_CALCULATION" | translate }}</label>
+                              <div class="col-md-6 col-md-offset-1">
+                                 <div ng-show="userCan('noRestriction')" class="radio c-radio">
+                                    <label>
+                                       <input type="radio" name="restriction" value="{{ restrictionType.noRestriction }}" checked="" ng-model="restriction" />
+                                       <span class="fa fa-circle"></span>{{ "settings.form.label.NO_RESTRICTION" | translate }}</label>
+                                 </div>
+                                 <div ng-show="userCan('time')" class="radio c-radio">
+                                    <label>
+                                       <input type="radio" name="restriction" value="{{ restrictionType.time }}" ng-model="restriction" />
+                                       <span class="fa fa-circle"></span>{{ "settings.form.label.TIME" | translate }}</label>
+                                 </div>
+                                 <div ng-show="userCan('resource')" class="radio c-radio">
+                                    <label>
+                                       <input type="radio" name="restriction" value="{{ restrictionType.resource }}" ng-model="restriction" />
+                                       <span class="fa fa-circle"></span>{{ "settings.form.label.RESOURCE" | translate }}</label>
+                                 </div>
+                                 <div ng-show="userCan('resourceVsTime')" class="radio c-radio">
+                                    <label>
+                                       <input type="radio" name="restriction" value="{{ restrictionType.resourceVsTime }}" ng-model="restriction" />
+                                       <span class="fa fa-circle"></span>{{ "settings.form.label.RESOURCE_VS_TIME" | translate }}</label>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset ng-show="(restriction == restrictionType.time) || (restriction == restrictionType.resourceVsTime)">
+                           <legend>{{ "settings.form.legend.TIME" | translate }}</legend>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">{{ "settings.form.label.DURATION_LIMIT" | translate }}</label>
+                              <div class="col-md-6">
+                                 <div class="row">
+                                    <div class="col-md-6">
+                                       <div class="form-group">
+                                          <label class="col-md-4 control-label">{{ "settings.form.label.TIME_FROM" | translate }}</label>
+                                          <div class="col-md-8">
+                                             <div class="input-group">
+                                                <timepicker ng-model="initTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                       <div class="form-group">
+                                          <label class="col-md-4 control-label">{{ "settings.form.label.TIME_TO" | translate }}</label>
+                                          <div class="col-md-8">
+                                             <div class="input-group">
+                                                <timepicker ng-model="endTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset ng-show="(restriction == restrictionType.resource) || (restriction == restrictionType.resourceVsTime)">
+                           <legend>{{ "settings.form.legend.RESOURCES" | translate }}</legend>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">{{ "settings.form.label.VEHICLE_TYPE" | translate }}</label>
+                              <div class="col-md-6">
+                                 <select name="vehicleTypeId" ng-model="vehicleType" required="" ng-options="vehicle for vehicle in vehicleTypes" class="form-control">
+                                    <option value="">Selccione ...</option>
+                                 </select>
+                              </div>
+                              <div class="col-md-4">
+                                 <button type="button" class="btn btn-oval btn-info">
+                                    <span class="fa fa-plus-circle"></span>
+                                 </button>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset ng-model="vehicleQuantity" required="" min="1" ng-show="userCan(&quot;resourceVsTime&quot;) &amp;&amp; ((restriction == restrictionType.resource) || (restriction == restrictionType.resourceVsTime))">
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">{{ "settings.form.label.QUANTITY" | translate }}</label>
+                              <div class="col-md-6">
+                                 <div class="input-group">
+                                    <input type="number" class="form-control" />
+                                    <span class="input-group-addon">uni</span>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset ng-show="userCan(&quot;resourceVsTime&quot;) &amp;&amp; ((restriction == restrictionType.resource) || (restriction == restrictionType.resourceVsTime))">
+                           <div class="form-group">
+                              <div class="col-md-2"></div>
+                              <div class="col-md-6">
+                                 <div class="row">
+                                    <div class="col-md-4 col-md-offset-4">
+                                       <button type="button" class="btn btn-labeled btn-primary">
+                                          <span class="btn-label"><i class="fa fa-plus"></i>
+                                          </span>{{ "settings.form.button.ADD" | translate }}</button>
+                                    </div>
+                                 </div>
+                                 <br/>
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                       <select name="nameVar" multiple="" class="form-control">
+                                          <option value="0">Triciclo</option>
+                                          <option value="1">Carretilla</option>
+                                          <option value="2">Carreta</option>
+                                       </select>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                     </form>
+                  </div>
+                  <div class="panel-footer">
+                     <div class="row text-center">
+                        <button ng-click="submitForm()" class="btn btn-labeled btn-success">
+                           <span class="btn-label"><i class="fa fa-check"></i>
+                           </span>{{ "settings.form.button.ACEPT" | translate }}</button>
+                        <button type="button" class="btn btn-labeled btn-danger">
+                           <span class="btn-label"><i class="fa fa-times"></i>
+                           </span>{{ "settings.form.button.CANCEL" | translate }}</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

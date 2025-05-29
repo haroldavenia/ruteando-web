@@ -1,0 +1,47 @@
+<div ng-controller="RegisterController" class="block-center mt-xl wd-xl">
+    <!-- START panel-->
+    <div class="panel panel-flat">
+        <div class="panel-heading text-center">
+            <a href="#">
+                <img src="app/img/logo.png" alt="Image" class="block-center img-rounded" />
+            </a>
+        </div>
+        <div class="panel-body">
+            <p class="text-center pv">{{ 'access.register.TITLE' | translate }}</p>
+            <form role="form" name="registerForm" novalidate="" ng-submit="account.register()" class="form-validate mb-lg">
+                <div class="form-group has-feedback">
+                    <label class="text-muted">{{ "access.register.EMAIL_LABEL" | translate }}</label>
+                    <input type="email" name="account_email" autocomplete="off" ng-model="account.model.username" required="" class="form-control" />
+                    <span class="fa fa-envelope form-control-feedback text-muted"></span>
+                    <span ng-show="registerForm.account_email.$dirty &amp;&amp; registerForm.account_email.$error.required" class="text-danger">This field is required</span>
+                    <span ng-show="registerForm.account_email.$dirty &amp;&amp; registerForm.account_email.$error.email" class="text-danger">This field must be a valid email address</span>
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="text-muted">{{ "access.register.PASS_LABEL" | translate }}</label>
+                    <input id="id-password" type="password" name="account_password" ng-model="account.model.password" ng-pattern="/^[a-zA-Z0-9]{6,10}$/" required="" class="form-control" />
+                    <span class="fa fa-lock form-control-feedback text-muted"></span>
+                    <span ng-show="registerForm.account_password.$dirty &amp;&amp; registerForm.account_password.$error.required" class="text-danger">This field is required</span>
+                    <span ng-show="registerForm.account_password.$dirty &amp;&amp; registerForm.account_password.$error.pattern" class="text-danger">Input should match 'a-zA-Z0-9' and 6-10 length</span>
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="text-muted">{{ "access.register.REPIT_PASS_LABEL" | translate }}</label>
+                    <input type="password" name="account_password_confirm" ng-model="account.model.password_repeat" ui-validate="'$value==account.model.password'" ui-validate-watch="'password'"
+                    class="form-control" />
+                    <span class="fa fa-lock form-control-feedback text-muted"></span>
+                    <span ng-show="registerForm.account_password_confirm.$dirty &amp;&amp; registerForm.account_password_confirm.$error.validator" class="text-danger">Password does Not match</span>
+                </div>
+                <div class="clearfix">
+                    <div class="checkbox c-checkbox pull-left mt0">
+                        <label>
+                            <input type="checkbox" required="" name="account_agreed" ng-model="account.agreed" />
+                            <span class="fa fa-check"></span>{{ "access.register.AGGRE_TERM" | translate }}</label>
+                    </div>
+                </div>
+                <div ng-show="registerForm.account_agreed.$dirty &amp;&amp; registerForm.account_agreed.$error.required" class="text-danger">You must agree the terms</div>
+                <button type="submit" class="btn btn-block btn-primary mt-lg">{{ "access.register.CREATE_ACCOUNT" | translate }}</button>
+            </form>
+            <div ng-show="authMsg" class="alert alert-danger text-center">{{authMsg}}</div>
+            <p class="pt-lg text-center">{{ "access.register.HAVE_ACCOUNT" | translate }}</p><a ui-sref="access.login" class="btn btn-block btn-default">{{ "access.register.SIGNUP" | translate }}</a>
+        </div>
+    </div>
+</div>

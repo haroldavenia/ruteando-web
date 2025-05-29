@@ -1,0 +1,76 @@
+<div class="panel col-lg-12 clearfix pb">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="input-group m0 col-xs-6 col-sm-3 pull-left">
+                <span class="input-group-addon input-sm">
+                    <em class="icon-magnifier"></em>
+                </span>
+                <input type="text" ng-change="assignedServices.filter()" ng-model="assignedServices.filterText" class="form-control input-sm" />
+            </div>
+            <div class="form-group m0 col-xs-6 col-sm-9">
+                <div class="pull-right">
+                    <button type="button" ng-click="assignedServices.add()" class="btn btn-sm btn-primary">
+                        <span>
+                            <em class="icon-plus"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.ADD' | translate }}</span>
+                    </button>
+                    <button type="button" ng-click="assignedServices.selectAll()" class="btn btn-sm btn-default">
+                        <span>
+                            <em class="text-primary icon-check"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.SELECT' | translate }}</span>
+                    </button>
+                    <button type="button" ng-click="assignedServices.remove()" class="btn btn-sm btn-default">
+                        <span>
+                            <em class="text-danger icon-trash"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.DELETE' | translate }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body p0">
+        <div class="table-responsive table-bordered">
+            <table class="table table-hover wd-wide">
+                <tbody>
+                    <tr ng-repeat="item in assignedServices.data" ng-class="{true: 'active'}[item.check]">
+                        <td class="wd-xxs">
+                            <div class="checkbox c-checkbox m0">
+                                <label>
+                                    <input type="checkbox" ng-model="item.check" />
+                                    <span class="fa fa-check"></span>
+                                </label>
+                            </div>
+                        </td>
+                        <td class="wd-xxs">
+                            <em ng-class="{ 'text-danger': item.status == VISIT_CANCELED, 'text-success': item.status == VISIT_FINISHED, 'text-info' : item.status == VISIT_IN_ROUTE, 'text-warning' : item.status == VISIT_ASSIGNED}" class="text-lg fa fa-truck"></em>
+                        </td>
+                        <td>
+                            <div class="ph">
+                                <h4 class="media-heading">{{item.plate}}</h4>
+                                <small class="text-muted">{{item.initDate}}</small>
+                                <p class="text-muted">{{item.estimatedTime}}</p>
+                            </div>
+                        </td>
+                        <td class="wd-sm">
+                            <div class="ph m0 text-muted visible-inline pull-right">
+                                <em tooltip="{{ 'assignedServices.LINKS.EDIT' | translate }}" tooltip-placement="bottom" ng-click="assignedServices.edit(item)" class="icon-pencil mr"></em>
+                                <em tooltip="{{ 'assignedServices.LINKS.LIST_VIEW' | translate }}" tooltip-placement="bottom" ng-click="assignedServices.listView(item)" class="icon-list mr"></em>
+                                <em tooltip="{{ 'assignedServices.LINKS.MAP' | translate }}" tooltip-placement="bottom" ng-click="assignedServices.goToMap(item)" class="icon-map mr"></em>
+                                <em tooltip="{{ 'assignedServices.LINKS.DELETE' | translate }}" tooltip-placement="bottom" ng-click="assignedServices.removeItem(item)" class="icon-trash mr"></em>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div ng-hide="assignedServices.paginations.numPages == 1" class="col-lg-12">
+                <pagination total-items="assignedServices.paginations.totalItems" ng-model="assignedServices.paginations.currentPage" max-size="assignedServices.paginations.maxSize" boundary-links="true" rotate="false" items-per-page="assignedServices.paginations.itemsPerPage"
+                previous-text="‹" next-text="›" num-pages="assignedServices.paginations.numPages" ng-change="assignedServices.changePage()" class="m pagination-sm pull-right"></pagination>
+            </div>
+        </div>
+    </div>
+</div>

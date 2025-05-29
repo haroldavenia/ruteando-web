@@ -1,0 +1,34 @@
+{"visits" : [
+  {
+    "id" : 1,
+    "name" : "VISITA 1",
+    "address" : "CL 122 22 22",
+    "lng" : "12,9902889",
+    "lat" : "72,0223330",
+    "status" : 0
+  },
+  {
+    "id" : 2,
+    "name" : "VISITA 2",
+    "address" : "CL 122 22 22",
+    "lng" : "12,9902889",
+    "lat" : "72,0223330",
+    "status" : 1
+  },
+  {
+    "id" : 1,
+    "name" : "VISITA 3",
+    "address" : "CL 200 22 22",
+    "lng" : "13,9902889",
+    "lat" : "71,0223330",
+    "status" : 2
+  },
+  {
+    "id" : 1,
+    "name" : "VISITA 4",
+    "address" : "CL 122 22 22",
+    "lng" : "11,9902889",
+    "lat" : "72,0223330",
+    "status" : 2
+  }
+  ]}

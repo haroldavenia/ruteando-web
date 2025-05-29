@@ -1,0 +1,91 @@
+{"places" : [
+  {
+    "id" : 1,
+    "name" : "EXITO SAN FRANCISCO",
+    "address" : "CL 72 # 38 - 100",
+    "phoneNumber" : "3029330",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : true
+  },{
+    "id" : 2,
+    "name" : "LUGAR UNO",
+    "address" : "CL 23 # 34 - 13",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : false
+  },{
+    "id" : 3,
+    "name" : "CC PORTAL DEL PRADO",
+    "address" : "CL 52 # 46 - 120",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : true
+  },{
+    "id" : 4,
+    "name" : "LUGAR UNO",
+    "address" : "CL 23 # 34 - 13",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : false
+  },{
+    "id" : 5,
+    "name" : "CC PORTAL DEL PRADO",
+    "address" : "CL 52 # 46 - 120",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : true
+  },{
+    "id" : 6,
+    "name" : "LUGAR UNO",
+    "address" : "CL 23 # 34 - 13",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : false
+  },{
+    "id" : 7,
+    "name" : "CC PORTAL DEL PRADO",
+    "address" : "CL 52 # 46 - 120",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : true
+  },{
+    "id" : 8,
+    "name" : "LUGAR UNO",
+    "address" : "CL 23 # 34 - 13",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : false
+  },{
+    "id" : 9,
+    "name" : "CC PORTAL DEL PRADO",
+    "address" : "CL 52 # 46 - 120",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : true
+  },{
+    "id" : 10,
+    "name" : "LUGAR UNO",
+    "address" : "CL 23 # 34 - 13",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : false
+  },{
+    "id" : 11,
+    "name" : "CC PORTAL DEL PRADO",
+    "address" : "CL 52 # 46 - 120",
+    "phoneNumber" : "3092992",
+    "x" : "12.9902889",
+    "y" : "72.0223330",
+    "status" : true
+  }
+  ]}

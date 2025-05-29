@@ -1,0 +1,51 @@
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-md-12 col-sm-12">
+         <div class="row">
+            <div class="col-md-12 col-sm-12">
+               <div class="panel panel-primary">
+                  <div class="panel-heading">{{ "settings.form.title" | translate }}</div>
+                  <div class="panel-body">
+                     <form id="settings" class="form-horizontal">
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">{{ "settings.form.label.TRAVEL_MODE" | translate }}</label>
+                              <div class="col-md-6">
+                                 <select name="travelMode" class="form-control">
+                                    <option value="-1">Seleccione...</option>
+                                    <option value="0">==Vehiculo==</option>
+                                    <option value="1">==Bicicleta==</option>
+                                    <option value="2">==Caminata==</option>
+                                 </select>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">{{ "settings.form.label.LENGTH_OF_STAY" | translate }}</label>
+                              <div class="col-md-6">
+                                 <div class="input-group">
+                                    <input type="number" class="form-control" />
+                                    <span class="input-group-addon">min</span>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                     </form>
+                  </div>
+                  <div class="panel-footer">
+                     <div class="row text-center">
+                        <button type="button" class="btn btn-labeled btn-success">
+                           <span class="btn-label"><i class="fa fa-check"></i>
+                           </span>{{ "settings.form.button.ACEPT" | translate }}</button>
+                        <button type="button" class="btn btn-labeled btn-danger">
+                           <span class="btn-label"><i class="fa fa-times"></i>
+                           </span>{{ "settings.form.button.CANCEL" | translate }}</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

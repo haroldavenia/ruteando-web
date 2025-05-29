@@ -1,0 +1,605 @@
+{
+  "app": {
+    "ACEPT" : "Aceptar",
+    "CANCEL": "Cancelar",
+    "ADD": "AGREGAR",
+    "SELECT": "SELECCIONAR",
+    "DELETE": "ELIMINAR", 
+    "MAX" :  "Máximo",
+    "MIN" : "Mínimo",
+    "EXPORT_TO_PDF" : "Exportar a PDF",
+    "LOADING_TEXT" : "Procesando, espere un momento...",
+    "NO_DATA" : "No se encontraron registros",
+    "EXPORT_TO_XLSX" : "Exportar a EXCEL"
+  },
+  "dashboard": {
+    "WELCOME": "Bienvenido a Ruteando"
+  },
+  "topbar": {
+    "search": {
+      "PLACEHOLDER": "Tipea y pulsa enter.."
+    }
+  },
+  "sidebar": {
+    "WELCOME": "Bienvenido",
+    "heading": {
+      "HEADER": "Navegacion principal"
+    },
+    "nav": {
+      "SINGLEVIEW": "Vista simple",
+      "menu": {
+        "MENU": "Menu",
+        "SUBMENU": "Sub Menu"
+      },
+      "MAPS": "Mapa",
+      "VISIT_LIST": "Lista de visitas",
+      "JOURNEYS": "Trayectos",
+      "SETTINGS": "Ajustes",
+      "VEHICLE_TYPE": "Tipos de vehiculos",
+      "PLACES": "Lugares",
+      "ROUTES": "Rutas",
+      "ASSIGNED_SERVICES": "Servicios Asignados",
+      "VEHICLES": "Vehiculos",
+      "DRIVERS" : "Conductores",
+      "ITINERARY" : "Itineario",
+      "VISITS_UNATTENDED": "Dir. sin atender",
+      "CATALOG" : "Catalogo"
+    }
+  },
+  "access": {
+    "login": {
+      "TITLE": "INGRESE LAS CREDENCIALES PARA CONTINUAR",
+      "placeholder": {
+        "EMAIL": "Ingrese un correo Electronico",
+        "USERNAME" : "Correo Electronico",
+        "PASSWORD": "Contraseña"
+      },
+      "REMENBER": "Recuerdame",
+      "FORGOT_PASSWORD": "¿Has olvidado la contraseña?",
+      "TITLE_SOCIAL": "Iniciar sesión con otros servicios",
+      "NEED_SIGNUP": "¿Necesita registrarse?",
+      "REGISTER_NOW": "¿Eres nuevo en Ruteando? ¡Unete!"
+    },
+    "register": {
+      "TITLE": "¿Eres nuevo en Ruteando? ¡Unete!",
+      "EMAIL_LABEL": "Dirección de correo electronico",
+      "PASS_LABEL": "Contraseña",
+      "REPIT_PASS_LABEL": "Repita la contraseña",
+      "TEST_DATA": "¿Desea usar datos de prueba?",
+      "AGGRE_TERM": "Al unirte a ruteando aceptas las Condiciones de uso y  su Política de privacidad",
+      "CREATE_ACCOUNT": "Abrir una cuenta",
+      "HAVE_ACCOUNT": "¿Tiene una cuenta?",
+      "INIT_WITH_SERVICE" : "Iniciar sesión con otro servicio",
+      "SIGNUP": "Login",
+      "dialog": {
+        "TITLE": "Verificacion de correo electronico",
+        "CONTENT": "verifique en la bandeja de entrada el correo con el enlace de confirmacion para registrarte"
+      }
+    },
+    "registerTwo" : {
+      "TITLE" : "INGRESE LOS DATOS PARA COMPLETAR EL REGISTRO",
+      "label" : {
+        "LEGAL_NAME" : "Nombre de Usuario/Empresa",
+        "PHONE" : "Telefono",
+        "LANGUAJE" : "Idioma",
+        "COUNTRY" : "Pais",
+        "CITY" : "Ciudad",
+        "STATE" : "Estado",
+        "INDUSTRY" : "Industria",
+        "NO_SHARE" : "No compatir esta aplicacion"
+      }, 
+      "legend" : {
+        "TITLE_ONE" : "1. Informacion basica",
+        "TITLE_TWO" : "2. Compartir",
+        "TITLE_LAST" : "Ultimo paso"
+      }, 
+      "wellcome" : {
+        "TITLE" : "Listo!",
+        "WELLCOME" : "Solo queda activar tu cuenta para que puedas disfrutar de nuestra aplicacion",
+        "BUTTON" : "Activar cuenta"
+      }
+    },
+    "reset" : {
+      "TITLE": "INGRESE LA NUEVA",
+      "RESET_PASSWORD" : "Cambiar password"
+    },
+    "recovery" : {
+      "TITLE": "RECUPERE SU CUENTA",
+      "MESSAGE": "Ingrese el correo asociado su cuenta y recibirá las instrucciones para restablecer una contraseña",
+      "CONTINUE": "Continuar"
+    }
+  },
+  "places": {
+    "TITLE": "LUGARES",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Dirección",
+      "phone_number": "Número Teléfono"
+    },
+    "LINKS": {
+      "EDIT": "Editar lugar",
+      "DELETE": "Eliminar lugar"
+    },
+    "message" : {
+      "deleteConfirm" : "Lugares eliminados satisfactoriamente"
+    }, 
+    "form" : {
+      "TITLE": "Informacion del lugar",
+      "legend" : {
+        "NAME" : "Nombre",
+        "ADDRESS" : "Dirección",
+        "PHONE" : "Telefono"
+      },
+      "label" : {
+        "NAME" : "Nombre",
+        "ADDRESS" : "Dirección",
+        "PHONE" : "Telefono"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "validation" : {
+        "NAME_REQUIRED" : "El nombre es requerido",
+        "NAME_LENGTH" : "Minimo 2 caracteres para el nombre",
+        "ADDRESS_REQUIRED" : "la dirección es requerida",
+        "ADDRESS_LENGTH" : "Minimo 2 caracteres para la dirección",
+        "PHONE_REQUIRED" : "un telefono es requerido",
+        "PHONE_LENGTH" : "de 7 a 10 digitos para el telefono",
+        "PHONE_PATTERN" : "No es un telefono valido"
+      },
+      "tooltip" : {
+        "GEOCODING" : "Geocodificar dirección",
+        "MAP" : "Ubicar dentro del mapa"
+      }
+    }
+  },
+  "vehicles": {
+    "TITLE": "VEHÍCULOS",
+    "TABLE_TITLE": {
+      "name": "Vehículo"
+    },
+    "LABEL" : {
+      "name" : "Nombre",
+      "licensePlate" : "Placa",
+      "vehicleType" :"Tipo De Vehículo"
+    }, 
+    "LINKS": {
+      "ADD_VEHICLETYPES": "Agregar Tipo De Vehículo",
+      "EDIT": "Editar vehículo",
+      "DELETE": "Eliminar vehículo"
+    },
+    "message" : {
+      "deleteConfirm" : "Vehículos eliminados satisfactoriamente"
+    }, 
+    "form" : {
+      "validation" : {
+        "LICENCSEPLATE_REQUIRED" : "El numero de matricula es requerido",
+        "LICENCSEPLATE_LENGTH" : "Minimo 6 caracteres",
+        "NAME_REQUIRED" : "El nombre es requerido",
+        "NAME_LENGTH" : "Minimo 2 caracteres",
+        "VEHICLE_TYPE_REQUIRED" : "El tipo de vehiculo es requerido"
+      }
+    }
+  },
+  "vehicleTypes": {
+    "TITLE": "TIPOS DE VEHÍCULOS",
+    "TABLE_TITLE": {
+      "name": "Vehículo",
+      "weight": "Peso",
+      "volume": "Volumen",
+      "capacity": "Capacidad",
+      "disponibility": "Disponibilidad"
+    },
+    "errorMessage" : {
+      "minWeight>maxWeight" : "Peso mínimo no puede ser mayor que el peso máximo",
+      "maxWeight<minWeight" : "Peso máximo no puede ser menor que el peso mínimo",
+      "minVolume>maxVolume" : "Volumen mínimo no puede ser mayor que el volumen máximo",
+      "maxVolume<minVolume" : "Volumen máximo no puede ser menor que el volumen mínimo",
+      "maxVolume>volume" : "Volumen máximo no puede ser mayor que el volumen del vehículo",
+      "maxWeight>weight" : "Peso máximo no puede ser mayor que el peso del vehículo"
+    }, 
+    "message" : {
+      "deleteConfirm" : "Tipos de vehículos eliminados satisfactoriamente"
+    }, 
+    "LABEL" : {
+      "basicInfo" :"Información Básica",
+      "name" : "Nombre",
+      "weight": "Peso",
+      "capacity": "Capacidad",
+      "volume" : "Volumen",
+      "measures" : "Medidas",
+      "high" : "Largo",
+      "width": "Ancho",
+      "depth" : "Profundidad",
+      "restrictions" : "Restricciones"
+    },
+    "LINKS": {
+      "EDIT": "Editar tipo de vehículo",
+      "DELETE": "Eliminar tipo de vehículo"
+    },
+    "form" :{
+      "TITLE" : "Tipo de vehiculo",
+      "legend" :{
+        "BASIC_INFO" : "Informacion Basica",
+        "MEASURES" : "Medidas",
+        "RESTRICTIONS" : "Restricciones",
+        "VOLUME" : "Volumen"
+      },
+      "label" : {
+        "NAME" : "Nombre",
+        "WEIGHT" : "Peso",
+        "CAPACITY" : "Capacidad",
+        "VOLUME" : "Volumen",
+        "WIDTH" : "Ancho",
+        "LONG" : "Largo",
+        "HIGH" : "Alto",
+        "WEIGHT_RESTRICTION" : "De peso",
+        "VOLUME_RESTRICTION" : "De volumen",
+        "MAXIMUN" : "Maximo",
+        "MINIMUN" : "Minimo"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      }
+    }
+  },
+  "visits": {
+    "TITLE": "LISTA DE VISITAS",
+    "TABLE_TITLE": {
+      "name": "Visita",
+      "address": "Dirección"
+    },
+    "LABEL" : {
+      "routes" : "Rutas"
+    },
+    "LINKS": {
+      "ADD_ROUTE" :"Agregar Ruta",
+      "INFO": "Información de la visita",
+      "MAP": "Ver en el mapa",
+      "DELETE": "Eliminar visita",
+      "FILTER" : "Filtrar por estado de la visita"
+    }
+  },
+  "settings": {
+    "TITLE": "AJUSTES",
+    "TABLE_TITLE": {
+      "name": "Visita",
+      "address": "Dirección"
+    },
+    "LINKS": {
+      "ADD_VEHICLETYPES" : "Agregar Tipo De Vehículo",
+      "ADD_PLACE": "Agregar Lugar",
+      "EDIT": "Editar configuración",
+      "DELETE": "Eliminar configuración"
+    },
+    "message" : {
+      "deleteConfirm" : "Ajustes eliminados satisfactoriamente"
+    }, 
+    "form": {
+      "title": "Ajustes del trayecto",
+      "legend": {
+        "TIME": "Tiempo",
+        "RESOURCES": "Recursos",
+        "EVALUATE" : "Evaluar con"
+      },
+      "label": {
+        "TRAVEL_MODE": "Modo de viaje",
+        "DESCRIPTION" : "Descripción",
+        "LENGTH_OF_STAY": "Tiempo de estadia",
+        "FIXED" : "Fijo",
+        "FIXED_ROUTES" : "Rutas fijas",
+        "BACK_TO_START_POINT" : "Regresar al punto de inicio",
+        "EVALUATE_PACKAGE" :"Restricción de paquetes",
+        "EVALUATE_WEIGHT" :"Peso",
+        "EVALUATE_VOLUME" : "Volumen",    
+        "EVALUATE_ITINERARY_ZONE" : "Zonas de itinerario",
+        "DEFINE_ITINERARY" : "Definido en Itinerario",
+        "RESTRICTION_ROUTE_CALCULATION": "Resricciones en el calculo de la ruta",
+        "DURATION_LIMIT": "",
+        "VEHICLE_TYPE": "Tipo de Vehiculo",
+        "QUANTITY": "Cantidad",
+        "NO_RESTRICTION": "Sin restriccion",
+        "PLACE":  "Lugar",
+        "TIME": "Tiempo",
+        "RESOURCE": "Recurso",
+        "RESOURCE_VS_TIME": "Recursos Vs Tiempo",
+        "TIME_FROM": "Hora Inicio",
+        "TIME_TO": "Hora Finaliza"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "validation" : {
+        "NAME_REQUIRED" : "El nombre es requerido",
+        "NAME_LENGTH" : "Minimo 2 caracteres para el nombre",
+        "WEIGHT_REQUIRED" : "El peso es requerido",
+        "CAPACITY_REQUIRED" : "Seleccione la capacidad del vehiculo",
+        "VOLUME_REQUIRED" : "El Volumen es requerido",
+        "WIDTH_REQUIRED" : "El peso es requerido",
+        "HIGH_REQUIRED" : "EL alto es requerido",
+        "DEPTH_REQUIRED" : "La profundidad es requirida",
+        "MIN_WEIGHT_REQUIRED" : "Peso minimo requerido",
+        "MAX_WEIGHT_REQUIRED" : "Peso maximo requerido",
+        "MIN_VOL_REQUIRED" : "Volumen minimo requerido",
+        "MAX_VOL_REQUIRED" : "Volumen Maximo requerido"
+      }
+
+    }
+  },
+  "assignedServices": {
+    "TITLE": "SERVICIOS ASIGNADOS",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Dirección",
+      "phone_number": "Número Teléfono"
+    },
+    "LINKS": {
+      "EDIT" : "Editar",
+      "LIST_VIEW": "Ver lista",
+      "MAP": "Ver en el mapa",
+      "DELETE": "Eliminar servicio"
+    },
+    "form": {
+      "TITLE": "Asignar servicio",
+      "label": {
+        "VEHICLE": "Vehiculo",
+        "DRIVER" : "Conductor",
+        "OBSERVATIONS": "Observaciones",
+        "LOGIN" : "Login"
+      },
+      "button": {
+        "ASSIGN": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "validations" : {
+        "VEHICLE_REQUIRED" : "el vehiculo es requerido",
+        "OBSERVATIONS_REQUIRED" : "ingrese alguna observacion"
+      },
+      "tooltip" : {
+        "ADD_VEHICLE" : "Agregar vehículo",
+        "ADD_DRIVER" : "Agregar conductor"
+      }
+    }
+  },
+  "journeys": {
+    "TITLE": "TRAYECTOS",
+    "TABLE_TITLE": {
+      "name": "Trayecto",
+      "routes": "Rutas",
+      "servedClients" : "Clientes Atendidos"
+    },
+    "LINKS": {
+      "ROUTE": "Ver Rutas",
+      "SHARE": "Compartir",
+      "CHART": "Ver gráfico",
+      "DELETE": "Eliminar trayecto",
+      "ADD_SETTING" : "Agregar ajuste",
+      "MAP" : "Ver en el mapa"
+    },
+    "message" : {
+      "deleteConfirm" : "Trayectos eliminados satisfactoriamente"
+    }, 
+    "form": {
+      "title": "Agregar Trayecto",
+      "legend": {
+        "GENERAL_INFORMATION": "Informacion General",
+        "JOURNEYS_FILE": "Archivo de Trayectos"
+      },
+      "label": {
+        "NAME": "Nombre",
+        "SETTINGS": "Ajuste",
+        "DROP_FILE": "Soltar Archivo",
+        "DETAIL": "Detalle"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "helpText": {
+        "TITLE": "Ayuda para construcción de archivo",
+        "ITEM_ONE": "== texto del primer item ==",
+        "ITEM_TWO": "== texto del segundo item==",
+        "ITEM_THREE": "== texto del tercer item =="
+      },
+      "validation" : {
+        "NAME_REQUIRED" : "Este campo es requerido",
+        "NAME_ERROR" : "No es valido",
+        "NAME_LENGTH" : "Minimo 2 caracteres",
+        "SETTING_REQUIRED" : "Seleccione un ajuste"
+      }
+    }
+  },
+  "drivers": {
+    "TITLE": "CONDUCTORES",
+    "label" : {
+      "firstName" : "Nombres",
+      "lastName" : "Apellidos",
+      "password" : "Contraseña",
+      "repeatPassword" : "Confirmar Contraseña",
+      "licenceNumber": "Número Licencia",
+      "vehicle" :"Vehículo",
+      "identificationNumber": "Identificación",
+      "phoneNumber": "Numero Teléfono",
+      "login" : "login",
+      "password" : "Contraseña",
+      "active" : "Activo"
+    },
+    "LINKS": {
+      "EDIT": "Editar conductor",
+      "DELETE": "Eliminar conductor"
+    },
+    "message" : {
+      "deleteConfirm" : "Conductores eliminados satisfactoriamente"
+    }, 
+    "form" :{
+      "validation" : {
+        "LICENCE_REQUIRED" : "El numero de licencia es requerido",
+        "LICENCE_LENGTH" : "Minimo 7 digitos",
+        "LICENCE_PATTERN" : "la licencia no es valida",
+        "NAME_REQUIRED" : "El nombre del conductorer es requerido",
+        "NAME_LENGTH" : "Minimo 2 caracteres",
+        "NAME_PATTERN" : "no es un nombre valida",
+        "IDENTIFICATION_REQUIRED" : "La identificacion del conductor es requerida",
+        "IDENTIFICATION_LENGTH" : "Minimo 7 caracteres",
+        "IDENTIFICATION_PATTERN" : "no es una identificacion valida",
+        "PHONE_REQUIRED" : "El numero de telefono es requerido",
+        "PHONE_LENGTH" : "Minimo 7 digitos",
+        "PHONE_PATTERN" : "no umero de telefono valido",
+        "PASSWORD_REQUIRED" : "la contraseña es requerida",
+        "PASSWORD_LENGTH" : "Minimo 6 caracteres",
+        "PASSWORD_PATTERN" : "el password no es valido",
+        "VEHICLE_REQUIRED" : "El vehiculo es requerido"
+      }
+    }
+  },
+  "geocoding": {
+    "TITLE" : "GEOCODIFICADOR",
+    "form": {
+      "TITLE": "Geocodificar dirección",
+      "label": {
+        "COUNTRY": "Pais",
+        "ZONE": "Zona",
+        "ADDRESS": "Dirección"
+      },
+      "button": {
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "validation" : {
+        "COUNTRY_REQUIRED" : "El pais es requerido",
+        "ZONE_REQUIRED" : "La zona es requerida",
+        "ADDRESS_REQUIRED" : "La dirección es requerida",
+        "ADDRESS_LENGTH" : "Minimo 2 caracteres",
+        "ADDRESS_NOFOUND": "No se encontró dirección valida" 
+      }
+    }
+  },
+  "package": {
+    "TITLE" : "Direcciones",
+    "form": {
+      "TITLE": "INFORMACIÓN DE VISITA",
+      "label": {
+        "GUIDE_NUMBER": "Numero de guia",
+        "ZONE": "Zona",
+        "ADDRESS": "Dirección",
+        "TIME_OF_STAY": "Tiempo de estadia",
+        "PIECE_NUMBER" : "Numero de Piezas",
+        "WEIGHT": "Peso",
+        "CAPACITY": "Capacidad",
+        "VOLUME": "Volumen",
+        "WIDTH" : "Ancho",
+        "HEIGHT" : "Alto",
+        "DEPTH" : "Profundidad",
+        "OBSERVATIONS": "Observaciones",
+        "PHONE_NUMBER" : "Número De Telefono",
+        "DELIVERY_TIME": "Hora De Entrega"
+      },
+      "legend" : {
+        "SENDER" : "Remitente",
+        "RECEIVER" : "Destinatario"
+      },
+      "button": {
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "tooltip" : {
+        "GEOCODING" : "Geocodificar dirección",
+        "MAP" : "Ubicar dentro del mapa"
+      },
+      "validation" : {
+        "ADDRESS_REQUIRED" : "la dirección es requerida",
+        "ADDRESS_LENGTH" : "Minimo 2 caracteres",
+        "LENGTH_OF_STAY_REQUIRED" : "El tiempo de estadia es requerido",
+        "WEIGHT_REQUIRED" : "Peso de la entrega requerido",
+        "VOLUME_REQUIRED" : "Volumen de la entrega requerido",
+        "RECIPIENT_GUIDE_REQUIRED" : "Guia de destinatario requerida",
+        "RECIPIENT_GUIDE_LENGTH" : "Minimo 2 caracteres",
+        "ZONE_REQUIRED" : "Seleccione una zona de la lista",
+        "DELIVERY_TIME" : "HOra de entrega requerida"
+      }
+    }
+  },
+  "routes": {
+    "TITLE": "RUTAS",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Visitas",
+      "phone_number": "Número Teléfono",
+      "weightUsed" : "Peso usado",
+      "volumeUsed" : "Volumen usado"
+    },
+    "LABEL" : {
+      "journey" : "Trayecto",
+      "showRoutesInMap" : "Mostrar lista de rutas",
+      "closeRoutesInMap" : "Ocultar lista de rutas"
+    },
+    "LINKS": {
+      "ADD_JOURNEY" :"Agregar trayecto",
+      "ADD_SERVICE": "Agregar servicio",
+      "INFO_ROUTE": "Información de la ruta",
+      "MAP": "Ver en el mapa",
+      "SHARE": "Compartir",
+      "LIST_VIEW": "Ver lista de servicios",
+      "DELETE": "Eliminar ruta",
+      "SHOW_IN_MAP": "VER EN MAPA"
+    }
+  },
+  "journey": {
+    "TITLE": "TRAYECTO",
+    "ROUTER": "Rutear",
+    "OPTIMAZE": "Optimizar",
+    "START_POINT": "Punto De Inicio",
+    "LINKS": {
+      "DETAIL": "Ver detalle",
+      "ADD_PLACE": "Agregar punto de inicio",
+      "MAP": "Ver en el mapa",
+      "EDIT": "Editar dirección",
+      "DELETE": "Eliminar dirección",
+      "FILTER": "Filtrar por estado de la dirección"
+    }
+  },
+  "visitsUnattended" : {
+    "TITLE" : "VISITAS SIN ATENDER"
+  },
+  "itinerary" :{
+    "TITLE" : "ITINERARIO",
+    "ROUTER": "Rutear",
+    "OPTIMAZE": "Optimizar",
+    "START_POINT": "Punto De Inicio",
+    "SETTINGS": "Ajuste",
+    "STATE_VISIT" : "Estado De Visita",
+    "NO_DATA" : "No se encuentran visitas para esté trayecto",
+    "LINKS": {
+      "ADD_PLACE": "Agregar punto de inicio",
+      "ADD_SETTING" : "Agregar ajuste",
+      "MAP": "Ver en el mapa",
+      "EDIT": "Editar dirección",
+      "DELETE": "Eliminar dirección",
+      "FILTER": "Filtrar por estado de la dirección"
+    },
+    "validation" : {
+      "PLACE_REQUIRED" : "Punto de inicio requerido",
+      "SETTING_REQUIRED": "Ajuste requerido"
+    }
+  },
+  "catalogs": {
+    "TITLE": "CATALOGO",
+    "label" : {
+      "name" : "Nombre",
+      "parent" :"Padre",
+      "ancestors" : "Ancestros"
+    },
+    "LINKS": {
+      "ADD_ANCESTORS" : "Agregar ancestro",
+      "EDIT": "Editar catalogo",
+      "DELETE": "Eliminar catalogo"
+    }
+  }
+}

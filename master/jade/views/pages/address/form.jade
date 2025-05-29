@@ -1,0 +1,90 @@
+.container-fluid
+    .row
+        .col-md-12.col-sm-12
+            .row
+                .col-md-12.col-sm-12
+                    .panel.panel-primary
+                        .panel-heading {{ "address.form.TITLE" | translate }}
+                        .panel-body
+                            form.form-horizontal(role='form', name='addressForm', novalidate)
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label(for='input-id-1') {{ "address.form.label.ADDRESS" | translate }}
+                                        .col-md-6
+                                            input.form-control(type='text' name='address', required, ng-minlength='2', ng-model='address.model.address')
+                                            span.text-danger(ng-show='addressForm.address.$dirty && addressForm.address.$error.required') {{ "address.form.validation.ADDRESS_REQUIRED" | translate }}
+                                            span.text-danger(ng-show='addressForm.address.$dirty && addressForm.address.$error.minlength') {{ "address.form.validation.ADDRESS_LENGTH" | translate }}
+                                        .col-md-4
+                                            button.btn.btn-primary(type='button', tooltip='{{ "address.form.tooltip.GEOCODING" | translate }}', tooltip-placement='bottom', ng-click="address.geocoding()")
+                                                span.icon-pencil
+                                            button.btn.btn-success(typed='button', ng-click='address.goToMap()', tooltip='{{ "address.form.tooltip.MAP" | translate }}', tooltip-placement='bottom')
+                                                span.icon-map
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label {{ "address.form.label.TIME_OF_STAY" | translate }}
+                                        .col-md-6
+                                            .input-group
+                                                input.form-control(type='number', name='lengthOfStay', required, ng-model='address.model.lengthOfStay', min='1')
+                                                span.input-group-addon min
+                                            span.text-danger(ng-show='addressForm.lengthOfStay.$dirty && addressForm.lengthOfStay.$error.required') {{ "address.form.validation.LENGTH_OF_STAY_REQUIRED" | translate }}
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label {{ "address.form.label.WEIGHT" | translate }}
+                                        .col-md-6
+                                            .input-group
+                                                input.form-control(type='number', name='wigth', required, ng-model='address.model.wigth', min='1')
+                                                span.input-group-addon gr
+                                            span.text-danger(ng-show='addressForm.wigth.$dirty && addressForm.wigth.$error.required') {{ "address.form.validation.WEIGHT_REQUIRED" | translate }}
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label {{ "address.form.label.VOLUMEN" | translate }}
+                                        .col-md-6
+                                            .input-group
+                                                input.form-control(type='number',name='volume', required, ng-model='address.model.volume', min='1' )
+                                                span.input-group-addon cm3
+                                            span.text-danger(ng-show='addressForm.volume.$dirty && addressForm.volume.$error.required') {{ "address.form.validation.VOLUME_REQUIRED" | translate }}
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label {{ "address.form.label.RECIPIENT_GUIDE" | translate }}
+                                        .col-md-6
+                                            input.form-control(type='text',name='recipientGuide', required, ng-model='address.model.recipientGuide', ng-minlength='2' )
+                                            span.text-danger(ng-show='addressForm.recipientGuide.$dirty && addressForm.recipientGuide.$error.required') {{ "address.form.validation.RECIPIENT_GUIDE_REQUIRED" | translate }}
+                                            span.text-danger(ng-show='addressForm.recipientGuide.$dirty && addressForm.recipientGuide.$error.minlength') {{ "address.form.validation.RECIPIENT_GUIDE_LENGTH" | translate }}
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label {{ "address.form.label.ALIAS" | translate }}
+                                        .col-md-6
+                                            input.form-control(type='text', name='alias', ng-model='address.model.alias' )
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label {{ "address.form.label.ZONE" | translate }}
+                                        .col-md-6
+                                            select.chosen-select.input-md(chosen='', name='zone', required, ng-model='address.model.zone', width="'100%'")
+                                                option(value='')
+                                                option(value="1") Nulla facilisi. Quisque in sapien et neque sodales facilisis. Proin a porta turpis. 
+                                                option(value="2") New York Giants
+                                                option(value="3") Philadelphia Eagles
+                                                option(value="4") Washington Redskins
+                                            span.text-danger(ng-show='addressForm.zone.$dirty && addressForm.zone.$error.required') {{ "address.form.validation.ZONE_REQUIRED" | translate }}
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label {{ "address.form.label.OBSERVATIONS" | translate }}
+                                        .col-md-6
+                                            textarea.form-control(name='observations', ng-model='address.model.observations', rows='4', placeholder='...')
+                                fieldset
+                                    .form-group
+                                        label.col-md-2.control-label {{ "address.form.label.DELIVERY_TIME" | translate }}
+                                        .col-md-6
+                                            .input-group
+                                                timepicker(name='deliveryTime', ng-model='address.model.deliveryTime', hour-step='1', minute-step='1', show-meridian='false')
+
+                        .panel-footer
+                            .row.text-center
+                                button.btn.btn-labeled.btn-success(ng-click="submitForm()")
+                                    span.btn-label
+                                        i.fa.fa-check
+                                    |   {{ "address.form.button.ACEPT" | translate }}
+                                button.btn.btn-labeled.btn-danger(type='button', ng-click='address.cancel()')
+                                    span.btn-label
+                                        i.fa.fa-times
+                                    |   {{ "address.form.button.CANCEL" | translate }}

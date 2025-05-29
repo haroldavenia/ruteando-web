@@ -1,0 +1,75 @@
+<div class="panel col-lg-12 clearfix pb">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="col-md-3 col-sm-3">
+                <div class="input-group m0">
+                    <span class="input-group-addon input-sm">
+                        <em class="icon-magnifier"></em>
+                    </span>
+                    <input type="text" ng-change="Visits.filter()" ng-model="Visits.filterText" class="form-control input sm" />
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="input-group m0">
+                    <select ng-model="statusFilter.current" ng-change="Visits.filter()" ng-options="status.name for status in statusFilter.data" class="form-control input-sm">
+                        <option value=""></option>
+                    </select>
+                    <span tooltip="{{ 'visits.LINKS.FILTER' | translate }}" tooltip-placement="bottom" ng-click="Visits.filter()" class="input-group-addon input-sm btn-primary">
+                        <em class="fa fa-filter"></em>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-1 pull-right"><a ng-click="Visits.goToBack()" class="btn btn-sm btn-danger pull-right">Regresar</a>
+            </div>
+            <!--.col-md-6.col-sm-9.form-group.m0
+  .pull-right
+    button.btn.btn-sm.btn-default(type='button' ng-click='Visits.selectAll()')
+      span: em.text-primary.icon-check
+      span.hidden-xs {{ 'app.SELECT' | translate }}
+    button.btn.btn-sm.btn-default(type='button' ng-click='Visits.remove()')
+      span: em.text-danger.icon-trash
+      span.hidden-xs  {{ 'app.DELETE' | translate }}-->
+        </div>
+    </div>
+    <div class="panel-body p0">
+        <div class="table-responsive table-bordered">
+            <table class="table table-hover wd-wide">
+                <tbody>
+                    <td colspan="1" ng-show="Visits.loading" class="height-lg">
+                        <p class="text-center"><i class="fa fa-spinner fa-spin fa-2x text-muted"></i>
+                        </p>
+                        <p class="text-center lead text-primary">{{ 'app.LOADING_TEXT' | translate }}</p>
+                    </td>
+                    <tr ng-repeat="item in Visits.data" ng-class="{true: 'active'}[item.check]">
+                        <!--td.wd-xxs.checkbox.c-checkbox.m0
+  label
+    input(type='checkbox',ng-model='item.check')
+    span.fa.fa-check-->
+                        <td class="wd-xxs">
+                            <em ng-class="{ 'text-info': item.status == VISITED, 'text-success' : item.status == VISIT_FINISHED, 'text-warning' : item.status == VISIT_PENDING}" class="icon-notebook"></em>
+                        </td>
+                        <td>
+                            <div class="ph">
+                                <small class="text-muted">{{item.address}}</small>
+                                <br/>
+                                <small class="text-muted">{{item.longitude}} , {{item.latitude}}</small>
+                            </div>
+                        </td>
+                        <td class="wd-sm">
+                            <div class="ph m0 text-muted visible-inline pull-right">
+                                <em tooltip="{{ 'visits.LINKS.INFO' | translate }}" tooltip-placement="bottom" ng-click="Visits.detail(item)" class="icon-info mr"></em>
+                                <em tooltip="{{ 'visits.LINKS.MAP' | translate }}" tooltip-placement="bottom" ng-click="Visits.goToMap(item)" class="icon-map mr"></em>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row m">
+            <div ng-hide="Visits.paginations.numPages == 1" class="col-lg-12">
+                <pagination total-items="Visits.paginations.totalItems" ng-model="Visits.paginations.currentPage" max-size="Visits.paginations.maxSize" boundary-links="true" rotate="false" items-per-page="Visits.paginations.itemsPerPage" previous-text="‹"
+                next-text="›" num-pages="Visits.paginations.numPages" ng-change="Visits.changePage()" first-text="«" last-text="»" class="m0 pagination-sm pull-right"></pagination>
+            </div>
+        </div>
+    </div>
+</div>

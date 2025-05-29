@@ -1,0 +1,7 @@
+//a.btn.btn-sm.btn-danger.pull-right.fa.fa-arrow-left.mr-sm(ng-click="goToBack()")
+a.btn.btn-sm.pull-right.btn-danger.fa.fa-arrow-right.mr-sm(ng-click="closeTab()", toggle-state="offsidebar-open", no-persist, tooltip="{{ 'routes.LABEL.closeRoutesInMap' | translate }}", tooltip-placement='bottom')
+h3.text-center.text-thin.mt-sm {{routeTab.name}}
+.container-fluid
+  .row
+    .col-md-12.col-sm-12( ng-repeat=" item in routeTab.routeList")
+      button.btn.btn-default.btn-block(ng-click="showRoute(item)") {{ item.name }}

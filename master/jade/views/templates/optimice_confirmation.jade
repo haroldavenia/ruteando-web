@@ -1,0 +1,8 @@
+.ngdialog-message
+  p.text-center.text-lg.mb-xs
+    em.fa.fa-exclamation-triangle.text-warning
+  p.lead.text-center No se han ubicado {{Itinerary.count.incorrects}} visitas y seran elminadas del proceso
+  p.lead.text-center ¿Desea Continuar?
+  p.text-right
+    button.btn.btn-primary.mr(type='button', ng-click='confirm()') Confirmar
+    button.btn.btn-default(type='button', ng-click="closeThisDialog('button')") Cancelar

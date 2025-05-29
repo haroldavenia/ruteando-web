@@ -1,0 +1,52 @@
+.block-center.mt-xl.wd-xl(ng-controller="LoginController")
+    // START panel
+    .panel.panel-flat
+        .panel-heading.text-center
+            a(href="#")
+                img.block-center.img-rounded(src='app/img/logo.png', alt='Image')
+        .panel-body
+            p.text-center.pv {{ "access.login.TITLE" | translate }}
+            form.form-validate(role='form', ng-submit="login()", name='loginForm', novalidate='').mb-lg
+                .form-group.has-feedback
+                    input.form-control(type='email', name="username" placeholder='{{ "access.login.placeholder.USERNAME" | translate }}', autocomplete="off", ng-model="account.username", required='')
+                    span.fa.fa-user.form-control-feedback.text-muted
+                //.form-group.has-feedback
+                    input.form-control(type='email', name="account_email" placeholder='{{ "access.login.placeholder.EMAIL" | translate }}', autocomplete="off", ng-model="account.email", required='')
+                    span.fa.fa-envelope.form-control-feedback.text-muted
+                    span.text-danger(ng-show="loginForm.account_email.$dirty && loginForm.account_email.$error.required") This field is required
+                    span.text-danger(ng-show="loginForm.account_email.$dirty && loginForm.account_email.$error.email") This field must be a valid email address
+                .form-group.has-feedback
+                    input.form-control(type='password', name="account_password" placeholder='{{ "access.login.placeholder.PASSWORD" | translate }}', ng-model="account.password", required='')
+                    span.fa.fa-lock.form-control-feedback.text-muted
+                .clearfix
+                    .checkbox.c-checkbox.pull-left.mt0
+                        label
+                            input(type='checkbox', value='', name="account_remember", ng-model="account.remember")
+                            span.fa.fa-check
+                            |  {{ "access.login.REMENBER" | translate }}
+                    .pull-right
+                        a.text-muted(ui-sref="access.recovery") {{ "access.login.FORGOT_PASSWORD" | translate }}
+                button.mb-sm.btn.btn-block.btn-primary.button-loading.mt-lg(type='submit', data-loading-text="Autenticando...", loading-status="account.loading") Iniciar Sesión
+                    .fa.fa-key
+            .alert.alert-danger.text-center(ng-show='authMsg') {{authMsg}}
+            p.text-center.pv {{ "access.login.TITLE_SOCIAL" | translate }}
+                               
+            .row
+                .col-sm-12
+                    .btn.btn-primary.btn-block(type='button' ng-click="clickLogin('facebook')", ng-disabled="account.loading")
+                        | Facebook
+                        span.fa.fa-facebook
+            .row
+                .col-sm-12
+                    .btn.btn-danger.btn-block(type='button' ng-click="clickLogin('google')", ng-disabled="account.loading")
+                        | Google
+                        span.fa.fa-google-plus
+            .row
+                .col-sm-12
+                    .btn.btn-info.btn-block(type="button" ng-click="clickLogin('linkedin')", ng-disabled="account.loading")
+                        | Linked
+                        span.fa.fa-linkedin
+
+            p.pt-lg.text-center {{ "access.login.NEED_SIGNUP" | translate }}
+            a(ui-sref="access.register").btn.btn-block.btn-default {{ "access.login.REGISTER_NOW" | translate }}
+    // END panel

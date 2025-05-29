@@ -1,0 +1,57 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">{{ "journeys.form.title" | translate }}</div>
+                        <div class="panel-body">
+                            <form role="form" name="journeyForm" novalidate="novalidate" class="form-horizontal">
+                                <fieldset>
+                                    <div class="form-group mb-lg">
+                                        <label class="col-md-1 control-label">{{ "journeys.form.label.NAME" | translate }}</label>
+                                        <div ng-class="{&quot;has-error&quot;: name_required }" class="col-md-5">
+                                            <input name="name" type="text" placeholder="Nombre" ng-model="journey.model.name" ng-change="journey_name()" required="required" class="form-control" />
+                                            <span ng-show="name_required" class="text-danger">{{ "journeys.form.validation.NAME_REQUIRED" | translate }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-lg">
+                                        <div class="col-md-6">
+                                            <input filestyle="" type="file" data-button-text="Seleccione su archivo" data-class-button="btn btn-default" data-classinput="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
+                                            <div ng-show="uploader.isHTML5">
+                                                <div nv-file-drop="" nv-file-select="" uploader="uploader" style="margin-top:10px;" class="drop-box">
+                                                    <span class="lb-drop-here">Arrastre su archivo aqui.</span>
+                                                    <div nv-file-over="" nv-file-select="" uploader="uploader" over-class="bg-success" class="height-sm box-placeholder text-center lead mb-xxl my-drop-zone">
+                                                        <div ng-if="journey.model.file_prevw == true" class="drop1-file-preview"><a ng-click="journey.cancelPreview()" class="prev-close"><i class="fa fa-times"></i></a>
+                                                            <img src="app/img/logo-single.png" alt="Ruteando" class="mt-sm" />
+                                                            <span class="name-file">{{journey.model.file_name}}</span>
+                                                            <span class="size-file">{{journey.model.file_size}} kb</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                            <h4 class="page-header mt0">{{ "journeys.form.helpText.TITLE" | translate }} <a ng-click="journey.goToHelp()" class="ml-sm">CLICK AQUÍ</a>
+                            </h4>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-4 col-sm-offset-3">
+                                    <button ng-click="journey.goToManually()" ng-class="{'disabled': (journey.valid_try_upload == 0 || (journey.model.name == undefined) || journey.model.name == '') }" class="btn btn-labeled btn-success">
+                                        <span class="btn-label"><i class="fa fa-cloud-upload"></i>
+                                        </span>{{ "journeys.form.label.LOAD" | translate }}</button>
+                                    <button ng-click="journey.cancel()" class="btn btn-labeled btn-danger">
+                                        <span class="btn-label"><i class="fa fa-times"></i>
+                                        </span>{{ "journeys.form.button.CANCEL" | translate }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

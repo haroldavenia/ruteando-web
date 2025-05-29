@@ -1,0 +1,41 @@
+.container-fluid
+    .row
+        .col-md-12.col-sm-12
+            .row
+                .col-md-12.col-sm-12
+                    .panel.panel-primary
+                        .panel-heading {{ "geocoding.form.TITLE" | translate }}
+                        .panel-body
+                            form.form-horizontal(role='form', name='geocodingForm', novalidate)
+                                fieldset.mb-sm.pb-sm                                    
+                                    .form-group.mb-sm
+                                        label.col-md-2.control-label {{ "geocoding.form.label.ADDRESS" | translate }}
+                                        .col-md-6(ng-class="{'has-success': geocoding.status == CORRECT, 'has-error': geocoding.status == INCORRECT }")
+                                            input.form-control(type='text',name='address', required, ng-minlength='2', ng-model='geocoding.model.address')
+                                            span.text-success(ng-show='geocoding.status == CORRECT') {{ geocoding.model.location.x }} , {{ geocoding.model.location.y }} precisión: {{ geocoding.model.score }}% 
+                                            em(ng-class="{'MATCH':'icon-check text-success','UNMATCH':'icon-close text-danger','MEAN':'icon-check text-mean-geo','MANUAL':'icon-check text-manual-geo'}[geocoding.model.status]")
+                                            span.text-danger(ng-show='address_required') {{ "geocoding.form.validation.ADDRESS_REQUIRED" | translate }}
+                                            span.text-danger(ng-show='geocoding.status == INCORRECT') {{ "geocoding.form.validation.ADDRESS_NOFOUND" | translate }}
+                                    
+                                    .form-group.mb-sm
+                                        label.col-md-2.control-label {{ "geocoding.form.label.CITY" | translate }}
+                                        .col-md-6(ng-class="{'has-success': geocoding.status == CORRECT, 'has-error': geocoding.status == INCORRECT }")
+                                            input.form-control(type='text',name='city', required, ng-minlength='2', ng-model='geocoding.model.city')
+                                            span.text-danger(ng-show='city_required') {{ "geocoding.form.validation.CITY_REQUIRED" | translate }}
+                                            
+                                    .form-group.mb-sm
+                                        label.col-md-2.control-label {{ "geocoding.form.label.COUNTRY" | translate }}
+                                        .col-md-6(ng-class="{'has-success': geocoding.status == CORRECT, 'has-error': geocoding.status == INCORRECT }")
+                                            input.form-control(type='text',name='country', required, ng-minlength='2', ng-model='geocoding.model.country')
+                                            span.text-danger(ng-show='country_required') {{ "geocoding.form.validation.COUNTRY_REQUIRED" | translate }}
+
+                        .panel-footer
+                            .row.text-center
+                                button.btn.btn-labeled.btn-success(ng-click="geocoding.send()")
+                                    span.btn-label
+                                        i.fa.fa-check
+                                    |   {{ "geocoding.form.button.ACEPT" | translate }}
+                                button.btn.btn-labeled.btn-danger(type='button', ng-click='geocoding.cancel()')
+                                    span.btn-label
+                                        i.fa.fa-times
+                                    |   {{ "geocoding.form.button.CANCEL" | translate }}

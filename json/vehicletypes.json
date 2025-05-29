@@ -1,0 +1,23 @@
+{"vehicleTypes" : [
+  {
+    "id" : 1,
+    "name" : "CAMIÓN 1",
+    "weight" : "500 KG",
+    "capacity" : "10 M2",
+    "disponibility" : "7:00 - 16-00"
+  },
+  {
+    "id" : 2,
+    "name" : "CAMIÓN 2",
+    "weight" : "300 KG",
+    "capacity" : "10 M2",
+    "disponibility" : "7:00 - 16-00"
+  },
+  {
+    "id" : 1,
+    "name" : "CAMIÓN 3",
+    "weight" : "200 KG",
+    "capacity" : "10 M2",
+    "disponibility" : "7:00 - 16-00"
+  }
+  ]}

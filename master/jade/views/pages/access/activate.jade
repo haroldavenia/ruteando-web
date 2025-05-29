@@ -1,0 +1,16 @@
+.block-center.mt-xl.wd-xl
+    // START panel
+    .panel.panel-dark.panel-flat
+        .panel-heading.text-center
+            a(href="#")
+                img.block-center.img-rounded(src='app/img/logo.png', alt='Image')
+        .panel-body
+            p.text-center.pv ACTIVATE
+    // END panel
+    .p-lg.text-center
+        span &copy; 
+        span(ng-bind="app.year") 
+        span  - 
+        span(ng-bind="app.name")
+        br
+        span(ng-bind="app.description")
