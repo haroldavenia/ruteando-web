@@ -1,0 +1,11 @@
+{"vehicles" : [
+  {
+    "id" : 1,
+    "licensePlate" : "UYY-122",
+    "name" : "chevrolet furgon 3t"
+  },{
+    "id" : 2,
+    "licensePlate" : "UVV-233",
+    "name" : "chevrolet blanco"
+  }
+  ]}

@@ -1,0 +1,49 @@
+.container-fluid
+    .row
+        .col-md-12.col-sm-12
+            .row
+                .col-md-12.col-sm-12
+                    .panel.panel-primary
+                        .panel-heading {{ "assignedServices.form.TITLE" | translate }}
+                        .panel-body
+                            form.form-horizontal(role="form", name='assigneServiceForm', novalidate)
+                              fieldset.mb-sm.pb-sm
+                                .form-group.mb-sm
+                                  p.col-sm-2 Nombre ruta 
+                                  p.col-sm-6 {{ route.name }}
+                                .form-group.mb-sm
+                                  p.col-sm-2 Total paquetes 
+                                  p.col-sm-6 {{ route.packages.length }}
+                                .form-group.mb-sm
+                                    label.col-sm-1.control-label {{ "assignedServices.form.label.DRIVER" | translate }}
+                                    .col-sm-4.pr-sm
+                                      ui-select(ng-model='drivers.selected', theme='bootstrap')
+                                          ui-select-match(placeholder='Seleccione un conductor') {{$select.selected.name}}
+                                          ui-select-choices(repeat='driver in drivers.data | propsFilter: {name: $select.search}')
+                                            div(ng-bind-html='driver.name | highlight: $select.search')
+                                            small {{driver.login}}
+                                    .col-sm-1.ph0
+                                      span.btn.btn-default( tooltip="{{ 'assignedServices.form.tooltip.ADD_DRIVER' | translate }}", tooltip-placement='bottom', ng-click='place.geocoding()')
+                                          em.icon-plus
+                                  .form-group.mb-sm
+                                    label.col-sm-1.control-label {{ "assignedServices.form.label.VEHICLE" | translate }}
+                                    .col-sm-4.pr-sm                                    
+                                      ui-select(ng-model='vehicles.selected', theme='bootstrap')
+                                        ui-select-match(placeholder='Seleccione un Vehiculo') {{$select.selected.name}}
+                                        ui-select-choices(repeat='vehicle in vehicles.data | propsFilter: {name: $select.search}')
+                                          div(ng-bind-html='vehicle.name | highlight: $select.search')
+                                          small
+                                            | licencePlate: {{vehicle.licencePlate}}
+                                    .col-sm-1.ph0
+                                      span.btn.btn-default( tooltip="{{ 'assignedServices.form.tooltip.ADD_VEHICLE' | translate }}", tooltip-placement='bottom', ng-click='place.geocoding()')
+                                          em.icon-plus                        
+                        .panel-footer
+                            .row.text-center
+                                button.btn.btn-labeled.btn-success(ng-click="assignedService.save()")
+                                    span.btn-label
+                                        i.fa.fa-check
+                                    |   {{ "assignedServices.form.button.ASSIGN" | translate }}
+                                button.btn.btn-labeled.btn-danger(type='button', ng-click="assignedService.goToBack()")
+                                    span.btn-label
+                                        i.fa.fa-times
+                                    |   {{ "assignedServices.form.button.CANCEL" | translate }}

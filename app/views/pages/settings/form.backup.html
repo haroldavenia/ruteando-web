@@ -1,0 +1,209 @@
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-md-12 col-sm-12">
+         <div class="row">
+            <div class="col-md-12 col-sm-12">
+               <div class="panel panel-primary">
+                  <div class="panel-heading">==Ajustes del trayecto ==</div>
+                  <div class="panel-body">
+                     <form class="form-horizontal">
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">==Modo de Viaje==</label>
+                              <div class="col-md-6">
+                                 <select name="travelMode" class="form-control">
+                                    <option value="-1">Seleccione...</option>
+                                    <option value="0">==Vehiculo==</option>
+                                    <option value="1">==Bicicleta==</option>
+                                    <option value="2">==Caminata==</option>
+                                 </select>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">==Tiempo de estadia==</label>
+                              <div class="col-md-6">
+                                 <div class="input-group">
+                                    <input type="number" class="form-control" />
+                                    <span class="input-group-addon">min</span>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">==Restricciones en el calculo de la ruta==</label>
+                              <div class="col-md-6 col-md-offset-1">
+                                 <div class="radio c-radio">
+                                    <label>
+                                       <input type="radio" name="a" value="option0" checked="" />
+                                       <span class="fa fa-circle"></span>Sin restricciones</label>
+                                 </div>
+                                 <div class="radio c-radio">
+                                    <label>
+                                       <input type="radio" name="a" value="option1" />
+                                       <span class="fa fa-circle"></span>Tiempo</label>
+                                 </div>
+                                 <div class="radio c-radio">
+                                    <label>
+                                       <input type="radio" name="a" value="option2" />
+                                       <span class="fa fa-circle"></span>Recursos</label>
+                                 </div>
+                                 <div class="radio c-radio">
+                                    <label>
+                                       <input type="radio" name="a" value="option3" />
+                                       <span class="fa fa-circle"></span>Tiempo Vs Recursos</label>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <legend>==Tiempo==</legend>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">==Duracion Limite==</label>
+                              <div class="col-md-6">
+                                 <div class="row">
+                                    <div class="col-md-6">
+                                       <div class="form-group">
+                                          <label class="col-md-4 control-label">==De==</label>
+                                          <div class="col-md-8">
+                                             <div class="input-group">
+                                                <timepicker ng-model="initTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                       <div class="form-group">
+                                          <label class="col-md-4 control-label">==A==</label>
+                                          <div class="col-md-8">
+                                             <div class="input-group">
+                                                <timepicker ng-model="endTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <legend>==Recursos==</legend>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">==Tipo de vehiculo==</label>
+                              <div class="col-md-6">
+                                 <select name="vehicleTypeId" class="form-control">
+                                    <option value="0">Triciclo</option>
+                                    <option value="1">Carretilla</option>
+                                    <option value="2">Carreta</option>
+                                 </select>
+                              </div>
+                              <div class="col-md-4">
+                                 <button type="button" class="btn btn-oval btn-info">
+                                    <span class="fa fa-plus-circle"></span>
+                                 </button>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label">==Cantidad==</label>
+                              <div class="col-md-6">
+                                 <div class="input-group">
+                                    <input type="number" class="form-control" />
+                                    <span class="input-group-addon">uni</span>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                        <fieldset>
+                           <div class="form-group">
+                              <div class="col-md-2"></div>
+                              <div class="col-md-6">
+                                 <div class="row">
+                                    <div class="col-md-4 col-md-offset-4">
+                                       <button type="button" class="btn btn-labeled btn-primary">
+                                          <span class="btn-label"><i class="fa fa-plus"></i>
+                                          </span>Agregar</button>
+                                    </div>
+                                 </div>
+                                 <br/>
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                       <select name="nameVar" multiple="" class="form-control">
+                                          <option value="0">Triciclo</option>
+                                          <option value="1">Carretilla</option>
+                                          <option value="2">Carreta</option>
+                                       </select>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </fieldset>
+                     </form>
+                  </div>
+                  <div class="panel-footer">
+                     <div class="row text-center">
+                        <button type="button" class="btn btn-labeled btn-success">
+                           <span class="btn-label"><i class="fa fa-check"></i>
+                           </span>Aceptar</button>
+                        <button type="button" class="btn btn-labeled btn-danger">
+                           <span class="btn-label"><i class="fa fa-times"></i>
+                           </span>Cancelar</button>
+                     </div>
+                  </div>
+                  <fieldset>
+                     <legend>==Disponibilidad==</legend>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label"></label>
+                        <div class="col-md-6">
+                           <div class="row">
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="col-md-4 control-label">==De==</label>
+                                    <div class="col-md-8">
+                                       <div class="input-group">
+                                          <timepicker ng-model="initTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="col-md-4 control-label">==A==</label>
+                                    <div class="col-md-8">
+                                       <div class="input-group">
+                                          <timepicker ng-model="endTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </fieldset>
+                  <fieldset>
+                     <legend>==Sedes==</legend>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Capacidad==</label>
+                        <div class="col-md-6">
+                           <select name="account" class="form-control">
+                              <option value="0">la Vecindad del Chavo</option>
+                              <option value="1">Far Far Away</option>
+                              <option value="2">Narnia</option>
+                           </select>
+                        </div>
+                        <div class="col-md-4">
+                           <button type="button" class="btn btn-oval btn-info">
+                              <span class="fa fa-plus-circle"></span>
+                           </button>
+                        </div>
+                     </div>
+                  </fieldset>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

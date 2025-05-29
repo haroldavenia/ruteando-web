@@ -1,0 +1,31 @@
+.col-lg-12
+  .panel.panel-default
+    .panel-heading
+      | VEHICULO
+    .panel-body
+      form.form-horizontal(role='form', name='vehicleForm', novalidate)
+        .form-group
+          label.col-md-2.control-label(for='input-id-1') {{ 'vehicles.LABEL.licensePlate' | translate }}
+          .col-md-4(ng-class='{ "has-error": licencePlate_required }')
+            input#input-id-1.form-control(type='text', name='licencePlate', ng-model='vehicle.model.licencePlate', required, ng-minlength='6')
+        .form-group
+          label.col-md-2.control-label(for='input-id-2') {{ 'vehicles.LABEL.name' | translate }}
+          .col-md-4(ng-class='{ "has-error": name_required }')
+            input#input-id-1.form-control(type='text', name='name', ng-model='vehicle.model.name', required, ng-minlength='2')
+        .form-group
+          label.col-sm-2.control-label {{ 'vehicles.LABEL.vehicleType' | translate }} 
+          .col-sm-4(ng-class='{ "has-error": vehicleType_required }')
+            .input-group
+              select.form-control.input-sm(name='vehicleType',ng-model="vehicleTypes.current", ng-options="vehicleType as vehicleType.name for vehicleType in vehicleTypes.data", ng-change="vehicle.setTypeResource(vehicleTypes.current)", required)
+              span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'vehicles.LINKS.ADD_VEHICLETYPES' | translate }}", tooltip-placement='bottom', ng-click='vehicleTypes.add()')
+                em.icon-plus
+    .panel-footer
+      .row.text-center
+        button.btn.btn-labeled.btn-success(type='button', ng-click='vehicle.save()')
+          span.btn-label
+            i.fa.fa-check
+          |           {{ "app.ACEPT" | translate }}
+        button.btn.btn-labeled.btn-danger(ng-click='cancelForm()')
+          span.btn-label
+            i.fa.fa-times
+          |           {{ "app.CANCEL" | translate }}

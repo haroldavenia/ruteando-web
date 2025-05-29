@@ -1,0 +1,6 @@
+// START Off Sidebar (right)
+nav
+  tabset(justified="true")
+    tab(active="tabs.route.active")
+      tab-heading 
+      div(ng-include="'app/views/partials/routes_tab.html'" , ng-controller='RouteTabController')

@@ -1,0 +1,89 @@
+<div class="panel col-lg-12 clearfix pb">
+    <div class="panel-heading">
+        <div class="row">
+            <div class="input-group m0 col-xs-6 col-sm-3 pull-left">
+                <span class="input-group-addon input-sm">
+                    <em class="icon-magnifier"></em>
+                </span>
+                <input type="text" ng-change="vehicleTypes.filter()" ng-model="vehicleTypes.filterText" class="form-control input-sm" />
+            </div>
+            <div class="form-group m0 col-xs-6 col-sm-9">
+                <div class="pull-right">
+                    <button type="button" ng-click="vehicleTypes.add()" class="btn btn-sm btn-primary">
+                        <span>
+                            <em class="icon-plus"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.ADD' | translate }}</span>
+                    </button>
+                    <button type="button" ng-click="vehicleTypes.selectAll()" class="btn btn-sm btn-default">
+                        <span>
+                            <em class="text-primary icon-check"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.SELECT' | translate }}</span>
+                    </button>
+                    <button type="button" ng-click="vehicleTypes.remove()" class="btn btn-sm btn-default">
+                        <span>
+                            <em class="text-danger icon-trash"></em>
+                        </span>
+                        <span class="hidden-xs">{{ 'app.DELETE' | translate }}</span>
+                    </button>
+                    <button type="button" ng-click="exportPDf()" tooltip="{{ 'app.EXPORT_TO_PDF' | translate }}" tooltip-placement="bottom" class="btn btn-danger btn-sm">
+                        <span>
+                            <em class="fa fa-file-pdf-o"></em>
+                        </span>
+                        <!-- span.hidden-xs {{ 'app.EXPORT_TO_PDF' | translate }}-->
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body p0">
+        <div class="table-responsive table-bordered">
+            <table class="table table-hover wd-wide">
+                <tbody>
+                    <td colspan="4" ng-show="vehicleTypes.loading" class="height-lg">
+                        <p class="text-center"><i class="fa fa-spinner fa-spin fa-2x text-muted"></i>
+                        </p>
+                        <p class="text-center lead text-primary">{{ 'app.LOADING_TEXT' | translate }}</p>
+                    </td>
+                    <td colspan="4" ng-show="vehicleTypes.noData" class="height-lg">
+                        <p class="text-center lead text-primary">{{ 'app.NO_DATA' | translate }}</p>
+                    </td>
+                    <tr ng-repeat="item in vehicleTypes.data" ng-class="{true: 'active'}[item.check]">
+                        <td class="wd-xxs">
+                            <div class="checkbox c-checkbox m0">
+                                <label>
+                                    <input type="checkbox" ng-model="item.check" />
+                                    <span class="fa fa-check"></span>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ph">
+                                <h4 class="media-heading">{{ item.name }}</h4>
+                            </div>
+                        </td>
+                        <td class="col-sm-4">
+                            <div class="ph">
+                                <p class="text-muted">{{ 'vehicleTypes.TABLE_TITLE.weight' | translate }} : {{item.weight / 1000 }} Kg</p>
+                                <p class="text-muted">{{ 'vehicleTypes.TABLE_TITLE.volume' | translate }} : {{item.volume / 1000000 }} m3</p>
+                            </div>
+                        </td>
+                        <td class="wd-sm">
+                            <div class="ph m0 text-muted visible-inline pull-right">
+                                <em tooltip="{{ 'vehicleTypes.LINKS.EDIT' | translate }}" tooltip-placement="bottom" ng-click="vehicleTypes.edit(item)" class="icon-pencil mr"></em>
+                                <em tooltip="{{ 'vehicleTypes.LINKS.DELETE' | translate }}" tooltip-placement="bottom" ng-click="vehicleTypes.removeItem(item)" class="icon-trash mr"></em>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div ng-hide="vehicleTypes.paginations.numPages == 1" class="col-lg-12">
+                <pagination total-items="vehicleTypes.paginations.totalItems" ng-model="vehicleTypes.paginations.currentPage" max-size="vehicleTypes.paginations.maxSize" boundary-links="true" rotate="false" items-per-page="vehicleTypes.paginations.itemsPerPage"
+                previous-text="‹" next-text="›" num-pages="vehicleTypes.paginations.numPages" ng-change="vehicleTypes.changePage()" first-text="«" last-text="»" class="m pagination-sm pull-right"></pagination>
+            </div>
+        </div>
+    </div>
+</div>

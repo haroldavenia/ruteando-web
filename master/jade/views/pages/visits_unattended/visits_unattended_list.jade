@@ -1,0 +1,24 @@
+.container-fluid
+  .row
+    .col-md-12.col-sm-12
+      .panel.panel-default
+        .panel-heading
+          .row
+            label.col-md-5.col-sm-4.control-label Nombre del trayecto
+            .col-md-6.col-sm-6
+                  select.form-control.input-sm(ng-model="journeys.current", ng-options="journey.name for journey in journeys.data")
+                
+        .panel-body
+          .row
+            .col-md-12.col-sm-12
+              .table-responsive
+                table.table.table-hover.wd-wide
+                  tbody
+                    tr
+                      td.wd-xxs #
+                      td Avn siempre viva 123
+                      td trayecto XX
+        .panel-footer
+          .row
+            .col-md-12.col-sm-12
+              spam {x} visitas sin antender en {y} trayectos

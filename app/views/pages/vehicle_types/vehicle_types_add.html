@@ -1,0 +1,223 @@
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-md-12 col-sm-12">
+         <div class="panel panel-primary">
+            <div class="panel-heading">==titulo==</div>
+            <div class="panel-body">
+               <form class="form-horizontal">
+                  <fieldset>
+                     <legend>==Info Basica==</legend>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Nombre==</label>
+                        <div class="col-md-6">
+                           <input type="text" placeholder="Nombre" class="form-control" />
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Peso==</label>
+                        <div class="col-md-6">
+                           <div class="input-group">
+                              <input type="number" class="form-control" />
+                              <span class="input-group-addon">kg</span>
+                           </div>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="checkbox c-checkbox needsclick">
+                              <label>
+                                 <input type="checkbox" value="" />
+                                 <span class="fa fa-check"></span>
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Capacidad==</label>
+                        <div class="col-md-6">
+                           <select name="account" class="form-control">
+                              <option value="0">Seleccione uno...</option>
+                              <option value="1">En Volumen</option>
+                              <option value="2">En Medidas</option>
+                           </select>
+                        </div>
+                        <div class="col-md-4">
+                           <div class="checkbox c-checkbox">
+                              <label>
+                                 <input type="checkbox" value="" />
+                                 <span class="fa fa-check"></span>
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                  </fieldset>
+                  <fieldset>
+                     <legend>==Volumen==</legend>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Volumen==</label>
+                        <div class="col-md-6">
+                           <div class="input-group">
+                              <input type="number" class="form-control" />
+                              <span class="input-group-addon">cm3</span>
+                           </div>
+                        </div>
+                     </div>
+                  </fieldset>
+                  <fieldset>
+                     <legend>==Medidas==</legend>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Ancho==</label>
+                        <div class="col-md-6">
+                           <div class="input-group">
+                              <input type="number" class="form-control" />
+                              <span class="input-group-addon">cm</span>
+                           </div>
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Largo==</label>
+                        <div class="col-md-6">
+                           <div class="input-group">
+                              <input type="number" class="form-control" />
+                              <span class="input-group-addon">cm</span>
+                           </div>
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Alto==</label>
+                        <div class="col-md-6">
+                           <div class="input-group">
+                              <input type="number" class="form-control" />
+                              <span class="input-group-addon">cm</span>
+                           </div>
+                        </div>
+                     </div>
+                  </fieldset>
+                  <fieldset>
+                     <legend>==Disponibilidad==</legend>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label"></label>
+                        <div class="col-md-6">
+                           <div class="row">
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="col-md-4 control-label">==De==</label>
+                                    <div class="col-md-8">
+                                       <div class="input-group">
+                                          <timepicker ng-model="initTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="col-md-4 control-label">==A==</label>
+                                    <div class="col-md-8">
+                                       <div class="input-group">
+                                          <timepicker ng-model="endTime" hour-step="1" minute-step="1" show-meridian="false"></timepicker>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </fieldset>
+                  <fieldset>
+                     <legend>==Restricciones==</legend>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==De Peso:==</label>
+                        <div class="col-md-6">
+                           <div class="row">
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="col-md-4 control-label">==Maximo==</label>
+                                    <div class="col-md-8">
+                                       <div class="input-group">
+                                          <input type="number" class="form-control" />
+                                          <span class="input-group-addon">Kg</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="col-md-4 control-label">==Minimo==</label>
+                                    <div class="col-md-8">
+                                       <div class="input-group">
+                                          <input type="number" class="form-control" />
+                                          <span class="input-group-addon">Kg</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <br/>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==De Volumen:==</label>
+                        <div class="col-md-6">
+                           <div class="row">
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="col-md-4 control-label">==Maximo==</label>
+                                    <div class="col-md-8">
+                                       <div class="input-group">
+                                          <input type="number" class="form-control" />
+                                          <span class="input-group-addon">cm3</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-md-6">
+                                 <div class="form-group">
+                                    <label class="col-md-4 control-label">==Minimo==</label>
+                                    <div class="col-md-8">
+                                       <div class="input-group">
+                                          <input type="number" class="form-control" />
+                                          <span class="input-group-addon">cm3</span>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </fieldset>
+                  <fieldset>
+                     <legend>==Sedes==</legend>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label">==Capacidad==</label>
+                        <div class="col-md-6">
+                           <select name="account" class="form-control">
+                              <option value="0">la Vecindad del Chavo</option>
+                              <option value="1">Far Far Away</option>
+                              <option value="2">Narnia</option>
+                           </select>
+                        </div>
+                        <div class="col-md-4">
+                           <button type="button" class="btn btn-oval btn-info">
+                              <span class="fa fa-plus-circle"></span>
+                           </button>
+                        </div>
+                     </div>
+                  </fieldset>
+               </form>
+            </div>
+            <div class="panel-footer">
+               <div class="row text-center">
+                  <button type="button" class="btn btn-labeled btn-success">
+                     <span class="btn-label"><i class="fa fa-check"></i>
+                     </span>Aceptar</button>
+                  <button type="button" class="btn btn-labeled btn-danger">
+                     <span class="btn-label"><i class="fa fa-times"></i>
+                     </span>Cancelar</button>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

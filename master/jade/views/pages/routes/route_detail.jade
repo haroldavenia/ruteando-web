@@ -1,0 +1,42 @@
+.row
+      .col-lg-12
+        .panel.panel-default
+          .panel-heading
+            h3.lead.mt-sm.mb-sm DETALLE DE LA RUTA
+              a.btn.btn-sm.btn-danger.pull-right(ng-click="routeDetail.goToBack()") Regresar
+          .panel-body
+            .row
+                label.col-sm-2 Nombre
+                .col-sm-6  {{ routeDetail.model.name }}
+            .row
+                label.col-sm-2 Fecha de Salida
+                .col-sm-6  {{ routeDetail.model.date }}
+            .row
+                label.col-sm-2 Distancia recorrida
+                .col-sm-6  {{ routeDetail.model.distance }}
+            .row
+                label.col-sm-2 Tiempo estimado
+                .col-sm-6 {{ routeDetail.model.estimatedTime }}
+            .row
+                label.col-sm-2 Clientes atentidos
+                .col-sm-6 {{ routeDetail.model.numVisits }}
+            .row
+                label.col-sm-2 Prom. Tiempo Visita
+                .col-sm-6 {{ routeDetail.model.avgTimeVisit }}
+            .row
+                label.col-sm-2 Hora Salida
+                .col-sm-6 {{ routeDetail.model.initTime }}
+            .row
+                label.col-sm-2 Hora finalizacion
+                .col-sm-6 {{ routeDetail.model.finalTime }}
+            .row
+                label.col-sm-2 Peso Usado
+                .col-sm-6 {{ routeDetail.model.weightUse }}
+            .row
+                label.col-sm-2 Volumen Usado
+                .col-sm-6 {{ routeDetail.model.volumeUse }}
+            .row
+                label.col-sm-2 Gasolina
+                .col-sm-6 {{ routeDetail.model.cost }} Gal.
+
+

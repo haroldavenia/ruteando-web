@@ -1,0 +1,46 @@
+{
+  "transport": null,
+  "duration": 30435,
+  "cargo": [
+    {
+      "id": "0",
+      "latitude": 4.646039742152375,
+      "longitude": -74.01256556250007,
+      "weight": 1000000,
+      "volume": 0,
+      "transport_id": 0,
+      "unloadingTime": 300,
+      "status": null,
+      "status_message": null,
+      "startTimeOfDelivery": null,
+      "endTimeOfDelivery": null,
+      "city": "Testcity",
+      "desc": null
+    }
+  ],
+  "status": "0",
+  "status_message": "\"Found route between points\"",
+  "route_geometry": "ktqzGnifdlCo}Y{uFcmjBckhAw_C_q@ovA{Jgc@cGsXkHka@we@cj@_g@ogAwhAod@sg@_~AwhAcy@ksAvkBc|KrgJ{~v@gwOsnS~nlAogyGvnoCwesB{ubAgtpCsjqAjly@_w`EwmF{r@?kk@cBkWby@skdAf@n~Lcwi@ziL_dS~y\\\\kwNf_fB{zkDoPkWoPoUwVw`@kR{^{J_N{c|EwmsOrfxKjvuBzajGvmx@fc@_S~p@od@bo@sXzm@gTbo@{Yvt@_]b[cLjW_N~|`FsmfBp|dFhwyC`jYhdtCrqEjxxEbcAjz@beYbnWnd@ni@jgzBvmgAjpTrrQzh@zYraMbbIni@~a@xvDbuBj_AwhAtLgOvy@{aAzYkHbL{Eby@?zr@nA|Yf@v`@bB`j@vBzY?jH?zYf@hTzE``@fTnPjWdj@r{@te@~z@vLvQxVve@hf@jz@rl@j_AjHbGj_AzJl_ArI~z@jHtwAvQ~iAjWrq@bLbGbBbaBnUnd@jHvgDzaAf^rS~eCj\\\\x}Cb[jtHf}Lmii@blg@_w[bxdA{||@fsVgnBb}C_yU~iwCwt@~RcyTngd@{TjMoPvL{}GncCgw@bGo{UbiC{Y~u@{dB~{BgpFv_Cwxf@vmAgc@fTwf`@r~Pod@sIowWnfSfTz_BgxmAvfo@jbBo}JknAgiBbVgEkHkWoPod@{J{YzYgO~WkM_ukE{tgJ",
+  "route_summary": {
+    "total_distance": 370735,
+    "total_time": 29235,
+    "start_point": "\" \"",
+    "end_point": "\" \""
+  },
+  "route_name": [
+    "Chingaza",
+    " "
+  ],
+  "routeInstructions": [
+    "\"10\",\" \",1856,0,191,\"1855m\",\"N\",6,1",
+    "\"2\",\"I-50\",8113,1,389,\"8112m\",\"E\",81,1",
+    "\"8\",\"Carrera 2\",246,2,12,\"245m\",\"NE\",25,1",
+    "\"1\",\"Carrera 2 3\",157,3,8,\"157m\",\"N\",8,1",
+    "\"1\",\"Carrera\",66,4,3,\"66m\",\"N\",6,1",
+    "\"1\",\"Carrera 2 5\",49,5,2,\"48m\",\"N\",20,1",
+    "\"2\",\"Carrera 2 7\",92,6,4,\"92m\",\"NE\",48,1",
+    "\"1\",\"Carrera 2 8\",105,7,5,\"104m\",\"NE\",43,1"
+
+  ],
+  "via_points": null
+}

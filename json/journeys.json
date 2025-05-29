@@ -1,0 +1,16 @@
+{"journeys" : [
+	{
+	  "name" : "TRAYECTO UNO",
+	  "placeId" : "1",
+	  "settingId" : "2",
+	  "routeNumber" : "200",
+	  "date" : "12/09/2015"
+	},
+	{
+	  "name" : "TRAYECTO DOS",
+	  "placeId" : "1",
+	  "settingId" : "2",
+	  "routeNumber" : "127",
+	  "date" : "12/09/2015"
+	}
+  ]}

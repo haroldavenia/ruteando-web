@@ -1,0 +1,40 @@
+.col-lg-12
+  .panel.panel-default
+    .panel-heading
+      | CATALOGO
+    .panel-body
+      form.form-horizontal(role='form', name='catalogForm', novalidate)
+        .form-group
+            label.col-md-2.control-label(for='input-id-2') {{ 'catalogs.label.name' | translate }}
+            .col-md-4
+              input#input-id-1.form-control(type='text', name='name', required, ng-model='catalog.model.name')
+              span.text-danger(ng-show='catalogForm.name.$dirty && catalogForm.name.$error.required') {{ "catalogs.form.validation.NAME_REQUIRED" | translate }}
+              span.text-danger(ng-show='catalogForm.name.$dirty && catalogForm.name.$error.minlength') {{ "catalogs.form.validation.NAME_LENGTH" | translate }}
+          .form-group
+            label.col-sm-2.control-label {{ 'catalogs.label.parent' | translate }} 
+            .col-sm-4
+               select.form-control.input-sm( name='parent', ng-model="catalog.model.parent", ng-options="catalog for catalog in catalogs.data")
+        .form-group
+          label.col-sm-2.control-label {{ 'catalogs.label.ancestors' | translate }} 
+          .col-sm-4
+            .input-group
+              select.form-control.input-sm(name='ancestors', ng-model="ancestors.current", ng-options="catalog for catalog in catalogs.data")
+              span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'catalogs.LINKS.ADD_ANCESTORS' | translate }}", tooltip-placement='bottom', ng-click='ancestors.add()')
+                em.icon-plus
+        .form-group
+          label.col-sm-6.control-label {{ 'catalogs.label.ancestors' | translate }} 
+          .col-sm-6
+            ul(ng-repeat='item in catalog.model.ancestors')
+              li {{ item }}
+          .col-sm-12
+            p {{ catalog.model }}
+    .panel-footer
+      .row.text-center
+        button.btn.btn-labeled.btn-success(type='button', ng-click="catalog.save()")
+          span.btn-label
+            i.fa.fa-check
+          |           {{ "app.ACEPT" | translate }}
+        button.btn.btn-labeled.btn-danger(ng-click='cancelForm()')
+          span.btn-label
+            i.fa.fa-times
+          |           {{ "app.CANCEL" | translate }}

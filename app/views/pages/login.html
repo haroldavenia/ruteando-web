@@ -1,0 +1,64 @@
+<div ng-controller="LoginController" class="block-center mt-xl wd-xl">
+    <!-- START panel-->
+    <div class="panel panel-flat">
+        <div class="panel-heading text-center">
+            <a href="#">
+                <img src="app/img/logo.png" alt="Image" class="block-center img-rounded" />
+            </a>
+        </div>
+        <div class="panel-body">
+            <p class="text-center pv">{{ "access.login.TITLE" | translate }}</p>
+            <form role="form" ng-submit="login()" name="loginForm" novalidate="" class="form-validate mb-lg">
+                <div class="form-group has-feedback">
+                    <input type="email" name="username" placeholder="{{ &quot;access.login.placeholder.USERNAME&quot; | translate }}" autocomplete="off" ng-model="account.username" required="" class="form-control" />
+                    <span class="fa fa-user form-control-feedback text-muted"></span>
+                </div>
+                <!--.form-group.has-feedbackinput.form-control(type='email', name="account_email" placeholder='{{ "access.login.placeholder.EMAIL" | translate }}', autocomplete="off", ng-model="account.email", required='')
+span.fa.fa-envelope.form-control-feedback.text-muted
+span.text-danger(ng-show="loginForm.account_email.$dirty && loginForm.account_email.$error.required") This field is required
+span.text-danger(ng-show="loginForm.account_email.$dirty && loginForm.account_email.$error.email") This field must be a valid email address-->
+                <div class="form-group has-feedback">
+                    <input type="password" name="account_password" placeholder="{{ &quot;access.login.placeholder.PASSWORD&quot; | translate }}" ng-model="account.password" required="" class="form-control" />
+                    <span class="fa fa-lock form-control-feedback text-muted"></span>
+                </div>
+                <div class="clearfix">
+                    <div class="checkbox c-checkbox pull-left mt0">
+                        <label>
+                            <input type="checkbox" value="" name="account_remember" ng-model="account.remember" />
+                            <span class="fa fa-check"></span>{{ "access.login.REMENBER" | translate }}</label>
+                    </div>
+                    <div class="pull-right"><a ui-sref="access.recovery" class="text-muted">{{ "access.login.FORGOT_PASSWORD" | translate }}</a>
+                    </div>
+                </div>
+                <button type="submit" data-loading-text="Autenticando..." loading-status="account.loading" class="mb-sm btn btn-block btn-primary button-loading mt-lg">Iniciar Sesión
+                    <div class="fa fa-key"></div>
+                </button>
+            </form>
+            <div ng-show="authMsg" class="alert alert-danger text-center">{{authMsg}}</div>
+            <p class="text-center pv">{{ "access.login.TITLE_SOCIAL" | translate }}</p>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div type="button" ng-click="clickLogin('facebook')" ng-disabled="account.loading" class="btn btn-primary btn-block">Facebook
+                        <span class="fa fa-facebook"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div type="button" ng-click="clickLogin('google')" ng-disabled="account.loading" class="btn btn-danger btn-block">Google
+                        <span class="fa fa-google-plus"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div type="button" ng-click="clickLogin('linkedin')" ng-disabled="account.loading" class="btn btn-info btn-block">Linked
+                        <span class="fa fa-linkedin"></span>
+                    </div>
+                </div>
+            </div>
+            <p class="pt-lg text-center">{{ "access.login.NEED_SIGNUP" | translate }}</p><a ui-sref="access.register" class="btn btn-block btn-default">{{ "access.login.REGISTER_NOW" | translate }}</a>
+        </div>
+    </div>
+    <!-- END panel-->
+</div>

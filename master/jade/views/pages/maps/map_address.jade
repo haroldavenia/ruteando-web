@@ -1,0 +1,33 @@
+.container-fluid
+    .row
+        .col-sm-12.col-md-12
+            .panel.panel-info
+                .panel-heading Editar localizacion de direccion
+                .panel-body
+                    .row
+                        .col-sm-12.col-md-12
+                            .map
+                              #map
+                    br
+                    .row
+                      .col-sm-12.col-md-12
+                        h4 Coordenadas actuales
+                        dl.dl-horizontal
+                          dt Longitud:
+                          dd {{ map.newCoordinates.longitude }}
+                          dt Latitud:
+                          dd {{ map.newCoordinates.latitude }}
+                .panel-footer
+                  .row.text-center
+                    button.btn.btn-labeled.btn-success(type='button', ng-click='save()')
+                      span.btn-label
+                        i.fa.fa-check
+                      | Aceptar
+                    button.btn.btn-labeled.btn-info(type='button', ng-click='reset()')
+                      span.btn-label
+                        i.fa.fa-circle
+                      | Reset
+                    button.btn.btn-labeled.btn-danger(type='button', ng-click='cancel()')
+                      span.btn-label
+                        i.fa.fa-times
+                      | Cancelar

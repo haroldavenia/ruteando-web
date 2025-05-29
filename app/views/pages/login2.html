@@ -1,0 +1,82 @@
+<div class="bgCity"></div>
+<div ng-controller="LoginController" class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
+            <form role="form" ng-submit="login()" name="loginForm" novalidate="" class="form-inline pt-lg pr-lg pb-sm">
+                <div class="form-group has-feedback">
+                    <input type="email" name="username" placeholder="{{ &quot;access.login.placeholder.USERNAME&quot; | translate }}" autocomplete="off" ng-model="account.username" class="form-control input-sm" />
+                    <span class="fa fa-user form-control-feedback text-muted"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="password" name="account_password" placeholder="{{ &quot;access.login.placeholder.PASSWORD&quot; | translate }}" ng-model="account.password" class="form-control input-sm" />
+                    <span class="fa fa-lock form-control-feedback text-muted"></span>
+                </div>
+                <button type="submit" data-loading-text="Autenticando..." loading-status="account.loading" class="btn btn-sm btn-primary button-loading">Iniciar Sesión
+                    <span class="fa fa-key"></span>
+                </button>
+            </form>
+            <div class="checkbox c-checkbox pull-left mt0 ml-xl mb0">
+                <label class="text-sm text-white">
+                    <input type="checkbox" value="" name="account_remember" ng-model="account.remember" />
+                    <span class="fa fa-check"></span>{{ "access.login.REMENBER" | translate }}</label>
+            </div><a ui-sref="access.recovery" class="text-muted pull-right mr-xl text-white">{{ "access.login.FORGOT_PASSWORD" | translate }}</a>
+        </div>
+    </div>
+</div>
+<div ng-controller="RegisterController" class="block-center mt-xl wd-xl">
+    <!-- START panel-->
+    <div class="panel panel-flat bg-white-65">
+        <div class="panel-heading text-center">
+            <a href="#">
+                <img src="app/img/logo_ruteando2.png" alt="Image" class="block-center img-rounded img-responsive" />
+            </a>
+        </div>
+        <div class="panel-body">
+            <h3 class="text-center mt0 lead">{{ 'access.register.TITLE' | translate }}</h3>
+            <form role="form" name="registerForm" novalidate="" ng-submit="account.register()" class="form-validate mb-lg">
+                <div class="form-group has-feedback">
+                    <input type="email" name="account_email" autocomplete="off" ng-model="account.model.username" ng-required="true" required="" placeholder="{{ &quot;access.register.EMAIL_LABEL&quot; | translate }}" class="form-control" />
+                    <span class="fa fa-envelope form-control-feedback text-muted"></span>
+                    <span ng-show="registerForm.account_email.$dirty &amp;&amp; registerForm.account_email.$error.required" class="text-danger">Campo requerido</span>
+                    <span ng-show="registerForm.account_email.$dirty &amp;&amp; registerForm.account_email.$error.email" class="text-danger">no es correo electronico valido</span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input id="id-password" type="password" name="account_password" ng-model="account.model.password" ng-pattern="/^[a-zA-Z0-9]{6,10}$/" ng-required="true" placeholder="{{ &quot;access.register.PASS_LABEL&quot; | translate }}" class="form-control"
+                    />
+                    <span class="fa fa-lock form-control-feedback text-muted"></span>
+                    <span ng-show="registerForm.account_password.$dirty &amp;&amp; registerForm.account_password.$error.required" class="text-danger">Campo requerido</span>
+                    <span ng-show="registerForm.account_password.$dirty &amp;&amp; registerForm.account_password.$error.pattern" class="text-danger">debe contener 'a-zA-Z0-9' y de 6-10 caracteres</span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="password" name="account_password_confirm" ng-model="account.model.password_repeat" ui-validate="'$value==account.model.password'" ui-validate-watch="'password'" ng-required="true" placeholder="{{ &quot;access.register.REPIT_PASS_LABEL&quot; | translate }}"
+                    class="form-control" />
+                    <span class="fa fa-lock form-control-feedback text-muted"></span>
+                    <span ng-show="registerForm.account_password_confirm.$dirty &amp;&amp; registerForm.account_password_confirm.$error.validator" class="text-danger">Contraseñas no coinciden</span>
+                </div>
+                <div class="clearfix">
+                    <div class="checkbox c-checkbox pull-left mt0">
+                        <label>
+                            <input type="checkbox" required="" name="account_agreed" ng-model="account.agreed" />
+                            <span class="fa fa-check"></span>{{ "access.register.AGGRE_TERM" | translate }}</label>
+                    </div>
+                </div>
+                <div ng-show="registerForm.account_agreed.$dirty &amp;&amp; registerForm.account_agreed.$error.required" class="text-danger"></div>
+                <button type="submit" id="btn_submit" ng-disabled="registerForm.account_email.$dirty &amp;&amp; (registerForm.account_email.$error.required || registerForm.account_email.$error.email) || registerForm.account_password.$dirty &amp;&amp; (registerForm.account_password.$error.pattern || registerForm.account_password.$error.required )|| registerForm.account_password_confirm.$dirty &amp;&amp; ( registerForm.account_password_confirm.$error.validator || registerForm.account_password_confirm.$error.required )"
+                class="btn btn-block btn-success">{{ "access.register.CREATE_ACCOUNT" | translate }}</button>
+            </form>
+            <div ng-show="authMsg" class="alert alert-danger text-center">{{authMsg}}</div>
+            <h4 class="text-center">{{ "access.register.INIT_WITH_SERVICE" | translate }}</h4>
+            <div class="text-center">
+                <div type="button" ng-click="clickLogin('facebook')" ng-disabled="account.loading" class="btn btn-primary btn-sm">
+                    <span class="fa fa-facebook"></span>
+                </div>
+                <div type="button" ng-click="clickLogin('google')" ng-disabled="account.loading" class="btn btn-danger btn-sm">
+                    <span class="fa fa-google-plus"></span>
+                </div>
+                <div type="button" ng-click="clickLogin('linkedin')" ng-disabled="account.loading" class="btn btn-info btn-sm">
+                    <span class="fa fa-linkedin"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

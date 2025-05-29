@@ -1,0 +1,155 @@
+.container-fluid
+    .row
+        .col-md-12.col-sm-12
+            .row
+                .col-md-12.col-sm-12
+                    .panel.panel-primary
+                        .panel-heading {{ "settings.form.title" | translate }}
+                        .panel-body
+                            form.form-horizontal(role='form', name='settingsForm', novalidate='', ng-submit='submitForm()')
+                                fieldset.mb-sm.pb-sm
+                                    div.mb-sm.clearfix
+                                        label.col-md-2.control-label {{ "settings.form.label.TRAVEL_MODE" | translate }}
+                                        .col-md-6(ng-class='{"has-error": travelMode_required}')
+                                            select.form-control(name='travelMode',ng-model='setting.model.travelMode', required='', ng-options='mode for mode in travelsMode')
+                                    div.mb-sm.clearfix
+                                        label.col-md-2.control-label {{ "settings.form.label.DESCRIPTION" | translate }}
+                                        .col-md-6(ng-class='{"has-error" : description_required }')
+                                            input.form-control(type='text', ng-model='setting.model.description', required='' )
+                                    div.mb-sm.clearfix
+                                        .checkbox.c-checkbox.col-sm-4.col-sm-offset-2
+                                            label
+                                                input(type='checkbox', ng-model='setting.model.backToStartPoint')
+                                                span.fa.fa-check
+                                            | {{ "settings.form.label.BACK_TO_START_POINT" | translate }}
+                                    div.mb-sm.clearfix
+                                        label.col-md-2.control-label {{ "settings.form.label.LENGTH_OF_STAY" | translate }}
+                                        .col-md-3
+                                            .radio.c-radio
+                                              label
+                                                input(type='radio', name='type_length_of_stay', value='{{ TYPE_LENGTH_OF_STAY.FIXED }}', checked='', ng-model='setting.model.typeLengthOfStay')
+                                                span.fa.fa-circle
+                                                |   {{ "settings.form.label.FIXED" | translate }}
+                                            .radio.c-radio
+                                              label
+                                                input(type='radio', name='type_length_of_stay', value='{{ TYPE_LENGTH_OF_STAY.DEFINE_ITINERARY }}', ng-model='setting.model.typeLengthOfStay')
+                                                span.fa.fa-circle
+                                                |   {{ "settings.form.label.DEFINE_ITINERARY" | translate }}                                           
+                                        .col-md-3
+                                            .input-group(ng-show="setting.model.typeLengthOfStay == TYPE_LENGTH_OF_STAY.FIXED", ng-class='{"has-error" : lengthOfStay_required}')
+                                                input.form-control(type='number', ng-model='setting.model.lengthOfStay', min='0')
+                                                span.input-group-addon min
+                                fieldset.mb-sm.pb-sm
+                                    div.mb-sm.clearfix
+                                        label.col-md-2.control-label {{ "settings.form.label.RESTRICTION_ROUTE_CALCULATION" | translate }}
+                                        .col-md-6
+                                            .radio.c-radio
+                                              label
+                                                input(type='radio', name='restriction', value='{{ RESTRICTION_FIXED_ROUTES }}', ng-model='setting.model.roadRestrictionType')
+                                                span.fa.fa-circle
+                                                |   {{ "settings.form.label.FIXED_ROUTES" | translate }}
+                                            .radio.c-radio
+                                              label
+                                                input(type='radio', name='restriction', value='{{ RESTRICTION_TIME }}', ng-model='setting.model.roadRestrictionType')
+                                                span.fa.fa-circle
+                                                |   {{ "settings.form.label.TIME" | translate }}
+                                            .radio.c-radio
+                                              label
+                                                input(type='radio', name='restriction', value='{{ RESTRICTION_RESOURCE_TIME }}', ng-model='setting.model.roadRestrictionType')
+                                                span.fa.fa-circle
+                                                |   {{ "settings.form.label.RESOURCE_VS_TIME" | translate }}
+                                fieldset.mb-sm.pb-sm
+                                    div.mb-sm.clearfix(ng-show='(setting.model.roadRestrictionType == RESTRICTION_FIXED_ROUTES)')
+                                        label.col-md-2.control-label {{ "settings.form.label.FIXED_ROUTES" | translate }}
+                                        .col-md-2(ng-class='{"has-error" : fixedRoutes_required}')
+                                            input.form-control(type='number', ng-model='setting.model.fixedRoutes', required='' )
+                                fieldset.mb-sm.pb-sm(ng-show='(setting.model.roadRestrictionType == RESTRICTION_RESOURCE_TIME )')
+                                    legend.mb-sm {{ "settings.form.legend.EVALUATE" | translate }}
+                                    .form-group
+                                      div.col-sm-2.col-sm-offset-1(ng-class='{"has-error": evaluateWeight_required}')
+                                        .checkbox.c-checkbox
+                                            label
+                                                input(type='checkbox', ng-model='setting.model.evaluateWeight')
+                                                span.fa.fa-check
+                                            | {{ "settings.form.label.EVALUATE_WEIGHT" | translate }}
+                                      div.col-sm-2(ng-class='{"has-error": evaluateVolume_required}')
+                                        .checkbox.c-checkbox
+                                            label
+                                                input(type='checkbox', ng-model='setting.model.evaluateVolume')
+                                                span.fa.fa-check
+                                            | {{ "settings.form.label.EVALUATE_VOLUME" | translate }}
+                                      div.col-sm-2
+                                        .checkbox.c-checkbox
+                                            label
+                                                input(type='checkbox', ng-model='setting.model.evaluateItineraryZone')
+                                                span.fa.fa-check
+                                            | {{ "settings.form.label.EVALUATE_ITINERARY_ZONE" | translate }}
+                                      div.col-sm-3
+                                        .checkbox.c-checkbox
+                                            label
+                                                input(type='checkbox', ng-model='setting.model.evaluateRestrictionPackage')
+                                                span.fa.fa-check
+                                            | {{ "settings.form.label.EVALUATE_PACKAGE" | translate }}
+                                fieldset.mb-sm.pb-sm
+                                    legend.mb-sm {{ "settings.form.legend.TIME" | translate }}
+                                    .form-group
+                                        label.col-md-2.control-label {{ "settings.form.label.TIME_FROM" | translate }}
+                                        .col-md-3
+                                            .input-group
+                                                timepicker(ng-model='setting.model.initTime', hour-step='1', minute-step='1', show-meridian='true')
+                                        .col-md-5(ng-hide='(setting.model.roadRestrictionType == RESTRICTION_FIXED_ROUTES)')
+                                            label.col-md-4.control-label {{ "settings.form.label.TIME_TO" | translate }}
+                                            .col-md-8
+                                                .input-group
+                                                    timepicker(ng-model='setting.model.finishTime', hour-step='1', minute-step='1', show-meridian='true')
+                                .div(ng-show='(setting.model.roadRestrictionType == RESTRICTION_RESOURCE_TIME)')
+                                    legend {{ "settings.form.legend.RESOURCES" | translate }}
+                                    div.mb-sm.clearfix
+                                      label.col-sm-2.control-label {{ 'settings.form.label.VEHICLE_TYPE' | translate }} 
+                                      .col-sm-3
+                                        .input-group
+                                          select.form-control.input-sm(ng-model="setting.resources.model.typeVehicle", ng-options="vehicleType.name for vehicleType in vehicleTypes.data")
+                                          span.input-group-addon.input-sm.btn-primary(tooltip="{{ 'settings.LINKS.ADD_VEHICLETYPES' | translate }}", tooltip-placement='bottom', ng-click='vehicleTypes.add()')
+                                            em.icon-plus
+                                      label.col-sm-1.control-label {{ "settings.form.label.QUANTITY" | translate }}
+                                      .col-sm-2
+                                            .input-group
+                                                input.form-control(type='number', ng-model='setting.resources.model.quantity')
+                                      .col-sm-2
+                                            button.btn.btn-labeled.btn-primary(type='button',ng-click='setting.resources.add()')
+                                                span.btn-label
+                                                    i.fa.fa-plus
+                                                |   {{ "settings.form.button.ADD" | translate }}
+                                      span.col-sm-6.col-sm-offset-2.text-danger(ng-show='setting.resources.error') {{ setting.resources.errorMessage}}
+                                fieldset.mb-sm.pb-sm(ng-show='setting.model.roadRestrictionType == RESTRICTION_RESOURCE_TIME')
+                                    .form-group
+                                                .col-sm-6.responsive
+                                                  table.table.table-hover.table-condensed
+                                                    thead
+                                                      tr
+                                                        th
+                                                        th Tipo De Vehículo                                                        
+                                                        th Cantidad
+                                                        th 
+                                                    tbody
+                                                      tr(ng-repeat='item in setting.resources.data')
+                                                        td.wd-xxs
+                                                         em(ng-class="{true:'icon-check text-success',false:'icon-close text-danger'}[item.status]")
+                                                        td 
+                                                          .ph
+                                                            h4.media-heading{{ item.typeVehicle.name }}
+                                                            small.text-danger(ng-hide='item.status') {{ item.errorMessage }}
+                                                        td {{ item.quantity }}
+                                                        td.wd-sm
+                                                          .ph.m0.text-muted.text-danger.visible-inline.pull-right
+                                                            em.icon-trash.mr(ng-click='setting.resources.remove(item)')
+                        .panel-footer
+                            .row.text-center
+                                button.btn.btn-labeled.btn-success(ng-click="setting.save()")
+                                    span.btn-label
+                                        i.fa.fa-check
+                                    |   {{ "settings.form.button.ACEPT" | translate }}
+                                button.btn.btn-labeled.btn-danger(type='button', ng-click="setting.cancel()")
+                                    span.btn-label
+                                        i.fa.fa-times
+                                    |   {{ "settings.form.button.CANCEL" | translate }}

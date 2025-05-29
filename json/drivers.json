@@ -1,0 +1,25 @@
+{
+  "drivers": [
+    {
+      "name": "Jose Perez",
+      "licenseNumber": "1929028399",
+      "identificationNumber": "1209390912",
+      "phoneNumber": "30290900",
+      "status": "1"
+    },
+    {
+      "name": "Maria Jose Andrade",
+      "licenseNumber": "3980109910",
+      "identificationNumber": "1122229003",
+      "phoneNumber": "12234567",
+      "status": "0"
+    },
+    {
+      "name": "Armando Lios",
+      "licenseNumber": "912890188",
+      "identificationNumber": "22u7377389",
+      "phoneNumber": "3094990",
+      "status": "1"
+    }
+  ]
+}

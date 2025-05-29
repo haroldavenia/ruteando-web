@@ -1,0 +1,77 @@
+<div class="col-lg-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">AGREGAR CONDUCTOR</div>
+        <div class="panel-body">
+            <form role="form" name="driverForm" novalidate="novalidate" class="form-horizontal">
+                <div class="form-group mb-sm clearfix">
+                    <label for="input-id-1" class="col-md-3 control-label">{{ 'drivers.label.licenceNumber' | translate }}</label>
+                    <div ng-class="{&quot;has-error&quot; : licenceNumber_required }" class="col-md-4">
+                        <input id="input-id-1" type="text" name="licenceNumber" required="required" ng-model="driver.model.licenceNumber" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group mb-sm clearfix">
+                    <label for="input-id-2" class="col-md-3 control-label">{{ 'drivers.label.firstName' | translate }}</label>
+                    <div ng-class="{&quot;has-error&quot; : firstName_required }" class="col-md-4">
+                        <input id="input-id-1" type="text" ng-model="driver.model.user.firstName" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group mb-sm clearfix">
+                    <label class="col-md-3 control-label">{{ 'drivers.label.lastName' | translate }}</label>
+                    <div ng-class="{&quot;has-error&quot; : lastName_required }" class="col-md-4">
+                        <input id="input-id-1" type="text" ng-model="driver.model.user.lastName" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group mb-sm clearfix">
+                    <label class="col-md-3 control-label">{{ 'drivers.label.identificationNumber' | translate }}</label>
+                    <div ng-class="{&quot;has-error&quot; : identificationNumber_required }" class="col-md-4">
+                        <input id="input-id-1" type="text" name="identificationNumber" required="required" ng-model="driver.model.identificationNumber" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group mb-sm clearfix">
+                    <label class="col-md-3 control-label">{{ 'drivers.label.phoneNumber' | translate }}</label>
+                    <div class="col-md-4">
+                        <input id="input-id-1" type="text" name="phoneNumber" required="required" ng-model="driver.model.phoneNumber" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group mb-sm clearfix">
+                    <label class="col-md-3 control-label">{{ 'drivers.label.login' | translate }}</label>
+                    <div ng-class="{&quot;has-error&quot; : login_required }" class="col-md-4">
+                        <input id="input-id-1" type="email" ng-model="driver.model.user.login" ng-readonly="currentState == EDIT_STATE" class="form-control" />
+                    </div>
+                    <!--div(ng-show="currentState == ADD_STATE")-->
+                </div>
+                <div>
+                    <div class="form-group mb-sm clearfix">
+                        <label class="col-md-3 control-label">{{ 'drivers.label.password' | translate }}</label>
+                        <div ng-class="{&quot;has-error&quot; : password_required }" class="col-md-4">
+                            <input id="input-id-1" type="password" ng-model="driver.model.user.password" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group mb-sm clearfix">
+                        <label class="col-md-3 control-label">{{ 'drivers.label.repeatPassword' | translate }}</label>
+                        <div ng-class="{&quot;has-error&quot; : repeatPassword_required }" class="col-md-4">
+                            <input id="input-id-1" type="password" required="required" ng-model="driver.model.user.repeatPassword" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-sm clearfix">
+                    <div class="checkbox c-checkbox col-sm-4 col-sm-offset-3">
+                        <label>
+                            <input type="checkbox" ng-model="driver.model.user.active" />
+                            <span class="fa fa-check"></span>{{ "drivers.label.active" | translate }}</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="panel-footer">
+            <div class="row text-center">
+                <button ng-click="driver.save()" class="btn btn-labeled btn-success">
+                    <span class="btn-label"><i class="fa fa-check"></i>
+                    </span>{{ "app.ACEPT" | translate }}</button>
+                <button ng-click="driver.cancel()" class="btn btn-labeled btn-danger">
+                    <span class="btn-label"><i class="fa fa-times"></i>
+                    </span>{{ "app.CANCEL" | translate }}</button>
+            </div>
+        </div>
+    </div>
+</div>

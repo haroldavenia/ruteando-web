@@ -1,0 +1,116 @@
+// START panel
+.panel.panel-default
+  .panel-heading
+    h3.lead.mb-sm.mt-sm.text-md ¿Cómo crear un archivo de direcciones para rutas?
+      a.btn.btn-sm.btn-danger.pull-right(ng-click="journey.goToBack()") Regresar
+  .panel-body
+    form(form-wizard="", steps="5", novalidate="", ng-submit="alertSubmit()")
+      .form-wizard.wizard-horizontal
+        // START wizard steps indicator
+        ol.row
+          li.col-md-2.col-md-offset-1.p-sm(ng-class="{'active':wizard.active(1)}", ng-click="wizard.go(1)")
+            p.text-center.lead.mb-sm 
+              span.fa.fa-download.mr-lg
+              | Descargar
+          li.col-md-2.p-sm(ng-class="{'active':wizard.active(2)}", ng-click="wizard.go(2)")
+            p.text-center.lead.mb-sm 
+              span.fa.fa-folder-open.mr-lg
+              | Abrir
+          li.col-md-2.p-sm(ng-class="{'active':wizard.active(3)}", ng-click="wizard.go(3)")
+            p.text-center.lead.mb-sm
+              span.fa.fa-pencil-square.mr-lg
+              | Editar
+          li.col-md-2.p-sm(ng-class="{'active':wizard.active(4)}", ng-click="wizard.go(4)")
+            p.text-center.lead.mb-sm 
+              span.fa.fa-floppy-o.mr-lg
+              | Guardar
+          li.col-md-2.p-sm(ng-class="{'active':wizard.active(5)}", ng-click="wizard.go(5)")
+            p.text-center.lead.mb-sm 
+              span.fa.fa-check-circle.mr-lg
+              | Verificar
+        // END wizard steps indicator
+        // START Wizard Step inputs 
+        div(ng-show="wizard.active(1)")
+          p.text-center.lead.pt-lg
+              span
+                a CLIC AQUÍ
+              | Para descargar el archivo de ejemplo 
+          p.lead.p-lg
+              | Nota: los campos 
+              b "DIRECCIONES" 
+              | y 
+              b  "CIUDAD" 
+              | deben estar digenciados, estos son importantes para el calculo de rutas inteligentes
+          ul.pager
+            li.next
+              a(href='#', ng-click="wizard.go(2)")
+                | Siguiente 
+                span &rarr;
+        div(ng-show="wizard.active(2)")
+          p.lead.pt-lg Abra el archivo descargado con Oficce Microsoft 
+            img.ml-xs.mr-lg(src="app/img/loadFile/excel-icon.png")
+            | ó OpenOficce Calc 
+            img.ml-xs.mr-lg(src="app/img/loadFile/openOffice-icon.png")
+            | y familiarice con los campo que allí aparecen.
+          img.col-md-12.mb-xl(src="app/img/loadFile/newFormat.png")
+          ul.pager
+            li.previous
+              a(href='#', ng-click="wizard.go(1)")
+                span &larr; Anterior
+            li.next
+              a(href='#', ng-click="wizard.go(3)")
+                | Siguiente 
+                span &rarr;
+        // END Wizard Step inputs 
+        // START Wizard Step inputs 
+        div(ng-show="wizard.active(3)")
+          p.lead.pt-lg Si sus datos poseen coordenadas Longitud; Latitud asociadas a las direcciones por favor diligencie estos datos en las columnas ("Longitud") y ("Latitud") respectivamente y deje como separador decimal el punto(.) Véase la siguiente imagen
+            // END row 
+          .row
+            img.col-md-6.col-md-offset-3.mb-xl(src="app/img/loadFile/coordenates.png")
+          p.lead 
+            b NOTA:
+            | Sí no tiene estos datos por favor elimine estas columnas del formato original.
+          p.lead.pt-lg Diligencie el formato de direcciones de tal forma que sea vea como la imagen siguiente
+            img.col-md-12.mt-xl.mb-xl(src="app/img/loadFile/PrintScreenFormat.png")
+          p.lead.pt-lg ó formato diligenciado sin columnas 
+            b "Longitud"
+            | ; 
+            b "Latitud".            
+            img.col-md-12.mt-xl.mb-xl(src="app/img/loadFile/PrintScreenFormat_sinxy.png")
+          ul.pager
+            li.previous
+              a(href='#', ng-click="wizard.go(2)")
+                span &larr; Anterior
+            li.next
+              a(href='#', ng-click="wizard.go(4)")
+                | Siguiente 
+                span &rarr;
+        // END Wizard Step inputs 
+        // START Wizard Step inputs 
+        div(ng-show="wizard.active(4)")
+          p.lead.pt-lg Ahora guarde el archivo, si desea guardarlo con otro nombre vaya al menu: ArchivoGuardar como, e indique como formato extensión(tipo) csv (del inglés commaseparated values).
+          .row
+            img.col-md-8.col-md-offset-2.mt-xl.mb-xl(src="app/img/loadFile/saveasCSV.png")
+          ul.pager
+            li.previous
+              a(href='#', ng-click="wizard.go(3)")
+                span &larr; Anterior
+            li.next
+              a(href='#', ng-click="wizard.go(5)")
+                | Siguiente 
+                span &rarr;
+        // END Wizard Step inputs 
+        // START Wizard Step inputs 
+        div(ng-show="wizard.active(5)")
+          p.lead.pt-lg Para verificar que el archivo ha sido diligenciado de manera correcta abra el archivo en bloc de notas o el programa Notepad++ 
+            img.ml-xs.mr-lg(src="app/img/loadFile/notepad.png")
+            | para confirmar su estructura y constatar que no contiene ningun salto de linea vacio, vea la siguiente imagen
+          .row
+            img.col-md-8.col-md-offset-2.mt-xl.mb-xl(src="app/img/loadFile/csv_notepad.png")          
+          ul.pager
+            li.previous
+              a(href='#', ng-click="wizard.go(4)")
+                span &larr; Anterior
+        // END Wizard Step inputs 
+// END panel 

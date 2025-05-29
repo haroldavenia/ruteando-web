@@ -1,0 +1,297 @@
+{
+  "app": {
+    "ACEPT" : "Aceptar",
+    "CANCEL": "Cancelar",
+    "ADD": "AGREGAR",
+    "SELECT": "SELECCIONAR",
+    "DELETE": "ELIMINAR",
+    "LOADING_TEXT" : "Obteniendo Datos..."
+  },
+  "dashboard": {
+    "WELCOME": "Bienvenido a {{appName}}"
+  },
+  "topbar": {
+    "search": {
+      "PLACEHOLDER": "Tipea y pulsa enter.."
+    }
+  },
+  "sidebar": {
+    "WELCOME": "Bienvenido",
+    "heading": {
+      "HEADER": "Navegacion principal"
+    },
+    "nav": {
+      "SINGLEVIEW": "Vista simple",
+      "menu": {
+        "MENU": "Menu",
+        "SUBMENU": "Sub Menu"
+      },
+      "MAPS": "Mapas",
+      "VISIT_LIST": "Lista de visitas",
+      "JOURNEYS": "Trayectos",
+      "SETTINGS": "Ajustes",
+      "VEHICLE_TYPE": "Tipos de vehiculos",
+      "PLACES": "Lugares",
+      "ROUTES": "Rutas",
+      "ASSIGNED_SERVICES": "Servicios Asignados",
+      "VEHICLES": "Vehiculos",
+      "DRIVERS" : "Conductores",
+      "ITINERARY" : "Itinerario",
+      "VISITS_UNATTENDED": "Visitas sin atender"
+    }
+  },
+  "access": {
+    "login": {
+      "TITLE": "INGRESE LAS CREDENCIALES PARA CONTINUAR.",
+      "placeholder": {
+        "EMAIL": "Ingrese un email",
+        "USERNAME" : "Usuario",
+        "PASSWORD": "Password"
+      },
+      "REMENBER": "Recuerdame",
+      "FORGOT_PASSWORD": "Olvido su password?",
+      "TITLE_SOCIAL": "Ingrese con su cuenta de red social.",
+      "NEED_SIGNUP": "Necesita registrarse?",
+      "REGISTER_NOW": "Registrese ahora"
+    },
+    "register": {
+      "TITLE": "REGISTRESE PARA OBTENER ACCESO INSTANTANEO.",
+      "EMAIL_LABEL": "Direccion de email",
+      "PASS_LABEL": "Password",
+      "REPIT_PASS_LABEL": "Repita el password",
+      "TEST_DATA": "¿Desea usar datos de prueba?",
+      "AGGRE_TERM": "Estoy de acuerdo con los ",
+      "TERM": "terminos de la pagina",
+      "CREATE_ACCOUNT": "Crear cuenta",
+      "HAVE_ACCOUNT": "¿Tiene una cuenta?",
+      "SIGNUP": "Login",
+      "dialog": {
+        "TITLE": "Verificacion de email",
+        "CONTENT": "verifique en la bandeja de entrada el correo con el enlace de confirmacion para registrarte"
+      }
+    }
+  },
+  "places": {
+    "TITLE": "LUGARES",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Dirección",
+      "phone_number": "Número Teléfono"
+    },
+    "LINKS": {
+      "EDIT": "Editar lugar",
+      "DELETE": "Eliminar lugar"
+    }
+  },
+  "vehicles": {
+    "TITLE": "VEHÍCULOS",
+    "TABLE_TITLE": {
+      "name": "Vehículo"
+    },
+    "LINKS": {
+      "EDIT": "Editar vehículo",
+      "DELETE": "Eliminar vehículo"
+    }
+  },
+  "vehicleTypes": {
+    "TITLE": "TIPOS DE VEHÍCULOS",
+    "TABLE_TITLE": {
+      "name": "Vehículo",
+      "weight": "Peso",
+      "capacity": "Capacidad",
+      "disponibility": "Disponibilidad"
+    },
+    "LINKS": {
+      "EDIT": "Editar tipo de vehículo",
+      "DELETE": "Eliminar tipo de vehículo"
+    }
+  },
+  "visits": {
+    "TITLE": "LISTA DE VISITAS",
+    "TABLE_TITLE": {
+      "name": "Visita",
+      "address": "Dirección"
+    },
+    "LINKS": {
+      "INFO": "Información de la visita",
+      "MAP": "Ver en el mapa",
+      "DELETE": "Eliminar visita"
+    }
+  },
+  "settings": {
+    "TITLE": "CONFIGURACIONES",
+    "TABLE_TITLE": {
+      "name": "Visita",
+      "address": "Dirección"
+    },
+    "LINKS": {
+      "EDIT": "Editar configuración",
+      "DELETE": "Eliminar configuración"
+    },
+    "form": {
+      "title": "Ajustes del trayecto",
+      "legend": {
+        "TIME": "Tiempo",
+        "RESOURCES": "Recursos"
+      },
+      "label": {
+        "TRAVEL_MODE": "Modo de viaje",
+        "LENGTH_OF_STAY": "Tiempo de estadia",
+        "RESTRICTION_ROUTE_CALCULATION": "Resricciones en el calculo de la ruta",
+        "DURATION_LIMIT": "Duracion limite",
+        "VEHICLE_TYPE": "Tipo de Vehiculo",
+        "QUANTITY": "Cantidad",
+        "NO_RESTRICTION": "Sin restriccion",
+        "TIME": "Tiempo",
+        "RESOURCE": "Recurso",
+        "RESOURCE_VS_TIME": "Recursos Vs Tiempo",
+        "TIME_FROM": "De",
+        "TIME_TO": "A"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      }
+    }
+  },
+  "assignedServices": {
+    "TITLE": "SERVICIOS ASIGNADOS",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Dirección",
+      "phone_number": "Número Teléfono"
+    },
+    "LINKS": {
+      "LIST_VIEW": "Ver lista",
+      "MAP": "Ver en el mapa",
+      "DELETE": "Eliminar servicio"
+    },
+    "form": {
+      "TITLE": "Asignar servicio",
+      "label": {
+        "VEHICLE": "Vehiculo",
+        "OBSERVATIONS": "Oserbaciones"
+      },
+      "button": {
+        "ASSIGN": "Asignar",
+        "CANCEL": "Cancelar"
+      }
+    }
+  },
+  "journeys": {
+    "TITLE": "TRAYECTOS",
+    "TABLE_TITLE": {
+      "name": "Trayecto",
+      "routes": "Rutas"
+    },
+    "LINKS": {
+      "ROUTE": "Ver Rutas",
+      "SHARE": "Compartir",
+      "CHART": "Ver gráfico",
+      "DELETE": "Eliminar trayecto"
+    },
+    "form": {
+      "title": "Agregar Trayecto",
+      "legend": {
+        "GENERAL_INFORMATION": "Informacion General",
+        "JOURNEYS_FILE": "Archivo de Trayectos"
+      },
+      "label": {
+        "NAME": "Nombre",
+        "SETTINGS": "Ajuste",
+        "DROP_FILE": "Soltar Archivo",
+        "MANUALLY": "Manual"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "helpText": {
+        "TITLE": "Ayuda para formato del arquivo",
+        "ITEM_ONE": "== texto del primer item ==",
+        "ITEM_TWO": "== texto del segundo item==",
+        "ITEM_THREE": "== texto del tercer item =="
+      }
+    }
+  },
+  "drivers": {
+    "TITLE": "CONDUCTORES",
+    "label" : {
+      "name" : "Conductor",
+      "licenceNumber": "Número Licencia",
+      "vehicle" :"Vehículo",
+      "identificationNumber": "Identificación",
+      "phoneNumber": "Numero Teléfono",
+      "password" : "Contraseña"
+    },
+    "LINKS": {
+      "EDIT": "Editar conductor",
+      "DELETE": "Eliminar conductor"
+    }
+  },
+  "geocoding": {
+    "form": {
+      "TITLE": "Geocodificar direccion",
+      "label": {
+        "COUNTRY": "Pais",
+        "CITY": "Ciudad",
+        "ADDRESS": "Direccion"
+      },
+      "button": {
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      }
+    }
+  },
+  "address": {
+    "form": {
+      "TITLE": "Informacion de direccion",
+      "label": {
+        "ADDRESS": "Direccion",
+        "TIME_OF_STAY": "Tiempo de estadia",
+        "WEIGHT": "Peso",
+        "VOLUMEN": "Volumen",
+        "RECIPIENT_GUIDE": "Guia de destinatario",
+        "ALIAS": "Alias",
+        "ZONE": "Zona",
+        "OBSERVATIONS": "Oserbaciones",
+        "DELIVERY_TIME": "Hora de entrega"
+      },
+      "button": {
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      }
+    }
+  },
+  "routes": {
+    "TITLE": "RUTAS",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Direcciones",
+      "phone_number": "Número Teléfono"
+    },
+    "LINKS": {
+      "ADD_SERVICE": "Agregar servicio",
+      "INFO_ROUTE": "Información de la ruta",
+      "MAP": "Ver en el mapa",
+      "SHARE": "Compartir",
+      "LIST_VIEW": "Ver lista de servicios",
+      "DELETE": "Eliminar ruta"
+    }
+  },
+  "journey": {
+    "TITLE": "TRAYECTO",
+    "ROUTER": "Rutear",
+    "OPTIMAZE": "Optimizar",
+    "START_POINT": "Punto De Inicio",
+    "LINKS": {
+      "ADD_PLACE": "Agregar punto de inicio",
+      "MAP": "Ver en el mapa",
+      "EDIT": "Editar dirección",
+      "DELETE": "Eliminar dirección",
+      "FILTER": "Filtrar por estado de la dirección"
+    }
+  }
+}

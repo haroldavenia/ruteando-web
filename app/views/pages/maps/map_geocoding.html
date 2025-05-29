@@ -1,0 +1,38 @@
+<div id="map"></div>
+<div class="container-fluid floating-panel right">
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="panel">
+                <div class="panel-heading text-primary mb-sm">Geocodificar Dirección</div>
+                <div class="panel-body p-sm">
+                    <p class="lead text-center mb-sm">{{ map.newAddress }}
+                        <br/>
+                        <span class="text-sm">{{ map.newCoordinates.longitude }} , {{ map.newCoordinates.latitude }}</span>
+                        <!--.rowh4 Coordenadas actuales
+p Longitud: 
+  span {{ map.newCoordinates.longitud }}
+br
+p Latitud:
+  span {{ map.newCoordinates.latitud }}
+p(ng-show="map.address") Direccion : 
+  span {{ map.newAddress }}-->
+                    </p>
+                </div>
+                <div class="panel-footer">
+                    <div class="text-center">
+                        <button type="button" ng-click="save()" class="btn btn-labeled btn-success">
+                            <span class="btn-label"><i class="fa fa-check"></i>
+                            </span>Aceptar</button>
+                        <!--button.btn.btn-green.btn-lg(type='button', ng-click='inverseGeocoding()') Geocodificar-->
+                        <!--button.btn.btn-labeled(type='button', ng-click='reset()')span.btn-label
+  i.fa.fa-circle
+| Regresar-->
+                        <button type="button" ng-click="cancel()" class="btn btn-labeled btn-danger">
+                            <span class="btn-label"><i class="fa fa-times"></i>
+                            </span>Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

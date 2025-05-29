@@ -1,0 +1,120 @@
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Testing</div>
+            <div class="panel-body">
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>{{ name }}</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="ran()" class="btn btn-labeled btn-danger btn-xs pull-right">
+                            <span class="btn-label"><i class="fa fa-file-pdf-o"></i>
+                            </span>Exportar a PDF</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>lista de visitas</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="listaVisita()" class="btn btn-labeled btn-danger btn-xs pull-right">
+                            <span class="btn-label"><i class="fa fa-file-pdf-o"></i>
+                            </span>Exportar a PDF</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>Update routeTab</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="change()" class="btn btn-default btn-xs pull-right">
+                            update</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>open tab</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="openRute()" class="btn btn-default btn-xs pull-right">
+                            route</button>
+                        <button type="button" ng-click="openOther()" class="btn btn-default btn-xs pull-right">
+                            other</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>test decode</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="testDecode()" class="btn btn-default btn-xs pull-right">
+                            test decode</button>
+                        <button type="button" ng-click="testDecodeMultiple()" class="btn btn-default btn-xs pull-right">
+                            test multiple</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>test decode</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="testMapping()" class="btn btn-default btn-xs pull-right">
+                            test mapping</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>test decode</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="testReverse()" class="btn btn-default btn-xs pull-right">
+                            test reverse geocoding</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>test points</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="testPoints()" class="btn btn-default btn-xs pull-right">
+                            test points</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <label class="col-sm-4">
+                        <span>test Excel</span>
+                    </label>
+                    <div class="col-sm-8">
+                        <button type="button" ng-click="testExcel()" class="btn btn-default btn-xs pull-right">
+                            test Excel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div class="panel panel-default">
+            <!-- .panel-heading Mapas-->
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="map">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

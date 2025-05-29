@@ -1,0 +1,67 @@
+<div class="panel col-lg-12 clearfix pb">
+   <div class="panel-heading">
+      <div class="row">
+         <div class="input-group m0 col-xs-6 col-sm-3 pull-left">
+            <span class="input-group-addon input-sm">
+               <em class="icon-magnifier"></em>
+            </span>
+            <input type="text" ng-change="Routes.filter()" ng-model="Routes.filterText" class="form-control input sm" />
+         </div>
+         <div class="form-group m0 col-xs-6 col-sm-9">
+            <div class="pull-right">
+               <button type="button" ng-click="Routes.selectAll()" class="btn btn-sm btn-default">
+                  <span>
+                     <em class="text-primary icon-check"></em>
+                  </span>
+                  <span class="hidden-xs">{{ 'app.SELECT' | translate }}</span>
+               </button>
+               <button type="button" ng-click="Routes.remove()" class="btn btn-sm btn-default">
+                  <span>
+                     <em class="text-danger icon-trash"></em>
+                  </span>
+                  <span class="hidden-xs">{{ 'app.DELETE' | translate }}</span>
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="panel-body p0">
+      <div class="table-responsive table-bordered">
+         <table class="table table-hover wd-wide">
+            <tbody>
+               <tr ng-repeat="item in Routes.data" ng-class="{true: 'active'}[item.check]">
+                  <td class="wd-xxs">
+                     <div class="checkbox c-checkbox m0">
+                        <label>
+                           <input type="checkbox" ng-model="item.check" />
+                           <span class="fa fa-check"></span>
+                        </label>
+                     </div>
+                  </td>
+                  <td>
+                     <div class="ph">{{ item.name }}
+                        <p class="text-muted">{{ item.services }} {{ 'routes.TABLE_TITLE.address' | translate }}</p>
+                     </div>
+                  </td>
+                  <td class="wd-sd">
+                     <div class="ph m0 text-muted visible-inline pull-right">
+                        <em tooltip="{{ 'routes.LINKS.ADD_SERVICE' | translate }}" tooltip-placement="bottom" ng-click="Routes.addService(item)" class="icon-screen-smartphone mr"></em>
+                        <em tooltip="{{ 'routes.LINKS.INFO_ROUTE' | translate }}" tooltip-placement="bottom" ng-click="Routes.info(item)" class="icon-info mr"></em>
+                        <em tooltip="{{ 'routes.LINKS.SHARE' | translate }}" tooltip-placement="bottom" ng-click="Routes.share(item)" class="icon-share mr"></em>
+                        <em tooltip="{{ 'routes.LINKS.MAP' | translate }}" tooltip-placement="bottom" ng-click="Routes.goToMap(item)" class="icon-map mr"></em>
+                        <em tooltip="{{ 'routes.LINKS.LIST_VIEW' | translate }}" tooltip-placement="bottom" ng-click="Routes.listView(item)" class="icon-list mr"></em>
+                        <em tooltip="{{ 'routes.LINKS.DELETE' | translate }}" tooltip-placement="bottom" ng-click="Routes.removeItem(item)" class="icon-trash mr"></em>
+                     </div>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+      <div class="row">
+         <div ng-hide="Routes.paginations.numPages == 1" class="col-lg-12">
+            <pagination total-items="Routes.paginations.totalItems" ng-model="Routes.paginations.currentPage" max-size="Routes.paginations.maxSize" boundary-links="true" rotate="false" items-per-page="Routes.paginations.itemsPerPage" next-text="»" previous-text="«"
+            num-pages="Routes.paginations.numPages" ng-change="Routes.changePage()" class="m pagination-sm pull-right"></pagination>
+         </div>
+      </div>
+   </div>
+</div>

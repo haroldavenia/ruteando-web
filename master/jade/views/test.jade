@@ -1,0 +1,85 @@
+.row
+  .col-sm-12.col-md-12
+    .panel.panel-default
+      .panel-heading
+        | Testing
+      .panel-body
+        .row
+          label.col-sm-4 
+            span {{ name }}
+          .col-sm-8
+            button.btn.btn-labeled.btn-danger.btn-xs.pull-right(type='button', ng-click='ran()') 
+                  span.btn-label
+                        i.fa.fa-file-pdf-o
+                  | Exportar a PDF
+        br
+        .row
+          label.col-sm-4 
+            span lista de visitas
+          .col-sm-8
+            button.btn.btn-labeled.btn-danger.btn-xs.pull-right(type='button', ng-click='listaVisita()') 
+                  span.btn-label
+                        i.fa.fa-file-pdf-o
+                  | Exportar a PDF
+        br
+        .row
+          label.col-sm-4 
+            span Update routeTab
+          .col-sm-8
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='change()') 
+              | update
+        br
+        .row
+          label.col-sm-4 
+            span open tab
+          .col-sm-8
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='openRute()') 
+              | route
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='openOther()') 
+              | other
+        br
+        .row
+          label.col-sm-4 
+            span test decode
+          .col-sm-8
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='testDecode()') 
+              | test decode
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='testDecodeMultiple()') 
+              | test multiple
+        br
+        .row
+          label.col-sm-4 
+            span test decode
+          .col-sm-8
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='testMapping()') 
+              | test mapping
+        br
+        .row
+          label.col-sm-4 
+            span test decode
+          .col-sm-8
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='testReverse()') 
+              | test reverse geocoding
+        br
+        .row
+          label.col-sm-4 
+            span test points
+          .col-sm-8
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='testPoints()') 
+              | test points
+        br
+        .row
+          label.col-sm-4 
+            span test Excel
+          .col-sm-8
+            button.btn.btn-default.btn-xs.pull-right(type='button', ng-click='testExcel()') 
+              | test Excel
+.row
+  .col-sm-12.col-md-12
+    .panel.panel-default
+      // .panel-heading Mapas
+      .panel-body
+        .row
+          .col-sm-12.col-md-12
+            .map
+              #map

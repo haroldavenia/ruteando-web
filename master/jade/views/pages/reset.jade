@@ -1,0 +1,37 @@
+.block-center.mt-xl.wd-xl
+    // START panel
+    .panel.panel-dark.panel-flat
+        .panel-heading.text-center
+            a(href="#")
+                img.block-center.img-rounded(src='app/img/logo.png', alt='Image')
+        .panel-body
+            p.text-center.pv {{ 'access.reset.TITLE' | translate }}
+            form.form-validate.mb-lg(role='form', name="registerForm", novalidate='', ng-submit="account.send()")
+                .form-group.has-feedback
+                    label.text-muted {{ "access.register.PASS_LABEL" | translate }}
+                    input#id-password.form-control(type='password', name="account_password", ng-model="account.model.password", ng-pattern="/^[a-zA-Z0-9]{6,10}$/", required='')
+                    span.fa.fa-lock.form-control-feedback.text-muted
+                    span.text-danger(ng-show="registerForm.account_password.$dirty && registerForm.account_password.$error.required") This field is required
+                    span.text-danger(ng-show="registerForm.account_password.$dirty && registerForm.account_password.$error.pattern") Input should match 'a-zA-Z0-9' and 6-10 length
+                .form-group.has-feedback
+                    label.text-muted {{ "access.register.REPIT_PASS_LABEL" | translate }}
+                    input.form-control(type='password', name="account_password_confirm", ng-model="account.model.password_repeat", ui-validate="'$value==account.model.password'" ui-validate-watch="'password'")
+                    span.fa.fa-lock.form-control-feedback.text-muted
+                    span.text-danger(ng-show="registerForm.account_password_confirm.$dirty && registerForm.account_password_confirm.$error.validator") Password does Not match
+                
+                
+                button.btn.btn-block.btn-primary.mt-lg(type='submit') {{ "access.reset.RESET_PASSWORD" | translate }}
+          
+            .alert.alert-danger.text-center(ng-show='authMsg') {{authMsg}}      
+            
+            p.pt-lg.text-center {{ "access.register.HAVE_ACCOUNT" | translate }}
+            a(ui-sref="access.login").btn.btn-block.btn-default {{ "access.register.SIGNUP" | translate }}
+
+    // END panel
+    .p-lg.text-center
+        span &copy; 
+        span(ng-bind="app.year") 
+        span  - 
+        span(ng-bind="app.name")
+        br
+        span(ng-bind="app.description")

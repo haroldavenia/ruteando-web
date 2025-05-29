@@ -1,0 +1,155 @@
+.block-center.mt-xl.wd-xl
+    // START panel
+    .panel.panel-dark.panel-flat
+        .panel-heading.text-center
+            a(href="#")
+                img.block-center.img-rounded(src='app/img/logo.png', alt='Image')
+        .panel-body
+            p.text-center.pv {{ 'access.registerTwo.TITLE' | translate }}
+            form.form-validate.mb-lg(form-wizard='', steps="3", role='form', name="registerForm", novalidate='', ng-submit="register()")
+                .form-wizard
+                    div(ng-show="wizard.active(1)")
+                        legend {{ "access.registerTwo.legend.TITLE_ONE" | translate }}
+                        fieldset
+                            .form-group
+                                label {{ "access.registerTwo.label.LEGAL_NAME" | translate }}
+                                .controls
+                                    input.form-control(type='text', name='legalName', required='', placeholder='...')
+                            .form-group
+                                label {{ "access.registerTwo.label.PHONE" | translate }}
+                                .controls
+                                    input.form-control(type='text', name='phone', required='', placeholder='...')
+                            .form-group
+                                label {{ "access.registerTwo.label.LANGUAJE" | translate }}
+                                .controls
+                                    select.form-control(name='languaje', required='')
+                                        option(value='')
+                                        option(value='es') Español
+                                        option(value='en') English
+                            .form-group
+                                label {{ "access.registerTwo.label.COUNTRY" | translate }}
+                                .controls
+                                    select.form-control(name='country', required='')
+                                        option(value='')
+                                        option(value='CO') Colombia
+                                        option(value='AR') Argentina
+                                        option(value='BR') Brazil
+                                        option(value='PE') Peru
+                            
+                            .form-group
+                                label {{ "access.registerTwo.label.STATE" | translate }}
+                                .controls
+                                    select.form-control(name='state', required='')
+                                        option(value='')
+                                        option(value='st1') Estado 1
+                                        option(value='st2') Estado 2
+                                        option(value='st3') Estado 3
+                                        option(value='st4') Estado 4
+                            
+                            .form-group
+                                label {{ "access.registerTwo.label.CITY" | translate }}
+                                .controls
+                                    select.form-control(name='city', required='')
+                                        option(value='')
+                                        option(value='cty1') City 1
+                                        option(value='cty2') City 2
+                                        option(value='cty3') City 3
+                                        option(value='cty4') City 4
+                            
+                            .form-group
+                                label {{ "access.registerTwo.label.INDUSTRY" | translate }}
+                                .controls
+                                    select.form-control(name='insdustry', required='')
+                                        option(value='')
+                                        option(value='ind1') Industry 1
+                                        option(value='ind2') Industry 2
+                                        option(value='ind3') Industry 3
+                                        option(value='ind4') Industry 4
+                            
+                        ul.pager
+                            li.next
+                                a(href='#', ng-click="wizard.go(2)")
+                                    | Next 
+                                    span &rarr;
+                    div(ng-show="wizard.active(2)")
+                        legend {{ "access.registerTwo.legend.TITLE_TWO" | translate }}
+                        .table-responsive.table-bordered
+                            table.table.table-hover.wd-wide
+                                thead
+                                    tr
+                                        th Picture
+                                        th Username
+                                        th(check-all)
+                                            .checkbox.c-checkbox(data-toggle="tooltip",data-title="Check All")
+                                                label
+                                                    input(type='checkbox')
+                                                    span.fa.fa-check
+                                tbody
+                                    tr
+                                        td
+                                            .media
+                                                img.img-responsive.img-circle(src="app/img/user/01.jpg", alt="Image")
+                                        td @twitter
+                                        td
+                                            .checkbox.c-checkbox
+                                                label
+                                                    input(type='checkbox')
+                                                    span.fa.fa-check
+                                    tr
+                                        td
+                                            .media
+                                                img.img-responsive.img-circle(src="app/img/user/02.jpg", alt="Image")
+                                        td @twitter
+                                        td
+                                            .checkbox.c-checkbox
+                                                label
+                                                    input(type='checkbox')
+                                                    span.fa.fa-check
+                                    tr
+                                        td
+                                            .media
+                                                img.img-responsive.img-circle(src="app/img/user/03.jpg", alt="Image")
+                                        td @twitter
+                                        td
+                                            .checkbox.c-checkbox
+                                                label
+                                                    input(type='checkbox')
+                                                    span.fa.fa-check
+                        br
+                        .clearfix
+                            .checkbox.c-checkbox.pull-left.mt0
+                                label
+                                    input(type='checkbox', name="shareAplication", ng-model="register.shareAplication")
+                                    span.fa.fa-check
+                                    |  {{ "access.registerTwo.label.NO_SHARE" | translate }}
+                        ul.pager
+                            li.previous
+                                a(href='#', ng-click="wizard.go(1)")
+                                    span &larr; Previous
+                            li.next
+                                a(href='#', ng-click="wizard.go(3)")
+                                    | Next 
+                                    span &rarr;
+                    
+                    div(ng-show="wizard.active(3)")
+                        legend {{ "access.registerTwo.legend.TITLE_LAST" | translate }}
+                        .jumbotron
+                            h3.mt0 {{ "access.registerTwo.wellcome.TITLE" | translate }}
+                            p {{ "access.registerTwo.wellcome.WELLCOME" | translate }}
+                            p.m0
+                                button.btn.btn-info(type='button') {{ "access.registerTwo.wellcome.BUTTON" | translate }}
+                        ul.pager
+                            li.previous
+                                a(href='#', ng-click="wizard.go(2)")
+                                    span &larr; Previous
+          
+            .alert.alert-danger.text-center(ng-show='authMsg') {{authMsg}}      
+
+    // END panel
+    .p-lg.text-center
+        span &copy; 
+        span(ng-bind="app.year") 
+        span  - 
+        span(ng-bind="app.name")
+        br
+        span(ng-bind="app.description")
