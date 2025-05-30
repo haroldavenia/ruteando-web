@@ -41,6 +41,7 @@
     "protractor": "protractor e2e-tests/protractor.conf.js"
   },
   "dependencies": {
+    "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "bufferutil": "^4.0.7"
   }
 }
