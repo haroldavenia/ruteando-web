@@ -77,10 +77,11 @@ if (app.get('env') === 'production') {
     protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
   });
 }
-app.use('/app',express.static('app'));
-app.use('/vendor',express.static('vendor'));
-app.use('/server',express.static('server'));
-app.use('/',express.static('.'));
+// Serve Angular build files
+app.use(express.static(path.join(__dirname, '..', 'ruteando-ng', 'dist', 'ruteando-ng')));
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, '..', 'ruteando-ng', 'dist', 'ruteando-ng', 'index.html'));
+});
 /*
  |--------------------------------------------------------------------------
  | Login Required Middleware
