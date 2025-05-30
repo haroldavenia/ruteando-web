@@ -1,4 +1,2 @@
 # ruteando-ng
-Proyecto migrado desde la carpeta `master` a la última versión de Angular.
-Todas las dependencias externas ahora se obtienen vía **npm** y las rutas se
-configuran mediante `@angular/router`.
+Proyecto Angular actualizado a la versión 19.2.12.
