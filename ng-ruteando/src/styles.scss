@@ -1,26 +1,20 @@
-// Custom styles
+// Bootstrap (usa @use en lugar de @import)
+@use 'bootstrap/scss/functions' as *;
+@use 'bootstrap/scss/variables' as *;
+@use 'bootstrap/scss/variables-dark' as *;
+@use 'bootstrap/scss/maps' as *;
+@use 'bootstrap/scss/mixins' as *;
+@use 'bootstrap/scss/utilities' as *;
+@use 'bootstrap/scss/bootstrap' as *;
+
+// Variables propias
 @use 'variables' as *;
 @use 'mixins' as *;
 @use 'base' as *;
 @use 'layout' as *;
 
-$bootstrap-icons-font-dir: "/assets/fonts";
-
-// Required Bootstrap imports
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark";
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
-@import "bootstrap/scss/utilities";
-@import "bootstrap/scss/bootstrap";
-@import "bootstrap-icons/font/bootstrap-icons";
-
-// Bootstrap main
-@import "bootstrap/scss/bootstrap";
-
-// Bootstrap Icons
-@import "bootstrap-icons/font/bootstrap-icons";
+// Bootstrap Icons CSS (solo se puede importar con @import porque es CSS plano)
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 // Global styles
 html, body {
@@ -31,7 +25,6 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-// Utility classes
 .text-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -42,7 +35,6 @@ html, body {
   cursor: pointer;
 }
 
-// Animation classes
 .fade-in {
   animation: fadeIn 0.3s ease-in;
 }
