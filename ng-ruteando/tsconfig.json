@@ -13,15 +13,21 @@
     "sourceMap": true,
     "declaration": false,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
     "paths": {
-      "@core/*": ["./src/app/core/*"],
-      "@environments/*": ["./src/environments/*"],
-      "@shared/*": ["./src/app/shared/*"]
+      "@core/*": [
+        "./src/app/core/*"
+      ],
+      "@environments/*": [
+        "./src/environments/*"
+      ],
+      "@shared/*": [
+        "./src/app/shared/*"
+      ]
     },
     "lib": [
       "ES2022",
