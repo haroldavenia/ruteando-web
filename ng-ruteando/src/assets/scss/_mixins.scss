@@ -1,0 +1,37 @@
+@use 'sass:color';
+@use 'variables' as v;
+
+// Layout mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin gradient-bg($start-color, $end-color) {
+  background: linear-gradient(135deg, $start-color 0%, $end-color 100%);
+}
+
+@mixin gradient-text($start-color, $end-color) {
+  background: linear-gradient(135deg, $start-color 0%, $end-color 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+
+  &:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  }
+}
+
+// Form control focus
+@mixin form-control-focus {
+  &:focus {
+    border-color: v.$primary;
+    box-shadow: 0 0 0 0.2rem rgba(v.$primary, 0.25);
+    outline: 0;
+  }
+}
