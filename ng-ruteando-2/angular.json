@@ -35,6 +35,8 @@
               }
             ],
             "styles": [
+              "node_modules/bootstrap/scss/bootstrap.scss",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
@@ -44,10 +46,10 @@
             },
             "scripts": [],
             "server": "src/main.server.ts",
+            "prerender": true,
             "ssr": {
-              "entry": "src/server.ts"
-            },
-            "outputMode": "server"
+              "entry": "server.ts"
+            }
           },
           "configurations": {
             "production": {

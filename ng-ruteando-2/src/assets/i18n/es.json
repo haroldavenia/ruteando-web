@@ -1,0 +1,20 @@
+{
+  "access": {
+    "login": {
+      "title": "Iniciar Sesión",
+      "username": "Usuario",
+      "password": "Contraseña",
+      "submit": "Ingresar",
+      "loading": "Ingresando...",
+      "placeholder": {
+        "USERNAME": "Ingrese su correo electrónico",
+        "PASSWORD": "Ingrese su contraseña"
+      },
+      "validation": {
+        "USERNAME_REQUIRED": "El usuario es requerido",
+        "PASSWORD_REQUIRED": "La contraseña es requerida",
+        "EMAIL_INVALID": "Por favor ingrese un correo válido"
+      }
+    }
+  }
+}
