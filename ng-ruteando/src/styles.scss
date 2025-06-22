@@ -13,6 +13,9 @@
 // FontAwesome
 @import '@fortawesome/fontawesome-free/css/all.min.css';
 
+// Estilos legacy de master para mantener consistencia visual
+@import 'legacy-master';
+
 // Global styles
 html, body {
   height: 100%;

@@ -1,0 +1,675 @@
+// Estilos legacy de master para mantener consistencia visual
+// Basado en los estilos LESS/SASS del proyecto master
+
+// Variables de colores
+$brand-primary: #5d9cec;
+$brand-success: #5cb85c;
+$brand-info: #5bc0de;
+$brand-warning: #f0ad4e;
+$brand-danger: #d9534f;
+$brand-inverse: #2c3e50;
+$brand-green: #27ae60;
+$brand-pink: #e91e63;
+$brand-purple: #9b59b6;
+$brand-dark: #34495e;
+
+// Variables de paneles
+$panel-global-border: #ddd;
+$panel-border-radius: 4px;
+
+// Variables de tablas
+$table-border-color: #ddd;
+$table-hover-bg: #f5f5f5;
+
+// Mixins
+@mixin panel-variant($border, $heading-text-color, $heading-bg-color, $heading-border) {
+  border-color: $border;
+  
+  & > .panel-heading {
+    color: $heading-text-color;
+    background-color: $heading-bg-color;
+    border-color: $heading-border;
+  }
+}
+
+// Estilos de paneles
+.panel {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: 1px solid $panel-global-border;
+  border-radius: $panel-border-radius;
+  box-shadow: 0 1px 1px rgba(0,0,0,.05);
+  
+  .table {
+    margin-bottom: 0;
+    border: 0;
+  }
+  
+  &.panel-transparent {
+    border: 0;
+    background-color: transparent;
+    box-shadow: 0 0 0 #000;
+    .panel-heading,
+    .panel-body {
+      background-color: transparent;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}
+
+.panel-flat {
+  margin: 0 !important;
+  border: 0;
+}
+
+.panel-group {
+  .panel-flat {
+    box-shadow: 0 0 0 #000;
+    &:first-child {
+      border-radius: 4px 4px 0 0;
+    }
+    &:last-child {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+}
+
+.panel-heading {
+  padding: 10px 15px;
+  border-bottom: 1px solid $panel-global-border;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  background-color: #f5f5f5;
+  
+  paneltool > a {
+    display: inline-block;
+    color: #fff;
+    width: 2em;
+    text-align: center;
+  }
+
+  .panel-default & {
+    paneltool > a {
+      color: #c1c2c3;
+    }
+  }
+  
+  // right floated labels adjust position
+  > .label.pull-right {
+    margin-top: 3px;
+    + .label.pull-right {
+      margin-right: 10px;
+    }
+  }
+  &.panel-heading-collapsed {
+    border-radius: $panel-border-radius - 1;
+  }
+}
+
+.panel-body {
+  padding: 15px;
+  
+  .pagination {
+    margin: 0;
+  }
+  .radial-bar {
+    margin-bottom: 0;
+  }
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.panel-footer {
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-top: 1px solid $panel-global-border;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  
+  .pagination {
+    margin: 0;
+  }
+  .radial-bar {
+    margin-bottom: 0;
+  }
+  p {
+    margin-bottom: 0;
+  }
+}
+
+// Active class for collapse elements 
+.panel-heading-active {
+  background-color: $brand-success !important;
+  font-weight: bold;
+  font-size: 16px;
+  > a {
+    padding: 15px 0;  // Adding padding here improves mobile touch
+    color: #fff !important;
+    transition: padding .5s ease;
+  }
+  + .panel-collapse:after {
+    content: "";
+    display: block;
+    width: 60%;
+    margin: 0 auto;
+    height: 0;
+    border-bottom: 1px solid #e1e2e3;
+  }
+}
+
+.panel-inverse {
+  @include panel-variant($panel-global-border, #fff, $brand-inverse, $brand-inverse);
+}
+
+.panel-green {
+  @include panel-variant($panel-global-border, #fff, $brand-green, $brand-green);
+}
+
+.panel-pink {
+  @include panel-variant($panel-global-border, #fff, $brand-pink, $brand-pink);
+}
+
+.panel-purple {
+  @include panel-variant($panel-global-border, #fff, $brand-purple, $brand-purple);
+}
+
+.panel-dark {
+  @include panel-variant($panel-global-border, #fff, $brand-dark, $brand-dark);
+}
+
+// Estilos de tablas
+.table {
+  margin-bottom: 0;
+  
+  > thead > tr > th {
+    padding: 14px 8px;
+    color: #888;
+    border-bottom: 2px solid $table-border-color;
+    font-weight: bold;
+  }
+  
+  > tbody > tr > td {
+    vertical-align: middle;
+    border-top: 1px solid $table-border-color;
+    > .media {
+      img {
+        width: 36px;
+        height: 36px;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .checkbox {
+    margin: 0 auto;
+    width: 20px;
+  }
+  
+  .progress {
+    margin-bottom: 0
+  }
+
+  .radial-bar {
+    margin-bottom: 0;
+    margin: 0 auto;
+  }
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: $table-hover-bg;
+}
+
+.table-bordered {
+  border: 1px solid $table-border-color;
+  
+  > thead > tr > th,
+  > tbody > tr > td {
+    border: 1px solid $table-border-color;
+  }
+}
+
+// Estilos de checkboxes personalizados
+.checkbox {
+  margin: 0;
+  
+  label {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    cursor: pointer;
+    
+    input[type="checkbox"] {
+      margin-right: 5px;
+    }
+  }
+}
+
+.c-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.c-checkbox span.fa {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  text-align: center;
+  line-height: 14px;
+  color: transparent;
+}
+
+.c-checkbox input[type="checkbox"]:checked + span.fa {
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+  color: white;
+}
+
+// Estilos de botones
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-left: 5px;
+  
+  &:first-child {
+    margin-left: 0;
+  }
+  
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+.btn-labeled {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.btn-label {
+  position: relative;
+  left: -12px;
+  display: inline-block;
+  padding: 6px 12px;
+  background: rgba(0,0,0,.15);
+  border-radius: 3px 0 0 3px;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+  
+  &:hover {
+    color: #fff;
+    background-color: darken($brand-primary, 10%);
+    border-color: darken($brand-primary, 10%);
+  }
+}
+
+.btn-success {
+  color: #fff;
+  background-color: $brand-success;
+  border-color: $brand-success;
+  
+  &:hover {
+    color: #fff;
+    background-color: darken($brand-success, 10%);
+    border-color: darken($brand-success, 10%);
+  }
+}
+
+.btn-info {
+  color: #fff;
+  background-color: $brand-info;
+  border-color: $brand-info;
+  
+  &:hover {
+    color: #fff;
+    background-color: darken($brand-info, 10%);
+    border-color: darken($brand-info, 10%);
+  }
+}
+
+.btn-warning {
+  color: #fff;
+  background-color: $brand-warning;
+  border-color: $brand-warning;
+  
+  &:hover {
+    color: #fff;
+    background-color: darken($brand-warning, 10%);
+    border-color: darken($brand-warning, 10%);
+  }
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: $brand-danger;
+  border-color: $brand-danger;
+  
+  &:hover {
+    color: #fff;
+    background-color: darken($brand-danger, 10%);
+    border-color: darken($brand-danger, 10%);
+  }
+}
+
+.btn-default {
+  background-color: #fff;
+  border-color: #ccc;
+  color: #333;
+  
+  &:hover {
+    background-color: #e6e6e6;
+    border-color: #adadad;
+    color: #333;
+  }
+}
+
+// Estilos de formularios
+.form-control {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  
+  &:focus {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+  }
+  
+  &.is-invalid {
+    border-color: $brand-danger;
+  }
+}
+
+.input-sm {
+  height: 30px;
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+.input-group-addon {
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #555;
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: $brand-danger;
+}
+
+// Estilos de formularios horizontales
+.form-horizontal {
+  .form-group {
+    margin-right: -15px;
+    margin-left: -15px;
+    margin-bottom: 15px;
+    
+    &:before,
+    &:after {
+      display: table;
+      content: " ";
+    }
+    
+    &:after {
+      clear: both;
+    }
+  }
+  
+  .control-label {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: right;
+    font-weight: bold;
+  }
+}
+
+// Estilos de texto
+.text-primary {
+  color: $brand-primary;
+}
+
+.text-success {
+  color: $brand-success;
+}
+
+.text-info {
+  color: $brand-info;
+}
+
+.text-warning {
+  color: $brand-warning;
+}
+
+.text-danger {
+  color: $brand-danger;
+}
+
+.text-muted {
+  color: #777;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.lead {
+  font-size: 18px;
+  font-weight: 300;
+}
+
+// Estilos de utilidades
+.pull-left {
+  float: left !important;
+}
+
+.pull-right {
+  float: right !important;
+}
+
+.m0 {
+  margin: 0 !important;
+}
+
+.p0 {
+  padding: 0 !important;
+}
+
+.pb {
+  padding-bottom: 15px;
+}
+
+.ph {
+  padding: 0 10px;
+}
+
+.mr {
+  margin-right: 5px;
+}
+
+.wd-wide {
+  width: 100%;
+}
+
+.wd-xxs {
+  width: 50px;
+}
+
+.wd-sm {
+  width: 100px;
+}
+
+.height-lg {
+  height: 300px;
+}
+
+.visible-inline {
+  display: inline-block;
+}
+
+.hidden-xs {
+  @media (max-width: 767px) {
+    display: none !important;
+  }
+}
+
+// Estilos de paginación
+.pagination {
+  margin: 10px 0;
+  
+  > li > a {
+    cursor: pointer;
+    color: $brand-primary;
+  }
+  
+  > .active > a {
+    background-color: $brand-primary;
+    border-color: $brand-primary;
+  }
+  
+  > .disabled > a {
+    color: #777;
+    cursor: not-allowed;
+  }
+}
+
+// Estilos de iconos
+.icon-pencil, .icon-trash {
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.icon-pencil:hover {
+  color: $brand-primary;
+}
+
+.icon-trash:hover {
+  color: $brand-danger;
+}
+
+// Estilos de media
+.media-heading {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+// Estilos de filas y columnas
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+  
+  &:before,
+  &:after {
+    display: table;
+    content: " ";
+  }
+  
+  &:after {
+    clear: both;
+  }
+}
+
+.col-lg-12, .col-md-2, .col-md-4, .col-sm-2, .col-sm-4, .col-sm-12 {
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.col-lg-12 {
+  width: 100%;
+}
+
+.col-md-2 {
+  width: 16.66666667%;
+}
+
+.col-md-4 {
+  width: 33.33333333%;
+}
+
+.col-sm-2 {
+  width: 16.66666667%;
+}
+
+.col-sm-4 {
+  width: 33.33333333%;
+}
+
+.col-sm-12 {
+  width: 100%;
+}
+
+// Estilos de animaciones
+.fa-spin {
+  animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Estilos de estados activos
+.active {
+  background-color: #f0f8ff;
+}
+
+// Estilos de loading
+.content-loading {
+  z-index: 122;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: rgba(238, 238, 238, 0.8);
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: -webkit-box;
+  display: -webkit-flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+} 
