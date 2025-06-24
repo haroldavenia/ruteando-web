@@ -7,7 +7,14 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "standalone": true
+        },
+        "@schematics/angular:directive": {
+          "standalone": true
+        },
+        "@schematics/angular:pipe": {
+          "standalone": true
         }
       },
       "root": "",
@@ -15,11 +22,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/ng-ruteando",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -27,54 +34,69 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "./node_modules/bootstrap-icons/font/fonts",
-                "output": "/assets/fonts"
-              }
+              "src/assets"
             ],
             "styles": [
               "src/styles.scss"
             ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/assets/scss"
-              ]
-            },
             "scripts": [],
-            "server": "src/main.server.ts",
-            "ssr": {
-              "entry": "src/server.ts"
-            },
-            "outputMode": "server"
+            "allowedCommonJsDependencies": [
+              "file-saver",
+              "html2canvas",
+              "dompurify",
+              "core-js/modules/es.array.index-of.js",
+              "core-js/modules/es.array.iterator.js",
+              "core-js/modules/es.array.reduce.js",
+              "core-js/modules/es.array.reverse.js",
+              "core-js/modules/es.promise.js",
+              "core-js/modules/es.regexp.to-string.js",
+              "core-js/modules/es.string.ends-with.js",
+              "core-js/modules/es.string.includes.js",
+              "core-js/modules/es.string.match.js",
+              "core-js/modules/es.string.replace.js",
+              "core-js/modules/es.string.split.js",
+              "core-js/modules/es.string.starts-with.js",
+              "core-js/modules/es.string.trim.js",
+              "core-js/modules/web.dom-collections.iterator.js",
+              "raf",
+              "rgbcolor"
+            ]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
+              "buildOptimizer": false,
               "optimization": false,
+              "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular/build:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "ng-ruteando:build:production"
@@ -86,13 +108,13 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular/build:extract-i18n",
+          "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "buildTarget": "ng-ruteando:build"
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "polyfills": [
               "zone.js",

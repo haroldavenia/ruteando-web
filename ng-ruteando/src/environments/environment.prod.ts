@@ -1,35 +1,35 @@
 export const environment = {
-  production: false,
+  production: true,
   clientId: 'HANOIT-APP',
   clientSecret: '123456',
   facebookAppId: '760244197414824',
   googleClientId: '299346955747-0q7jel6iaok2g36a1hginqta56i7fm08.apps.googleusercontent.com',
   
-  // API URL for services compatibility
-  apiUrl: 'http://hanoit:9000/hanoit/api/v1',
+  // API URL for services compatibility - Production URLs
+  apiUrl: 'https://api.ruteando.co/hanoit/api/v1',
   
-  // Legacy API Configuration
+  // Legacy API Configuration - Production
   api: {
-    protocol: 'http://',
-    host: 'hanoit',
-    port: '9000',
+    protocol: 'https://',
+    host: 'api.ruteando.co',
+    port: '443',
     path: '/hanoit/api',
     version: '/v1'
   },
   
-  // Swagger API Configuration
+  // Swagger API Configuration - Production
   swaggerApi: {
-    protocol: 'http://',
-    host: 'hanoit',
-    port: '8000',
+    protocol: 'https://',
+    host: 'api.ruteando.co',
+    port: '443',
     path: '/api'
   },
   
-  // OSRM API Configuration
+  // OSRM API Configuration - Production
   osrmApi: {
-    protocol: 'http://',
+    protocol: 'https://',
     host: 'app.ruteando.co',
-    port: '9000',
+    port: '443',
     path: '/hanoit/v2/delivery'
   },
   
@@ -39,7 +39,7 @@ export const environment = {
     accessToken: 'pk.eyJ1IjoiZGlyZWN0IiwiYSI6ImNpZjQ0OTcyZTMxZnJ0aW01dzU5bW9xd2sifQ.aYjmmG1QKi4VYM6ya0kL4Q'
   },
   
-  // Compatibility Configuration
+  // Compatibility Configuration - Production optimized
   compatibility: {
     // Habilitar/deshabilitar APIs específicas
     enableLegacyApi: true,
@@ -50,9 +50,9 @@ export const environment = {
     fallbackToLegacy: true,
     fallbackToSwagger: false,
     
-    // Configuración de logging
-    enableApiLogging: true,
-    enableTransformationLogging: true,
+    // Configuración de logging - Reduced for production
+    enableApiLogging: false,
+    enableTransformationLogging: false,
     enableErrorLogging: true,
     
     // Configuración de timeouts
@@ -64,8 +64,8 @@ export const environment = {
     maxRetries: 3,
     retryDelay: 1000, // 1 segundo
     
-    // Configuración de cache
+    // Configuración de cache - Enhanced for production
     enableCache: true,
-    cacheTimeout: 300000 // 5 minutos
+    cacheTimeout: 600000 // 10 minutos
   }
-};
+}; 

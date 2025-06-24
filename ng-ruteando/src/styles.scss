@@ -1,45 +1,306 @@
-// Variables propias (deben ir antes que Bootstrap)
-@use 'variables' as *;
-@use 'mixins' as *;
-@use 'base' as *;
-@use 'layout' as *;
+// Bootstrap
+@use 'bootstrap/scss/bootstrap' as bootstrap;
+@use 'sass:color';
 
-// Bootstrap completo
-@import 'bootstrap/scss/bootstrap';
-
-// Bootstrap Icons CSS
-@import 'bootstrap-icons/font/bootstrap-icons.css';
-
-// FontAwesome
-@import '@fortawesome/fontawesome-free/css/all.min.css';
-
-// Estilos legacy de master para mantener consistencia visual
-@import 'legacy-master';
+// Custom variables and mixins
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+$light-color: #f8f9fa;
+$dark-color: #343a40;
 
 // Global styles
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   height: 100%;
   margin: 0;
-  font-family: $font-family-base;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.text-truncate {
+// Layout
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: $dark-color;
+  color: white;
+  overflow-y: auto;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.cursor-pointer {
+.navbar {
+  background-color: white;
+  border-bottom: 1px solid #dee2e6;
+  padding: 0.5rem 1rem;
+}
+
+.content-area {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+// Components
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem;
+  border-radius: 8px 8px 0 0;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem;
+  border-radius: 0 0 8px 8px;
+}
+
+// Forms
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: $dark-color;
+}
+
+.form-control {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 0.375rem 0.75rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+}
+
+// Buttons
+.btn {
+  border-radius: 4px;
+  padding: 0.375rem 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
   cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease-in-out;
+  
+  &:hover {
+    text-decoration: none;
+  }
 }
 
-.fade-in {
-  animation: fadeIn 0.3s ease-in;
+.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: white;
+  
+  &:hover {
+    background-color: color.adjust($primary-color, $lightness: -10%);
+    border-color: color.adjust($primary-color, $lightness: -10%);
+  }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.btn-secondary {
+  background-color: $secondary-color;
+  border-color: $secondary-color;
+  color: white;
+  
+  &:hover {
+    background-color: color.adjust($secondary-color, $lightness: -10%);
+    border-color: color.adjust($secondary-color, $lightness: -10%);
+  }
 }
+
+.btn-success {
+  background-color: $success-color;
+  border-color: $success-color;
+  color: white;
+  
+  &:hover {
+    background-color: color.adjust($success-color, $lightness: -10%);
+    border-color: color.adjust($success-color, $lightness: -10%);
+  }
+}
+
+.btn-danger {
+  background-color: $danger-color;
+  border-color: $danger-color;
+  color: white;
+  
+  &:hover {
+    background-color: color.adjust($danger-color, $lightness: -10%);
+    border-color: color.adjust($danger-color, $lightness: -10%);
+  }
+}
+
+// Tables
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+  border-collapse: collapse;
+  
+  th, td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+    background-color: #f8f9fa;
+    font-weight: 600;
+  }
+}
+
+// Utilities
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 1rem; }
+.p-4 { padding: 1.5rem; }
+
+.d-none { display: none; }
+.d-block { display: block; }
+.d-inline { display: inline; }
+.d-inline-block { display: inline-block; }
+.d-flex { display: flex; }
+
+// Responsive
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    z-index: 1000;
+    transition: left 0.3s ease;
+    
+    &.show {
+      left: 0;
+    }
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+// Loading spinner
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid $primary-color;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Toast notifications
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050;
+}
+
+// Modal
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  max-width: 500px;
+  width: 90%;
+}
+
+.modal-header {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+.modal-footer {
+  padding: 1rem;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+} 

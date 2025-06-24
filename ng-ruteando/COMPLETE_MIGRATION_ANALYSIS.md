@@ -82,8 +82,10 @@ Este documento presenta un análisis exhaustivo de la migración del proyecto le
 #### **1. Servicios de Exportación (CRÍTICO)**
 **Estado:** ❌ NO MIGRADO
 **Archivos Legacy:**
+**Archivos Legacy:**
 - `master/js/modules/services/pdf_exporter.js` (19KB, 608 líneas)
 - `master/js/modules/services/xlsx_exporter.js` (3.5KB, 92 líneas)
+
 
 **Funcionalidades Faltantes:**
 - Exportación de reportes a PDF
