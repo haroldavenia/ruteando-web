@@ -13,9 +13,8 @@ App.constant('config',function () {
     var APP_FACE_ID = '760244197414824';
     var APP_GOOGLE_CLIENT_ID = "299346955747-0q7jel6iaok2g36a1hginqta56i7fm08.apps.googleusercontent.com";
 
-    var MAP_BOX_MAP_ID = 'direct.cif4495oq30swsum3eems1dkf',    // cambiar la aplicaion MapBox aqui
-        MAP_BOX_ACCESS_TOKEN = '',  // cambiar el access token de MapBox aqui
-        MAP_BOX_URL = 'http://api.tiles.mapbox.com/v4/'+MAP_BOX_MAP_ID+'/{z}/{x}/{y}.png?access_token='+MAP_BOX_ACCESS_TOKEN;
+    // Map tiles: OpenStreetMap (Mapbox token must not live in frontend or git)
+    var MAP_BOX_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
     var protocol = "http://",
         host = "localhost",
