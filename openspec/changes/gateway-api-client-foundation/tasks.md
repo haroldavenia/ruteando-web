@@ -5,7 +5,7 @@
 - [x] 1.1 Confirmar que `upgrade-angular-21-ng-ruteando` y `consolidate-ng-ruteando` están archivados (`openspec list --specs` incluye `frontend-platform`, `frontend-serving`, `frontend-environments` y `auth-token-storage`) y crear la rama `feat/gateway-api-client-foundation`
 - [x] 1.2 Elegir la librería de proxy HTTP para Express: comprobar con `npm view <paquete> version peerDependencies engines` que está mantenida y es compatible con Node 22 y Express 4, instalarla en la raíz y verificar con `npm ls <paquete>` (elegida `http-proxy-middleware@3.0.7`, devDependency de la raíz con versión exacta: línea 3 mantenida, Node >=18, Express 4, `npm audit` sin vulnerabilidades; la 4.2 exige Node >=22.15 y dejaría fuera a Node 20.19)
 - [x] 1.3 Crear `.env.example` con `GATEWAY_URL` (valor de ejemplo `https://gateway.example.invalid`) y `GATEWAY_API_KEY` (valor de ejemplo `change-me`), añadir `.env` a `.gitignore` y verificar con `git check-ignore -v .env` y que `git status` no muestra un `.env` de prueba
-- [ ] 1.4 Crear en `.env` local, sin confirmarlo, los valores reales de un entorno de pruebas del gateway, y verificar con `git status --short` que no aparece
+- [x] 1.4 Crear en `.env` local, sin confirmarlo, los valores reales de un entorno de pruebas del gateway, y verificar con `git status --short` que no aparece
 
 ## 2. Proxy del servidor (gateway-proxy)
 
