@@ -34,10 +34,10 @@
 
 ## 6. Salto a Angular 21
 
-- [ ] 6.1 Ejecutar `ng update` de core/cli y de material a 21, aceptar las migraciones y revisar el diff
-- [ ] 6.2 Verificar con `npm ls @angular/core @angular/common @angular/router @angular/platform-browser @angular/ssr @angular/cdk @angular/material` que todo resuelve a 21.x sin `ERESOLVE`, `invalid` ni `missing`, y que solo hay una versión de `@angular/core`
-- [ ] 6.3 Verificar que `npm ls ol jspdf @faker-js/faker` no reporta conflictos de peer dependencies; si los hay, actualizar la dependencia afectada sin importarla
-- [ ] 6.4 Verificar `ng build` (budgets respetados), `npm run test:ci`, SSR con `curl /` y consola del navegador sin errores; hacer commit del salto
+- [x] 6.1 Ejecutar `ng update` de core/cli y de material a 21, aceptar las migraciones y revisar el diff (nota: `npm install` con npm 10.9 falló con `Cannot read properties of null (reading 'edgesOut')`, un fallo interno del resolutor; se resolvió con npm 11, lockfile regenerado, y las migraciones se ejecutaron después con `ng update <paquete> --migrate-only --from --to`; la migración de arranque añadió `provideZoneChangeDetection()`, que se dejó en `app.config.ts`)
+- [x] 6.2 Verificar con `npm ls @angular/core @angular/common @angular/router @angular/platform-browser @angular/ssr @angular/cdk @angular/material` que todo resuelve a 21.x sin `ERESOLVE`, `invalid` ni `missing`, y que solo hay una versión de `@angular/core`
+- [x] 6.3 Verificar que `npm ls ol jspdf @faker-js/faker` no reporta conflictos de peer dependencies; si los hay, actualizar la dependencia afectada sin importarla
+- [x] 6.4 Verificar `ng build` (budgets respetados), `npm run test:ci`, SSR con `curl /` y consola del navegador sin errores; hacer commit del salto
 
 ## 7. Tema Material 3
 
