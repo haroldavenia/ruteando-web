@@ -15,10 +15,10 @@
 
 ## 3. Servicio de tokens (auth-token-storage)
 
-- [ ] 3.1 Crear `ng-ruteando/src/app/core/auth/token-storage.service.ts` con token de acceso en memoria, refresco y caducidad en `localStorage` (claves `hanoitToken` y `hanoitTokenExpiresDate`), caducidad `Date.now() + expires_in * 1000` en ISO, lectura tolerante al formato de fecha de AngularJS, `reset` y `expiresAt`, sin `setTimeout`; verificar que compila con `ng build`
-- [ ] 3.2 Hacer el servicio seguro en SSR con `PLATFORM_ID`: en servidor lecturas vacías o nulas y escritura sin efecto; verificar con una prueba que inyecta `PLATFORM_ID: 'server'` y no lanza excepciones
-- [ ] 3.3 Escribir `token-storage.service.spec.ts` que cubra: acceso solo en memoria y ausente de `localStorage`/`sessionStorage`; caducidad de 3600 s guardada a las 10:00:30 resulta 11:00:30 (con reloj simulado); token vigente, caducado (devuelve `null` y limpia); sesión previa con fecha en formato `Date.toString()`; fecha ilegible tratada como caducada; `reset`; verificar `npm run test:ci` en verde
-- [ ] 3.4 Comprobar el render SSR con el servicio inyectado en un componente de prueba o en `AppComponent`: `ng build` y `curl` al servidor SSR sin errores en el log, y retirar el uso temporal tras la prueba
+- [x] 3.1 Crear `ng-ruteando/src/app/core/auth/token-storage.service.ts` con token de acceso en memoria, refresco y caducidad en `localStorage` (claves `hanoitToken` y `hanoitTokenExpiresDate`), caducidad `Date.now() + expires_in * 1000` en ISO, lectura tolerante al formato de fecha de AngularJS, `reset` y `expiresAt`, sin `setTimeout`; verificar que compila con `ng build`
+- [x] 3.2 Hacer el servicio seguro en SSR con `PLATFORM_ID`: en servidor lecturas vacías o nulas y escritura sin efecto; verificar con una prueba que inyecta `PLATFORM_ID: 'server'` y no lanza excepciones
+- [x] 3.3 Escribir `token-storage.service.spec.ts` que cubra: acceso solo en memoria y ausente de `localStorage`/`sessionStorage`; caducidad de 3600 s guardada a las 10:00:30 resulta 11:00:30 (con reloj simulado); token vigente, caducado (devuelve `null` y limpia); sesión previa con fecha en formato `Date.toString()`; fecha ilegible tratada como caducada; `reset`; verificar `npm run test:ci` en verde
+- [x] 3.4 Comprobar el render SSR con el servicio inyectado en un componente de prueba o en `AppComponent`: `ng build` y `curl` al servidor SSR sin errores en el log, y retirar el uso temporal tras la prueba
 
 ## 4. Servidor (frontend-serving)
 
