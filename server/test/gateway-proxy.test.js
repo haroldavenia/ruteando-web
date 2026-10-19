@@ -127,6 +127,12 @@ test('sustituye la X-Api-Key que envíe el cliente', async () => {
   assert.ok(!JSON.stringify(lastRequest().headers).includes('clave-falsa-del-cliente'));
 });
 
+test('no reenvía el Origin del navegador (el gateway lo rechazaría con 403 por CORS)', async () => {
+  await fetch(proxied.base + '/gateway/places', { headers: { Origin: 'http://localhost:3000' } });
+  assert.equal(lastRequest().headers.origin, undefined);
+  assert.equal(lastRequest().headers['x-api-key'], API_KEY);
+});
+
 test('reenvía Authorization sin modificarla', async () => {
   await fetch(proxied.base + '/gateway/auth/me', { headers: { Authorization: `Bearer ${TOKEN}` } });
   assert.equal(lastRequest().headers.authorization, `Bearer ${TOKEN}`);

@@ -36,6 +36,17 @@ El servidor SHALL añadir la cabecera `X-Api-Key` a cada petición reenviada con
 - **WHEN** se inspeccionan las cabeceras de respuesta del proxy y los ficheros de `ng-ruteando/dist`
 - **THEN** el valor de `GATEWAY_API_KEY` no aparece en ninguno
 
+### Requirement: Petición de servidor a servidor
+El servidor SHALL NOT reenviar al gateway la cabecera `Origin` del navegador, para que la llamada se trate como de servidor a servidor.
+
+#### Scenario: Petición con Origin
+- **WHEN** el navegador envía una petición a `/gateway/**` con la cabecera `Origin`
+- **THEN** el gateway la recibe sin cabecera `Origin` y con `X-Api-Key`
+
+#### Scenario: Inicio de sesión desde el navegador
+- **WHEN** la aplicación abierta en el navegador inicia sesión mediante `/gateway/auth/login`
+- **THEN** el gateway responde 200 y no 403
+
 ### Requirement: Autorización reenviada sin custodia
 El servidor SHALL reenviar la cabecera `Authorization` sin modificarla y SHALL NOT almacenar ni registrar tokens.
 

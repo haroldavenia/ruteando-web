@@ -151,5 +151,14 @@ Este change va después de `consolidate-ng-ruteando` y sustituye a la parte de i
 
 ## Open Questions
 
-- ¿Cuál es el formato de error del gateway? Solo afecta a qué `code` se registran para mensajes personalizados; el mecanismo ya está previsto y los genéricos funcionan sin saberlo.
 - ¿Cuál es el contrato de `POST /packages/upload`? Se decide en la fase de jornadas; este change no depende de él.
+- ¿Cuándo corregirá el backend `POST /journeys/plan` con ids reales? Bloquea la planificación (ver Resultados contra el gateway real); no cambia este change.
+
+## Resultados contra el gateway real
+
+Verificado en vivo el 2026-10-19 con una cuenta desechable (tenant `free`, correo `.invalid`) y el código real de la aplicación:
+
+- El formato de error del gateway es `{error, message, timestamp, path}` con `error` en forma de código (`BAD_REQUEST`, `NOT_FOUND`, `CONFLICT`): la lectura tolerante ya lo interpreta y `ApiError.code` queda informado. Queda resuelta la pregunta abierta sobre el formato de error.
+- El `Origin` del navegador provocaba un 403 en el gateway (CORS): los dos proxies lo eliminan. Es un requisito añadido a la spec `gateway-proxy`.
+- El refresco no rotó el token de refresco en la prueba; el diseño no depende de ello.
+- Fallos del backend que el cliente no puede resolver: `journeys/plan` rechaza ids hexadecimales de paquete (400) y `guideNumber` es único por tenant (409 al repetir nulo).

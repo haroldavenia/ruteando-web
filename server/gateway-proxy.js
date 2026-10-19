@@ -60,6 +60,8 @@ function createGatewayProxy(env) {
       proxyReq: function(proxyReq, req) {
         // La clave del cliente nunca se reenvía: se sustituye por la del servidor
         proxyReq.setHeader('X-Api-Key', apiKey);
+        // La llamada al gateway es de servidor a servidor: el Origin del navegador activaría su filtro CORS (403)
+        proxyReq.removeHeader('origin');
         proxyReq.setTimeout(timeoutMs, function() {
           req.gatewayTimedOut = true;
           proxyReq.destroy(new Error('Gateway timeout'));

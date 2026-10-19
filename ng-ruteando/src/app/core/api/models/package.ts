@@ -43,6 +43,7 @@ export interface PackageInput {
   location: GeoJsonPoint;
   weight: number;
   volume: number;
+  /** Único por tenant: con `null` el gateway responde 409 `CONFLICT` al crear el segundo paquete. */
   guideNumber?: string | null;
   pieceNumber?: number;
   durationStay?: number | null;

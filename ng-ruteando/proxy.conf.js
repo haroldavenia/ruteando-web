@@ -25,6 +25,10 @@ module.exports = {
     pathRewrite: { '^/gateway': '/api/v1' },
     // Sustituye cualquier X-Api-Key que mande el navegador
     headers: { 'X-Api-Key': apiKey },
+    // La llamada al gateway es de servidor a servidor: el Origin del navegador activaría su filtro CORS (403)
+    configure(proxy) {
+      proxy.on('proxyReq', (proxyReq) => proxyReq.removeHeader('origin'));
+    },
     bypass(req, res) {
       if (missing.length && res) {
         res.statusCode = 503;

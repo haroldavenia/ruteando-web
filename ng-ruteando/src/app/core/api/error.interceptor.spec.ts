@@ -71,6 +71,23 @@ describe('errorInterceptor y respuestas de la API', () => {
     expect(error.raw?.status).toBe(400);
   });
 
+  it('interpreta el formato de error real del gateway ({ error, message, timestamp, path })', async () => {
+    const body = { error: 'CONFLICT', message: 'A record with the same unique key already exists', timestamp: '2026-10-19T16:57:19Z', path: '/api/v1/packages' };
+    const error = await failWith('/gateway/packages', 409, body);
+
+    expect(error.status).toBe(409);
+    expect(error.code).toBe('CONFLICT');
+    expect(error.message).toBe('No se pudo completar la solicitud'); // genérico: el texto en inglés del servidor no se muestra
+    expect(error.details).toEqual(body);
+  });
+
+  it('un código real del gateway se puede personalizar por registro (CONFLICT)', async () => {
+    setup([provideApiErrorMessages({ CONFLICT: 'Ya existe un registro con ese valor único' })]);
+    const error = await failWith('/gateway/packages', 409, { error: 'CONFLICT', message: 'x' });
+
+    expect(error.message).toBe('Ya existe un registro con ese valor único');
+  });
+
   it('toma `error` como código solo si tiene aspecto de código', async () => {
     expect((await failWith('/gateway/a', 400, { error: 'PACKAGE_INVALID' })).code).toBe('PACKAGE_INVALID');
     expect((await failWith('/gateway/b', 400, { error: 'Bad Request' })).code).toBeNull();
