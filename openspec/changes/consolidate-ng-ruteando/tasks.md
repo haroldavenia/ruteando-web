@@ -32,8 +32,8 @@
 
 - [x] 5.1 Confirmar con `git diff --stat` y revisión manual que nada de `ruteando-ng/` queda sin portar (home trivial, tokens portados, entornos sin valores útiles)
 - [x] 5.2 Ejecutar `git rm -r ruteando-ng` y quitar `!ruteando-ng/src/app/` de `.gitignore`; verificar con `git check-ignore -v app/x.js` (ignorado) y `git check-ignore -v ng-ruteando/src/app/x.ts` (no ignorado)
-- [ ] 5.3 Eliminar las referencias a `ruteando-ng` en `CLAUDE.md` (tabla, comandos, arquitectura, notas) y describir el flujo `npm run build:web` + `npm start`, `WEB_DIST`, el proxy y los entornos; verificar con `grep -n "ruteando-ng" CLAUDE.md` que no queda ninguna referencia
-- [ ] 5.4 Actualizar `.claude/skills/angular-ruteando/` (`SKILL.md`, `references/*`), borrar `references/angular-17-ngmodule.md` y las menciones al proyecto antiguo; verificar con `grep -rn "ruteando-ng" .claude/skills/angular-ruteando` que no quedan
+- [x] 5.3 Eliminar las referencias a `ruteando-ng` en `CLAUDE.md` (tabla, comandos, arquitectura, notas) y describir el flujo `npm run build:web` + `npm start`, `WEB_DIST`, el proxy y los entornos; verificar con `grep -n "ruteando-ng" CLAUDE.md` que no queda ninguna referencia
+- [x] 5.4 Actualizar `.claude/skills/angular-ruteando/` (`SKILL.md`, `references/*`), borrar `references/angular-17-ngmodule.md` y las menciones al proyecto antiguo; verificar con `grep -rn "ruteando-ng" .claude/skills/angular-ruteando` que no quedan
 
 ## 6. Verificación integral
 
