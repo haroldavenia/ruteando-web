@@ -1,6 +1,7 @@
 @use '@angular/material' as mat;
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 $primary: mat.m2-define-palette(mat.$m2-indigo-palette);
 $accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
@@ -14,7 +15,6 @@ $theme: mat.m2-define-light-theme((
   density: 0,
 ));
 
-@include mat.core-theme($theme);
 @include mat.button-theme($theme);
 @include mat.icon-theme($theme);
 @include mat.list-theme($theme);

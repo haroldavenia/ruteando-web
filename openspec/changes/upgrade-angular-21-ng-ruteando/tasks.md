@@ -18,13 +18,13 @@
 
 - [x] 3.1 Ejecutar `npx ng update @angular/core@18 @angular/cli@18` y `npx ng update @angular/material@18`, aceptar las migraciones y revisar el diff completo
 - [x] 3.2 Verificar `npx ng build`, `npm run test:ci` y el arranque SSR con `curl http://localhost:4000/` (el HTML contiene el texto de la página de inicio)
-- [ ] 3.3 Commit del salto con las versiones resultantes, las advertencias nuevas y los tamaños del bundle inicial
+- [x] 3.3 Commit del salto con las versiones resultantes, las advertencias nuevas y los tamaños del bundle inicial
 
 ## 4. Salto a Angular 19
 
-- [ ] 4.1 Ejecutar `ng update` de core/cli y de material a 19, aceptar las migraciones (incluida la de `standalone` por defecto) y revisar el diff
-- [ ] 4.2 Adaptar el SSR si la versión lo exige (`server.ts`, `app.config.server.ts`, `angular.json`) conservando `/` renderizado y el comodín que redirige a `/`; verificar con `curl /` y con una ruta inexistente
-- [ ] 4.3 Verificar `ng build`, `npm run test:ci` y la consola del navegador sin errores de hidratación, y hacer commit del salto
+- [x] 4.1 Ejecutar `ng update` de core/cli y de material a 19, aceptar las migraciones (incluida la de `standalone` por defecto) y revisar el diff
+- [x] 4.2 Adaptar el SSR si la versión lo exige (`server.ts`, `app.config.server.ts`, `angular.json`) conservando `/` renderizado y el comodín que redirige a `/`; verificar con `curl /` y con una ruta inexistente
+- [x] 4.3 Verificar `ng build`, `npm run test:ci` y la consola del navegador sin errores de hidratación, y hacer commit del salto
 
 ## 5. Salto a Angular 20
 

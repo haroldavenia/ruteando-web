@@ -23,7 +23,6 @@ interface NavItem {
 
 @Component({
   selector: 'app-shell',
-  standalone: true,
   imports: [
     RouterLink,
     RouterLinkActive,
