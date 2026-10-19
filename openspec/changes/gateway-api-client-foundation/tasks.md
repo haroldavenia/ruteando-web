@@ -37,8 +37,8 @@
 
 ## 6. Geografía (geo-data-conventions)
 
-- [ ] 6.1 Crear `core/geo` con `LatLng`, `fromGeoJsonPoint`, `toGeoJsonPoint`, `toOlCoordinate` y validación de rango (latitud entre -90 y 90, longitud entre -180 y 180, valores no numéricos o incompletos devuelven ausencia); verificar con pruebas de los escenarios de la spec
-- [ ] 6.2 Implementar `decodePolyline5` (orden lat, lng, sin el reemplazo de barras del legacy, tolerante a cadenas truncadas, vacías o nulas); verificar con una prueba que usa la polilínea real de una ruta de Bogotá (primer punto cerca de 4.61, -74.08) y otra con cadena truncada
+- [x] 6.1 Crear `core/geo` con `LatLng`, `fromGeoJsonPoint`, `toGeoJsonPoint`, `toOlCoordinate` y validación de rango (latitud entre -90 y 90, longitud entre -180 y 180, valores no numéricos o incompletos devuelven ausencia); verificar con pruebas de los escenarios de la spec
+- [x] 6.2 Implementar `decodePolyline5` (orden lat, lng, sin el reemplazo de barras del legacy, tolerante a cadenas truncadas, vacías o nulas); verificar con una prueba que usa la polilínea real de una ruta de Bogotá (primer punto cerca de 4.61, -74.08) y otra con cadena truncada
 
 ## 7. Sesión y acceso (auth-session)
 
