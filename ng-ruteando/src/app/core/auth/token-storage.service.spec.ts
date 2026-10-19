@@ -101,6 +101,26 @@ describe('TokenStorageService', () => {
       expect(localStorage.getItem('hanoitToken')).toBeNull();
     });
 
+    it('expone la caducidad del acceso: 3599 s desde las 10:00:00 es las 10:59:59', () => {
+      jasmine.clock().mockDate(new Date('2026-10-19T10:00:00Z'));
+      const service = newService();
+      service.set({ ...session, expires_in: 3599 });
+
+      expect(service.expiresAt?.toISOString()).toBe('2026-10-19T10:59:59.000Z');
+    });
+
+    it('el refresco con rotación sustituye por completo tokens y caducidad', () => {
+      const service = newService();
+      service.set(session);
+      jasmine.clock().mockDate(new Date('2026-10-19T10:30:00Z'));
+      service.set({ access_token: 'acceso-nuevo', refresh_token: 'refresco-nuevo', expires_in: 3599 });
+
+      expect(service.get()).toBe('acceso-nuevo');
+      expect(service.getRefreshToken()).toBe('refresco-nuevo');
+      expect(service.expiresAt?.toISOString()).toBe('2026-10-19T11:29:59.000Z');
+      expect(storedValues().join('|')).not.toContain('refresco-456');
+    });
+
     it('reiniciar la sesión borra acceso, refresco y caducidad', () => {
       const service = newService();
       service.set(session);

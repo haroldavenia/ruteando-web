@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 
 import { API_BASE_URL } from './api-config';
+import { isApiUrl } from './api-paths';
 import { ApiError, readErrorBody } from './api-error';
 import { API_ERROR_MESSAGES, REQUEST_ERROR_MESSAGES, resolveErrorMessage } from './api-error-messages';
 
@@ -14,7 +15,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const baseUrl = inject(API_BASE_URL);
   const registered = inject(API_ERROR_MESSAGES);
 
-  if (!req.url.startsWith(baseUrl)) {
+  if (!isApiUrl(req.url, baseUrl)) {
     return next(req);
   }
   return next(req).pipe(

@@ -30,10 +30,10 @@
 
 ## 5. Autenticación de peticiones y refresco (api-client-core)
 
-- [ ] 5.1 Ampliar `TokenStorageService` con la caducidad consultable (`expiresAt`, nula sin sesión o tras reiniciar) y con el reemplazo completo en el refresco con rotación; añadir sus pruebas (3599 s a las 10:00:00 da 10:59:59, nula sin sesión, refresco que cambia el token) y verificar `npm run test:ci` en verde
-- [ ] 5.2 Implementar `authInterceptor` con la lista de rutas públicas (`/auth/login`, `/auth/register`, `/auth/refresh`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/verify-email`, `/auth/resend-verification`, `/invitations/accept/*`), solo para `API_BASE_URL`, sin `Bearer ` vacío; verificar con pruebas de petición autenticada, pública, sin token y a otro origen
-- [ ] 5.3 Implementar `refreshInterceptor`: refresco compartido para 401 concurrentes, un solo reintento, sin refrescar en `/auth/login` ni `/auth/refresh`, refresco anticipado cuando faltan menos de 30 s, y en fallo limpiar sesión y redirigir a `/acceso?returnUrl=`; verificar con pruebas de refresco correcto, tres 401 simultáneos con una sola llamada, refresco fallido, segundo 401 y refresco anticipado con reloj simulado
-- [ ] 5.4 Registrar los interceptores en `app.config.ts` en el orden auth, refresh, error con `provideHttpClient(withFetch(), withInterceptors([...]))`; verificar con una prueba de integración con `HttpTestingController` que el orden produce las cabeceras y errores esperados
+- [x] 5.1 Ampliar `TokenStorageService` con la caducidad consultable (`expiresAt`, nula sin sesión o tras reiniciar) y con el reemplazo completo en el refresco con rotación; añadir sus pruebas (3599 s a las 10:00:00 da 10:59:59, nula sin sesión, refresco que cambia el token) y verificar `npm run test:ci` en verde
+- [x] 5.2 Implementar `authInterceptor` con la lista de rutas públicas (`/auth/login`, `/auth/register`, `/auth/refresh`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/verify-email`, `/auth/resend-verification`, `/invitations/accept/*`), solo para `API_BASE_URL`, sin `Bearer ` vacío; verificar con pruebas de petición autenticada, pública, sin token y a otro origen
+- [x] 5.3 Implementar `refreshInterceptor`: refresco compartido para 401 concurrentes, un solo reintento, sin refrescar en `/auth/login` ni `/auth/refresh`, refresco anticipado cuando faltan menos de 30 s, y en fallo limpiar sesión y redirigir a `/acceso?returnUrl=`; verificar con pruebas de refresco correcto, tres 401 simultáneos con una sola llamada, refresco fallido, segundo 401 y refresco anticipado con reloj simulado
+- [x] 5.4 Registrar los interceptores en `app.config.ts` en el orden auth, refresh, error con `provideHttpClient(withFetch(), withInterceptors([...]))`; verificar con una prueba de integración con `HttpTestingController` que el orden produce las cabeceras y errores esperados
 
 ## 6. Geografía (geo-data-conventions)
 
