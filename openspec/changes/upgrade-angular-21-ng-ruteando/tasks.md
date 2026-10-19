@@ -16,8 +16,8 @@
 
 ## 3. Salto a Angular 18
 
-- [ ] 3.1 Ejecutar `npx ng update @angular/core@18 @angular/cli@18` y `npx ng update @angular/material@18`, aceptar las migraciones y revisar el diff completo
-- [ ] 3.2 Verificar `npx ng build`, `npm run test:ci` y el arranque SSR con `curl http://localhost:4000/` (el HTML contiene el texto de la página de inicio)
+- [x] 3.1 Ejecutar `npx ng update @angular/core@18 @angular/cli@18` y `npx ng update @angular/material@18`, aceptar las migraciones y revisar el diff completo
+- [x] 3.2 Verificar `npx ng build`, `npm run test:ci` y el arranque SSR con `curl http://localhost:4000/` (el HTML contiene el texto de la página de inicio)
 - [ ] 3.3 Commit del salto con las versiones resultantes, las advertencias nuevas y los tamaños del bundle inicial
 
 ## 4. Salto a Angular 19
