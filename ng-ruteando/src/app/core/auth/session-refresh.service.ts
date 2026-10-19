@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, finalize, map, shareReplay, throwError } from 'rxjs';
+import { Observable, Subject, finalize, map, shareReplay, tap, throwError } from 'rxjs';
 
 import { API_BASE_URL } from '../api/api-config';
 import { SessionResponse } from './session.model';
@@ -30,6 +30,8 @@ export class SessionRefreshService {
 
   /** Emite cuando la sesión se da por caducada (renovación imposible). */
   readonly expired$ = new Subject<void>();
+  /** Emite cada sesión renovada con éxito, venga del interceptor, del temporizador o del arranque. */
+  readonly refreshed$ = new Subject<SessionResponse>();
 
   refresh(): Observable<SessionResponse> {
     if (this.inFlight) {
@@ -48,6 +50,7 @@ export class SessionRefreshService {
         });
         return session;
       }),
+      tap((session) => this.refreshed$.next(session)),
       finalize(() => (this.inFlight = null)),
       shareReplay({ bufferSize: 1, refCount: false }),
     );

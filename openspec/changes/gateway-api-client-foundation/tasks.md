@@ -42,12 +42,12 @@
 
 ## 7. Sesión y acceso (auth-session)
 
-- [ ] 7.1 Crear `AuthService` con `login` (mapea `accessToken`, `refreshToken` y `expiresIn` del gateway al formato del `TokenStorageService`), `refresh`, `logout` (llama a `POST /auth/logout` y limpia siempre) y `loadProfile` con `GET /auth/me`; verificar con pruebas de credenciales correctas, incorrectas y de fallo del logout
-- [ ] 7.2 Crear `CurrentUser` como signal con `id`, `email`, `role` y `tenantId`, y verificar con una prueba que la contraseña no se guarda en almacenamiento ni en estado
-- [ ] 7.3 Restaurar la sesión al arrancar con un inicializador de aplicación (refresco más perfil) que deja usuario anónimo sin error si no hay token o el refresco falla, y que no actúa en el render de servidor; verificar con pruebas de los tres casos y con `curl` al servidor SSR sin excepciones
-- [ ] 7.4 Implementar `authGuard` y `roleGuard(roles)` con redirección a `/acceso?returnUrl=`, a `/sin-permiso` y desde `/acceso` a inicio si ya hay sesión; verificar con pruebas de anónimo, con sesión, rol permitido, rol no permitido y cambio de sesión con otro rol
-- [ ] 7.5 Añadir las rutas mínimas `acceso` y `sin-permiso` con componentes provisionales (solo un título; las pantallas reales son de la fase de acceso) y el mensaje "Tu sesión ha caducado" mediante `MatSnackBar`; verificar con `ng serve` que los redireccionamientos llegan a esas rutas sin bucles
-- [ ] 7.6 Implementar la inyección del `tenantId` del usuario actual para las peticiones que lo exigen, con error genérico de sesión no válida si no hay usuario; verificar con una prueba de `zones` con y sin usuario
+- [x] 7.1 Crear `AuthService` con `login` (mapea `accessToken`, `refreshToken` y `expiresIn` del gateway al formato del `TokenStorageService`), `refresh`, `logout` (llama a `POST /auth/logout` y limpia siempre) y `loadProfile` con `GET /auth/me`; verificar con pruebas de credenciales correctas, incorrectas y de fallo del logout
+- [x] 7.2 Crear `CurrentUser` como signal con `id`, `email`, `role` y `tenantId`, y verificar con una prueba que la contraseña no se guarda en almacenamiento ni en estado
+- [x] 7.3 Restaurar la sesión al arrancar con un inicializador de aplicación (refresco más perfil) que deja usuario anónimo sin error si no hay token o el refresco falla, y que no actúa en el render de servidor; verificar con pruebas de los tres casos y con `curl` al servidor SSR sin excepciones
+- [x] 7.4 Implementar `authGuard` y `roleGuard(roles)` con redirección a `/acceso?returnUrl=`, a `/sin-permiso` y desde `/acceso` a inicio si ya hay sesión; verificar con pruebas de anónimo, con sesión, rol permitido, rol no permitido y cambio de sesión con otro rol
+- [x] 7.5 Añadir las rutas mínimas `acceso` y `sin-permiso` con componentes provisionales (solo un título; las pantallas reales son de la fase de acceso) y el mensaje "Tu sesión ha caducado" mediante `MatSnackBar`; verificar con `ng serve` que los redireccionamientos llegan a esas rutas sin bucles (resultado: aún no hay ninguna ruta protegida en la app, así que las redirecciones de los guards se verificaron con el `Router` real en `auth.guards.spec.ts`, incluida la ausencia de bucles; `/acceso` y `/sin-permiso` se comprobaron en SSR y en Chrome sin interfaz, sin errores de consola)
+- [ ] 7.6 Implementar la inyección del `tenantId` del usuario actual para las peticiones que lo exigen, con error genérico de sesión no válida si no hay usuario; verificar con una prueba de `zones` con y sin usuario (`TenantContext` y su prueba genérica están hechos; la prueba con `zones` se añade en 8.4 y entonces se marca esta tarea)
 
 ## 8. Modelos y servicios de datos
 
