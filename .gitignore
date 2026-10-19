@@ -7,3 +7,4 @@ cosas
 app
 !ng-ruteando/src/app/
 vendor
+.env
