@@ -1,10 +1,11 @@
 # ng-ruteando
 
-Frontend Angular de Ruteando (standalone, SCSS, Angular Material, SSR). Es el destino de la migración desde la app AngularJS de `master/`.
+Frontend Angular 21 de Ruteando (standalone, SCSS, Angular Material M3, SSR). Es el destino de la migración desde la app AngularJS de `master/`.
 
 ## Requisitos
 
-- Node 22 LTS (`nvm use 22`). Con otras versiones el CLI puede mostrar un aviso de "Unsupported".
+- Node `^20.19 || ^22.12 || >=24` (campo `engines`; `.nvmrc` = 22, usa `nvm use`). Con una versión fuera de rango, `npm install` avisa con `EBADENGINE`.
+- Si `npm install` desde cero falla con `Cannot read properties of null (reading 'edgesOut')`, usa npm 11 (`npx npm@11 install`); `npm ci` funciona con npm 10 y 11.
 - `npm ci` dentro de `ng-ruteando/` para instalar dependencias.
 
 ## Comandos
@@ -15,7 +16,7 @@ Frontend Angular de Ruteando (standalone, SCSS, Angular Material, SSR). Es el de
 | `npm run build` | Compilación de producción en `dist/ng-ruteando/{browser,server}`; falla si se superan los presupuestos de tamaño |
 | `npm test` | Pruebas unitarias con Karma en modo interactivo (abre Chrome y vigila cambios) |
 | `npm run test:ci` | Pruebas unitarias en una sola ejecución con Chrome sin interfaz; termina con código distinto de 0 si alguna falla |
-| `npm run serve:ssr:ng-ruteando` | Servidor Node con renderizado en servidor en `http://localhost:4000/` (hay que compilar antes con `npm run build`) |
+| `npm run serve:ssr:ng-ruteando` | Servidor Node con renderizado en servidor en `http://localhost:4000/` (hay que compilar antes con `npm run build`); acepta peticiones del host `localhost` y los de la variable `NG_ALLOWED_HOSTS` (lista separada por comas) |
 
 Las pruebas necesitan Chrome instalado (o la variable `CHROME_BIN` apuntando a un binario de Chrome/Chromium).
 

@@ -11,6 +11,9 @@
     "serve:ssr:ng-ruteando": "node dist/ng-ruteando/server/server.mjs"
   },
   "private": true,
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+  },
   "dependencies": {
     "@angular/animations": "^21.2.25",
     "@angular/cdk": "21.2.14",

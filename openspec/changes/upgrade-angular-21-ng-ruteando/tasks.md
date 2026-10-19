@@ -48,10 +48,10 @@
 
 ## 8. Versiones soportadas y cierre
 
-- [ ] 8.1 Comprobar con `npm view @angular/core@21 engines` el rango de Node soportado y declararlo en `engines` de `ng-ruteando/package.json` y en `.nvmrc`; verificar con una versión fuera de rango que `npm install` avisa de la incompatibilidad
-- [ ] 8.2 Ejecutar `npm ci`, `npx ng build`, `npm run test:ci` y el servidor SSR con la versión mínima y con la más reciente del rango, sin avisos de "Unsupported" del CLI
-- [ ] 8.3 Actualizar las referencias a Angular 17 de `ng-ruteando` en `CLAUDE.md` y en `.claude/skills/angular-ruteando/` (versión, comandos, tema M3, Node) y verificar con `grep -rn "17\.3" CLAUDE.md .claude/skills/angular-ruteando` que no quedan referencias obsoletas para `ng-ruteando`
-- [ ] 8.4 Ejecutar `openspec validate upgrade-angular-21-ng-ruteando` y verificar que no reporta errores
+- [x] 8.1 Comprobar con `npm view @angular/core@21 engines` el rango de Node soportado y declararlo en `engines` de `ng-ruteando/package.json` y en `.nvmrc`; verificar con una versión fuera de rango que `npm install` avisa de la incompatibilidad
+- [x] 8.2 Ejecutar `npm ci`, `npx ng build`, `npm run test:ci` y el servidor SSR con la versión mínima y con la más reciente del rango, sin avisos de "Unsupported" del CLI
+- [x] 8.3 Actualizar las referencias a Angular 17 de `ng-ruteando` en `CLAUDE.md` y en `.claude/skills/angular-ruteando/` (versión, comandos, tema M3, Node) y verificar con `grep -rn "17\.3" CLAUDE.md .claude/skills/angular-ruteando` que no quedan referencias obsoletas para `ng-ruteando`
+- [x] 8.4 Ejecutar `openspec validate upgrade-angular-21-ng-ruteando` y verificar que no reporta errores
 
 ## Workflow follow-up
 
