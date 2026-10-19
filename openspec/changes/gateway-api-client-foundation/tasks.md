@@ -62,9 +62,9 @@
 
 - [ ] 9.1 Con `.env` apuntando al gateway de pruebas y una cuenta de pruebas (nunca la de administración de producción), arrancar `npm run build:web` y `npm start`, iniciar sesión por la API del servicio, listar `places` y planificar una jornada de prueba; verificar que las respuestas llegan, que la clave no aparece en el navegador (pestaña de red y bundle) y que un 401 forzado se recupera con un solo refresco
 - [ ] 9.2 Forzar un 400, un 401 tras refresco fallido, un 403 con rol `driver` y un 404, y verificar que se muestran los mensajes genéricos y que uno personalizado por petición y otro por código sustituyen al genérico
-- [ ] 9.3 Ejecutar `npm run test:ci` en `ng-ruteando/`, `npm run test:server` en la raíz y `npx ng build`, y verificar código 0, sin avisos de presupuesto y sin errores de SSR en `curl /`
-- [ ] 9.4 Actualizar `CLAUDE.md` y `.claude/skills/angular-ruteando/` (arquitectura `core/api`, `core/auth`, `core/geo`, proxy del gateway, variables, convenciones de coordenadas y de errores) y verificar con `grep -rn "hanoit:9000\|oauth/token" CLAUDE.md .claude/skills` que no quedan indicaciones del backend anterior como vigentes
-- [ ] 9.5 Ejecutar `openspec validate gateway-api-client-foundation` y verificar que no reporta errores
+- [x] 9.3 Ejecutar `npm run test:ci` en `ng-ruteando/`, `npm run test:server` en la raíz y `npx ng build`, y verificar código 0, sin avisos de presupuesto y sin errores de SSR en `curl /`
+- [x] 9.4 Actualizar `CLAUDE.md` y `.claude/skills/angular-ruteando/` (arquitectura `core/api`, `core/auth`, `core/geo`, proxy del gateway, variables, convenciones de coordenadas y de errores) y verificar con `grep -rn "hanoit:9000\|oauth/token" CLAUDE.md .claude/skills` que no quedan indicaciones del backend anterior como vigentes
+- [x] 9.5 Ejecutar `openspec validate gateway-api-client-foundation` y verificar que no reporta errores
 
 ## Workflow follow-up
 
