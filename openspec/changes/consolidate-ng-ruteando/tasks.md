@@ -22,11 +22,11 @@
 
 ## 4. Servidor (frontend-serving)
 
-- [ ] 4.1 En `server/server.js`, añadir la constante de ruta del build (`WEB_DIST` con valor por defecto `ng-ruteando/dist/ng-ruteando/browser`) y servir ese directorio como estático; verificar con `curl -I /` y con un `.js` compilado
-- [ ] 4.2 Mover el registro de las rutas `/api/*` y `/auth/*` antes del estático y del comodín, y limitar el comodín a `GET` con `Accept: text/html` y sin extensión de fichero; verificar `curl /api/me` (401 JSON), `curl /rutas/listado -H 'Accept: text/html'` (200 HTML), `curl /inexistente.js` (404)
-- [ ] 4.3 Añadir la comprobación de arranque de la compilación ausente: log con `npm run build:web` y respuesta 503 en rutas del cliente; verificar arrancando con `WEB_DIST` apuntando a un directorio vacío
-- [ ] 4.4 Añadir el script `build:web` a `package.json` raíz y el script `test:server`; verificar que `npm run build:web` genera el build y termina con código 0
-- [ ] 4.5 Escribir `server/test/serving.test.js` con `node:test` que arranque el servidor con `PORT` libre y un `WEB_DIST` temporal con un `index.html` de ejemplo, y cubra `/`, ruta profunda, `/inexistente.js`, `GET /api/me`, `POST /auth/login` (llega al manejador) y el 503 con directorio vacío; verificar `npm run test:server` en verde sin MongoDB accesible
+- [x] 4.1 En `server/server.js`, añadir la constante de ruta del build (`WEB_DIST` con valor por defecto `ng-ruteando/dist/ng-ruteando/browser`) y servir ese directorio como estático; verificar con `curl -I /` y con un `.js` compilado
+- [x] 4.2 Mover el registro de las rutas `/api/*` y `/auth/*` antes del estático y del comodín, y limitar el comodín a `GET` con `Accept: text/html` y sin extensión de fichero; verificar `curl /api/me` (401 JSON), `curl /rutas/listado -H 'Accept: text/html'` (200 HTML), `curl /inexistente.js` (404)
+- [x] 4.3 Añadir la comprobación de arranque de la compilación ausente: log con `npm run build:web` y respuesta 503 en rutas del cliente; verificar arrancando con `WEB_DIST` apuntando a un directorio vacío
+- [x] 4.4 Añadir el script `build:web` a `package.json` raíz y el script `test:server`; verificar que `npm run build:web` genera el build y termina con código 0
+- [x] 4.5 Escribir `server/test/serving.test.js` con `node:test` que arranque el servidor con `PORT` libre y un `WEB_DIST` temporal con un `index.html` de ejemplo, y cubra `/`, ruta profunda, `/inexistente.js`, `GET /api/me`, `POST /auth/login` (llega al manejador) y el 503 con directorio vacío; verificar `npm run test:server` en verde sin MongoDB accesible
 
 ## 5. Eliminar `ruteando-ng` y documentación (frontend-app-shell)
 

@@ -32,6 +32,8 @@
   "scripts": {
     "prestart": "npm install",
     "start": "node server/server.js",
+    "build:web": "npm --prefix ng-ruteando run build",
+    "test:server": "node --test server/test/*.test.js",
     "pretest": "npm install",
     "test": "karma start karma.conf.js",
     "test-single-run": "karma start karma.conf.js  --single-run",

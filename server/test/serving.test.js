@@ -1,0 +1,154 @@
+// Pruebas de la publicación del frontend: arrancan server/server.js de verdad con un
+// directorio de compilación temporal. No necesitan MongoDB (las rutas probadas no lo usan).
+const { test, before, after } = require('node:test');
+const assert = require('node:assert/strict');
+const { spawn } = require('node:child_process');
+const fs = require('node:fs');
+const net = require('node:net');
+const os = require('node:os');
+const path = require('node:path');
+
+const SERVER = path.join(__dirname, '..', 'server.js');
+const MARKER = '<app-root>ruteando-prueba</app-root>';
+
+let tmpDir;
+let withBuild;
+let withoutBuild;
+
+function freePort() {
+  return new Promise((resolve, reject) => {
+    const probe = net.createServer();
+    probe.listen(0, () => {
+      const { port } = probe.address();
+      probe.close(() => resolve(port));
+    });
+    probe.on('error', reject);
+  });
+}
+
+async function startServer(webDist) {
+  const port = await freePort();
+  const child = spawn(process.execPath, [SERVER], {
+    env: {
+      ...process.env,
+      PORT: String(port),
+      WEB_DIST: webDist,
+      MONGO_URI: 'mongodb://127.0.0.1:1/prueba',
+      NODE_ENV: 'test',
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  let output = '';
+  await new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('El servidor no arrancó:\n' + output)), 15000);
+    const onData = (chunk) => {
+      output += chunk;
+      if (output.includes('listening')) {
+        clearTimeout(timer);
+        resolve();
+      }
+    };
+    child.stdout.on('data', onData);
+    child.stderr.on('data', (chunk) => (output += chunk));
+    child.on('exit', () => reject(new Error('El servidor terminó al arrancar:\n' + output)));
+  });
+  return { base: `http://127.0.0.1:${port}`, child, log: () => output };
+}
+
+before(async () => {
+  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ruteando-web-'));
+  const full = path.join(tmpDir, 'con-build');
+  const empty = path.join(tmpDir, 'sin-build');
+  fs.mkdirSync(full);
+  fs.mkdirSync(empty);
+  fs.writeFileSync(path.join(full, 'index.csr.html'), `<!doctype html><html><body>${MARKER}</body></html>`);
+  fs.writeFileSync(path.join(full, 'app.js'), 'console.log("ok");');
+  withBuild = await startServer(full);
+  withoutBuild = await startServer(empty);
+});
+
+after(() => {
+  for (const s of [withBuild, withoutBuild]) {
+    if (s) s.child.kill();
+  }
+  if (tmpDir) fs.rmSync(tmpDir, { recursive: true, force: true });
+});
+
+test('GET / devuelve la página de la aplicación', async () => {
+  const res = await fetch(withBuild.base + '/');
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('content-type'), /text\/html/);
+  assert.ok((await res.text()).includes(MARKER));
+});
+
+test('un fichero compilado existente se sirve con su tipo', async () => {
+  const res = await fetch(withBuild.base + '/app.js');
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('content-type'), /javascript/);
+});
+
+test('una ruta profunda del cliente devuelve la aplicación', async () => {
+  const res = await fetch(withBuild.base + '/rutas/listado', { headers: { Accept: 'text/html' } });
+  assert.equal(res.status, 200);
+  assert.ok((await res.text()).includes(MARKER));
+});
+
+test('un fichero inexistente con extensión devuelve 404 y no la aplicación', async () => {
+  const res = await fetch(withBuild.base + '/inexistente.js');
+  assert.equal(res.status, 404);
+  assert.ok(!(await res.text()).includes(MARKER));
+});
+
+test('GET /api/me sin cabecera Authorization devuelve 401 en JSON, no HTML', async () => {
+  const res = await fetch(withBuild.base + '/api/me');
+  assert.equal(res.status, 401);
+  assert.match(res.headers.get('content-type'), /application\/json/);
+  assert.ok((await res.json()).message);
+});
+
+test('GET /auth/unlink/:provider lo atiende su manejador (401 en JSON)', async () => {
+  const res = await fetch(withBuild.base + '/auth/unlink/google');
+  assert.equal(res.status, 401);
+  assert.match(res.headers.get('content-type'), /application\/json/);
+});
+
+test('POST /api/account lo atiende su manejador', async () => {
+  const res = await fetch(withBuild.base + '/api/account', { method: 'POST' });
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { status: 'ok' });
+});
+
+test('una ruta de API desconocida devuelve 404 en JSON, no la aplicación', async () => {
+  const res = await fetch(withBuild.base + '/api/no-existe');
+  assert.equal(res.status, 404);
+  assert.match(res.headers.get('content-type'), /application\/json/);
+});
+
+test('POST /auth/login llega a su manejador y no a la aplicación', async () => {
+  // Sin MongoDB el manejador queda esperando; la aplicación habría respondido de inmediato.
+  let body = null;
+  try {
+    const res = await fetch(withBuild.base + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'a@b.c', password: 'x' }),
+      signal: AbortSignal.timeout(1500),
+    });
+    body = await res.text();
+  } catch (error) {
+    assert.equal(error.name, 'TimeoutError');
+  }
+  if (body !== null) {
+    assert.ok(!body.includes(MARKER), 'POST /auth/login no debe devolver la página de la aplicación');
+  }
+});
+
+test('sin compilación: 503 con mensaje claro y aviso en el registro', async () => {
+  const res = await fetch(withoutBuild.base + '/');
+  assert.equal(res.status, 503);
+  assert.match((await res.json()).message, /npm run build:web/);
+  assert.match(withoutBuild.log(), /npm run build:web/);
+
+  const api = await fetch(withoutBuild.base + '/api/me');
+  assert.equal(api.status, 401, 'las rutas de API siguen funcionando sin compilación');
+});

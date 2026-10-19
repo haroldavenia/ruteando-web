@@ -4,6 +4,7 @@
  * License: MIT
  */
 
+var fs = require('fs');
 var path = require('path');
 var qs = require('querystring');
 
@@ -20,6 +21,9 @@ var mongoose = require('mongoose');
 var request = require('request');
 
 var config = require('./config');
+
+// Directorio con la compilación de navegador de ng-ruteando (se puede cambiar con WEB_DIST)
+var WEB_DIST = path.resolve(process.env.WEB_DIST || path.join(__dirname, '..', 'ng-ruteando', 'dist', 'ng-ruteando', 'browser'));
 
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true, lowercase: true },
@@ -77,11 +81,6 @@ if (app.get('env') === 'production') {
     protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
   });
 }
-// Serve Angular build files
-app.use(express.static(path.join(__dirname, '..', 'ruteando-ng', 'dist', 'ruteando-ng')));
-app.get('*', function(req, res) {
-  res.sendFile(path.join(__dirname, '..', 'ruteando-ng', 'dist', 'ruteando-ng', 'index.html'));
-});
 /*
  |--------------------------------------------------------------------------
  | Login Required Middleware
@@ -794,6 +793,46 @@ app.get('/auth/unlink/:provider', ensureAuthenticated, function(req, res) {
     });
   });
 });
+
+/*
+ |--------------------------------------------------------------------------
+ | Serve the Angular build (ng-ruteando)
+ | Va después de todas las rutas /api/* y /auth/*, para que no las tape.
+ |--------------------------------------------------------------------------
+ */
+function webEntryFile() {
+  var candidates = ['index.csr.html', 'index.html'];
+  for (var i = 0; i < candidates.length; i++) {
+    var file = path.join(WEB_DIST, candidates[i]);
+    if (fs.existsSync(file)) {
+      return file;
+    }
+  }
+  return null;
+}
+
+// Una ruta de API o de autenticación desconocida no debe devolver la página de la aplicación
+app.use(['/api', '/auth'], function(req, res) {
+  res.status(404).send({ message: 'Not found' });
+});
+
+app.use(express.static(WEB_DIST, { index: false }));
+
+app.get('*', function(req, res) {
+  // Ficheros inexistentes (con extensión) y peticiones que no piden HTML no son rutas del cliente
+  if (path.extname(req.path) || !req.accepts('html')) {
+    return res.status(404).send({ message: 'Not found' });
+  }
+  var entry = webEntryFile();
+  if (!entry) {
+    return res.status(503).send({ message: 'El frontend no está compilado. Ejecuta "npm run build:web".' });
+  }
+  res.sendFile(entry);
+});
+
+if (!webEntryFile()) {
+  console.log(('Frontend sin compilar en ' + WEB_DIST + '. Ejecuta `npm run build:web`.').yellow);
+}
 
 /*
  |--------------------------------------------------------------------------
