@@ -1,0 +1,16 @@
+{
+  "name": "POST /api/v1/auth/resend-verification",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/auth/resend-verification",
+    "body": {
+      "email": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "message": "Si el email existe, recibirás instrucciones de verificación."
+    }
+  }
+}

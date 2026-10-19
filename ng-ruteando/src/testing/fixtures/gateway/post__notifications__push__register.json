@@ -1,0 +1,18 @@
+{
+  "name": "POST /api/v1/notifications/push/register",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/notifications/push/register",
+    "body": {
+      "deviceToken": "postman-5f6f1325079242c7807dd3c411677b3c",
+      "platform": "web"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "deviceCount": 1,
+      "registered": true
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "GET /api/v1/billing/usage",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/billing/usage",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "plan": "free",
+      "seats": {
+        "limit": 100,
+        "used": 2,
+        "available": 98,
+        "usagePercent": 2
+      },
+      "limits": {
+        "deposits": {
+          "limit": 1,
+          "used": 1,
+          "usagePercent": 100
+        },
+        "drivers": {
+          "limit": 1,
+          "used": 1,
+          "usagePercent": 100
+        },
+        "routesMonthly": {
+          "limit": 5,
+          "used": 0,
+          "usagePercent": 0,
+          "resetsAt": "2026-11-01T00:00:00Z"
+        },
+        "admins": {
+          "limit": 1,
+          "used": 1,
+          "usagePercent": 100
+        },
+        "addressesPerFile": {
+          "limit": 100
+        }
+      },
+      "subscription": {
+        "status": "active",
+        "billingInterval": "monthly",
+        "cancelAtPeriodEnd": false
+      }
+    }
+  }
+}

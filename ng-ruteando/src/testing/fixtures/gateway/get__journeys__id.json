@@ -1,0 +1,60 @@
+{
+  "name": "GET /api/v1/journeys/{id}",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/journeys/{journey_id}",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "5f6f1325079242c7807dd3c4",
+      "tenantId": "6acb99aca2fa810fb39fb599",
+      "createdBy": null,
+      "settingsId": "6acb99b48275a26dbdf8fcf7",
+      "settings": {
+        "id": "6acb99b48275a26dbdf8fcf7",
+        "name": "Postman settings",
+        "routeTopology": "round_trip",
+        "restrictionType": "fixed_routes"
+      },
+      "name": "Postman journey",
+      "status": "planned",
+      "totalServices": null,
+      "totalResources": null,
+      "totalZones": null,
+      "stats": null,
+      "invalidPackageIds": null,
+      "routes": [
+        {
+          "routeIndex": 0,
+          "name": "Postman route",
+          "resourceId": "6acb99b48275a26dbdf8fcf5",
+          "resource": {
+            "id": "6acb99b48275a26dbdf8fcf5",
+            "name": "Postman resource",
+            "plate": null,
+            "resourceTypeName": "Postman van"
+          },
+          "geoJson": null,
+          "startRouteUtc": null,
+          "finishRouteUtc": null,
+          "distanceTraveled": 1000,
+          "duration": 600,
+          "weightUsed": null,
+          "volumeUsed": null,
+          "weightUsagePercent": null,
+          "volumeUsagePercent": null,
+          "fuelCost": null,
+          "avgStayTime": null,
+          "legsCount": null,
+          "badPackageIds": null,
+          "waypoints": []
+        }
+      ],
+      "resourceSummary": null,
+      "createdAt": "2026-10-11T14:14:13.770Z",
+      "updatedAt": "2026-10-11T14:14:13.770Z"
+    }
+  }
+}

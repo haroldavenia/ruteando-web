@@ -1,4 +1,4 @@
-export type UserRole = 'super_admin' | 'tenant_admin' | 'driver';
+export type UserRole = 'super_admin' | 'tenant_admin' | 'agent' | 'driver';
 
 /** Usuario que devuelven `/auth/login`, `/auth/refresh` y `/auth/me`. */
 export interface UserProfile {

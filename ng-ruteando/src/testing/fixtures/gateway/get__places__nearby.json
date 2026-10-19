@@ -1,0 +1,33 @@
+{
+  "name": "GET /api/v1/places/nearby",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/places/nearby?lon=-74.07728&lat=4.60872&maxDistance=5000",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": [
+      {
+        "id": "6acb99b38275a26dbdf8fcf2",
+        "tenantId": "6acb99aca2fa810fb39fb599",
+        "name": "Postman depot",
+        "type": "depot",
+        "address": null,
+        "location": {
+          "coordinates": [
+            -74.07728,
+            4.60872
+          ],
+          "type": "Point"
+        },
+        "phoneNumber": null,
+        "contactName": null,
+        "zoneId": null,
+        "active": true,
+        "createdAt": "2026-10-11T14:14:11.846Z",
+        "updatedAt": "2026-10-11T14:14:11.925Z"
+      }
+    ]
+  }
+}

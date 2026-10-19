@@ -1,0 +1,158 @@
+{
+  "name": "POST /api/v1/routing/matrix",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/routing/matrix",
+    "body": {
+      "locations": [
+        "4.78494,-74.1259",
+        "4.60872,-74.07728",
+        "4.72218,-74.18812"
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "code": "Ok",
+      "message": null,
+      "success": true,
+      "sourceCount": 3,
+      "destinationCount": 3,
+      "destinations": [
+        {
+          "hint": "cREJgP___38ZAAAAHgAAAAkAAAAzAAAAR1IJQgCItECW9URBeB-HQhkAAAAeAAAACQAAADMAAAB6AgAAh-6U-0sCSQC07ZT7LANJAAIAPw6CvDRp",
+          "distance": 34.16093223,
+          "name": "Vía Cota - Siberia",
+          "location": [
+            -74.125689,
+            4.784715
+          ],
+          "nodes": null,
+          "latitude": 4.784715,
+          "longitude": -74.125689,
+          "waypoint_index": null,
+          "trips_index": null,
+          "matchings_index": null,
+          "alternatives_count": null
+        },
+        {
+          "hint": "EhQVgGwUFYAZAAAAaAAAAAAAAAAAAAAA-qmNQYNvkEIAAAAAAAAAABkAAABoAAAAAAAAAAAAAAB6AgAA7KuV-z5TRgCgq5X70FJGAAAAzweCvDRp",
+          "distance": 14.80121991,
+          "name": "Calle 18A",
+          "location": [
+            -74.077204,
+            4.60883
+          ],
+          "nodes": null,
+          "latitude": 4.60883,
+          "longitude": -74.077204,
+          "waypoint_index": null,
+          "trips_index": null,
+          "matchings_index": null,
+          "alternatives_count": null
+        },
+        {
+          "hint": "w9wIgMXcCIAAAAAAMAAAAAAAAACNAQAAAAAAAEPyn0EAAAAAxpYlQwAAAAAwAAAAAAAAAI0BAAB6AgAAN-qT-94SSACo-pP7BA5IAAAAjxOCvDRp",
+          "distance": 486.7407068,
+          "name": "",
+          "location": [
+            -74.192329,
+            4.723422
+          ],
+          "nodes": null,
+          "latitude": 4.723422,
+          "longitude": -74.192329,
+          "waypoint_index": null,
+          "trips_index": null,
+          "matchings_index": null,
+          "alternatives_count": null
+        }
+      ],
+      "sources": [
+        {
+          "hint": "cREJgP___38ZAAAAHgAAAAkAAAAzAAAAR1IJQgCItECW9URBeB-HQhkAAAAeAAAACQAAADMAAAB6AgAAh-6U-0sCSQC07ZT7LANJAAIAPw6CvDRp",
+          "distance": 34.16093223,
+          "name": "Vía Cota - Siberia",
+          "location": [
+            -74.125689,
+            4.784715
+          ],
+          "nodes": null,
+          "latitude": 4.784715,
+          "longitude": -74.125689,
+          "waypoint_index": null,
+          "trips_index": null,
+          "matchings_index": null,
+          "alternatives_count": null
+        },
+        {
+          "hint": "EhQVgGwUFYAZAAAAaAAAAAAAAAAAAAAA-qmNQYNvkEIAAAAAAAAAABkAAABoAAAAAAAAAAAAAAB6AgAA7KuV-z5TRgCgq5X70FJGAAAAzweCvDRp",
+          "distance": 14.80121991,
+          "name": "Calle 18A",
+          "location": [
+            -74.077204,
+            4.60883
+          ],
+          "nodes": null,
+          "latitude": 4.60883,
+          "longitude": -74.077204,
+          "waypoint_index": null,
+          "trips_index": null,
+          "matchings_index": null,
+          "alternatives_count": null
+        },
+        {
+          "hint": "w9wIgMXcCIAAAAAAMAAAAAAAAACNAQAAAAAAAEPyn0EAAAAAxpYlQwAAAAAwAAAAAAAAAI0BAAB6AgAAN-qT-94SSACo-pP7BA5IAAAAjxOCvDRp",
+          "distance": 486.7407068,
+          "name": "",
+          "location": [
+            -74.192329,
+            4.723422
+          ],
+          "nodes": null,
+          "latitude": 4.723422,
+          "longitude": -74.192329,
+          "waypoint_index": null,
+          "trips_index": null,
+          "matchings_index": null,
+          "alternatives_count": null
+        }
+      ],
+      "durations": [
+        [
+          0,
+          1964.6,
+          931.4
+        ],
+        [
+          2373.1,
+          0,
+          2081.1
+        ],
+        [
+          1423.2,
+          2153.8,
+          0
+        ]
+      ],
+      "distances": [
+        [
+          0,
+          27195.8,
+          10565.6
+        ],
+        [
+          33563,
+          0,
+          30316.9
+        ],
+        [
+          15102.7,
+          28295.8,
+          0
+        ]
+      ]
+    }
+  }
+}

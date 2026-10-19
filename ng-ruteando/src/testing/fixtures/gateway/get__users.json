@@ -1,0 +1,51 @@
+{
+  "name": "GET /api/v1/users",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/users?page=0&size=20",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "page": 0,
+      "size": 20,
+      "content": [
+        {
+          "id": "6acb99b1a2fa810fb39fb5a9",
+          "email": "driver-postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "firstName": "Postman",
+          "lastName": "Driver",
+          "phone": null,
+          "role": "driver",
+          "tenantId": "6acb99aca2fa810fb39fb599",
+          "createdAt": "2026-10-11T14:14:09.317Z",
+          "active": true,
+          "identifierType": null,
+          "identifierValue": null,
+          "avatar": null,
+          "lastLoginAt": "2026-10-11T14:14:09.613Z",
+          "updatedAt": "2026-10-11T14:14:09.613Z"
+        },
+        {
+          "id": "6acb99aca2fa810fb39fb59a",
+          "email": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "firstName": "Postman",
+          "lastName": "Fixture",
+          "phone": null,
+          "role": "tenant_admin",
+          "tenantId": "6acb99aca2fa810fb39fb599",
+          "createdAt": "2026-10-11T14:14:04.598Z",
+          "active": true,
+          "identifierType": null,
+          "identifierValue": null,
+          "avatar": null,
+          "lastLoginAt": "2026-10-11T14:14:06.735Z",
+          "updatedAt": "2026-10-11T14:14:08.646Z"
+        }
+      ],
+      "totalElements": 2,
+      "totalPages": 1
+    }
+  }
+}

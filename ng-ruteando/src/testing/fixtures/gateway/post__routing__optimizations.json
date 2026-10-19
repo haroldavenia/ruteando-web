@@ -1,0 +1,643 @@
+{
+  "name": "POST /api/v1/routing/optimizations",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/routing/optimizations",
+    "body": {
+      "nameJourney": "prueba-postman",
+      "cargoInput": [
+        {
+          "id": "1",
+          "latitude": 4.60872,
+          "longitude": -74.07728,
+          "weight": 1,
+          "volume": 1,
+          "unloadingTime": 0,
+          "startTimeOfDelivery": "08:00:00",
+          "endTimeOfDelivery": "18:00:00"
+        },
+        {
+          "id": "2",
+          "latitude": 4.72218,
+          "longitude": -74.18812,
+          "weight": 1,
+          "volume": 1,
+          "unloadingTime": 0,
+          "startTimeOfDelivery": "08:00:00",
+          "endTimeOfDelivery": "18:00:00"
+        }
+      ],
+      "configuration": {
+        "depot": {
+          "latitude": 4.78494,
+          "longitude": -74.1259
+        },
+        "startTime": "08:00:00",
+        "maxiumTime": 36000,
+        "backToDepot": true,
+        "evaluateWeight": false,
+        "evaluateVolume": false
+      },
+      "numberOfRoutes": 1,
+      "transport": [
+        {
+          "id": 1,
+          "initialLatitude": 4.78494,
+          "initialLongitude": -74.1259,
+          "shiftStartTime": "08:00:00",
+          "shiftEndTime": "18:00:00"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "cargo": [
+        {
+          "id": "2",
+          "latitude": 4.72218,
+          "longitude": -74.18812,
+          "weight": 1,
+          "volume": 1,
+          "unloadingTime": 0,
+          "status": null,
+          "status_message": null,
+          "startTimeOfDelivery": "08:00:00",
+          "endTimeOfDelivery": "18:00:00",
+          "city": null,
+          "receiver": null,
+          "sender": null,
+          "zone": null,
+          "guideNumber": null,
+          "pieceNumber": null
+        },
+        {
+          "id": "1",
+          "latitude": 4.60872,
+          "longitude": -74.07728,
+          "weight": 1,
+          "volume": 1,
+          "unloadingTime": 0,
+          "status": null,
+          "status_message": null,
+          "startTimeOfDelivery": "08:00:00",
+          "endTimeOfDelivery": "18:00:00",
+          "city": null,
+          "receiver": null,
+          "sender": null,
+          "zone": null,
+          "guideNumber": null,
+          "pieceNumber": null
+        }
+      ],
+      "duration": 5533,
+      "routeInstructions": [
+        [
+          11,
+          "Vía Cota - Siberia",
+          4582,
+          0,
+          410,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Vía Siberia - Funza",
+          49,
+          1,
+          2,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Vía Siberia - Funza",
+          2245,
+          2,
+          169,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Vía Siberia - Funza",
+          3416,
+          3,
+          283,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Vía Funza - Siberia",
+          86,
+          4,
+          20,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "",
+          185,
+          5,
+          71,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          9,
+          "",
+          0,
+          6,
+          0,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          11,
+          "",
+          185,
+          7,
+          46,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Vía Funza - Siberia",
+          3192,
+          8,
+          305,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Vía Funza - Siberia",
+          2376,
+          9,
+          250,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "",
+          48,
+          10,
+          5,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "",
+          220,
+          11,
+          19,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "",
+          144,
+          12,
+          13,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "Autopista Medellín - Vía Rosal Bogotá",
+          4293,
+          13,
+          326,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "Avenida Calle 80",
+          3249,
+          14,
+          161,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Calle 76A",
+          819,
+          15,
+          75,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          8,
+          "Avenida Carrera 86",
+          508,
+          16,
+          34,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Avenida Carrera 86",
+          2762,
+          17,
+          194,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Diagonal 25G",
+          52,
+          18,
+          4,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "",
+          224,
+          19,
+          27,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Calle 26",
+          462,
+          20,
+          69,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "",
+          129,
+          21,
+          16,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Calle 26",
+          5457,
+          22,
+          324,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Carrera 40",
+          768,
+          23,
+          54,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Avenida Carrera 40",
+          565,
+          24,
+          43,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "Avenida Calle 20",
+          123,
+          25,
+          7,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Transversal 39 Bis A",
+          213,
+          26,
+          11,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "Avenida Calle 19",
+          2439,
+          27,
+          147,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Carrera 15 Bis",
+          41,
+          28,
+          11,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Calle 18A",
+          89,
+          29,
+          40,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Calle 18A",
+          72,
+          30,
+          10,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          9,
+          "Calle 18A",
+          0,
+          31,
+          0,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          11,
+          "Calle 18A",
+          17,
+          32,
+          4,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Carrera 15 Bis",
+          41,
+          33,
+          7,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Calle 19",
+          551,
+          34,
+          56,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Avenida Calle 19",
+          104,
+          35,
+          23,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Carrera 10",
+          697,
+          36,
+          46,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "",
+          204,
+          37,
+          24,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Calle 26",
+          2740,
+          38,
+          176,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Avenida Calle 26",
+          2700,
+          39,
+          180,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Carrera 66A",
+          396,
+          40,
+          43,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Calle 44",
+          418,
+          41,
+          39,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Carrera 68",
+          4119,
+          42,
+          272,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "",
+          169,
+          43,
+          15,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "Avenida Calle 80",
+          4571,
+          44,
+          230,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Avenida Calle 80",
+          2760,
+          45,
+          144,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "Autopista Medellín",
+          4481,
+          46,
+          262,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "",
+          296,
+          47,
+          26,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "",
+          39,
+          48,
+          4,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Vía Sibería - Cota",
+          6887,
+          49,
+          627,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Carrera 5",
+          16,
+          50,
+          9,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Vía Cota - Siberia",
+          2350,
+          51,
+          176,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          15,
+          "Vía Cota - Siberia",
+          0,
+          52,
+          0,
+          "0m",
+          "right",
+          "driving"
+        ]
+      ],
+      "route_geometry": "ooe\\ptlcMFF^d@Xb@FJDJJRRj@Lj@Jh@Fh@Dl@Df@Db@Fb@F^Ld@BLV~@BDt@xCDDpC|JdArD`B`GTx@Pn@Lj@Z~@Nl@Pn@X`Av@nC^pAnAhERr@TdARv@Tr@JVR^|@lAz@dAvA~A|AfB`CrCPPbBfBbAlArBbCh@d@z@r@^\\|BvBnAfAxArAt@l@v@r@v@n@PPl@`@r@d@z@p@b@Z|@n@RLPLb@Z`BjADBh@^p@f@t@d@l@b@`@X\\Tl@b@ZT\\Vp@h@x@j@h@^`@ZtA~@f@Z|@j@z@h@x@f@l@`@l@`@n@^x@h@~@j@~@n@r@b@z@j@\\Tb@XdBbAf@^dAn@ZRZR~@j@lAv@bAp@l@^~@j@pAx@TNdAn@r@b@XNd@Zd@V`@^NLFNFN?DDNFJLFLDNAD?R@RDRD^Pj@^hBfAfAt@RNzBxA~BvA|@j@bAn@j@\\nBrAx@f@tAv@hAr@nAz@~A`AxDfCFBFDJJ|AhAt@v@^d@Vd@Xl@Rh@\\x@l@bBbAfCvBzDtBhDxAbCxCfFh@z@zBtDvA`Cv@xAL`@L^P\\JPv@lAHLJPr@dANTtAvAJLv@hA|AbCzAdCR\\hBtCjB|C`A~AhA~AhGxGVVdCjCdBfBfHtHJLrE~ElAlAJJx@~@`AfAnBzBjBrBhBrBjArAJHpCtCLLzBxB~DxDjAjAfBhBNNnAxAtChC\\ZnEjE`A`AnBlBfAdATRp@r@LNvAxA\\^PGUSKM}@}@BEd@c@PIn@OPILMZId@IVOTUVYWXUTWNe@H[HMLQHo@NQHe@b@CD[]aA_AeBeBiBgBcAcAcQ{PoAoAyDwDoCiCmCqCoBwB_EsEeBoB]a@i@m@_@a@_@c@IIiBoBsMqNa@c@aBaBOMo@o@m@o@kBqBY[IIaDmDiAyAy@uAe@u@wDiGS]U_@_BkCaCuDs@{@]c@KSs@gAKQKMu@oAKOS]Qa@Ia@w@wAwBiDQWkAoBm@cAqDeGeAeBoBeDqBiDaAcCo@_B_@aACEa@}@o@uAkAqAgBsAaHoEYQwBsAwNaJIESMuA_Am@e@qC_BmBiAa@UKIKGGGGIC]?UBc@LOjCeEVa@t@iAj@_Aj@_Ax@wAZi@`@o@n@_An@}@vB}Ct@gADGxBaDhBmCdBeCn@_Al@}@n@}@n@{@r@}@t@{@x@s@t@u@`@a@xAqAn@e@zAkAbAm@p@YzBwAPKXQXQTSX[bAaA~AcBlAqArDcDNM`Aw@bEeDVS|@u@zL}J~CkCn@g@pA_A@?rA{@b@[n@c@LItAw@JIl@a@j@a@h@e@v@y@~@gAb@e@bDyCzL{JjFmEzCcCh@e@DC~HoG|K_J`Au@x@s@t@i@ZUDE`Au@\\W\\YHGp@m@d@_@p@k@TSDCDEVSBC\\Y`HsFnC}BzAoA`@YhByAv@q@nA_ALKv@g@nAw@f@a@RMr@e@j@]DCPMjAs@VQf@[d@YlBmAhFcDDCb@Yv@i@HGhAu@LIh@]r@c@fAq@TOJI\\QPMb@YrA{@~@m@zBuAdBcATMt@c@n@e@jBwAl@g@f@a@DEv@s@JINONMx@u@ZYRUzDcELO@AZ[jEsEFILMx@{@f@i@jAkAZ_@FILOr@}@d@q@b@q@d@{@l@oALOVWNOFGv@y@~@aA`@a@VYRSJMZYHKVWp@s@VYrAuANOXYZ[v@y@LMPQd@g@FEXYPSRSbAcAn@s@PQp@s@lAqAFGfBtAZTx@h@TN`@VHDPJLH`Aj@HFt@b@`CtAl@\\fAl@DBTL^RTLD@THx@TLBZDRDZL^PVLHDJDNHLF@?^TJDHFLLXTLJJJb@R`@R`@Pv@ZlBr@n@Vr@^zAr@tAn@fAb@j@Vb@Rd@N`@Nh@Pv@Tx@Vl@RVJNF^NDDDBHHRX@@X^JJZ\\l@n@l@d@x@n@TPXPb@\\r@j@DDXX`@\\n@n@t@p@\\ZPNp@n@x@t@VTVVr@p@b@b@f@f@JHHHpAnALLfC|BjAjA|JfJXV^^PN^\\\\^vBbCvBdCHJbJhJn@l@FRBP?PAHCHGJGDG@GBI@I@IAMCKGKKg@q@u@cAISCO?M@G@E@IDIDGFGNMLMvAy@bBaA`Ai@HEhBeA`B_AzBoAHERMnAq@p@e@RQZWZ_@NM`@[nBiAdEcCtAy@dBaArEeCtBkA`By@nAq@pCaBrAw@VOv@e@x@g@t@c@~FcDVMz@i@nAq@n@]l@YrAw@`@UlAs@^Sd@W~Aq@fCuApC}ADCf@Wj@U|@]bAm@r@g@h@a@tBmAh@Y`@UtBkAhAm@tDsBdDeBjAw@rC}AXO`DiBhCwAlCyArAu@`BaAvAu@zCaB|CiBfAq@r@c@tBiArC_B|C_BlDkBtCuAv@a@nAs@fBaApBiAdCuAhAo@`B_AxBwAfEgC|A}@fEwB~Aw@v@c@fDaBtE{Bz@i@NMr@k@t@s@PSDEJOh@o@Xe@LWLSTe@Vo@Ri@JURg@b@cBPm@@EDQVFxAX\\HHDHDFJpAzBBDJPFJp@hAv@tAhDxFr@jADFBDHLBFt@lAnBdDXd@JNHJ`@b@FJFHT^LXBBHNHJHLVPFDLHPLJFNFJFHBH@FB^FTDVB`BFfDRL?J@TAPAPCNGXOJIFIBCDEJSJUVu@J_@HsBBU@OFs@@MDABAD?D?vAFX@TAV?ZAXC^E\\Ix@STI^MNIJG^SLINKHIHGHIDGJKxGiHnCyCLM|CgDn@o@LMJKNKh@_@NKDEHGJKlGoHp@u@v@}@h@m@b@k@NS~@kADENSPUFGf@o@b@k@X_@TYz@gAFIHKpBiCPWNQBEBCbC_DdFuGtAgBV[FIlA_BbAsAd@s@x@oAFIBE|DuGjAqBNJl@^zAeCiAhBQZm@_@OKxAaCDIDGFIHMDIDGn@_A~@uAJOLQr@eAt@gAFKDINSl@}@DEDGDIHMFIDGj@y@PWPWLS[GQZGJIJm@z@EFGFIEc@U}BiAmBaAiB}@MIECQIMGiAk@o@_@ICIEAAKGMGgCkAEAKGMGi@SwB}@SIAAUMQOCAAAaAm@IEKQEI?AAGAM@I@G@EDEFG@ADCDCDAF?F@DDDFFHBJ?FAHSf@qAxA{@d@IDIDaA^_Bn@SH[Le@Tm@Zc@Ts@`@OHMJQLu@j@aAt@YRs@b@aCxAcAl@sDvBm@^s@`@WPw@f@eBbAQH[R[PGDEBSLkAp@cAl@wBtAk@^aA|@KJc@`@{@r@_GtD{BtAmCzA}DtBMHwAz@_CtAwBxAkBlAcBdAs@^c@To@V]Jg@NQF[JSJCBMHWPKHQNGHIDUPs@b@uDzBMHWRWTWV[^ORKNA@OTMVCDKVCDUh@Of@kD|La@rA]nAEPCHCJIXa@vAs@hCELGROZ]n@]h@UZUZUXQNa@^MJo@d@QNwBlAg@Xs@^sBjAaCpAsDrB_B|@cAh@_DdBsBjAm@\\gAn@eAj@yBlA}DxB_CnAcGfD]R[NkAn@iBdAqEdCoGlD}A|@k@XMBG@E?ICGCGGKKQQIIOK_BaA{A_AUO{CkBoAu@MKOIEFCFCBGJwCtEWd@MPKNEFq@hAMRkBxCKJEDI@G?K@IIc@[YQi@_@}@m@}@o@s@i@QQQSUSUWMM[YQQQMmA}@sA_Aa@YYQa@SUMOI]Sa@WyCsByDoCgAw@u@g@u@k@{@s@s@k@s@k@qBwAc@[kCmBSM[UYW][cAgAUS]]WWYSa@YWO]Qg@[eBaAgCuA_BaA[Om@a@_@YaD{BQM_@]IGcCoBqDeCMIa@WYQGGQKKGWMYO}As@e@U]QsAm@aCeAcAg@yBgASKw@_@eAi@{@a@eB}@k@Uy@_@g@SUMQIOGcAi@]QkAm@kAk@i@[[S_@WQOQQCCIKMO]c@sBmCQWEGeAyAgBeCaBcC_EmFaBwBmA{A{BwCC]AO@MDOFKJMNIRELAJBJBLHHNBP?JCLENEPMJcD|B_BlAq@b@uBvAwG|EiBpAaChBMJ_@V_HdFkHlF{AhAo@b@UNsCvBeAx@yBpB}@|@}@bAUXQVS\\MTQXkD~GQ^o@fBUp@IVIVGPQ`@MZ]t@]t@c@bAQ`@u@bBKVKVEJIRm@rAk@pACHKTaAxBk@jAYl@{@|AKPYd@QXMP_@l@MPa@l@a@h@KPMPa@f@[b@q@~@m@v@sBlCyAlBy@dAm@x@SXY`@OVMROZWd@Ub@a@~@O\\Qf@CHe@xA[|@m@fBM\\IRSl@q@nBu@zByAjEq@hBa@fAy@xBYp@IRUd@}@dB]j@[b@e@n@e@j@OPg@j@o@n@w@x@IJi@h@MN{@|@m@n@uBxBCBaCdCcBdBu@t@g@d@a@\\KH[ZQPeA|@OLu@l@o@b@{@j@u@b@KFSLu@d@gF~CuAz@e@ZMHe@Xa@VoBnAs@b@UNIDg@\\eF`DqCjBkAt@YP{BvAgAp@aAl@aAj@sA|@u@f@OJi@^{ChCk@b@]X}ChCm@f@oAbAyFpE[TYTEBIFKDKDMBWB]Dc@B]BM@MBKDMDKHIHILELIPIXELO\\KTGNQVGHGHOL]Zo@h@{CfCcAz@[XMLIHIJq@bAu@~@WZWZm@f@i@b@sBbBUPe@^gBtAuC~BWRaBpAgDnCUPGDgBxA[VMHEDA@wAhA[VYTeA|@yGhF}@x@qC`CIDcAz@_At@a@Zm@d@KJoCxB_At@mB~Aa@ZOJWRw@p@kBzAiDlCGFiCvBkB~AQL{DzC]Vq@j@uHhGs@f@m@j@eDpCaAv@uBbBa@^a@\\_@\\_@\\_@^_@^_@^_@^WZED]`@_@`@[b@]b@kAbB]f@oAjBs@bAgBhCKL_CjDU\\{@lAiCtDWXqChE[b@[^kAxAeE`GGJUZQFSB_@@c@QaCwAaCwAiBiAe@YsBqA]SkAu@}DeCoBsA{CkBiDuB_Am@cAo@g@[k@_@yA_A_Ao@a@WmA{@i@_@eD}BqA_Ak@a@e@_@kCkBs@k@CAYU{ByAIEk@_@i@a@k@c@YS_@W_@UuBgBm@k@cAaA}BqBkBaB}@w@qBoBm@i@m@q@y@cAKKW[s@y@m@s@OOGIq@y@kC{CSUEGSUeBkBeAwAc@o@Wo@Sq@{@_DEOoBaHeAsDCIw@uCm@wBQi@sA}EIWu@mCOg@i@kBc@aBEMu@kCGU}@_DAC]kAKe@Ke@Gm@Gq@G{@Io@EUESKe@Um@O]IOYa@a@g@o@s@UYg@k@c@i@SYQYiCcFACIOIMg@cAi@}@}GmLqBkD_A{AuA}AoBqBkBoBaAw@OOk@_@kAy@gEuC{@m@wA_Ai@Y_@O{@a@UGaA_@e@Qc@Qo@U_@MYQGGUUY_@GKq@}@m@{@OSs@}@]a@]_@_@]iCsBiF_E_Aq@UQ?BFHFD`CjB^b@r@h@rB|APLNLp@j@n@h@JL^`@Z`@f@n@z@lAl@z@`@j@VVPPLJJFZJPJb@Lf@RPFNFd@NRHj@Rb@RZN\\RLFvA~@pA|@^Tb@Z\\V~@l@h@^^Vd@ZZTNJRN^\\x@x@v@x@x@x@Z^d@f@h@j@d@l@PVJLXb@^j@d@x@j@`Ah@z@rBpDhD`Gh@|@\\n@|AzCj@hAPVFJJNb@h@f@j@FFLNh@l@",
+      "route_name": [
+        "Vía Cota - Siberia, Vía Siberia - Funza"
+      ],
+      "route_summary": {
+        "endPoint": "Vía Cota - Siberia",
+        "startPoint": "Vía Cota - Siberia",
+        "totalDistance": 72568.8,
+        "totalTime": 5533
+      },
+      "status": "200",
+      "status_message": "Found route between points",
+      "transport": null,
+      "via_points": null
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "PUT /api/v1/driver/packages/report",
+  "request": {
+    "method": "PUT",
+    "url": "/api/v1/driver/packages/report",
+    "body": {
+      "id": "bc815e19789947b7a1b383d8",
+      "status": "attended",
+      "observation": "Fixture delivery completed"
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "id": "bc815e19789947b7a1b383d8",
+      "name": "Postman legacy package",
+      "longitude": null,
+      "latitude": null,
+      "address": null,
+      "standarizedAddress": null,
+      "score": null,
+      "city": null,
+      "country": null,
+      "statusGeocoding": null,
+      "measure": null,
+      "weight": null,
+      "volume": null,
+      "pieceNumber": null,
+      "receiver": null,
+      "sender": null,
+      "timeState": null,
+      "distanceArrival": null,
+      "timeArrival": null,
+      "guideNumber": null,
+      "visitOrder": null,
+      "zone": null,
+      "category": null,
+      "postalCode": null,
+      "observation": "Fixture delivery completed",
+      "status": "attended"
+    }
+  }
+}

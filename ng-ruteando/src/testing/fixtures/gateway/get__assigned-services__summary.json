@@ -1,0 +1,12 @@
+{
+  "name": "GET /api/v1/assigned-services/summary",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/assigned-services/summary",
+    "body": null
+  },
+  "response": {
+    "status": 202,
+    "body": []
+  }
+}

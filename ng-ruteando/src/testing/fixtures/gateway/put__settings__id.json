@@ -1,0 +1,77 @@
+{
+  "name": "PUT /api/v1/settings/{id}",
+  "request": {
+    "method": "PUT",
+    "url": "/api/v1/settings/{settings_id}",
+    "body": {
+      "description": "Postman settings",
+      "routeTopology": "round_trip",
+      "restrictionType": "fixed_routes",
+      "fixedRoutes": 1,
+      "resourceIds": [
+        "6acb99b48275a26dbdf8fcf5"
+      ],
+      "placeStartId": "6acb99b38275a26dbdf8fcf2"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99b48275a26dbdf8fcf7",
+      "tenantId": "6acb99aca2fa810fb39fb599",
+      "description": "Postman settings",
+      "routeTopology": "round_trip",
+      "restrictionType": "fixed_routes",
+      "placeStartId": "6acb99b38275a26dbdf8fcf2",
+      "placeEndId": "6acb99b38275a26dbdf8fcf2",
+      "evaluateWeight": null,
+      "evaluateVolume": null,
+      "evaluateItineraryZone": null,
+      "fixedRoutes": 1,
+      "lengthOfStay": null,
+      "typeLengthOfStay": null,
+      "shiftStartUtc": null,
+      "shiftDurationSec": null,
+      "breakDurationSec": null,
+      "resourceIds": [
+        "6acb99b48275a26dbdf8fcf5"
+      ],
+      "active": true,
+      "createdAt": "2026-10-11T14:14:12.299Z",
+      "updatedAt": "2026-10-11T14:14:12.381Z",
+      "createdBy": "6acb99aca2fa810fb39fb59a",
+      "globalShiftActive": false,
+      "globalBreakActive": false,
+      "placeStart": {
+        "id": "6acb99b38275a26dbdf8fcf2",
+        "name": "Postman depot",
+        "location": {
+          "coordinates": [
+            -74.07728,
+            4.60872
+          ],
+          "type": "Point"
+        }
+      },
+      "placeEnd": {
+        "id": "6acb99b38275a26dbdf8fcf2",
+        "name": "Postman depot",
+        "location": {
+          "coordinates": [
+            -74.07728,
+            4.60872
+          ],
+          "type": "Point"
+        }
+      },
+      "resources": [
+        {
+          "id": "6acb99b48275a26dbdf8fcf5",
+          "name": "Postman resource",
+          "plate": null,
+          "resourceTypeName": "Postman van"
+        }
+      ]
+    }
+  }
+}

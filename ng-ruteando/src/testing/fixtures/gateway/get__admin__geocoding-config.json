@@ -1,0 +1,23 @@
+{
+  "name": "GET /api/v1/admin/geocoding-config",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/admin/geocoding-config",
+    "body": null
+  },
+  "response": {
+    "status": 202,
+    "body": [
+      {
+        "id": 1,
+        "geocodingConfiguration": {
+          "geocodingStrategyClassName": "com.hanoit.service.geocoding.strategy.v2.spi.provider.BatchSecuentialMultiThreadStrategy",
+          "arcGisMaxAddressesPerRequest": 1000,
+          "arcGisMaxThreads": 4,
+          "geocentrixMaxAddressesPerRequest": 1000,
+          "geocentrixMaxThreads": 4
+        }
+      }
+    ]
+  }
+}

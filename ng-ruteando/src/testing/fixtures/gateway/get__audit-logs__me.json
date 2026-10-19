@@ -1,0 +1,304 @@
+{
+  "name": "GET /api/v1/audit-logs/me",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/audit-logs/me",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "size": 20,
+      "number": 0,
+      "content": [
+        {
+          "id": "6acb99b6a2fa810fb39fb5c5",
+          "action": "journey.delete",
+          "entityType": "journey",
+          "entityId": "5f6f1325079242c7807dd3c4",
+          "description": "Journey eliminado: name=Postman journey",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:14.039Z"
+        },
+        {
+          "id": "6acb99b5a2fa810fb39fb5c4",
+          "action": "resource.assign.driver",
+          "entityType": "resource",
+          "entityId": "6acb99b48275a26dbdf8fcf5",
+          "description": "Driver 6acb99b1a2fa810fb39fb5a9 asignado al recurso 6acb99b48275a26dbdf8fcf5",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": {
+            "before": {
+              "driverId": ""
+            },
+            "after": {
+              "driverId": "6acb99b1a2fa810fb39fb5a9"
+            }
+          },
+          "createdAt": "2026-10-11T14:14:13.818Z"
+        },
+        {
+          "id": "6acb99b4a2fa810fb39fb5c3",
+          "action": "package.status.change",
+          "entityType": "package",
+          "entityId": "6acb99b48275a26dbdf8fcf6",
+          "description": "Status de paquete cambiado: pending -> attended",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": {
+            "before": {
+              "status": "pending"
+            },
+            "after": {
+              "status": "attended"
+            }
+          },
+          "createdAt": "2026-10-11T14:14:12.470Z"
+        },
+        {
+          "id": "6acb99b4a2fa810fb39fb5c2",
+          "action": "resource.unassign.driver",
+          "entityType": "resource",
+          "entityId": "6acb99b48275a26dbdf8fcf5",
+          "description": "Driver desasignado del recurso 6acb99b48275a26dbdf8fcf5",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": {
+            "before": {
+              "driverId": "6acb99b1a2fa810fb39fb5a9"
+            },
+            "after": {
+              "driverId": ""
+            }
+          },
+          "createdAt": "2026-10-11T14:14:12.449Z"
+        },
+        {
+          "id": "6acb99b4a2fa810fb39fb5c1",
+          "action": "resource.assign.driver",
+          "entityType": "resource",
+          "entityId": "6acb99b48275a26dbdf8fcf5",
+          "description": "Driver 6acb99b1a2fa810fb39fb5a9 asignado al recurso 6acb99b48275a26dbdf8fcf5",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": {
+            "before": {
+              "driverId": ""
+            },
+            "after": {
+              "driverId": "6acb99b1a2fa810fb39fb5a9"
+            }
+          },
+          "createdAt": "2026-10-11T14:14:12.419Z"
+        },
+        {
+          "id": "6acb99b4a2fa810fb39fb5c0",
+          "action": "settings.update",
+          "entityType": "settings",
+          "entityId": "6acb99b48275a26dbdf8fcf7",
+          "description": "Settings actualizado",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": {
+            "before": {
+              "routeTopology": "round_trip",
+              "restrictionType": "fixed_routes",
+              "fixedRoutes": 1,
+              "lengthOfStay": null
+            },
+            "after": {
+              "routeTopology": "round_trip",
+              "restrictionType": "fixed_routes",
+              "fixedRoutes": 1,
+              "lengthOfStay": null
+            }
+          },
+          "createdAt": "2026-10-11T14:14:12.382Z"
+        },
+        {
+          "id": "6acb99b4a2fa810fb39fb5bf",
+          "action": "settings.create",
+          "entityType": "settings",
+          "entityId": "6acb99b48275a26dbdf8fcf7",
+          "description": "Settings creado: topology=round_trip, restriction=fixed_routes",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:12.301Z"
+        },
+        {
+          "id": "6acb99b4a2fa810fb39fb5be",
+          "action": "package.create",
+          "entityType": "package",
+          "entityId": "6acb99b48275a26dbdf8fcf6",
+          "description": "Paquete creado: guide=null",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:12.220Z"
+        },
+        {
+          "id": "6acb99b4a2fa810fb39fb5bd",
+          "action": "resource.update",
+          "entityType": "resource",
+          "entityId": "6acb99b48275a26dbdf8fcf5",
+          "description": "Recurso actualizado",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": {
+            "before": {
+              "name": "Postman resource",
+              "licensePlate": null,
+              "driverId": null,
+              "quantity": 1
+            },
+            "after": {
+              "name": "Postman resource",
+              "licensePlate": null,
+              "driverId": null,
+              "quantity": 1
+            }
+          },
+          "createdAt": "2026-10-11T14:14:12.196Z"
+        },
+        {
+          "id": "6acb99b4a2fa810fb39fb5bc",
+          "action": "resource.create",
+          "entityType": "resource",
+          "entityId": "6acb99b48275a26dbdf8fcf5",
+          "description": "Recurso creado: name=Postman resource, plate=null",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:12.120Z"
+        },
+        {
+          "id": "6acb99b3a2fa810fb39fb5bb",
+          "action": "place.update",
+          "entityType": "place",
+          "entityId": "6acb99b38275a26dbdf8fcf2",
+          "description": "Lugar actualizado",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": {
+            "before": {
+              "name": "Postman depot",
+              "type": "depot",
+              "address": null
+            },
+            "after": {
+              "name": "Postman depot",
+              "type": "depot",
+              "address": null
+            }
+          },
+          "createdAt": "2026-10-11T14:14:11.926Z"
+        },
+        {
+          "id": "6acb99b3a2fa810fb39fb5ba",
+          "action": "place.create",
+          "entityType": "place",
+          "entityId": "6acb99b38275a26dbdf8fcf2",
+          "description": "Lugar creado: name=Postman depot, type=depot",
+          "actorEmail": null,
+          "actorRole": "TENANT_ADMIN",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:11.848Z"
+        },
+        {
+          "id": "6acb99b3a2fa810fb39fb5b8",
+          "action": "notification.push_registered",
+          "entityType": "user",
+          "entityId": "6acb99aca2fa810fb39fb59a",
+          "description": "notification.push_registered",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:11.054Z"
+        },
+        {
+          "id": "6acb99b3a2fa810fb39fb5b7",
+          "action": "notification.preferences_updated",
+          "entityType": "user",
+          "entityId": "6acb99aca2fa810fb39fb59a",
+          "description": "notification.preferences_updated",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:11.025Z"
+        },
+        {
+          "id": "6acb99b2a2fa810fb39fb5b6",
+          "action": "invitation.revoked",
+          "entityType": "invitation",
+          "entityId": "6acb99b2a2fa810fb39fb5b4",
+          "description": "invitation.revoked",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:10.987Z"
+        },
+        {
+          "id": "6acb99b2a2fa810fb39fb5b5",
+          "action": "invitation.created",
+          "entityType": "invitation",
+          "entityId": "6acb99b2a2fa810fb39fb5b4",
+          "description": "invitation.created",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:10.962Z"
+        },
+        {
+          "id": "6acb99b1a2fa810fb39fb5af",
+          "action": "invitation.created",
+          "entityType": "invitation",
+          "entityId": "6acb99b1a2fa810fb39fb5ae",
+          "description": "invitation.created",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:09.756Z"
+        },
+        {
+          "id": "6acb99b1a2fa810fb39fb5ad",
+          "action": "user.updated",
+          "entityType": "user",
+          "entityId": "6acb99b1a2fa810fb39fb5a9",
+          "description": "user.updated",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:09.703Z"
+        },
+        {
+          "id": "6acb99b1a2fa810fb39fb5aa",
+          "action": "user.created",
+          "entityType": "user",
+          "entityId": "6acb99b1a2fa810fb39fb5a9",
+          "description": "user.created",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:09.319Z"
+        },
+        {
+          "id": "6acb99b1a2fa810fb39fb5a8",
+          "action": "tenant.updated",
+          "entityType": "tenant",
+          "entityId": "6acb99aca2fa810fb39fb599",
+          "description": "tenant.updated",
+          "actorEmail": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+          "actorRole": "tenant_admin",
+          "changes": null,
+          "createdAt": "2026-10-11T14:14:09.023Z"
+        }
+      ],
+      "totalElements": 23,
+      "totalPages": 2
+    }
+  }
+}
