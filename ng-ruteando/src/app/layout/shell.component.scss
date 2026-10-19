@@ -1,0 +1,25 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.title {
+  margin-left: 8px;
+}
+
+.container {
+  flex: 1;
+}
+
+mat-sidenav {
+  width: 240px;
+}
+
+.content {
+  padding: 16px;
+}
+
+.active {
+  font-weight: 500;
+}

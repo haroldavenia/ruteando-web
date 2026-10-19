@@ -6,4 +6,5 @@ cosas
 .idea/*
 app
 !ruteando-ng/src/app/
+!ng-ruteando/src/app/
 vendor

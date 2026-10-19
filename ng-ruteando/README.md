@@ -1,27 +1,44 @@
-# NgRuteando
+# ng-ruteando
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Frontend Angular de Ruteando (standalone, SCSS, Angular Material, SSR). Es el destino de la migración desde la app AngularJS de `master/`.
 
-## Development server
+## Requisitos
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Node 22 LTS (`nvm use 22`). Con otras versiones el CLI puede mostrar un aviso de "Unsupported".
+- `npm ci` dentro de `ng-ruteando/` para instalar dependencias.
 
-## Code scaffolding
+## Comandos
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+| Comando | Qué hace |
+|---|---|
+| `npm start` | Servidor de desarrollo en `http://localhost:4200/` con recarga automática |
+| `npm run build` | Compilación de producción en `dist/ng-ruteando/{browser,server}`; falla si se superan los presupuestos de tamaño |
+| `npm test` | Pruebas unitarias con Karma en modo interactivo (abre Chrome y vigila cambios) |
+| `npm run test:ci` | Pruebas unitarias en una sola ejecución con Chrome sin interfaz; termina con código distinto de 0 si alguna falla |
+| `npm run serve:ssr:ng-ruteando` | Servidor Node con renderizado en servidor en `http://localhost:4000/` (hay que compilar antes con `npm run build`) |
 
-## Build
+Las pruebas necesitan Chrome instalado (o la variable `CHROME_BIN` apuntando a un binario de Chrome/Chromium).
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Comprobar el SSR a mano
 
-## Running unit tests
+```
+npm run build
+npm run serve:ssr:ng-ruteando &
+curl -s http://localhost:4000/ | grep -o "Planificación de rutas"
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+La respuesta debe contener el texto de la página de inicio ya renderizado.
 
-## Running end-to-end tests
+## Estructura
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```
+src/app/
+  app.component.ts     componente raíz (renderiza el layout)
+  app.config.ts        proveedores (router, hidratación, HTTP, animaciones)
+  app.config.server.ts configuración añadida para SSR
+  app.routes.ts        rutas (carga diferida)
+  layout/              shell: barra superior y menú lateral
+  home/                página de inicio
+```
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+El tema de Angular Material se define una sola vez en `src/styles.scss`.
