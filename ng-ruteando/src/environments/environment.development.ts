@@ -1,6 +1,6 @@
-// Desarrollo (`ng serve` y `ng build --configuration development`). `/hanoit` lo reenvía
-// el proxy de desarrollo (`proxy.conf.json`), así el navegador no hace peticiones de otro origen.
+// Desarrollo (`ng serve` y `ng build --configuration development`). `/gateway` lo reenvía el proxy
+// de desarrollo (`proxy.conf.js`) al gateway con la clave del entorno; el navegador no la ve.
 export const environment = {
   production: false,
-  apiUrl: '/hanoit/api/v1',
+  apiUrl: '/gateway',
 };

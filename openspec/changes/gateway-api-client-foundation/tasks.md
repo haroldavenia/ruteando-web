@@ -17,9 +17,9 @@
 
 ## 3. Proxy de desarrollo y entorno (gateway-proxy, frontend-environments)
 
-- [ ] 3.1 Sustituir `ng-ruteando/proxy.conf.json` por `proxy.conf.js` con la misma lógica que el servidor (reescritura, `X-Api-Key` desde `process.env`, aviso si falta la variable) y enlazarlo en `angular.json`; verificar con `ng serve` y una petición a `/gateway/...` contra el gateway falso
-- [ ] 3.2 Poner `apiUrl: '/gateway'` en los dos ficheros de entorno y verificar con `ng build` y `ng build --configuration development` que el valor aparece en cada salida y que `grep -rn "https\?://" ng-ruteando/dist` no muestra el dominio del gateway
-- [ ] 3.3 Documentar en `ng-ruteando/README.md` cómo arrancar con las variables y cómo cambiar `GATEWAY_URL`, y verificar el procedimiento cambiando el destino y reiniciando
+- [x] 3.1 Sustituir `ng-ruteando/proxy.conf.json` por `proxy.conf.js` con la misma lógica que el servidor (reescritura, `X-Api-Key` desde `process.env`, aviso si falta la variable) y enlazarlo en `angular.json`; verificar con `ng serve` y una petición a `/gateway/...` contra el gateway falso
+- [x] 3.2 Poner `apiUrl: '/gateway'` en los dos ficheros de entorno y verificar con `ng build` y `ng build --configuration development` que el valor aparece en cada salida y que `grep -rn "https\?://" ng-ruteando/dist` no muestra el dominio del gateway
+- [x] 3.3 Documentar en `ng-ruteando/README.md` cómo arrancar con las variables y cómo cambiar `GATEWAY_URL`, y verificar el procedimiento cambiando el destino y reiniciando
 
 ## 4. Capa HTTP común (api-client-core)
 

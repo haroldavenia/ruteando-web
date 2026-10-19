@@ -32,20 +32,26 @@ La respuesta debe contener el texto de la página de inicio ya renderizado.
 
 ## Entornos y proxy de desarrollo
 
-La URL base de la API sale del entorno y se provee con el token `API_BASE_URL` (`src/app/core/config/api-base-url.ts`); el código de `src/app/` no contiene URLs de la API.
+La URL base de la API sale del entorno y se provee con el token `API_BASE_URL` (`src/app/core/config/api-base-url.ts`); el código de `src/app/` no contiene URLs ni claves de la API.
 
 | Fichero | Se usa en | `apiUrl` |
 |---|---|---|
-| `src/environments/environment.ts` | `ng build` (producción) | `/hanoit/api/v1` (mismo origen; el despliegue decide el destino) |
-| `src/environments/environment.development.ts` | `ng serve` y `ng build --configuration development` | `/hanoit/api/v1` |
+| `src/environments/environment.ts` | `ng build` (producción) | `/gateway` |
+| `src/environments/environment.development.ts` | `ng serve` y `ng build --configuration development` | `/gateway` |
 
-`ng serve` reenvía `/hanoit` al destino de `proxy.conf.json` (por defecto `http://hanoit:9000`), de modo que el navegador no hace peticiones de otro origen. Para cambiar el destino, edita `target` en `proxy.conf.json` y reinicia `ng serve`; no hace falta tocar el código. Ejemplo:
+`/gateway` es una ruta del propio origen: en producción la atiende el servidor Express (`server/gateway-proxy.js`) y con `ng serve` la atiende `proxy.conf.js`. Ambos reenvían a `<GATEWAY_URL>/api/v1/...` y añaden la cabecera `X-Api-Key` desde el servidor, de modo que el navegador no ve la clave ni hace peticiones de otro origen.
+
+Para arrancar con el gateway:
 
 ```
-"target": "http://localhost:9099"
+cp ../.env.example ../.env     # en la raíz del repositorio; .env no se versiona
+# edita ../.env: GATEWAY_URL (sin /api/v1) y GATEWAY_API_KEY
+npm start
 ```
 
-En el entorno no se guardan secretos ni credenciales.
+También se pueden pasar como variables de entorno (`GATEWAY_URL=... GATEWAY_API_KEY=... npm start`); lo definido en el entorno tiene prioridad sobre `.env`. Para apuntar a otro gateway cambia `GATEWAY_URL` y reinicia `ng serve`; no hace falta tocar el código. Si falta alguna variable, `ng serve` avisa con su nombre y `/gateway` responde 503.
+
+La clave es un secreto: no la escribas en los ficheros de entorno ni en el código.
 
 ## Estructura
 
