@@ -20,6 +20,9 @@ var moment = require('moment');
 var mongoose = require('mongoose');
 var request = require('request');
 
+var gatewayProxy = require('./gateway-proxy');
+gatewayProxy.loadEnvFile(); // carga ../.env (si existe) antes de leer la configuración
+
 var config = require('./config');
 
 // Directorio con la compilación de navegador de ng-ruteando (se puede cambiar con WEB_DIST)
@@ -71,6 +74,8 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 app.use(cors());
 app.use(logger('dev'));
+// Proxy del gateway: antes de los analizadores de cuerpo (se reenvía en streaming), del estático y del comodín del SPA
+app.use('/gateway', gatewayProxy.createGatewayProxy());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

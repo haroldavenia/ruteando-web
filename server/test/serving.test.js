@@ -2,58 +2,16 @@
 // directorio de compilación temporal. No necesitan MongoDB (las rutas probadas no lo usan).
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { spawn } = require('node:child_process');
 const fs = require('node:fs');
-const net = require('node:net');
 const os = require('node:os');
 const path = require('node:path');
+const { startServer } = require('./helpers');
 
-const SERVER = path.join(__dirname, '..', 'server.js');
 const MARKER = '<app-root>ruteando-prueba</app-root>';
 
 let tmpDir;
 let withBuild;
 let withoutBuild;
-
-function freePort() {
-  return new Promise((resolve, reject) => {
-    const probe = net.createServer();
-    probe.listen(0, () => {
-      const { port } = probe.address();
-      probe.close(() => resolve(port));
-    });
-    probe.on('error', reject);
-  });
-}
-
-async function startServer(webDist) {
-  const port = await freePort();
-  const child = spawn(process.execPath, [SERVER], {
-    env: {
-      ...process.env,
-      PORT: String(port),
-      WEB_DIST: webDist,
-      MONGO_URI: 'mongodb://127.0.0.1:1/prueba',
-      NODE_ENV: 'test',
-    },
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-  let output = '';
-  await new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('El servidor no arrancó:\n' + output)), 15000);
-    const onData = (chunk) => {
-      output += chunk;
-      if (output.includes('listening')) {
-        clearTimeout(timer);
-        resolve();
-      }
-    };
-    child.stdout.on('data', onData);
-    child.stderr.on('data', (chunk) => (output += chunk));
-    child.on('exit', () => reject(new Error('El servidor terminó al arrancar:\n' + output)));
-  });
-  return { base: `http://127.0.0.1:${port}`, child, log: () => output };
-}
 
 before(async () => {
   tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ruteando-web-'));
@@ -63,8 +21,8 @@ before(async () => {
   fs.mkdirSync(empty);
   fs.writeFileSync(path.join(full, 'index.csr.html'), `<!doctype html><html><body>${MARKER}</body></html>`);
   fs.writeFileSync(path.join(full, 'app.js'), 'console.log("ok");');
-  withBuild = await startServer(full);
-  withoutBuild = await startServer(empty);
+  withBuild = await startServer({ webDist: full });
+  withoutBuild = await startServer({ webDist: empty });
 });
 
 after(() => {
