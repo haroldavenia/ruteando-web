@@ -1,0 +1,8 @@
+{
+  "/hanoit": {
+    "target": "http://hanoit:9000",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

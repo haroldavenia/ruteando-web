@@ -30,6 +30,23 @@ curl -s http://localhost:4000/ | grep -o "Planificación de rutas"
 
 La respuesta debe contener el texto de la página de inicio ya renderizado.
 
+## Entornos y proxy de desarrollo
+
+La URL base de la API sale del entorno y se provee con el token `API_BASE_URL` (`src/app/core/config/api-base-url.ts`); el código de `src/app/` no contiene URLs de la API.
+
+| Fichero | Se usa en | `apiUrl` |
+|---|---|---|
+| `src/environments/environment.ts` | `ng build` (producción) | `/hanoit/api/v1` (mismo origen; el despliegue decide el destino) |
+| `src/environments/environment.development.ts` | `ng serve` y `ng build --configuration development` | `/hanoit/api/v1` |
+
+`ng serve` reenvía `/hanoit` al destino de `proxy.conf.json` (por defecto `http://hanoit:9000`), de modo que el navegador no hace peticiones de otro origen. Para cambiar el destino, edita `target` en `proxy.conf.json` y reinicia `ng serve`; no hace falta tocar el código. Ejemplo:
+
+```
+"target": "http://localhost:9099"
+```
+
+En el entorno no se guardan secretos ni credenciales.
+
 ## Estructura
 
 ```

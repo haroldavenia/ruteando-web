@@ -2,16 +2,16 @@
 
 ## 1. Preparación
 
-- [ ] 1.1 Confirmar que `upgrade-angular-21-ng-ruteando` está terminado (`npm ls @angular/core` en `ng-ruteando/` muestra 21.x) y que `adopt-angular-material-ng-ruteando` está archivado (`openspec list --specs` incluye `frontend-app-shell`)
-- [ ] 1.2 Crear la rama `chore/consolidate-ng-ruteando` y verificar con `git branch --show-current`
-- [ ] 1.3 Ejecutar `npx ng build` en `ng-ruteando/`, listar `dist/ng-ruteando/browser` y anotar el fichero de entrada de cliente (`index.csr.html` o `index.html`) y si `index.html` contiene ya el HTML prerenderizado de `/`; verificar que el nombre queda registrado en este fichero
+- [x] 1.1 Confirmar que `upgrade-angular-21-ng-ruteando` está terminado (`npm ls @angular/core` en `ng-ruteando/` muestra 21.x) y que `adopt-angular-material-ng-ruteando` está archivado (`openspec list --specs` incluye `frontend-app-shell`)
+- [x] 1.2 Crear la rama `chore/consolidate-ng-ruteando` y verificar con `git branch --show-current`
+- [x] 1.3 Ejecutar `npx ng build` en `ng-ruteando/`, listar `dist/ng-ruteando/browser` y anotar el fichero de entrada de cliente (`index.csr.html` o `index.html`) y si `index.html` contiene ya el HTML prerenderizado de `/`; verificar que el nombre queda registrado en este fichero (resultado en Angular 21.2: el fichero de entrada de cliente es `index.csr.html` con `<app-root>` vacío; `index.html` es la página prerenderizada de `/`, con el texto de inicio ya incluido; el servidor debe usar `index.csr.html` como respuesta de las rutas del cliente)
 
 ## 2. Entornos y proxy (frontend-environments)
 
-- [ ] 2.1 Generar los ficheros de entorno con `npx ng generate environments`, definir `apiUrl` en cada uno (desarrollo: ruta del proxy `/hanoit/api/v1`) y verificar con `ng build --configuration development` y `ng build` que cada compilación contiene su valor (`grep` en la salida)
-- [ ] 2.2 Crear `ng-ruteando/proxy.conf.json` con destino por defecto `http://hanoit:9000`, `changeOrigin` y `secure: false`, y enlazarlo en el target `serve` de `angular.json`; verificar que `ng serve` arranca y que una petición a `/hanoit/...` se reenvía (el log del proxy muestra el destino)
-- [ ] 2.3 Verificar que no hay URLs ni credenciales literales con `grep -rnE "https?://" ng-ruteando/src/app --include=*.ts` y `grep -rniE "secret|Basic |client_secret" ng-ruteando/src`, sin coincidencias de API o credenciales
-- [ ] 2.4 Documentar en `ng-ruteando/README.md` los entornos y cómo cambiar el destino del proxy, y verificar que el procedimiento documentado funciona cambiando el destino y reiniciando
+- [x] 2.1 Generar los ficheros de entorno con `npx ng generate environments`, definir `apiUrl` en cada uno (desarrollo: ruta del proxy `/hanoit/api/v1`) y verificar con `ng build --configuration development` y `ng build` que cada compilación contiene su valor (`grep` en la salida)
+- [x] 2.2 Crear `ng-ruteando/proxy.conf.json` con destino por defecto `http://hanoit:9000`, `changeOrigin` y `secure: false`, y enlazarlo en el target `serve` de `angular.json`; verificar que `ng serve` arranca y que una petición a `/hanoit/...` se reenvía (el log del proxy muestra el destino)
+- [x] 2.3 Verificar que no hay URLs ni credenciales literales con `grep -rnE "https?://" ng-ruteando/src/app --include=*.ts` y `grep -rniE "secret|Basic |client_secret" ng-ruteando/src`, sin coincidencias de API o credenciales
+- [x] 2.4 Documentar en `ng-ruteando/README.md` los entornos y cómo cambiar el destino del proxy, y verificar que el procedimiento documentado funciona cambiando el destino y reiniciando
 
 ## 3. Servicio de tokens (auth-token-storage)
 
