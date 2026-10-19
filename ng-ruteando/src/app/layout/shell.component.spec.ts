@@ -2,7 +2,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ApplicationRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import { ShellComponent } from './shell.component';
@@ -16,7 +16,7 @@ describe('ShellComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ShellComponent],
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: '', pathMatch: 'full', children: [] }]),
         provideNoopAnimations(),
         { provide: BreakpointObserver, useValue: { observe: () => breakpoints.asObservable() } },
       ],
@@ -35,6 +35,16 @@ describe('ShellComponent', () => {
   it('renderiza el enlace "Inicio" del menú', () => {
     const links = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('a'));
     expect(links.some((a) => a.textContent?.includes('Inicio'))).toBeTrue();
+  });
+
+  it('marca como activo el elemento de menú de la ruta actual', async () => {
+    await TestBed.inject(Router).navigateByUrl('/');
+    fixture.detectChanges();
+
+    const inicio = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('a')).find((a) =>
+      a.textContent?.includes('Inicio'),
+    );
+    expect(inicio?.classList.contains('active')).toBeTrue();
   });
 
   it('usa el menú fijo en pantalla ancha y desplegable en estrecha', () => {

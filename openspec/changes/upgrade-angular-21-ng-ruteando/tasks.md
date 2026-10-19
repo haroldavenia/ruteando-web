@@ -41,10 +41,10 @@
 
 ## 7. Tema Material 3
 
-- [ ] 7.1 Sustituir la definición M2 de `src/styles.scss` por la API de tema M3 vigente, con un único `@include`, paleta predefinida cercana al índigo/rosa actual y tipografía Roboto; verificar que `ng build` pasa sin avisos de obsolescencia del tema
-- [ ] 7.2 Verificar con `grep -rn "define-light-theme\|define-palette" src` que no queda ninguna función M2 y que ningún `*.scss` de componente repite el tema
-- [ ] 7.3 Comprobar manualmente a 1200px y a 600px que el shell (barra, menú, elemento activo, botón de menú) conserva estructura y que el contraste del texto es al menos 4.5:1 con las herramientas del navegador
-- [ ] 7.4 Añadir a `shell.component.spec.ts` una comprobación de que el elemento de menú activo recibe la clase de activo, y verificar `npm run test:ci` en verde
+- [x] 7.1 Sustituir la definición M2 de `src/styles.scss` por la API de tema M3 vigente, con un único `@include`, paleta predefinida cercana al índigo/rosa actual y tipografía Roboto; verificar que `ng build` pasa sin avisos de obsolescencia del tema
+- [x] 7.2 Verificar con `grep -rn "define-light-theme\|define-palette" src` que no queda ninguna función M2 y que ningún `*.scss` de componente repite el tema
+- [x] 7.3 Comprobar manualmente a 1200px y a 600px que el shell (barra, menú, elemento activo, botón de menú) conserva estructura y que el contraste del texto es al menos 4.5:1 con las herramientas del navegador (comprobado con capturas de Chrome sin interfaz y contrastes calculados a partir de los tokens compilados: barra 6,46:1, texto 16,33:1, menú 8,93:1, elemento activo 7,27:1; la barra conserva el color primario mediante `toolbar-overrides` porque en M3 `color="primary"` ya no tiñe el toolbar)
+- [x] 7.4 Añadir a `shell.component.spec.ts` una comprobación de que el elemento de menú activo recibe la clase de activo, y verificar `npm run test:ci` en verde
 
 ## 8. Versiones soportadas y cierre
 
