@@ -23,10 +23,10 @@
 
 ## 4. Capa HTTP común (api-client-core)
 
-- [ ] 4.1 Crear `core/api/api-config.ts` con el token de inyección `API_BASE_URL` leído del entorno, `ApiError`, `Page<T>`, `PageParams` y los tipos de modelos de lista; verificar que `ng build` compila y que no hay dominios del gateway en `src/` con `grep`
-- [ ] 4.2 Implementar los mensajes de error: mapa genérico por estado (400, 401, 403, 404, 5xx, 0) en español, `provideApiErrorMessages()` para registros por código o estado, y `HttpContextToken` con `withErrorMessage()` para mensajes por petición, con la prioridad petición, código, genérico; verificar con pruebas unitarias de cada escenario de prioridad
-- [ ] 4.3 Implementar `errorInterceptor` que normaliza a `ApiError` leyendo `code`, `error`, `message` y `detail` de forma tolerante, conserva el cuerpo en `details`/`raw`, no usa el texto del servidor como mensaje visible y no usa `alert`; verificar con pruebas para cuerpos JSON, vacíos, no JSON y estado 0
-- [ ] 4.4 Verificar con una prueba que 202 con `[]` y 204 sin cuerpo se tratan como éxito, y que `Page<T>` y `page=1&size=20` se construyen y leen como indica la spec
+- [x] 4.1 Crear `core/api/api-config.ts` con el token de inyección `API_BASE_URL` leído del entorno, `ApiError`, `Page<T>`, `PageParams` y los tipos de modelos de lista; verificar que `ng build` compila y que no hay dominios del gateway en `src/` con `grep`
+- [x] 4.2 Implementar los mensajes de error: mapa genérico por estado (400, 401, 403, 404, 5xx, 0) en español, `provideApiErrorMessages()` para registros por código o estado, y `HttpContextToken` con `withErrorMessage()` para mensajes por petición, con la prioridad petición, código, genérico; verificar con pruebas unitarias de cada escenario de prioridad
+- [x] 4.3 Implementar `errorInterceptor` que normaliza a `ApiError` leyendo `code`, `error`, `message` y `detail` de forma tolerante, conserva el cuerpo en `details`/`raw`, no usa el texto del servidor como mensaje visible y no usa `alert`; verificar con pruebas para cuerpos JSON, vacíos, no JSON y estado 0
+- [x] 4.4 Verificar con una prueba que 202 con `[]` y 204 sin cuerpo se tratan como éxito, y que `Page<T>` y `page=1&size=20` se construyen y leen como indica la spec
 
 ## 5. Autenticación de peticiones y refresco (api-client-core)
 

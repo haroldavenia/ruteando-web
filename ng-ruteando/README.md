@@ -32,7 +32,7 @@ La respuesta debe contener el texto de la página de inicio ya renderizado.
 
 ## Entornos y proxy de desarrollo
 
-La URL base de la API sale del entorno y se provee con el token `API_BASE_URL` (`src/app/core/config/api-base-url.ts`); el código de `src/app/` no contiene URLs ni claves de la API.
+La URL base de la API sale del entorno y se provee con el token `API_BASE_URL` (`src/app/core/api/api-config.ts`); el código de `src/app/` no contiene URLs ni claves de la API.
 
 | Fichero | Se usa en | `apiUrl` |
 |---|---|---|

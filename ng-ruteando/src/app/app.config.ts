@@ -5,7 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideRouter } from '@angular/router';
 
 import { environment } from '../environments/environment';
-import { API_BASE_URL } from './core/config/api-base-url';
+import { API_BASE_URL } from './core/api/api-config';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
