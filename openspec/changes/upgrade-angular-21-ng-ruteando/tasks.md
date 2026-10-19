@@ -28,9 +28,9 @@
 
 ## 5. Salto a Angular 20
 
-- [ ] 5.1 Ejecutar `ng update` de core/cli y de material a 20, aceptar las migraciones y revisar el diff
-- [ ] 5.2 Completar la migración del SSR a la API de servidor vigente (motor de petición, rutas de servidor y modo de salida) y verificar con `curl /`
-- [ ] 5.3 Registrar los avisos de obsolescencia que emita el build (por ejemplo animaciones) en este fichero sin migrarlos; verificar `ng build`, `npm run test:ci` y hacer commit del salto
+- [x] 5.1 Ejecutar `ng update` de core/cli y de material a 20, aceptar las migraciones y revisar el diff
+- [x] 5.2 Completar la migración del SSR a la API de servidor vigente (motor de petición, rutas de servidor y modo de salida) y verificar con `curl /`
+- [x] 5.3 Registrar los avisos de obsolescencia que emita el build (por ejemplo animaciones) en este fichero sin migrarlos; verificar `ng build`, `npm run test:ci` y hacer commit del salto (resultado en 20.3: el build no emitió avisos de obsolescencia; `CommonEngine` sigue vigente y sin marcar como obsoleto, por lo que se mantiene con `allowedHosts`)
 
 ## 6. Salto a Angular 21
 
