@@ -37,9 +37,9 @@
 
 ## 6. Verificación integral
 
-- [ ] 6.1 Con una instalación limpia (`npm ci` en `ng-ruteando/` y en la raíz), ejecutar `npm run build:web`, `npm run test:server`, `npm run test:ci` en `ng-ruteando/` y `npm start`; comprobar `/`, una ruta profunda, `/api/me` y `/inexistente.js`, y que la aplicación abre en el navegador sin errores de consola
-- [ ] 6.2 Ejecutar `grep -rIl "ruteando-ng" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist` y verificar que solo quedan menciones en `openspec/changes/archive` y en este change
-- [ ] 6.3 Ejecutar `openspec validate consolidate-ng-ruteando` y verificar que no reporta errores
+- [x] 6.1 Con una instalación limpia (`npm ci` en `ng-ruteando/` y en la raíz), ejecutar `npm run build:web`, `npm run test:server`, `npm run test:ci` en `ng-ruteando/` y `npm start`; comprobar `/`, una ruta profunda, `/api/me` y `/inexistente.js`, y que la aplicación abre en el navegador sin errores de consola
+- [x] 6.2 Ejecutar `grep -rIl "ruteando-ng" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist` y verificar que solo quedan menciones en `openspec/changes/archive` y en este change (resultado: además quedan el skill `migracion-ruteando`, cuyas instrucciones describen este borrado, y `openspec/specs/frontend-app-shell/spec.md`, que se corrige al archivar este change con el delta MODIFIED)
+- [x] 6.3 Ejecutar `openspec validate consolidate-ng-ruteando` y verificar que no reporta errores
 
 ## Workflow follow-up
 
