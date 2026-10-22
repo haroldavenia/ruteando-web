@@ -21,6 +21,9 @@ before(async () => {
   fs.mkdirSync(empty);
   fs.writeFileSync(path.join(full, 'index.csr.html'), `<!doctype html><html><body>${MARKER}</body></html>`);
   fs.writeFileSync(path.join(full, 'app.js'), 'console.log("ok");');
+  // El prerender de Angular deja una carpeta por ruta (acceso/index.html): no debe provocar redirecciones
+  fs.mkdirSync(path.join(full, 'acceso'));
+  fs.writeFileSync(path.join(full, 'acceso', 'index.html'), '<!doctype html><body>prerender</body>');
   withBuild = await startServer({ webDist: full });
   withoutBuild = await startServer({ webDist: empty });
 });
@@ -47,6 +50,12 @@ test('un fichero compilado existente se sirve con su tipo', async () => {
 
 test('una ruta profunda del cliente devuelve la aplicación', async () => {
   const res = await fetch(withBuild.base + '/rutas/listado', { headers: { Accept: 'text/html' } });
+  assert.equal(res.status, 200);
+  assert.ok((await res.text()).includes(MARKER));
+});
+
+test('una ruta del cliente que coincide con una carpeta del build no redirige: devuelve la aplicación', async () => {
+  const res = await fetch(withBuild.base + '/acceso?returnUrl=%2Fjourneys', { redirect: 'manual', headers: { Accept: 'text/html' } });
   assert.equal(res.status, 200);
   assert.ok((await res.text()).includes(MARKER));
 });

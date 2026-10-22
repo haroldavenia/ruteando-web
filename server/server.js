@@ -821,7 +821,8 @@ app.use(['/api', '/auth'], function(req, res) {
   res.status(404).send({ message: 'Not found' });
 });
 
-app.use(express.static(WEB_DIST, { index: false }));
+// redirect: false -> el prerender deja carpetas como acceso/ y `GET /acceso` no debe redirigir a `/acceso/`
+app.use(express.static(WEB_DIST, { index: false, redirect: false }));
 
 app.get('*', function(req, res) {
   // Ficheros inexistentes (con extensión) y peticiones que no piden HTML no son rutas del cliente
