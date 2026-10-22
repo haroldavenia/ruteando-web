@@ -67,36 +67,38 @@ describe('ShellComponent', () => {
     };
 
     for (const role of ['tenant_admin', 'super_admin'] as const) {
-      it(`${role} ve Inicio, la sección Flota con tres entradas y Lugares`, () => {
+      it(`${role} ve Inicio, la sección Flota con tres entradas, Lugares y Paquetes`, () => {
         withRole(role);
         const root = fixture.nativeElement as HTMLElement;
         expect(root.querySelector('mat-sidenav h3')?.textContent).toContain('Flota');
-        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares']);
+        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Paquetes']);
       });
     }
 
-    for (const role of ['agent', 'driver'] as const) {
-      it(`${role} solo ve Inicio`, () => {
-        withRole(role);
-        expect(links().length).toBe(1);
-        expect(links()[0]).toContain('Inicio');
-        expect((fixture.nativeElement as HTMLElement).querySelector('mat-sidenav h3')).toBeNull();
-      });
-    }
+    it('un agente ve Inicio y Paquetes, sin la sección Flota ni Lugares', () => {
+      withRole('agent');
+      expect(links()).toEqual(['Inicio', 'Paquetes']);
+      expect((fixture.nativeElement as HTMLElement).querySelector('mat-sidenav h3')).toBeNull();
+    });
 
-    it('la edición de un lugar marca "Lugares" como activa', async () => {
-      withRole('tenant_admin');
+    it('un conductor solo ve Inicio', () => {
+      withRole('driver');
+      expect(links()).toEqual(['Inicio']);
+    });
+
+    it('la edición de un paquete marca "Paquetes" como activa', async () => {
+      withRole('agent');
       TestBed.inject(Router).resetConfig([
         { path: '', pathMatch: 'full', children: [] },
-        { path: 'lugares/:id', children: [] },
+        { path: 'paquetes/:id', children: [] },
       ]);
-      await TestBed.inject(Router).navigateByUrl('/lugares/abc');
+      await TestBed.inject(Router).navigateByUrl('/paquetes/abc');
       fixture.detectChanges();
 
       const active = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-sidenav a.active')).map((a) =>
         a.querySelector('[matListItemTitle]')!.textContent!.trim(),
       );
-      expect(active).toEqual(['Lugares']);
+      expect(active).toEqual(['Paquetes']);
     });
 
     it('sin usuario cargado (render en servidor) solo muestra las entradas sin rol y no falla', () => {

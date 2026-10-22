@@ -227,4 +227,51 @@ describe('rutas de la aplicación', () => {
       });
     }
   });
+
+  describe('paquetes', () => {
+    it('un anónimo en /paquetes va a /acceso recordando el destino', async () => {
+      await harness.navigateByUrl('/paquetes');
+      expect(router.url).toBe('/acceso?returnUrl=%2Fpaquetes');
+    });
+
+    for (const role of ['tenant_admin', 'super_admin', 'agent'] as const) {
+      it(`${role} entra en /paquetes dentro del shell`, async () => {
+        currentUser.set(makeUser({ role }));
+        await harness.navigateByUrl('/paquetes');
+        harness.detectChanges();
+
+        expect(router.url).toBe('/paquetes');
+        expect(document.querySelector('mat-toolbar')).not.toBeNull();
+        expect(document.querySelector('app-package-list h1')?.textContent).toContain('Paquetes');
+      });
+    }
+
+    it('driver es llevado a /sin-permiso en cualquier ruta de /paquetes', async () => {
+      currentUser.set(makeUser({ role: 'driver' }));
+      for (const url of ['/paquetes', '/paquetes/nuevo', '/paquetes/abc']) {
+        await harness.navigateByUrl(url);
+        expect(router.url).withContext(url).toBe('/sin-permiso');
+      }
+    });
+
+    for (const [url, title] of [
+      ['/paquetes/nuevo', 'Nuevo paquete'],
+      ['/paquetes/abc', 'Editar paquete'],
+    ]) {
+      it(`${url} muestra "${title}"`, async () => {
+        currentUser.set(makeUser({ role: 'agent' }));
+        await harness.navigateByUrl(url);
+        harness.detectChanges();
+        expect(document.querySelector('app-package-form h1')?.textContent).toContain(title);
+      });
+    }
+
+    it('un agente no puede entrar en flota ni en lugares', async () => {
+      currentUser.set(makeUser({ role: 'agent' }));
+      for (const url of ['/flota/vehiculos', '/lugares']) {
+        await harness.navigateByUrl(url);
+        expect(router.url).withContext(url).toBe('/sin-permiso');
+      }
+    });
+  });
 });

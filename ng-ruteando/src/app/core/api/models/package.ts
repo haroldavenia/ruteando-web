@@ -48,4 +48,7 @@ export interface PackageInput {
   pieceNumber?: number;
   durationStay?: number | null;
   observation?: string | null;
+  city?: string | null;
+  country?: string | null;
+  postalCode?: string | null;
 }

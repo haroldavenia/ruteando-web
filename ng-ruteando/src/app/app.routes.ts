@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
-import { ADMIN_ROLES } from './core/auth/admin-roles';
+import { ADMIN_ROLES, OPERATIONS_ROLES } from './core/auth/admin-roles';
 
 export const routes: Routes = [
   {
@@ -63,6 +63,13 @@ export const routes: Routes = [
         canActivate: [roleGuard(ADMIN_ROLES)],
         canActivateChild: [roleGuard(ADMIN_ROLES)],
         loadChildren: () => import('./features/places/places.routes').then((m) => m.PLACES_ROUTES),
+      },
+      {
+        // Paquetes: trabajo diario de administradores y agentes (el conductor no entra)
+        path: 'paquetes',
+        canActivate: [roleGuard(OPERATIONS_ROLES)],
+        canActivateChild: [roleGuard(OPERATIONS_ROLES)],
+        loadChildren: () => import('./features/packages/packages.routes').then((m) => m.PACKAGES_ROUTES),
       },
       {
         path: 'sin-permiso',

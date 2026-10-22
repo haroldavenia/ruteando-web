@@ -5,3 +5,6 @@ import { UserRole } from './session.model';
  * de las rutas para que las rutas de la aplicación no arrastren las rutas de cada feature al bundle inicial.
  */
 export const ADMIN_ROLES: readonly UserRole[] = ['tenant_admin', 'super_admin'];
+
+/** Roles que trabajan con los datos del día a día (paquetes): los administradores y los agentes; el conductor no. */
+export const OPERATIONS_ROLES: readonly UserRole[] = ['tenant_admin', 'super_admin', 'agent'];
