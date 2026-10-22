@@ -96,14 +96,14 @@ El menú lateral SHALL agrupar las entradas por secciones de negocio y SHALL mos
 
 #### Scenario: Administrador
 - **WHEN** un usuario `tenant_admin` o `super_admin` abre el área autenticada
-- **THEN** el menú muestra "Inicio", la sección "Flota" con "Vehículos", "Tipos de vehículo" y "Conductores", y la entrada "Lugares"
+- **THEN** el menú muestra "Inicio", la sección "Flota" con "Vehículos", "Tipos de vehículo" y "Conductores", y las entradas "Lugares" y "Paquetes"
 
 #### Scenario: Otros roles
 - **WHEN** un usuario `agent` o `driver` abre el área autenticada
-- **THEN** el menú muestra "Inicio" y no muestra la sección "Flota" ni la entrada "Lugares"
+- **THEN** el menú muestra "Inicio", no muestra la sección "Flota" ni la entrada "Lugares", y muestra "Paquetes" solo al agente
 
 #### Scenario: Elemento activo en una sección
-- **WHEN** la ruta actual es una pantalla de la sección o una de sus subrutas (por ejemplo la edición de un vehículo o de un lugar)
+- **WHEN** la ruta actual es una pantalla de la sección o una de sus subrutas (por ejemplo la edición de un vehículo, de un lugar o de un paquete)
 - **THEN** la entrada correspondiente del menú se marca como activa
 
 #### Scenario: Sin sesión cargada
