@@ -9,7 +9,8 @@ import { API_BASE_URL } from '../api/api-config';
 import { REFRESH_MARGIN_MS } from '../api/refresh.interceptor';
 import { CurrentUser } from './current-user';
 import { SessionRefreshService } from './session-refresh.service';
-import { SessionResponse, UserProfile } from './session.model';
+import { loginErrors, linkErrors, registerErrors } from './auth-messages';
+import { MessageResponse, RegisterRequest, RegisterResponse, SessionResponse, UserProfile } from './session.model';
 import { TokenStorageService } from './token-storage.service';
 
 /**
@@ -41,17 +42,37 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<UserProfile> {
-    return this.http.post<SessionResponse>(`${this.baseUrl}/auth/login`, { email, password }).pipe(
-      map((session) => {
-        this.tokens.set({
-          access_token: session.accessToken,
-          refresh_token: session.refreshToken,
-          expires_in: session.expiresIn,
-        });
-        this.currentUser.set(session.user);
-        this.scheduleRefresh();
-        return session.user;
-      }),
+    return this.http
+      .post<SessionResponse>(`${this.baseUrl}/auth/login`, { email, password }, { context: loginErrors() })
+      .pipe(map((session) => this.startSession(session)));
+  }
+
+  /** Crea la cuenta y su tenant. No inicia sesión: eso ocurre al verificar el correo. */
+  register(input: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.baseUrl}/auth/register`, input, { context: registerErrors() });
+  }
+
+  /** Verifica el correo con el token del enlace; el gateway devuelve una sesión, así que inicia sesión. */
+  verifyEmail(token: string): Observable<UserProfile> {
+    return this.http
+      .post<SessionResponse>(`${this.baseUrl}/auth/verify-email`, { token }, { context: linkErrors() })
+      .pipe(map((session) => this.startSession(session)));
+  }
+
+  resendVerification(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.baseUrl}/auth/resend-verification`, { email });
+  }
+
+  forgotPassword(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.baseUrl}/auth/forgot-password`, { email });
+  }
+
+  /** Fija la contraseña nueva con el token del correo. No inicia sesión. */
+  resetPassword(token: string, newPassword: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(
+      `${this.baseUrl}/auth/reset-password`,
+      { token, newPassword },
+      { context: linkErrors() },
     );
   }
 
@@ -63,11 +84,19 @@ export class AuthService {
     return this.http.get<UserProfile>(`${this.baseUrl}/auth/me`).pipe(tap((user) => this.currentUser.set(user)));
   }
 
-  /** Avisa al gateway y limpia siempre la sesión local, aunque la llamada falle. */
+  /**
+   * Avisa al gateway con el token de refresco (para que lo revoque) y limpia siempre la sesión local,
+   * aunque la llamada falle. Sin token de refresco no hay nada que revocar: solo limpia.
+   */
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/auth/logout`, null).pipe(
-      map(() => undefined),
-      catchError(() => of(undefined)),
+    const refreshToken = this.tokens.getRefreshToken();
+    const notified$: Observable<void> = refreshToken
+      ? this.http.post<void>(`${this.baseUrl}/auth/logout`, { refreshToken }).pipe(
+          map(() => undefined),
+          catchError(() => of(undefined)),
+        )
+      : of(undefined);
+    return notified$.pipe(
       tap(() => {
         this.endSession();
         void this.router.navigate(['/acceso']);
@@ -89,6 +118,17 @@ export class AuthService {
     } catch {
       this.endSession();
     }
+  }
+
+  private startSession(session: SessionResponse): UserProfile {
+    this.tokens.set({
+      access_token: session.accessToken,
+      refresh_token: session.refreshToken,
+      expires_in: session.expiresIn,
+    });
+    this.currentUser.set(session.user);
+    this.scheduleRefresh();
+    return session.user;
   }
 
   private endSession(): void {

@@ -81,7 +81,7 @@ describe('AuthService', () => {
 
       const error = (await result) as ApiError;
       expect(error.status).toBe(401);
-      expect(error.message).toBe('Tu sesión no es válida o ha caducado');
+      expect(error.message).toBe('Correo o contraseña incorrectos');
       expect(tokens.get()).toBe('');
       expect(tokens.getRefreshToken()).toBeNull();
       expect(currentUser.isAuthenticated()).toBeFalse();

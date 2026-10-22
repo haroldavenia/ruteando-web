@@ -22,3 +22,32 @@ export interface SessionResponse {
   expiresIn: number;
   user: UserProfile;
 }
+
+/** Cuerpo de `POST /auth/register`. */
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  /** Nombre de la empresa: el registro crea también su tenant. */
+  tenantName: string;
+}
+
+export interface TenantSummary {
+  id: string;
+  name: string;
+  slug: string;
+  plan: string;
+}
+
+/** Respuesta de `POST /auth/register`: no trae tokens, la sesión se inicia después de verificar el correo. */
+export interface RegisterResponse {
+  user: UserProfile;
+  tenant: TenantSummary;
+  message: string;
+}
+
+/** Respuesta con solo un mensaje (`forgot-password`, `resend-verification`, `reset-password`). */
+export interface MessageResponse {
+  message: string;
+}

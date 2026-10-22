@@ -1,4 +1,4 @@
-import { SessionResponse, UserProfile } from '../../auth/session.model';
+import { MessageResponse, RegisterResponse, SessionResponse, TenantSummary, UserProfile } from '../../auth/session.model';
 import {
   AssignedService,
   Journey,
@@ -30,6 +30,10 @@ import navigations from '../../../../testing/fixtures/gateway/get__journeys__jou
 import assigned from '../../../../testing/fixtures/gateway/get__assigned-services.json';
 import users from '../../../../testing/fixtures/gateway/get__users.json';
 import login from '../../../../testing/fixtures/gateway/post__auth__login.json';
+import register from '../../../../testing/fixtures/gateway/post__auth__register.json';
+import forgotPassword from '../../../../testing/fixtures/gateway/post__auth__forgot-password.json';
+import resetPassword from '../../../../testing/fixtures/gateway/post__auth__reset-password.json';
+import resendVerification from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
 
 /**
  * `Record<keyof T, true>` obliga a listar TODAS las claves del modelo (si el tipo cambia, esto no
@@ -112,5 +116,20 @@ describe('los modelos coinciden con los ejemplos reales del gateway', () => {
     const body = login.response.body as unknown as { user: unknown };
     expect(actual(body)).toEqual(keys<SessionResponse>(session));
     expect(actual(body.user)).toEqual(keys<UserProfile>(profile));
+  });
+
+  it('la respuesta del registro (RegisterResponse y TenantSummary)', () => {
+    const response: Record<keyof RegisterResponse, true> = { user: true, tenant: true, message: true };
+    const tenant: Record<keyof TenantSummary, true> = { id: true, name: true, slug: true, plan: true };
+    const body = register.response.body as unknown as { tenant: unknown };
+    expect(actual(body)).toEqual(keys<RegisterResponse>(response));
+    expect(actual(body.tenant)).toEqual(keys<TenantSummary>(tenant));
+  });
+
+  it('las respuestas con solo un mensaje (MessageResponse)', () => {
+    const model: Record<keyof MessageResponse, true> = { message: true };
+    for (const fixture of [forgotPassword, resetPassword, resendVerification]) {
+      expect(actual(fixture.response.body)).toEqual(keys<MessageResponse>(model));
+    }
   });
 });
