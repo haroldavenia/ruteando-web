@@ -65,6 +65,13 @@ export const routes: Routes = [
         loadChildren: () => import('./features/places/places.routes').then((m) => m.PLACES_ROUTES),
       },
       {
+        // Configuraciones de planificación: las gestionan los administradores
+        path: 'configuraciones',
+        canActivate: [roleGuard(ADMIN_ROLES)],
+        canActivateChild: [roleGuard(ADMIN_ROLES)],
+        loadChildren: () => import('./features/settings/settings.routes').then((m) => m.SETTINGS_ROUTES),
+      },
+      {
         // Paquetes: trabajo diario de administradores y agentes (el conductor no entra)
         path: 'paquetes',
         canActivate: [roleGuard(OPERATIONS_ROLES)],

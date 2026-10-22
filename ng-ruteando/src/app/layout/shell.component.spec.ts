@@ -67,11 +67,11 @@ describe('ShellComponent', () => {
     };
 
     for (const role of ['tenant_admin', 'super_admin'] as const) {
-      it(`${role} ve Inicio, la sección Flota con tres entradas, Lugares y Paquetes`, () => {
+      it(`${role} ve Inicio, la sección Flota con tres entradas, Lugares, Paquetes y Configuraciones`, () => {
         withRole(role);
         const root = fixture.nativeElement as HTMLElement;
         expect(root.querySelector('mat-sidenav h3')?.textContent).toContain('Flota');
-        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Paquetes']);
+        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Paquetes', 'Configuraciones']);
       });
     }
 
@@ -79,6 +79,21 @@ describe('ShellComponent', () => {
       withRole('agent');
       expect(links()).toEqual(['Inicio', 'Paquetes']);
       expect((fixture.nativeElement as HTMLElement).querySelector('mat-sidenav h3')).toBeNull();
+    });
+
+    it('la edición de una configuración marca "Configuraciones" como activa', async () => {
+      withRole('tenant_admin');
+      TestBed.inject(Router).resetConfig([
+        { path: '', pathMatch: 'full', children: [] },
+        { path: 'configuraciones/:id', children: [] },
+      ]);
+      await TestBed.inject(Router).navigateByUrl('/configuraciones/abc');
+      fixture.detectChanges();
+
+      const active = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-sidenav a.active')).map((a) =>
+        a.querySelector('[matListItemTitle]')!.textContent!.trim(),
+      );
+      expect(active).toEqual(['Configuraciones']);
     });
 
     it('un conductor solo ve Inicio', () => {

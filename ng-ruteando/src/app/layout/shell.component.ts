@@ -51,6 +51,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   },
   { label: 'Lugares', icon: 'place', link: '/lugares', roles: ADMIN_ROLES },
   { label: 'Paquetes', icon: 'inventory_2', link: '/paquetes', roles: OPERATIONS_ROLES },
+  { label: 'Configuraciones', icon: 'tune', link: '/configuraciones', roles: ADMIN_ROLES },
 ];
 
 @Component({
