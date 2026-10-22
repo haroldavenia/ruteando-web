@@ -57,12 +57,26 @@ La clave es un secreto: no la escribas en los ficheros de entorno ni en el códi
 
 ```
 src/app/
-  app.component.ts     componente raíz (renderiza el layout)
-  app.config.ts        proveedores (router, hidratación, HTTP, animaciones)
-  app.config.server.ts configuración añadida para SSR
-  app.routes.ts        rutas (carga diferida)
-  layout/              shell: barra superior y menú lateral
-  home/                página de inicio
+  app.component.ts     componente raíz (solo un router-outlet)
+  app.config.ts        proveedores (router, hidratación, HTTP con interceptores, animaciones, restauración de sesión)
+  app.routes.ts        rutas: /acceso/** con su layout; el área privada con el shell diferido y authGuard
+  core/                api (HTTP, errores, modelos, servicios de datos), auth (sesión, guards), geo
+  features/access/     pantallas de acceso: login, registro, verificar correo, recuperar y restablecer
+  layout/              shell: barra superior, menú de usuario y menú lateral (solo con sesión)
+  shared/              piezas reutilizables (diálogo de confirmación)
+  home/                página de inicio (privada)
 ```
+
+## Pantallas de acceso
+
+| Ruta | Pantalla |
+|---|---|
+| `/acceso` | Iniciar sesión (`?returnUrl=` solo admite rutas internas) |
+| `/acceso/registro` | Crear cuenta |
+| `/acceso/recuperar` | Recuperar contraseña |
+| `/acceso/verificar-email?token=` | Verificar el correo (inicia sesión) |
+| `/acceso/restablecer?token=` | Elegir una contraseña nueva |
+
+Los correos del gateway deben enlazar a `/acceso/verificar-email?token=...` y a `/acceso/restablecer?token=...`. La página de inicio y el resto del área privada exigen sesión.
 
 El tema de Angular Material se define una sola vez en `src/styles.scss`.

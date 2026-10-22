@@ -26,10 +26,11 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renderiza el layout base', () => {
+  it('solo contiene el outlet: el shell y las pantallas de acceso se cargan por ruta', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.querySelector('app-shell')).not.toBeNull();
+    expect(el.querySelector('router-outlet')).not.toBeNull();
+    expect(el.querySelector('app-shell')).toBeNull();
   });
 });

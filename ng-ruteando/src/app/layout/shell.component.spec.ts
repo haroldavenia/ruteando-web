@@ -1,9 +1,17 @@
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ApplicationRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
+
+import { makeUser } from '../../testing/session';
+import { API_BASE_URL } from '../core/api/api-config';
+import { AuthService } from '../core/auth/auth.service';
+import { CurrentUser } from '../core/auth/current-user';
 
 import { ShellComponent } from './shell.component';
 
@@ -18,6 +26,9 @@ describe('ShellComponent', () => {
       providers: [
         provideRouter([{ path: '', pathMatch: 'full', children: [] }]),
         provideNoopAnimations(),
+        { provide: API_BASE_URL, useValue: '/gateway' },
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: BreakpointObserver, useValue: { observe: () => breakpoints.asObservable() } },
       ],
     }).compileComponents();
@@ -64,5 +75,100 @@ describe('ShellComponent', () => {
     breakpoints.next({ matches: false, breakpoints: {} });
     fixture.detectChanges();
     expect(root.querySelector('button[aria-label="Abrir menú de navegación"]')).not.toBeNull();
+  });
+
+  describe('menú de usuario', () => {
+    let overlay: HTMLElement;
+    let logout: jasmine.Spy;
+    const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
+    const trigger = () => (fixture.nativeElement as HTMLElement).querySelector('button[aria-label="Menú de usuario"]') as HTMLButtonElement;
+    const overlayButton = (text: string) =>
+      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
+
+    async function openMenu(): Promise<void> {
+      trigger().click();
+      fixture.detectChanges();
+      await wait();
+    }
+
+    beforeEach(() => {
+      overlay = TestBed.inject(OverlayContainer).getContainerElement();
+      TestBed.inject(CurrentUser).set(makeUser({ firstName: 'Ana', lastName: 'Pérez', email: 'ana@example.invalid' }));
+      logout = spyOn(TestBed.inject(AuthService), 'logout').and.returnValue(of(undefined));
+      fixture.detectChanges();
+    });
+
+    it('el botón del menú es un botón con etiqueta en español', () => {
+      expect(trigger()).not.toBeNull();
+      expect(trigger().tagName).toBe('BUTTON');
+    });
+
+    it('muestra el nombre y el correo de la persona con sesión', async () => {
+      await openMenu();
+
+      expect(overlay.textContent).toContain('Ana Pérez');
+      expect(overlay.textContent).toContain('ana@example.invalid');
+    });
+
+    it('sin nombre muestra el correo como nombre', async () => {
+      TestBed.inject(CurrentUser).set(makeUser({ firstName: null, lastName: null, email: 'sin-nombre@example.invalid' }));
+      fixture.detectChanges();
+      await openMenu();
+
+      expect(overlay.querySelector('.user-name')?.textContent).toContain('sin-nombre@example.invalid');
+    });
+
+    it('"Cerrar sesión" es un botón nativo (se activa con Intro) y abre el diálogo de confirmación', async () => {
+      await openMenu();
+      const item = overlayButton('Cerrar sesión');
+      expect(item.tagName).toBe('BUTTON');
+
+      item.click();
+      fixture.detectChanges();
+      await wait();
+
+      expect(overlay.querySelector('app-confirm-dialog')).not.toBeNull();
+      expect(logout).not.toHaveBeenCalled();
+    });
+
+    it('al confirmar cierra la sesión', async () => {
+      await openMenu();
+      overlayButton('Cerrar sesión').click();
+      await wait();
+
+      (Array.from(overlay.querySelectorAll('app-confirm-dialog button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.trim() === 'Cerrar sesión')!
+        .click();
+      await wait();
+
+      expect(logout).toHaveBeenCalledTimes(1);
+    });
+
+    it('al cancelar la sesión sigue iniciada y el foco vuelve al botón de cuenta', async () => {
+      await openMenu();
+      overlayButton('Cerrar sesión').click();
+      await wait();
+
+      (Array.from(overlay.querySelectorAll('app-confirm-dialog button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.trim() === 'Cancelar')!
+        .click();
+      await wait();
+
+      expect(logout).not.toHaveBeenCalled();
+      expect(document.activeElement).toBe(trigger());
+    });
+
+    it('con Escape tampoco se cierra la sesión y el foco vuelve al botón de cuenta', async () => {
+      await openMenu();
+      overlayButton('Cerrar sesión').click();
+      await wait();
+
+      const container = overlay.querySelector('.mat-mdc-dialog-container') as HTMLElement;
+      container.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true }));
+      await wait();
+
+      expect(logout).not.toHaveBeenCalled();
+      expect(document.activeElement).toBe(trigger());
+    });
   });
 });

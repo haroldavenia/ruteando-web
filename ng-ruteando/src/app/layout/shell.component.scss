@@ -23,3 +23,23 @@ mat-sidenav {
 .active {
   font-weight: 500;
 }
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 12px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.user-name {
+  font: var(--mat-sys-title-small);
+}
+
+.user-email {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}

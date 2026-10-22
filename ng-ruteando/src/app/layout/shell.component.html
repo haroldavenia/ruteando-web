@@ -5,6 +5,20 @@
     </button>
   }
   <span class="title">Ruteando</span>
+  <span class="spacer"></span>
+  <button mat-icon-button type="button" aria-label="Menú de usuario" [matMenuTriggerFor]="userMenu">
+    <mat-icon aria-hidden="true">account_circle</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu">
+    <div class="user-info" role="group" aria-label="Sesión iniciada">
+      <span class="user-name">{{ displayName() }}</span>
+      <span class="user-email">{{ email() }}</span>
+    </div>
+    <button mat-menu-item type="button" (click)="confirmLogout()">
+      <mat-icon aria-hidden="true">logout</mat-icon>
+      <span>Cerrar sesión</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>
 
 <mat-sidenav-container class="container">

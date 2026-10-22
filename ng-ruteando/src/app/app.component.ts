@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 import { SessionExpiredNotifier } from './core/auth/session-notifier';
 
-import { ShellComponent } from './layout/shell.component';
-
 @Component({
   selector: 'app-root',
-  imports: [ShellComponent],
+  imports: [RouterOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<app-shell />`,
+  template: `<router-outlet />`,
 })
 export class AppComponent {
   // Se instancia aquí para avisar al usuario cuando la sesión caduque
