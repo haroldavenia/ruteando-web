@@ -64,6 +64,7 @@ src/app/
   features/access/     pantallas de acceso: login, registro, verificar correo, recuperar y restablecer
   features/fleet/      flota (solo tenant_admin y super_admin): tipos de vehículo, vehículos y conductores
   features/places/     lugares (mismos roles): listado, alta, edición y borrado con ubicación en el mapa
+  features/packages/   paquetes (administradores y agentes): CRUD, cambio de estado y exportación a CSV
   layout/              shell: barra superior, menú de usuario y menú lateral (solo con sesión)
   shared/              piezas reutilizables: confirmación, formularios (shared/form), listados/borrado/guardado (shared/data) y mapa (shared/map)
   home/                página de inicio (privada)
@@ -100,5 +101,14 @@ Solo `tenant_admin` y `super_admin` (`roleGuard(ADMIN_ROLES)`); el menú lateral
 | `/lugares/nuevo`, `/lugares/:id` | Alta y edición (ubicación en el mapa o con latitud y longitud) |
 
 El mapa (`shared/map`) usa OpenLayers, que se carga solo en el navegador y bajo demanda. Las teselas y su atribución se configuran en `src/environments/environment*.ts` (`map`); por defecto son las de OpenStreetMap (sin clave, uso ligero, atribución obligatoria): para producción real cambia `tilesUrl` y `attribution`. Los campos de latitud y longitud son la alternativa accesible al mapa y siempre están presentes. No hay geocodificación: la dirección se guarda como texto.
+
+## Paquetes
+
+| Ruta | Pantalla |
+|---|---|
+| `/paquetes` | Listado, cambio de estado, borrado y «Exportar CSV» |
+| `/paquetes/nuevo`, `/paquetes/:id` | Alta y edición (ubicación en el mapa o con coordenadas) |
+
+Acceso para `tenant_admin`, `super_admin` y `agent` (`OPERATIONS_ROLES`). La guía es única por empresa. El CSV usa `;`, UTF-8 con BOM y las columnas del legacy; los textos que empiezan por `=`, `+`, `-` o `@` llevan un apóstrofo para que la hoja de cálculo no los ejecute. La importación de CSV llegará con las jornadas.
 
 El tema de Angular Material se define una sola vez en `src/styles.scss`.
