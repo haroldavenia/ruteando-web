@@ -11,10 +11,12 @@ import { errorInterceptor } from './core/api/error.interceptor';
 import { refreshInterceptor } from './core/api/refresh.interceptor';
 import { AuthService } from './core/auth/auth.service';
 import { routes } from './app.routes';
+import { MAP_CONFIG } from './shared/map/map-config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: API_BASE_URL, useValue: environment.apiUrl },
+    { provide: MAP_CONFIG, useValue: environment.map },
     // Se conserva zone.js (Angular 21 usa zoneless por defecto); pasar a zoneless queda fuera de este change
     provideZoneChangeDetection(),
     provideRouter(routes),
