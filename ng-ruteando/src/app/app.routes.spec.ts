@@ -132,5 +132,55 @@ describe('rutas de la aplicación', () => {
       expect(document.querySelector('app-access-layout h1')?.textContent).toContain('Restablecer contraseña');
     });
   });
-});
 
+  describe('flota', () => {
+    it('un anónimo en /flota/vehiculos va a /acceso recordando el destino', async () => {
+      await harness.navigateByUrl('/flota/vehiculos');
+      expect(router.url).toBe('/acceso?returnUrl=%2Fflota%2Fvehiculos');
+    });
+
+    for (const role of ['tenant_admin', 'super_admin'] as const) {
+      it(`${role} entra: /flota lleva a /flota/vehiculos dentro del shell`, async () => {
+        currentUser.set(makeUser({ role }));
+        await harness.navigateByUrl('/flota');
+        harness.detectChanges();
+
+        expect(router.url).toBe('/flota/vehiculos');
+        expect(document.querySelector('mat-toolbar')).not.toBeNull();
+        expect(document.querySelector('app-resource-list h1')?.textContent).toContain('Vehículos');
+      });
+    }
+
+    for (const role of ['agent', 'driver'] as const) {
+      it(`${role} es llevado a /sin-permiso en cualquier ruta de /flota`, async () => {
+        currentUser.set(makeUser({ role }));
+        for (const url of ['/flota', '/flota/tipos', '/flota/vehiculos/nuevo', '/flota/conductores']) {
+          await harness.navigateByUrl(url);
+          expect(router.url).withContext(url).toBe('/sin-permiso');
+        }
+      });
+    }
+
+    const screens: [string, string, string][] = [
+      ['/flota/tipos', 'app-resource-type-list', 'Tipos de vehículo'],
+      ['/flota/tipos/nuevo', 'app-resource-type-form', 'Nuevo tipo de vehículo'],
+      ['/flota/tipos/abc', 'app-resource-type-form', 'Editar tipo de vehículo'],
+      ['/flota/vehiculos', 'app-resource-list', 'Vehículos'],
+      ['/flota/vehiculos/nuevo', 'app-resource-form', 'Nuevo vehículo'],
+      ['/flota/vehiculos/abc', 'app-resource-form', 'Editar vehículo'],
+      ['/flota/conductores', 'app-driver-list', 'Conductores'],
+      ['/flota/conductores/nuevo', 'app-driver-form', 'Nuevo conductor'],
+      ['/flota/conductores/abc', 'app-driver-form', 'Editar conductor'],
+    ];
+    for (const [url, selector, title] of screens) {
+      it(`${url} muestra "${title}"`, async () => {
+        currentUser.set(makeUser({ role: 'tenant_admin' }));
+        await harness.navigateByUrl(url);
+        harness.detectChanges();
+
+        expect(router.url).toBe(url);
+        expect(document.querySelector(`${selector} h1`)?.textContent).toContain(title);
+      });
+    }
+  });
+});

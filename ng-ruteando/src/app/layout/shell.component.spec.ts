@@ -58,6 +58,54 @@ describe('ShellComponent', () => {
     expect(inicio?.classList.contains('active')).toBeTrue();
   });
 
+  describe('menú por secciones y rol', () => {
+    const links = () =>
+      Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-sidenav a')).map((a) => a.querySelector('[matListItemTitle]')!.textContent!.trim());
+    const withRole = (role: 'tenant_admin' | 'super_admin' | 'agent' | 'driver') => {
+      TestBed.inject(CurrentUser).set(makeUser({ role }));
+      fixture.detectChanges();
+    };
+
+    for (const role of ['tenant_admin', 'super_admin'] as const) {
+      it(`${role} ve Inicio y la sección Flota con tres entradas`, () => {
+        withRole(role);
+        const root = fixture.nativeElement as HTMLElement;
+        expect(root.querySelector('mat-sidenav h3')?.textContent).toContain('Flota');
+        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores']);
+      });
+    }
+
+    for (const role of ['agent', 'driver'] as const) {
+      it(`${role} solo ve Inicio`, () => {
+        withRole(role);
+        expect(links().length).toBe(1);
+        expect(links()[0]).toContain('Inicio');
+        expect((fixture.nativeElement as HTMLElement).querySelector('mat-sidenav h3')).toBeNull();
+      });
+    }
+
+    it('sin usuario cargado (render en servidor) solo muestra las entradas sin rol y no falla', () => {
+      TestBed.inject(CurrentUser).clear();
+      fixture.detectChanges();
+      expect(links().length).toBe(1);
+    });
+
+    it('la edición de un vehículo marca "Vehículos" como activa, y Inicio solo en /', async () => {
+      withRole('tenant_admin');
+      TestBed.inject(Router).resetConfig([
+        { path: '', pathMatch: 'full', children: [] },
+        { path: 'flota/vehiculos/:id', children: [] },
+      ]);
+      await TestBed.inject(Router).navigateByUrl('/flota/vehiculos/abc');
+      fixture.detectChanges();
+
+      const active = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-sidenav a.active')).map((a) =>
+        a.querySelector('[matListItemTitle]')!.textContent!.trim(),
+      );
+      expect(active).toEqual(['Vehículos']);
+    });
+  });
+
   it('usa el menú fijo en pantalla ancha y desplegable en estrecha', () => {
     expect(fixture.componentInstance.mode()).toBe('side');
 

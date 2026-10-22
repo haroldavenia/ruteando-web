@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
-import { authGuard, guestGuard } from './core/auth/auth.guards';
+import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
+import { FLEET_ROLES } from './features/fleet/fleet-roles';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,13 @@ export const routes: Routes = [
         path: '',
         pathMatch: 'full',
         loadComponent: () => import('./home/home.component').then((m) => m.HomeComponent),
+      },
+      {
+        // Flota: tipos de vehículo, vehículos y conductores, solo para quienes administran la empresa
+        path: 'flota',
+        canActivate: [roleGuard(FLEET_ROLES)],
+        canActivateChild: [roleGuard(FLEET_ROLES)],
+        loadChildren: () => import('./features/fleet/fleet.routes').then((m) => m.FLEET_ROUTES),
       },
       {
         path: 'sin-permiso',

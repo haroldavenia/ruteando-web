@@ -22,6 +22,10 @@ mat-sidenav {
 
 .active {
   font-weight: 500;
+  // Con varias entradas el peso de la letra no basta para ver dónde está la persona
+  --mat-list-list-item-container-color: var(--mat-sys-secondary-container);
+  --mat-list-list-item-label-text-color: var(--mat-sys-on-secondary-container);
+  --mat-list-list-item-leading-icon-color: var(--mat-sys-on-secondary-container);
 }
 
 .spacer {

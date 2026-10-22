@@ -24,17 +24,15 @@
 <mat-sidenav-container class="container">
   <mat-sidenav #drawer [mode]="mode()" [opened]="isWide()" role="navigation" aria-label="Navegación principal">
     <mat-nav-list>
-      @for (item of items; track item.link) {
-        <a
-          mat-list-item
-          [routerLink]="item.link"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          (click)="!isWide() && drawer.close()"
-        >
-          <mat-icon matListItemIcon aria-hidden="true">{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.label }}</span>
-        </a>
+      @for (item of items(); track item.label) {
+        @if (item.children; as children) {
+          <h3 matSubheader>{{ item.label }}</h3>
+          @for (child of children; track child.link) {
+            <ng-container *ngTemplateOutlet="link; context: { $implicit: child }" />
+          }
+        } @else {
+          <ng-container *ngTemplateOutlet="link; context: { $implicit: item }" />
+        }
       }
     </mat-nav-list>
   </mat-sidenav>
@@ -43,3 +41,17 @@
     <router-outlet />
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+<ng-template #link let-item>
+  <a
+    mat-list-item
+    [routerLink]="item.link"
+    routerLinkActive="active"
+    ariaCurrentWhenActive="page"
+    [routerLinkActiveOptions]="{ exact: !!item.exact }"
+    (click)="!isWide() && drawer.close()"
+  >
+    <mat-icon matListItemIcon aria-hidden="true">{{ item.icon }}</mat-icon>
+    <span matListItemTitle>{{ item.label }}</span>
+  </a>
+</ng-template>
