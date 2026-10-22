@@ -8,8 +8,8 @@ import { RouterLink } from '@angular/router';
 
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
-import { FocusFirstInvalidDirective } from '../shared/focus-first-invalid.directive';
-import { FormResultComponent } from '../shared/form-result.component';
+import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
+import { FormResultComponent } from '../../../shared/form/form-result.component';
 
 /** Texto fijo: no depende de la respuesta del gateway para no revelar si la cuenta existe. */
 const NEUTRAL_MESSAGE = 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña';

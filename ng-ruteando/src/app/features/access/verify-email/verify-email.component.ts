@@ -10,9 +10,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { INVALID_LINK_MESSAGE } from '../../../core/auth/auth-messages';
-import { FocusFirstInvalidDirective } from '../shared/focus-first-invalid.directive';
-import { FormResultComponent } from '../shared/form-result.component';
-import { notify } from '../shared/notify';
+import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
+import { FormResultComponent } from '../../../shared/form/form-result.component';
+import { notify } from '../../../shared/form/notify';
 
 const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verificación';
 

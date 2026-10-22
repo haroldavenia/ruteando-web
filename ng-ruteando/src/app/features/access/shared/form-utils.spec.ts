@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { firstErrorMessage } from './access.messages';
+import { firstErrorMessage } from '../../../shared/form/access.messages';
 import { matchesSibling, revalidateOnPasswordChange } from './form-utils';
 
 @Component({ template: '' })

@@ -8,11 +8,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { INVALID_LINK_MESSAGE } from '../../../core/auth/auth-messages';
-import { FocusFirstInvalidDirective } from '../shared/focus-first-invalid.directive';
-import { FormResultComponent } from '../shared/form-result.component';
+import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
+import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { PASSWORD_MIN_LENGTH, matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
-import { notify } from '../shared/notify';
-import { PasswordFieldComponent } from '../shared/password-field.component';
+import { notify } from '../../../shared/form/notify';
+import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 
 /** Estados del gateway que indican que el enlace ya no sirve (el gateway no documenta cuál usa). */
 const LINK_ERRORS = [400, 401, 404, 410];

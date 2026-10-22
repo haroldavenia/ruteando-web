@@ -8,11 +8,11 @@ import { RouterLink } from '@angular/router';
 
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
-import { firstErrorMessage } from '../shared/access.messages';
-import { FocusFirstInvalidDirective } from '../shared/focus-first-invalid.directive';
-import { FormResultComponent } from '../shared/form-result.component';
+import { firstErrorMessage } from '../../../shared/form/access.messages';
+import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
+import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { PASSWORD_MIN_LENGTH, matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
-import { PasswordFieldComponent } from '../shared/password-field.component';
+import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 
 interface TextField {
   name: 'firstName' | 'lastName' | 'tenantName' | 'email';
