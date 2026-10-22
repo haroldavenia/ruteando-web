@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { Observable, Subject, of, throwError } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
@@ -38,7 +39,7 @@ function page(content: Row[], number = 0, total = content.length): Page<Row> {
 class HostComponent {
   fetch: (p: PageParams) => Observable<Page<Row>> = () => of(page([]));
   readonly state = new ListState<Row>((p) => this.fetch(p));
-  readonly columns = COLUMNS;
+  columns: DataColumn<Row>[] = COLUMNS;
 }
 
 describe('DataTableComponent', () => {
@@ -59,7 +60,7 @@ describe('DataTableComponent', () => {
     fixture.detectChanges();
   }
 
-  beforeEach(() => TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations()] }));
+  beforeEach(() => TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations(), provideRouter([])] }));
 
   it('muestra el indicador de carga mientras espera', async () => {
     await render(() => new Subject<Page<Row>>(), true);
@@ -152,5 +153,21 @@ describe('DataTableComponent', () => {
     expect(getComputedStyle(scroller).overflowX).toBe('auto');
     expect(container.scrollWidth).toBeLessThanOrEqual(container.clientWidth);
     container.remove();
+  });
+
+  it('una columna con enlace pinta el texto como enlace a su ruta', async () => {
+    fixture = TestBed.createComponent(HostComponent);
+    host = fixture.componentInstance;
+    host.fetch = () => of(page([{ name: 'Furgón', plate: 'ABC123' }]));
+    (host as { columns: DataColumn<Row>[] }).columns = [{ ...COLUMNS[0], link: (r) => ['/flota', r.plate] }, COLUMNS[1]];
+    host.state.load(0);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const link = root().querySelector('td a') as HTMLAnchorElement | null;
+    expect(link?.textContent?.trim()).toBe('Furgón');
+    expect(link?.getAttribute('href')).toBe('/flota/ABC123');
+    expect(root().querySelectorAll('td a').length).toBe(1);
   });
 });

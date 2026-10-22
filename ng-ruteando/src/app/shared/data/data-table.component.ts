@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router';
 
 import { ListState } from './list-state';
 
@@ -16,6 +17,8 @@ export interface DataColumn<T> {
   header: string;
   /** Texto de la celda; también es el que busca el filtro. */
   cell: (row: T) => string;
+  /** Si se indica, el texto de la celda es un enlace a esta ruta. */
+  link?: (row: T) => string | readonly string[];
 }
 
 /** Normaliza para comparar sin distinguir mayúsculas ni acentos. */
@@ -48,7 +51,7 @@ class SpanishPaginatorIntl extends MatPaginatorIntl {
  */
 @Component({
   selector: 'app-data-table',
-  imports: [NgTemplateOutlet, FormsModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressBarModule],
+  imports: [NgTemplateOutlet, RouterLink, FormsModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressBarModule],
   providers: [{ provide: MatPaginatorIntl, useClass: SpanishPaginatorIntl }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './data-table.component.html',
