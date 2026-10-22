@@ -72,6 +72,13 @@ export const routes: Routes = [
         loadChildren: () => import('./features/settings/settings.routes').then((m) => m.SETTINGS_ROUTES),
       },
       {
+        // Jornadas: planificar y consultar; como los paquetes, para administradores y agentes
+        path: 'jornadas',
+        canActivate: [roleGuard(OPERATIONS_ROLES)],
+        canActivateChild: [roleGuard(OPERATIONS_ROLES)],
+        loadChildren: () => import('./features/journeys/journeys.routes').then((m) => m.JOURNEYS_ROUTES),
+      },
+      {
         // Paquetes: trabajo diario de administradores y agentes (el conductor no entra)
         path: 'paquetes',
         canActivate: [roleGuard(OPERATIONS_ROLES)],

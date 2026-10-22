@@ -1,0 +1,47 @@
+:host {
+  display: block;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--mat-sys-body-medium);
+}
+
+th,
+td {
+  padding: 8px 12px;
+  text-align: start;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  white-space: nowrap;
+}
+
+thead th {
+  font: var(--mat-sys-title-small);
+}
+
+tbody th {
+  font-weight: 500;
+}
+
+.stops td {
+  background: var(--mat-sys-surface-container-low);
+  white-space: normal;
+}
+
+.inner {
+  max-width: 720px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

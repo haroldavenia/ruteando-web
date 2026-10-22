@@ -67,17 +67,17 @@ describe('ShellComponent', () => {
     };
 
     for (const role of ['tenant_admin', 'super_admin'] as const) {
-      it(`${role} ve Inicio, la sección Flota con tres entradas, Lugares, Paquetes y Configuraciones`, () => {
+      it(`${role} ve Inicio, la sección Flota con tres entradas, Lugares, Paquetes, Jornadas y Configuraciones`, () => {
         withRole(role);
         const root = fixture.nativeElement as HTMLElement;
         expect(root.querySelector('mat-sidenav h3')?.textContent).toContain('Flota');
-        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Paquetes', 'Configuraciones']);
+        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Paquetes', 'Jornadas', 'Configuraciones']);
       });
     }
 
-    it('un agente ve Inicio y Paquetes, sin la sección Flota ni Lugares', () => {
+    it('un agente ve Inicio, Paquetes y Jornadas, sin la sección Flota ni Lugares', () => {
       withRole('agent');
-      expect(links()).toEqual(['Inicio', 'Paquetes']);
+      expect(links()).toEqual(['Inicio', 'Paquetes', 'Jornadas']);
       expect((fixture.nativeElement as HTMLElement).querySelector('mat-sidenav h3')).toBeNull();
     });
 
@@ -94,6 +94,21 @@ describe('ShellComponent', () => {
         a.querySelector('[matListItemTitle]')!.textContent!.trim(),
       );
       expect(active).toEqual(['Configuraciones']);
+    });
+
+    it('el detalle de una jornada marca "Jornadas" como activa', async () => {
+      withRole('agent');
+      TestBed.inject(Router).resetConfig([
+        { path: '', pathMatch: 'full', children: [] },
+        { path: 'jornadas/:id', children: [] },
+      ]);
+      await TestBed.inject(Router).navigateByUrl('/jornadas/abc');
+      fixture.detectChanges();
+
+      const active = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-sidenav a.active')).map((a) =>
+        a.querySelector('[matListItemTitle]')!.textContent!.trim(),
+      );
+      expect(active).toEqual(['Jornadas']);
     });
 
     it('un conductor solo ve Inicio', () => {
