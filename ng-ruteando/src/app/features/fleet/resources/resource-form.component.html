@@ -49,7 +49,7 @@
         <mat-error>{{ error('depotId') }}</mat-error>
       </mat-form-field>
       @if (placesLoaded() && places().length === 0) {
-        <p class="hint">Todavía no hay lugares que usar como depósito.</p>
+        <p class="hint">Todavía no hay lugares que usar como depósito. Primero <a routerLink="/lugares/nuevo">crea un lugar</a>.</p>
       }
       @if (placesTruncated()) {
         <p class="hint" role="status">Se muestran solo los primeros {{ selectLimit }} lugares.</p>

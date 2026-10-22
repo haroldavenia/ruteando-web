@@ -22,7 +22,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../core/auth/auth.service';
 import { CurrentUser } from '../core/auth/current-user';
 import { UserRole } from '../core/auth/session.model';
-import { FLEET_ROLES } from '../features/fleet/fleet-roles';
+import { ADMIN_ROLES } from '../core/auth/admin-roles';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 
 /** Entrada del menú: un enlace (`link`) o una sección con enlaces (`children`). */
@@ -42,13 +42,14 @@ const NAV_ITEMS: readonly NavItem[] = [
   {
     label: 'Flota',
     icon: 'local_shipping',
-    roles: FLEET_ROLES,
+    roles: ADMIN_ROLES,
     children: [
       { label: 'Vehículos', icon: 'directions_car', link: '/flota/vehiculos' },
       { label: 'Tipos de vehículo', icon: 'category', link: '/flota/tipos' },
       { label: 'Conductores', icon: 'badge', link: '/flota/conductores' },
     ],
   },
+  { label: 'Lugares', icon: 'place', link: '/lugares', roles: ADMIN_ROLES },
 ];
 
 @Component({

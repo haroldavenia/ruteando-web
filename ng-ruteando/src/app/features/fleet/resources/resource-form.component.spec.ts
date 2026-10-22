@@ -146,6 +146,17 @@ describe('ResourceFormComponent', () => {
       expect(root().querySelector('a[href="/flota/tipos"]')).not.toBeNull();
     });
 
+    it('sin lugares explica que hace falta un depósito y enlaza a /lugares/nuevo', () => {
+      setup(null, { places: { response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } } } });
+      expect(root().textContent).toContain('Todavía no hay lugares que usar como depósito');
+      expect(root().querySelector('a[href="/lugares/nuevo"]')).not.toBeNull();
+    });
+
+    it('con lugares no muestra el enlace', () => {
+      setup(null);
+      expect(root().querySelector('a[href="/lugares/nuevo"]')).toBeNull();
+    });
+
     it('avisa cuando la lista de tipos está truncada', () => {
       const body = { ...(fx(types).response.body as object), totalElements: 450 };
       setup(null, { types: { response: { status: 200, body } } });

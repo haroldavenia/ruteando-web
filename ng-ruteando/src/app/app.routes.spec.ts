@@ -7,10 +7,12 @@ import { Router, provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { NEVER } from 'rxjs';
 
+import { TEST_MAP_CONFIG } from '../testing/map';
 import { makeUser } from '../testing/session';
 import { routes } from './app.routes';
 import { API_BASE_URL } from './core/api/api-config';
 import { CurrentUser } from './core/auth/current-user';
+import { MAP_CONFIG } from './shared/map/map-config';
 
 describe('rutas de la aplicación', () => {
   let harness: RouterTestingHarness;
@@ -23,6 +25,7 @@ describe('rutas de la aplicación', () => {
         provideRouter(routes),
         provideNoopAnimations(),
         { provide: API_BASE_URL, useValue: '/gateway' },
+        { provide: MAP_CONFIG, useValue: TEST_MAP_CONFIG },
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: BreakpointObserver, useValue: { observe: () => NEVER } },
@@ -179,6 +182,47 @@ describe('rutas de la aplicación', () => {
         harness.detectChanges();
 
         expect(router.url).toBe(url);
+        expect(document.querySelector(`${selector} h1`)?.textContent).toContain(title);
+      });
+    }
+  });
+
+  describe('lugares', () => {
+    it('un anónimo en /lugares va a /acceso recordando el destino', async () => {
+      await harness.navigateByUrl('/lugares');
+      expect(router.url).toBe('/acceso?returnUrl=%2Flugares');
+    });
+
+    for (const role of ['tenant_admin', 'super_admin'] as const) {
+      it(`${role} entra en /lugares dentro del shell`, async () => {
+        currentUser.set(makeUser({ role }));
+        await harness.navigateByUrl('/lugares');
+        harness.detectChanges();
+
+        expect(router.url).toBe('/lugares');
+        expect(document.querySelector('mat-toolbar')).not.toBeNull();
+        expect(document.querySelector('app-place-list h1')?.textContent).toContain('Lugares');
+      });
+    }
+
+    for (const role of ['agent', 'driver'] as const) {
+      it(`${role} es llevado a /sin-permiso en cualquier ruta de /lugares`, async () => {
+        currentUser.set(makeUser({ role }));
+        for (const url of ['/lugares', '/lugares/nuevo', '/lugares/abc']) {
+          await harness.navigateByUrl(url);
+          expect(router.url).withContext(url).toBe('/sin-permiso');
+        }
+      });
+    }
+
+    for (const [url, selector, title] of [
+      ['/lugares/nuevo', 'app-place-form', 'Nuevo lugar'],
+      ['/lugares/abc', 'app-place-form', 'Editar lugar'],
+    ]) {
+      it(`${url} muestra "${title}"`, async () => {
+        currentUser.set(makeUser({ role: 'tenant_admin' }));
+        await harness.navigateByUrl(url);
+        harness.detectChanges();
         expect(document.querySelector(`${selector} h1`)?.textContent).toContain(title);
       });
     }

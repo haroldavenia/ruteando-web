@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
-import { FLEET_ROLES } from './features/fleet/fleet-roles';
+import { ADMIN_ROLES } from './core/auth/admin-roles';
 
 export const routes: Routes = [
   {
@@ -53,9 +53,16 @@ export const routes: Routes = [
       {
         // Flota: tipos de vehículo, vehículos y conductores, solo para quienes administran la empresa
         path: 'flota',
-        canActivate: [roleGuard(FLEET_ROLES)],
-        canActivateChild: [roleGuard(FLEET_ROLES)],
+        canActivate: [roleGuard(ADMIN_ROLES)],
+        canActivateChild: [roleGuard(ADMIN_ROLES)],
         loadChildren: () => import('./features/fleet/fleet.routes').then((m) => m.FLEET_ROUTES),
+      },
+      {
+        // Lugares (depósitos, almacenes, tiendas...): mismos roles que la flota
+        path: 'lugares',
+        canActivate: [roleGuard(ADMIN_ROLES)],
+        canActivateChild: [roleGuard(ADMIN_ROLES)],
+        loadChildren: () => import('./features/places/places.routes').then((m) => m.PLACES_ROUTES),
       },
       {
         path: 'sin-permiso',

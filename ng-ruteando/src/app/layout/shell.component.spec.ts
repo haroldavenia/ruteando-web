@@ -67,11 +67,11 @@ describe('ShellComponent', () => {
     };
 
     for (const role of ['tenant_admin', 'super_admin'] as const) {
-      it(`${role} ve Inicio y la sección Flota con tres entradas`, () => {
+      it(`${role} ve Inicio, la sección Flota con tres entradas y Lugares`, () => {
         withRole(role);
         const root = fixture.nativeElement as HTMLElement;
         expect(root.querySelector('mat-sidenav h3')?.textContent).toContain('Flota');
-        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores']);
+        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares']);
       });
     }
 
@@ -83,6 +83,21 @@ describe('ShellComponent', () => {
         expect((fixture.nativeElement as HTMLElement).querySelector('mat-sidenav h3')).toBeNull();
       });
     }
+
+    it('la edición de un lugar marca "Lugares" como activa', async () => {
+      withRole('tenant_admin');
+      TestBed.inject(Router).resetConfig([
+        { path: '', pathMatch: 'full', children: [] },
+        { path: 'lugares/:id', children: [] },
+      ]);
+      await TestBed.inject(Router).navigateByUrl('/lugares/abc');
+      fixture.detectChanges();
+
+      const active = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-sidenav a.active')).map((a) =>
+        a.querySelector('[matListItemTitle]')!.textContent!.trim(),
+      );
+      expect(active).toEqual(['Lugares']);
+    });
 
     it('sin usuario cargado (render en servidor) solo muestra las entradas sin rol y no falla', () => {
       TestBed.inject(CurrentUser).clear();
