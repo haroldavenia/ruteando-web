@@ -62,8 +62,9 @@ src/app/
   app.routes.ts        rutas: /acceso/** con su layout; el área privada con el shell diferido y authGuard
   core/                api (HTTP, errores, modelos, servicios de datos), auth (sesión, guards), geo
   features/access/     pantallas de acceso: login, registro, verificar correo, recuperar y restablecer
+  features/fleet/      flota (solo tenant_admin y super_admin): tipos de vehículo, vehículos y conductores
   layout/              shell: barra superior, menú de usuario y menú lateral (solo con sesión)
-  shared/              piezas reutilizables (diálogo de confirmación)
+  shared/              piezas reutilizables: confirmación, formularios (shared/form) y listados/borrado/guardado (shared/data)
   home/                página de inicio (privada)
 ```
 
@@ -78,5 +79,16 @@ src/app/
 | `/acceso/restablecer?token=` | Elegir una contraseña nueva |
 
 Los correos del gateway deben enlazar a `/acceso/verificar-email?token=...` y a `/acceso/restablecer?token=...`. La página de inicio y el resto del área privada exigen sesión.
+
+## Flota
+
+| Ruta | Pantalla |
+|---|---|
+| `/flota` | Lleva a `/flota/vehiculos` |
+| `/flota/vehiculos`, `/nuevo`, `/:id` | Vehículos: listado, alta, edición, borrado y asignación de conductor |
+| `/flota/tipos`, `/nuevo`, `/:id` | Tipos de vehículo |
+| `/flota/conductores`, `/nuevo`, `/:id` | Conductores (usuarios con rol `driver`) y envío del enlace de restablecimiento |
+
+Solo `tenant_admin` y `super_admin` (`roleGuard(FLEET_ROLES)`); el menú lateral oculta la sección al resto. Cada pantalla es una ruta diferida y los formularios avisan antes de salir con cambios sin guardar (`unsavedChangesGuard`). El patrón de listado (`ListState`, `DataTableComponent`, `PageHeaderComponent`), borrado (`DeleteFlow`) y envío (`SubmitState`) vive en `shared/data/` y es el que reutilizarán las fases siguientes.
 
 El tema de Angular Material se define una sola vez en `src/styles.scss`.
