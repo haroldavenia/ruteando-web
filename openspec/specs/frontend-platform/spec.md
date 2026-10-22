@@ -53,11 +53,11 @@ El proyecto SHALL ejecutar su suite de pruebas desde línea de comandos, sin nav
 La aplicación SHALL seguir sirviéndose con SSR sin acceder a APIs exclusivas del navegador durante el render, y SHALL hidratarse en el cliente sin errores.
 
 #### Scenario: Respuesta SSR
-- **WHEN** se ejecuta el servidor Node generado y se pide `/`
-- **THEN** la respuesta HTML contiene el contenido de la página de inicio ya renderizado
+- **WHEN** se ejecuta el servidor Node generado y se pide `/acceso`
+- **THEN** la respuesta HTML contiene el formulario de inicio de sesión ya renderizado
 
 #### Scenario: Hidratación sin errores
-- **WHEN** el navegador carga `/` desde el servidor SSR
+- **WHEN** el navegador carga `/acceso` desde el servidor SSR
 - **THEN** la consola no muestra errores de hidratación ni de proveedores
 
 #### Scenario: Ruta desconocida
