@@ -65,6 +65,7 @@ src/app/
   features/fleet/      flota (solo tenant_admin y super_admin): tipos de vehículo, vehículos y conductores
   features/places/     lugares (mismos roles): listado, alta, edición y borrado con ubicación en el mapa
   features/packages/   paquetes (administradores y agentes): CRUD, cambio de estado y exportación a CSV
+  features/settings/   configuraciones de planificación (administradores): CRUD con secciones según la restricción
   layout/              shell: barra superior, menú de usuario y menú lateral (solo con sesión)
   shared/              piezas reutilizables: confirmación, formularios (shared/form), listados/borrado/guardado (shared/data) y mapa (shared/map)
   home/                página de inicio (privada)
@@ -110,5 +111,14 @@ El mapa (`shared/map`) usa OpenLayers, que se carga solo en el navegador y bajo 
 | `/paquetes/nuevo`, `/paquetes/:id` | Alta y edición (ubicación en el mapa o con coordenadas) |
 
 Acceso para `tenant_admin`, `super_admin` y `agent` (`OPERATIONS_ROLES`). La guía es única por empresa. El CSV usa `;`, UTF-8 con BOM y las columnas del legacy; los textos que empiezan por `=`, `+`, `-` o `@` llevan un apóstrofo para que la hoja de cálculo no los ejecute. La importación de CSV llegará con las jornadas.
+
+## Configuraciones
+
+| Ruta | Pantalla |
+|---|---|
+| `/configuraciones` | Listado y borrado |
+| `/configuraciones/nuevo`, `/configuraciones/:id` | Alta y edición |
+
+Solo `tenant_admin` y `super_admin`. Una configuración elige topología de la ruta, tipo de restricción, lugares de salida y llegada, vehículos y reglas de evaluación; con «Rutas fijas» se pide el número de rutas y con los demás tipos, el turno. Es lo que luego recibe la planificación de jornadas.
 
 El tema de Angular Material se define una sola vez en `src/styles.scss`.
