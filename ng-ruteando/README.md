@@ -66,6 +66,7 @@ src/app/
   features/places/     lugares (mismos roles): listado, alta, edición y borrado con ubicación en el mapa
   features/packages/   paquetes (administradores y agentes): CRUD, cambio de estado y exportación a CSV
   features/settings/   configuraciones de planificación (administradores): CRUD con secciones según la restricción
+  features/journeys/   jornadas (administradores y agentes): planificar, listar y detalle con rutas y paradas
   layout/              shell: barra superior, menú de usuario y menú lateral (solo con sesión)
   shared/              piezas reutilizables: confirmación, formularios (shared/form), listados/borrado/guardado (shared/data) y mapa (shared/map)
   home/                página de inicio (privada)
@@ -120,5 +121,15 @@ Acceso para `tenant_admin`, `super_admin` y `agent` (`OPERATIONS_ROLES`). La gu�
 | `/configuraciones/nuevo`, `/configuraciones/:id` | Alta y edición |
 
 Solo `tenant_admin` y `super_admin`. Una configuración elige topología de la ruta, tipo de restricción, lugares de salida y llegada, vehículos y reglas de evaluación; con «Rutas fijas» se pide el número de rutas y con los demás tipos, el turno. Es lo que luego recibe la planificación de jornadas.
+
+## Jornadas
+
+| Ruta | Pantalla |
+|---|---|
+| `/jornadas` | Listado y borrado |
+| `/jornadas/nueva` | Planificar: nombre, configuración y paquetes (selección que se conserva entre páginas) |
+| `/jornadas/:id` | Detalle: resumen, rutas, paradas y paquetes no planificables |
+
+Acceso para `tenant_admin`, `super_admin` y `agent`. La optimización la hace el gateway: la aplicación envía el nombre, la configuración y los ids de los paquetes. Si la planificación tarda más que `GATEWAY_TIMEOUT_MS` (30 s por defecto) el proxy responde 504; súbelo en `.env`. Conocido: el gateway real rechaza ids de paquete hexadecimales en `journeys/plan` (400 `For input string`). Las rutas todavía no se dibujan en el mapa.
 
 El tema de Angular Material se define una sola vez en `src/styles.scss`.
