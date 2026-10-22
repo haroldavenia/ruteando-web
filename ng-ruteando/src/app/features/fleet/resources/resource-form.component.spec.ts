@@ -9,7 +9,7 @@ import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
 
 import { ResourceFormComponent, SELECT_LIMIT } from './resource-form.component';
-import { fromUtcIso } from './shift-time';
+import { fromUtcIso } from '../../../shared/time/shift-time';
 
 import places from '../../../../testing/fixtures/gateway/get__places.json';
 import types from '../../../../testing/fixtures/gateway/get__resource-types.json';

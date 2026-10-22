@@ -18,7 +18,7 @@ import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-inv
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { notify } from '../../../shared/form/notify';
 
-import { fromUtcIso, localDateOf, minutesToSeconds, secondsToMinutes, shiftErrors, toUtcIso, todayLocalDate } from './shift-time';
+import { fromUtcIso, localDateOf, minutesToSeconds, secondsToMinutes, shiftErrors, toUtcIso, todayLocalDate } from '../../../shared/time/shift-time';
 
 /** Cuántos tipos y lugares se cargan en los selectores; si hay más, el formulario avisa. */
 export const SELECT_LIMIT = 200;
