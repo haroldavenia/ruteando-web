@@ -63,8 +63,9 @@ src/app/
   core/                api (HTTP, errores, modelos, servicios de datos), auth (sesión, guards), geo
   features/access/     pantallas de acceso: login, registro, verificar correo, recuperar y restablecer
   features/fleet/      flota (solo tenant_admin y super_admin): tipos de vehículo, vehículos y conductores
+  features/places/     lugares (mismos roles): listado, alta, edición y borrado con ubicación en el mapa
   layout/              shell: barra superior, menú de usuario y menú lateral (solo con sesión)
-  shared/              piezas reutilizables: confirmación, formularios (shared/form) y listados/borrado/guardado (shared/data)
+  shared/              piezas reutilizables: confirmación, formularios (shared/form), listados/borrado/guardado (shared/data) y mapa (shared/map)
   home/                página de inicio (privada)
 ```
 
@@ -89,6 +90,15 @@ Los correos del gateway deben enlazar a `/acceso/verificar-email?token=...` y a 
 | `/flota/tipos`, `/nuevo`, `/:id` | Tipos de vehículo |
 | `/flota/conductores`, `/nuevo`, `/:id` | Conductores (usuarios con rol `driver`) y envío del enlace de restablecimiento |
 
-Solo `tenant_admin` y `super_admin` (`roleGuard(FLEET_ROLES)`); el menú lateral oculta la sección al resto. Cada pantalla es una ruta diferida y los formularios avisan antes de salir con cambios sin guardar (`unsavedChangesGuard`). El patrón de listado (`ListState`, `DataTableComponent`, `PageHeaderComponent`), borrado (`DeleteFlow`) y envío (`SubmitState`) vive en `shared/data/` y es el que reutilizarán las fases siguientes.
+Solo `tenant_admin` y `super_admin` (`roleGuard(ADMIN_ROLES)`); el menú lateral oculta la sección al resto. Cada pantalla es una ruta diferida y los formularios avisan antes de salir con cambios sin guardar (`unsavedChangesGuard`). El patrón de listado (`ListState`, `DataTableComponent`, `PageHeaderComponent`), borrado (`DeleteFlow`) y envío (`SubmitState`) vive en `shared/data/` y es el que reutilizarán las fases siguientes.
+
+## Lugares y mapa
+
+| Ruta | Pantalla |
+|---|---|
+| `/lugares` | Listado de lugares |
+| `/lugares/nuevo`, `/lugares/:id` | Alta y edición (ubicación en el mapa o con latitud y longitud) |
+
+El mapa (`shared/map`) usa OpenLayers, que se carga solo en el navegador y bajo demanda. Las teselas y su atribución se configuran en `src/environments/environment*.ts` (`map`); por defecto son las de OpenStreetMap (sin clave, uso ligero, atribución obligatoria): para producción real cambia `tilesUrl` y `attribution`. Los campos de latitud y longitud son la alternativa accesible al mapa y siempre están presentes. No hay geocodificación: la dirección se guarda como texto.
 
 El tema de Angular Material se define una sola vez en `src/styles.scss`.
