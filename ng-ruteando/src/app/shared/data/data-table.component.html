@@ -1,0 +1,65 @@
+@let s = state();
+<mat-form-field class="filter" subscriptSizing="dynamic">
+  <mat-label>Filtrar esta página</mat-label>
+  <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+  <input matInput type="search" autocomplete="off" [ngModel]="filter()" (ngModelChange)="filter.set($event)" />
+</mat-form-field>
+
+@if (s.status() === 'loading') {
+  <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
+  <p class="state" role="status">Cargando {{ entityPlural() }}…</p>
+}
+
+@if (s.status() === 'error') {
+  <div class="state error" role="alert">
+    <mat-icon aria-hidden="true">error</mat-icon>
+    <span>{{ s.error() }}</span>
+    <button mat-stroked-button type="button" (click)="s.reload()">Reintentar</button>
+  </div>
+}
+
+@if (s.status() === 'empty') {
+  <div class="state">
+    <p>{{ emptyMessage() }}</p>
+    <ng-content select="[empty-action]" />
+  </div>
+}
+
+@if (s.status() === 'ready') {
+  <div class="table-scroll">
+    <table mat-table [dataSource]="visibleRows()">
+      @for (column of columns(); track column.id) {
+        <ng-container [matColumnDef]="column.id">
+          <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
+          <td mat-cell *matCellDef="let row">{{ column.cell(row) }}</td>
+        </ng-container>
+      }
+      @if (rowActions(); as actions) {
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef><span class="visually-hidden">Acciones</span></th>
+          <td mat-cell *matCellDef="let row" class="actions">
+            <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
+          </td>
+        </ng-container>
+      }
+      <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+    </table>
+  </div>
+
+  @if (visibleRows().length === 0) {
+    <div class="state" role="status">
+      <p>No hay resultados</p>
+      <button mat-button type="button" (click)="clearFilter()">Limpiar búsqueda</button>
+    </div>
+  }
+
+  <mat-paginator
+    [length]="s.total()"
+    [pageIndex]="s.page()"
+    [pageSize]="s.size()"
+    [pageSizeOptions]="pageSizeOptions()"
+    (page)="pageChanged($event)"
+    [attr.aria-label]="'Paginación de ' + entityPlural()"
+  />
+}
