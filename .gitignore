@@ -3,3 +3,4 @@ start_server.sh
 cosas
 .idea/*
 .env
+.claude/settings.local.json
