@@ -49,6 +49,25 @@ describe('unsavedChangesGuard', () => {
     expect(results).toEqual([true]);
   });
 
+  it('una pantalla puede poner sus propios textos al diálogo', async () => {
+    const component: HasUnsavedChanges = {
+      hasUnsavedChanges: () => true,
+      leaveDialog: () => ({ title: '¿Salir de la importación?', confirmLabel: 'Salir', cancelLabel: 'Seguir importando' }),
+    };
+    const results: boolean[] = [];
+    (runInInjectionContext(TestBed.inject(Injector), () =>
+      unsavedChangesGuard(component, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot, {} as RouterStateSnapshot),
+    ) as Observable<boolean>).subscribe((v) => results.push(v));
+    TestBed.inject(ApplicationRef).tick();
+    await wait();
+
+    expect(overlay.textContent).toContain('¿Salir de la importación?');
+    expect(overlay.textContent).toContain('Tienes cambios sin guardar');
+    button('Salir').click();
+    await wait();
+    expect(results).toEqual([true]);
+  });
+
   it('"Seguir editando" mantiene al usuario en la pantalla', async () => {
     const results: boolean[] = [];
     run(true).subscribe((v) => results.push(v));

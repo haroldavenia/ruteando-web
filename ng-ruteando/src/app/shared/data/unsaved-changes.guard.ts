@@ -9,6 +9,8 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 export interface HasUnsavedChanges {
   /** `true` si el formulario está modificado y todavía no se ha guardado. */
   hasUnsavedChanges(): boolean;
+  /** Textos del diálogo cuando no son los de siempre (por ejemplo, «hay una importación en curso»). */
+  leaveDialog?(): Partial<{ title: string; message: string; confirmLabel: string; cancelLabel: string }>;
 }
 
 /** Pregunta antes de abandonar un formulario sucio; con el formulario limpio o ya guardado deja pasar. */
@@ -23,6 +25,7 @@ export const unsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = (componen
         message: 'Tienes cambios sin guardar. Si sales ahora se perderán.',
         confirmLabel: 'Descartar',
         cancelLabel: 'Seguir editando',
+        ...component.leaveDialog?.(),
       },
     })
     .afterClosed()
