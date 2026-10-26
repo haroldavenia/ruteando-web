@@ -8,7 +8,10 @@ export const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {
   mixed: 'Mixto',
 };
 
-/** Etiquetas en español de `PackageStatus`. */
+/**
+ * Etiquetas en español de `PackageStatus`, también de los estados que el gateway ya no ofrece (`returned`):
+ * un paquete puede conservar uno y debe verse con su nombre.
+ */
 export const PACKAGE_STATUS_LABELS: Readonly<Record<string, string>> = {
   pending: 'Pendiente',
   attended: 'Atendido',
@@ -28,7 +31,8 @@ export const GEOCODING_STATUS_LABELS: Readonly<Record<string, string>> = {
 
 /** Valores habituales para pintar los selectores antes de cargar los dominios del gateway. */
 export const DEFAULT_SERVICE_TYPES = Object.keys(SERVICE_TYPE_LABELS);
-export const DEFAULT_PACKAGE_STATUSES = Object.keys(PACKAGE_STATUS_LABELS);
+/** Estados activos del gateway real; son los que se ofrecen mientras no cargue el catálogo. */
+export const DEFAULT_PACKAGE_STATUSES = ['pending', 'attended', 'unattended', 'cancelled'];
 
 const label = (labels: Readonly<Record<string, string>>, key: string | null): string => (key === null ? '' : (labels[key] ?? key));
 

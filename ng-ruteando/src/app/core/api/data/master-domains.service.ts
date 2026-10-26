@@ -23,7 +23,6 @@ export const MASTER_DOMAIN_DEFAULTS: Readonly<Record<string, readonly MasterDoma
     ['attended', 'Attended'],
     ['unattended', 'Unattended'],
     ['cancelled', 'Cancelled'],
-    ['returned', 'Returned'],
   ),
 };
 
@@ -40,6 +39,11 @@ export class MasterDomainsService {
   /** Valores del dominio `code`, o una lista vacía si no existe. */
   values(code: string): readonly MasterDomainValue[] {
     return this.state()[code] ?? [];
+  }
+
+  /** Valores activos del dominio `code`, en el mismo orden que `values()`: los que se pueden elegir como destino (el gateway rechaza los inactivos). */
+  activeValues(code: string): readonly MasterDomainValue[] {
+    return this.values(code).filter((value) => value.active);
   }
 
   /** Carga los dominios una sola vez; si falla no se cachea el fallo y se conservan los valores actuales. */

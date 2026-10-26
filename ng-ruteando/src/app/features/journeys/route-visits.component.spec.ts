@@ -212,12 +212,12 @@ describe('RouteVisitsComponent', () => {
       expect(root().querySelector('.bar')?.getAttribute('aria-hidden')).toBe('true');
     });
 
-    it('ofrece los estados menos el actual, con su etiqueta', async () => {
+    it('ofrece los estados activos menos el actual, con su etiqueta, y no «Devuelto»', async () => {
       changeButton('Tienda Sur').click();
       fixture.detectChanges();
       await wait();
       const labels = Array.from(overlay.querySelectorAll('button')).map((b) => b.textContent!.trim());
-      expect(labels).toEqual(['Atendido', 'No atendido', 'Cancelado', 'Devuelto']);
+      expect(labels).toEqual(['Atendido', 'No atendido', 'Cancelado']);
     });
 
     it('cambia el estado, avisa y recalcula el avance', async () => {
