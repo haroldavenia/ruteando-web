@@ -368,4 +368,45 @@ describe('rutas de la aplicación', () => {
       });
     }
   });
+
+  describe('zonas', () => {
+    it('un anónimo en /zonas va a /acceso recordando el destino', async () => {
+      await harness.navigateByUrl('/zonas');
+      expect(router.url).toBe('/acceso?returnUrl=%2Fzonas');
+    });
+
+    for (const role of ['tenant_admin', 'super_admin'] as const) {
+      it(`${role} entra en /zonas dentro del shell`, async () => {
+        currentUser.set(makeUser({ role }));
+        await harness.navigateByUrl('/zonas');
+        harness.detectChanges();
+
+        expect(router.url).toBe('/zonas');
+        expect(document.querySelector('mat-toolbar')).not.toBeNull();
+        expect(document.querySelector('app-zone-list h1')?.textContent).toContain('Zonas');
+      });
+    }
+
+    for (const role of ['agent', 'driver'] as const) {
+      it(`${role} es llevado a /sin-permiso en cualquier ruta de /zonas`, async () => {
+        currentUser.set(makeUser({ role }));
+        for (const url of ['/zonas', '/zonas/nueva', '/zonas/abc']) {
+          await harness.navigateByUrl(url);
+          expect(router.url).withContext(url).toBe('/sin-permiso');
+        }
+      });
+    }
+
+    for (const [url, title] of [
+      ['/zonas/nueva', 'Nueva zona'],
+      ['/zonas/abc', 'Editar zona'],
+    ]) {
+      it(`${url} muestra "${title}"`, async () => {
+        currentUser.set(makeUser({ role: 'tenant_admin' }));
+        await harness.navigateByUrl(url);
+        harness.detectChanges();
+        expect(document.querySelector('app-zone-form h1')?.textContent).toContain(title);
+      });
+    }
+  });
 });

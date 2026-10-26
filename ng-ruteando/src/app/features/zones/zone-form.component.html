@@ -1,0 +1,56 @@
+<h1>{{ isNew ? 'Nueva zona' : 'Editar zona' }}</h1>
+@switch (loader.status()) {
+  @case ('loading') {
+    <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
+  }
+  @case ('missing') {
+    <app-form-result [error]="loader.error()" />
+    <a mat-stroked-button routerLink="/zonas">Volver al listado</a>
+  }
+  @case ('error') {
+    <app-form-result [error]="loader.error()" />
+    <a mat-stroked-button routerLink="/zonas">Volver al listado</a>
+  }
+  @default {
+    <form [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
+      <div class="row">
+        <mat-form-field>
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" autocomplete="off" />
+          <mat-error>{{ error('name') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Código</mat-label>
+          <input matInput formControlName="code" autocomplete="off" />
+          <mat-hint>Sin espacios, hasta 20 caracteres</mat-hint>
+          <mat-error>{{ error('code') }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <fieldset class="colors">
+        <legend>Color</legend>
+        @for (option of colors; track option.label) {
+          <label class="color" [class.selected]="form.controls.color.value === option.value">
+            <input type="radio" name="zone-color" [value]="option.value" [checked]="form.controls.color.value === option.value" (change)="selectColor(option.value)" />
+            <span class="swatch" [class.none]="option.value === null" [style.background]="option.value ?? 'transparent'" aria-hidden="true"></span>
+            {{ option.label }}
+          </label>
+        }
+      </fieldset>
+
+      <section aria-labelledby="polygon-title">
+        <h2 id="polygon-title">Polígono</h2>
+        <app-polygon-editor [(vertices)]="vertices" [color]="form.controls.color.value" />
+        @if (polygonError()) {
+          <p class="error" role="alert">{{ polygonError() }}</p>
+        }
+      </section>
+
+      <app-form-result [error]="submit.error()" />
+      <div class="buttons">
+        <a mat-button routerLink="/zonas">Cancelar</a>
+        <button mat-flat-button type="submit" [disabled]="submit.submitting()">Guardar</button>
+      </div>
+    </form>
+  }
+}

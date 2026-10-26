@@ -67,11 +67,11 @@ describe('ShellComponent', () => {
     };
 
     for (const role of ['tenant_admin', 'super_admin'] as const) {
-      it(`${role} ve Inicio, la sección Flota con tres entradas, Lugares, Paquetes, Jornadas y Configuraciones`, () => {
+      it(`${role} ve Inicio, la sección Flota con tres entradas, Lugares, Zonas, Paquetes, Jornadas y Configuraciones`, () => {
         withRole(role);
         const root = fixture.nativeElement as HTMLElement;
         expect(root.querySelector('mat-sidenav h3')?.textContent).toContain('Flota');
-        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Paquetes', 'Jornadas', 'Configuraciones']);
+        expect(links()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Configuraciones']);
       });
     }
 
@@ -109,6 +109,21 @@ describe('ShellComponent', () => {
         a.querySelector('[matListItemTitle]')!.textContent!.trim(),
       );
       expect(active).toEqual(['Jornadas']);
+    });
+
+    it('la edición de una zona marca "Zonas" como activa', async () => {
+      withRole('tenant_admin');
+      TestBed.inject(Router).resetConfig([
+        { path: '', pathMatch: 'full', children: [] },
+        { path: 'zonas/:id', children: [] },
+      ]);
+      await TestBed.inject(Router).navigateByUrl('/zonas/abc');
+      fixture.detectChanges();
+
+      const active = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-sidenav a.active')).map((a) =>
+        a.querySelector('[matListItemTitle]')!.textContent!.trim(),
+      );
+      expect(active).toEqual(['Zonas']);
     });
 
     it('un conductor solo ve Inicio', () => {

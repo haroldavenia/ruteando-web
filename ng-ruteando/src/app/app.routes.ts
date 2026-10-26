@@ -72,6 +72,13 @@ export const routes: Routes = [
         loadChildren: () => import('./features/settings/settings.routes').then((m) => m.SETTINGS_ROUTES),
       },
       {
+        // Zonas (áreas con polígono): las gestionan los administradores
+        path: 'zonas',
+        canActivate: [roleGuard(ADMIN_ROLES)],
+        canActivateChild: [roleGuard(ADMIN_ROLES)],
+        loadChildren: () => import('./features/zones/zones.routes').then((m) => m.ZONES_ROUTES),
+      },
+      {
         // Jornadas: planificar y consultar; como los paquetes, para administradores y agentes
         path: 'jornadas',
         canActivate: [roleGuard(OPERATIONS_ROLES)],

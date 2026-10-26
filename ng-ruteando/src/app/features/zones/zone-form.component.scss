@@ -1,0 +1,85 @@
+:host {
+  display: block;
+  max-width: 880px;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font: var(--mat-sys-headline-small);
+}
+
+h2 {
+  margin: 16px 0 8px;
+  font: var(--mat-sys-title-medium);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0 16px;
+}
+
+.colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+}
+
+legend {
+  padding: 0 4px;
+  font: var(--mat-sys-label-large);
+}
+
+.color {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.color.selected {
+  border-color: var(--mat-sys-primary);
+  background: var(--mat-sys-secondary-container);
+}
+
+.color:focus-within {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+.swatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 3px;
+}
+
+.swatch.none {
+  border-style: dashed;
+}
+
+.error {
+  margin: 8px 0 0;
+  color: var(--mat-sys-error);
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
