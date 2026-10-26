@@ -4,12 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
-import { EMPTY, Subscription, of, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { MasterDomainsService } from '../../core/api/data/master-domains.service';
 import { PackagesApi } from '../../core/api/data/packages.api';
 import { Package } from '../../core/api/models';
-import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { messageFor } from '../../shared/data/api-messages';
 import { downloadCsv } from '../../shared/data/csv';
 import { DataColumn, DataTableComponent } from '../../shared/data/data-table.component';
@@ -25,6 +24,7 @@ import {
   packageStatusLabel,
   serviceTypeLabel,
 } from './package-labels';
+import { changePackageStatus } from './package-status-change';
 
 const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
 
@@ -143,22 +143,7 @@ export class PackageListComponent {
   protected changeStatus(row: Package, status: string): void {
     this.deleter.success.set(null);
     this.deleter.error.set(null);
-    const confirmed$ =
-      status === 'cancelled'
-        ? this.dialog
-            .open(ConfirmDialogComponent, {
-              data: {
-                title: 'Cancelar paquete',
-                message: `¿Cancelar el paquete «${this.label(row)}»?`,
-                confirmLabel: 'Cancelar paquete',
-                cancelLabel: 'Volver',
-              },
-            })
-            .afterClosed()
-            .pipe(switchMap((ok) => (ok === true ? of(true) : EMPTY)))
-        : of(true);
-
-    confirmed$.pipe(switchMap(() => this.api.setStatus(row.id, status))).subscribe({
+    changePackageStatus(this.api, this.dialog, { id: row.id, label: this.label(row) }, status).subscribe({
       next: () => {
         this.deleter.success.set(`El paquete «${this.label(row)}» ahora está ${packageStatusLabel(status).toLowerCase()}`);
         this.state.reload();
