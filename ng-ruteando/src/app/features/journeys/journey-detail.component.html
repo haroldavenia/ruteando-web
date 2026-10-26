@@ -33,12 +33,19 @@
         </dl>
       </section>
 
+      @if (journey.routes.length > 0) {
+        <section #mapSection aria-labelledby="map-title">
+          <h2 id="map-title">Mapa de las rutas</h2>
+          <app-routes-map [routes]="journey.routes" [(selectedRoute)]="selectedRoute" [(selectedStop)]="selectedStop" />
+        </section>
+      }
+
       <section aria-labelledby="routes-title">
         <h2 id="routes-title">Rutas</h2>
         @if (journey.routes.length === 0) {
           <p>Esta jornada no tiene rutas.</p>
         } @else {
-          <app-journey-routes [routes]="journey.routes" />
+          <app-journey-routes [routes]="journey.routes" [selectedRoute]="selectedRoute()" (routeFocus)="focusRoute($event)" (stopFocus)="focusStop($event)" />
         }
       </section>
 

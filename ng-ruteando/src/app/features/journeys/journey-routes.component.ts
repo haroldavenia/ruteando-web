@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -6,6 +6,7 @@ import { DomainRoute } from '../../core/api/models';
 import { formatCount, formatDateTime, formatDistance, formatDuration, formatLatLng, formatPercent } from '../../shared/format';
 
 import { stopTypeLabel } from './journey-labels';
+import { StopRef } from './routes-map.component';
 
 /**
  * Rutas de una jornada en una tabla; cada fila se abre para ver sus paradas en orden. Lee el modelo de
@@ -20,6 +21,11 @@ import { stopTypeLabel } from './journey-labels';
 })
 export class JourneyRoutesComponent {
   readonly routes = input.required<readonly DomainRoute[]>();
+  /** Ruta enfocada en el mapa, para marcar su fila. */
+  readonly selectedRoute = input<number | null>(null);
+  /** Se pide enfocar una ruta o una parada en el mapa. */
+  readonly routeFocus = output<number>();
+  readonly stopFocus = output<StopRef>();
 
   protected readonly open = signal<ReadonlySet<number>>(new Set());
 

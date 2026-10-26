@@ -1,0 +1,60 @@
+<div
+  #host
+  class="map"
+  role="region"
+  aria-label="Mapa de las rutas de la jornada. Las mismas rutas y paradas están en las tablas de más abajo."
+></div>
+@if (failed()) {
+  <p class="notice error" role="alert">No se pudo cargar el mapa. La leyenda y las tablas de rutas y paradas siguen disponibles.</p>
+}
+@if (nothingToDraw()) {
+  <p class="notice" role="status">No hay rutas con recorrido ni paradas con posición que dibujar.</p>
+}
+
+<section class="legend" aria-labelledby="legend-title">
+  <div class="legend-head">
+    <h3 id="legend-title">Leyenda de las rutas</h3>
+    @if (selectedRoute() !== null) {
+      <button mat-stroked-button type="button" (click)="showAll()">Ver todas</button>
+    }
+  </div>
+  <p class="visually-hidden" role="status" aria-live="polite">{{ routeFocusText() }}</p>
+  <ul>
+    @for (item of legend(); track item.routeIndex) {
+      <li>
+        <button type="button" class="item" (click)="toggleRoute(item.routeIndex)" [attr.aria-pressed]="selectedRoute() === item.routeIndex">
+          <span class="swatch" [class.dashed]="item.dashed" [style.background]="item.dashed ? 'transparent' : item.color" [style.border-color]="item.color" aria-hidden="true"></span>
+          <span class="text">
+            <strong>{{ item.routeIndex + 1 }}. {{ item.name }}</strong>
+            <span>{{ item.vehicle }} · {{ item.distance }}</span>
+          </span>
+        </button>
+      </li>
+    }
+  </ul>
+</section>
+
+<div class="card-region" aria-live="polite">
+  @if (stopCard(); as card) {
+    <section class="card" aria-labelledby="stop-title">
+      <div class="card-head">
+        <h3 id="stop-title">
+          <span class="swatch" [style.background]="card.color" aria-hidden="true"></span>
+          {{ card.waypoint.stopType === 'depot' ? 'Depósito' : 'Parada ' + card.waypoint.sequence }} · Ruta {{ card.route.routeIndex + 1 }}: {{ card.route.name }}
+        </h3>
+        <button mat-icon-button type="button" (click)="closeStop()" aria-label="Cerrar la ficha de la parada">
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      </div>
+      <dl>
+        <div><dt>Orden</dt><dd>{{ card.waypoint.sequence }}</dd></div>
+        <div><dt>Tipo</dt><dd>{{ card.type }}</dd></div>
+        <div><dt>Llegada</dt><dd>{{ card.arrival }}</dd></div>
+        <div><dt>Salida</dt><dd>{{ card.departure }}</dd></div>
+      </dl>
+      @if (card.waypoint.packageId) {
+        <a [routerLink]="['/paquetes', card.waypoint.packageId]">Ver el paquete</a>
+      }
+    </section>
+  }
+</div>

@@ -45,3 +45,8 @@ tbody th {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.route.focused th,
+.route.focused td {
+  background: var(--mat-sys-secondary-container);
+}
