@@ -130,6 +130,6 @@ Solo `tenant_admin` y `super_admin`. Una configuración elige topología de la r
 | `/jornadas/nueva` | Planificar: nombre, configuración y paquetes (selección que se conserva entre páginas) |
 | `/jornadas/:id` | Detalle: resumen, rutas, paradas y paquetes no planificables |
 
-Acceso para `tenant_admin`, `super_admin` y `agent`. La optimización la hace el gateway: la aplicación envía el nombre, la configuración y los ids de los paquetes. Si la planificación tarda más que `GATEWAY_TIMEOUT_MS` (30 s por defecto) el proxy responde 504; súbelo en `.env`. Conocido: el gateway real rechaza ids de paquete hexadecimales en `journeys/plan` (400 `For input string`). Las rutas todavía no se dibujan en el mapa.
+Acceso para `tenant_admin`, `super_admin` y `agent`. La optimización la hace el gateway: la aplicación envía el nombre, la configuración y los ids de los paquetes. Si la planificación tarda más que `GATEWAY_TIMEOUT_MS` (30 s por defecto) el proxy responde 504; súbelo en `.env`. Conocido: el gateway real rechaza ids de paquete hexadecimales en `journeys/plan` (400 `For input string`). El detalle muestra las rutas en un mapa (una línea de color por ruta, paradas numeradas y depósitos con «D») con una leyenda y una ficha de parada operables con teclado; elegir una ruta o una parada en las tablas («Ver en el mapa») la enfoca en el mapa.
 
 El tema de Angular Material se define una sola vez en `src/styles.scss`.
