@@ -1,7 +1,7 @@
 # frontend-serving Specification
 
 ## Purpose
-Define cómo el servidor Express del repositorio publica la aplicación Angular compilada de `ng-ruteando`, de modo que las rutas del cliente funcionen al recargar y que las rutas de API del propio servidor sigan accesibles.
+Define cómo el servidor Express del repositorio publica la aplicación Angular compilada de `ng-ruteando`, de modo que las rutas del cliente funcionen al recargar y que las rutas que no son del cliente (`/api/*`, `/auth/*`) no devuelvan la página de la aplicación.
 
 ## Requirements
 
@@ -27,17 +27,6 @@ El servidor SHALL responder con la página de la aplicación a cualquier ruta de
 - **WHEN** se pide una ruta con extensión de fichero que no existe, como `/inexistente.js`
 - **THEN** la respuesta es 404 y no el HTML de la aplicación
 
-### Requirement: Las rutas de API tienen prioridad
-Las rutas de API y de autenticación definidas en el servidor (`/api/*`, `/auth/*`) SHALL ser atendidas por sus manejadores y no por la página de la aplicación.
-
-#### Scenario: GET de API autenticada
-- **WHEN** se pide `GET /api/me` sin cabecera `Authorization`
-- **THEN** la respuesta es 401 en JSON y no 200 con HTML
-
-#### Scenario: POST de autenticación
-- **WHEN** se envía `POST /auth/login`
-- **THEN** lo atiende el manejador de login y no la página de la aplicación
-
 ### Requirement: Compilación ausente
 El servidor SHALL indicar con claridad que falta la compilación del frontend en lugar de fallar de forma opaca.
 
@@ -51,3 +40,33 @@ El repositorio SHALL contener un único proyecto Angular publicable.
 #### Scenario: Proyecto anterior eliminado
 - **WHEN** se inspecciona el repositorio
 - **THEN** no existe el directorio `ruteando-ng/` y ningún fichero versionado de código o configuración lo referencia como destino de compilación
+
+### Requirement: Rutas de API y autenticación desconocidas
+El servidor SHALL responder 404 en JSON a cualquier petición bajo `/api/*` o `/auth/*` y nunca con la página de la aplicación, porque esas rutas no son del cliente.
+
+#### Scenario: GET a una ruta de API
+- **WHEN** se pide `GET /api/me` con cabecera `Accept: text/html`
+- **THEN** la respuesta es 404 con un cuerpo JSON de mensaje y no el HTML de la aplicación
+
+#### Scenario: POST de autenticación
+- **WHEN** se envía `POST /auth/login`
+- **THEN** la respuesta es 404 con un cuerpo JSON de mensaje, sin esperar a ninguna base de datos
+
+#### Scenario: Sin base de datos
+- **WHEN** se ejecuta `npm start` sin MongoDB ni `MONGO_URI`
+- **THEN** el servidor arranca sin errores de conexión en el registro
+
+### Requirement: Repositorio sin la aplicación anterior
+El repositorio SHALL contener un único frontend, `ng-ruteando`, y ningún código, dependencia ni configuración de la aplicación AngularJS ni del backend de ejemplo de Satellizer.
+
+#### Scenario: Directorios retirados
+- **WHEN** se inspecciona la raíz del repositorio
+- **THEN** no existen `master/`, `externModules/`, `json/`, `build/` ni un `index.html` en la raíz
+
+#### Scenario: Sin credenciales incrustadas
+- **WHEN** se buscan claves de API o secretos en los ficheros versionados
+- **THEN** no hay ninguna clave de Google Maps ni valores por defecto de secretos OAuth, y el servidor solo lee `GATEWAY_URL`, `GATEWAY_API_KEY`, `GATEWAY_TIMEOUT_MS`, `PORT` y `WEB_DIST`
+
+#### Scenario: Dependencias del servidor
+- **WHEN** se lee el `package.json` de la raíz
+- **THEN** no declara `mongoose`, `jwt-simple`, `bcryptjs`, `request`, `multer`, `faker`, `karma` ni `protractor`

@@ -79,17 +79,6 @@ El servidor SHALL responder con un error JSON de forma estable cuando el gateway
 - **WHEN** el servidor arranca sin `GATEWAY_API_KEY`
 - **THEN** arranca, escribe un aviso en el registro y responde 503 con un mensaje claro a las peticiones a `/gateway/**`
 
-### Requirement: Precedencia de la ruta del proxy
-La ruta `/gateway/**` SHALL ser atendida por el proxy antes que por los analizadores de cuerpo, el contenido estático y la página de la aplicación.
-
-#### Scenario: Recurso inexistente del gateway
-- **WHEN** el gateway responde 404 a `GET /gateway/recurso-que-no-existe`
-- **THEN** el navegador recibe ese 404 y no el HTML de la aplicación
-
-#### Scenario: Rutas propias intactas
-- **WHEN** se piden `GET /api/me` o `POST /auth/login`
-- **THEN** siguen siendo atendidas por sus manejadores del servidor y no por el proxy
-
 ### Requirement: Proxy de desarrollo equivalente
 El servidor de desarrollo de `ng-ruteando` SHALL aplicar el mismo reenvío, reescritura de ruta e inyección de clave con las mismas variables de entorno.
 
@@ -100,3 +89,14 @@ El servidor de desarrollo de `ng-ruteando` SHALL aplicar el mismo reenvío, rees
 #### Scenario: Variables ausentes en desarrollo
 - **WHEN** se ejecuta `ng serve` sin `GATEWAY_API_KEY`
 - **THEN** el arranque muestra un aviso con el nombre de la variable que falta
+
+### Requirement: Ruta única del proxy
+La ruta `/gateway/**` SHALL ser atendida por el proxy antes que por los analizadores de cuerpo, el contenido estático y la página de la aplicación, y SHALL ser la única ruta de API que atiende el servidor.
+
+#### Scenario: Recurso inexistente del gateway
+- **WHEN** el gateway responde 404 a `GET /gateway/recurso-que-no-existe`
+- **THEN** el navegador recibe ese 404 y no el HTML de la aplicación
+
+#### Scenario: Rutas propias retiradas
+- **WHEN** se piden `GET /api/me` o `POST /auth/login`
+- **THEN** el servidor responde 404 en JSON y no las reenvía al gateway

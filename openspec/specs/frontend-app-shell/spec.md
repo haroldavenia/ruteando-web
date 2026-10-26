@@ -42,13 +42,13 @@ La aplicación SHALL poder servirse con SSR desde el servidor Node generado, sin
 - **WHEN** se pide `/` al servidor SSR
 - **THEN** la respuesta no contiene la página de inicio: es la pantalla de acceso o una redirección a ella
 
-### Requirement: Código fuente versionado
-El código de `ng-ruteando/src/app/` SHALL estar sujeto a control de versiones y no ignorado por git.
+### Requirement: Código fuente versionado sin reglas heredadas
+El código de `ng-ruteando/src/app/` SHALL estar sujeto a control de versiones sin depender de excepciones en `.gitignore`, que no SHALL contener reglas de la aplicación anterior.
 
 #### Scenario: Fichero nuevo visible
 - **WHEN** se crea `ng-ruteando/src/app/app.config.ts`
 - **THEN** `git status` lo muestra como no rastreado y `git check-ignore` no lo ignora
 
-#### Scenario: Regla existente intacta
-- **WHEN** se evalúa la carpeta `app/` de la raíz, salida de compilación de la aplicación AngularJS, y el `.gitignore`
-- **THEN** `app/` de la raíz sigue ignorada y `.gitignore` ya no contiene ninguna excepción para `ruteando-ng`
+#### Scenario: Sin reglas heredadas
+- **WHEN** se lee el `.gitignore`
+- **THEN** no contiene reglas ni excepciones para una carpeta `app/` en la raíz, para `master/`, para `vendor` ni para `ruteando-ng`
