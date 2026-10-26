@@ -1,5 +1,5 @@
 // Pruebas de la publicación del frontend: arrancan server/server.js de verdad con un
-// directorio de compilación temporal. No necesitan MongoDB (las rutas probadas no lo usan).
+// directorio de compilación temporal.
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -66,23 +66,15 @@ test('un fichero inexistente con extensión devuelve 404 y no la aplicación', a
   assert.ok(!(await res.text()).includes(MARKER));
 });
 
-test('GET /api/me sin cabecera Authorization devuelve 401 en JSON, no HTML', async () => {
-  const res = await fetch(withBuild.base + '/api/me');
-  assert.equal(res.status, 401);
-  assert.match(res.headers.get('content-type'), /application\/json/);
-  assert.ok((await res.json()).message);
-});
-
-test('GET /auth/unlink/:provider lo atiende su manejador (401 en JSON)', async () => {
-  const res = await fetch(withBuild.base + '/auth/unlink/google');
-  assert.equal(res.status, 401);
-  assert.match(res.headers.get('content-type'), /application\/json/);
-});
-
-test('POST /api/account lo atiende su manejador', async () => {
-  const res = await fetch(withBuild.base + '/api/account', { method: 'POST' });
-  assert.equal(res.status, 200);
-  assert.deepEqual(await res.json(), { status: 'ok' });
+test('GET /api/me devuelve 404 en JSON, no la aplicación, aunque se pida HTML', async () => {
+  for (const accept of ['application/json', 'text/html']) {
+    const res = await fetch(withBuild.base + '/api/me', { headers: { Accept: accept } });
+    assert.equal(res.status, 404);
+    assert.match(res.headers.get('content-type'), /application\/json/);
+    const text = await res.text();
+    assert.ok(!text.includes(MARKER));
+    assert.ok(JSON.parse(text).message);
+  }
 });
 
 test('una ruta de API desconocida devuelve 404 en JSON, no la aplicación', async () => {
@@ -91,23 +83,26 @@ test('una ruta de API desconocida devuelve 404 en JSON, no la aplicación', asyn
   assert.match(res.headers.get('content-type'), /application\/json/);
 });
 
-test('POST /auth/login llega a su manejador y no a la aplicación', async () => {
-  // Sin MongoDB el manejador queda esperando; la aplicación habría respondido de inmediato.
-  let body = null;
-  try {
-    const res = await fetch(withBuild.base + '/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'a@b.c', password: 'x' }),
-      signal: AbortSignal.timeout(1500),
-    });
-    body = await res.text();
-  } catch (error) {
-    assert.equal(error.name, 'TimeoutError');
-  }
-  if (body !== null) {
-    assert.ok(!body.includes(MARKER), 'POST /auth/login no debe devolver la página de la aplicación');
-  }
+test('POST /auth/login responde 404 enseguida, sin esperar a ninguna base de datos', async () => {
+  const res = await fetch(withBuild.base + '/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: 'a@b.c', password: 'x' }),
+    signal: AbortSignal.timeout(1500),
+  });
+  assert.equal(res.status, 404);
+  assert.match(res.headers.get('content-type'), /application\/json/);
+  assert.ok(!(await res.text()).includes(MARKER));
+});
+
+test('GET /auth/unlink/google y POST /api/account tampoco existen', async () => {
+  assert.equal((await fetch(withBuild.base + '/auth/unlink/google')).status, 404);
+  assert.equal((await fetch(withBuild.base + '/api/account', { method: 'POST' })).status, 404);
+});
+
+test('el servidor arranca sin MongoDB y no lo menciona en el registro', () => {
+  assert.doesNotMatch(withBuild.log(), /mongo/i);
+  assert.doesNotMatch(withoutBuild.log(), /mongo/i);
 });
 
 test('sin compilación: 503 con mensaje claro y aviso en el registro', async () => {
@@ -117,5 +112,5 @@ test('sin compilación: 503 con mensaje claro y aviso en el registro', async () 
   assert.match(withoutBuild.log(), /npm run build:web/);
 
   const api = await fetch(withoutBuild.base + '/api/me');
-  assert.equal(api.status, 401, 'las rutas de API siguen funcionando sin compilación');
+  assert.equal(api.status, 404, '/api responde 404 en JSON también sin compilación');
 });
