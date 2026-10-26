@@ -55,6 +55,19 @@ describe('rutas de la aplicación', () => {
     expect(text()).toContain('Planificación de rutas');
   });
 
+  for (const [role, area] of [
+    ['tenant_admin', 'Configuraciones'],
+    ['agent', 'Jornadas'],
+  ] as const) {
+    it(`${role} ve en la página de inicio el acceso «${area}»`, async () => {
+      currentUser.set(makeUser({ role }));
+      await harness.navigateByUrl('/');
+      harness.detectChanges();
+      const names = Array.from(document.querySelectorAll('app-home a.area')).map((a) => a.textContent);
+      expect(names.some((n) => n?.includes(area))).toBeTrue();
+    });
+  }
+
   it('con sesión, /acceso va a la página de inicio', async () => {
     currentUser.set(makeUser());
     await harness.navigateByUrl('/acceso');
