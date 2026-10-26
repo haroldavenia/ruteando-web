@@ -246,9 +246,23 @@ describe('rutas de la aplicación', () => {
       });
     }
 
+    it('/paquetes/importar abre la importación y no se confunde con un identificador', async () => {
+      currentUser.set(makeUser({ role: 'agent' }));
+      await harness.navigateByUrl('/paquetes/importar');
+      harness.detectChanges();
+      expect(router.url).toBe('/paquetes/importar');
+      expect(document.querySelector('app-package-import h1')?.textContent).toContain('Importar paquetes');
+      expect(document.querySelector('app-package-form')).toBeNull();
+    });
+
+    it('un anónimo en /paquetes/importar va a /acceso recordando el destino', async () => {
+      await harness.navigateByUrl('/paquetes/importar');
+      expect(router.url).toBe('/acceso?returnUrl=%2Fpaquetes%2Fimportar');
+    });
+
     it('driver es llevado a /sin-permiso en cualquier ruta de /paquetes', async () => {
       currentUser.set(makeUser({ role: 'driver' }));
-      for (const url of ['/paquetes', '/paquetes/nuevo', '/paquetes/abc']) {
+      for (const url of ['/paquetes', '/paquetes/nuevo', '/paquetes/importar', '/paquetes/abc']) {
         await harness.navigateByUrl(url);
         expect(router.url).withContext(url).toBe('/sin-permiso');
       }

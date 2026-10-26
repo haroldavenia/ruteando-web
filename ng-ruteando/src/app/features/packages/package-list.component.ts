@@ -32,8 +32,17 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
   selector: 'app-package-list',
   imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, MatMenuModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    .empty-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+  `,
   template: `
     <app-page-header title="Paquetes">
+      <a mat-stroked-button routerLink="/paquetes/importar"><mat-icon aria-hidden="true">upload_file</mat-icon>Importar CSV</a>
       <button mat-stroked-button type="button" (click)="exportCsv()" [disabled]="exporting() || state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>Exportar CSV
       </button>
@@ -61,7 +70,10 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/paquetes/nuevo">Crear el primer paquete</a>
+      <span empty-action class="empty-actions">
+        <a mat-stroked-button routerLink="/paquetes/nuevo">Crear el primer paquete</a>
+        <a mat-stroked-button routerLink="/paquetes/importar">Importar un CSV</a>
+      </span>
     </app-data-table>
 
     <mat-menu #statusMenu="matMenu">

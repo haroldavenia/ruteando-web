@@ -75,7 +75,18 @@ describe('PackageListComponent', () => {
   it('con la lista vacía ofrece crear el primero', () => {
     load({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     expect(root().textContent).toContain('Todavía no hay paquetes');
-    expect(root().querySelector('a[href="/paquetes/nuevo"][empty-action]')).not.toBeNull();
+    expect(root().querySelector('[empty-action] a[href="/paquetes/nuevo"]')).not.toBeNull();
+    expect(root().querySelector('[empty-action] a[href="/paquetes/importar"]')?.textContent).toContain('Importar un CSV');
+  });
+
+  it('el encabezado ofrece «Importar CSV», «Exportar CSV» y «Nuevo paquete»', () => {
+    load();
+    const header = root().querySelector('app-page-header')!;
+    const labels = Array.from(header.querySelectorAll('a, button')).map((e) => e.textContent!.replace(/\s+/g, ' ').trim());
+    expect(labels.some((l) => l.includes('Importar CSV'))).toBeTrue();
+    expect(labels.some((l) => l.includes('Exportar CSV'))).toBeTrue();
+    expect(labels.some((l) => l.includes('Nuevo paquete'))).toBeTrue();
+    expect(header.querySelector('a[href="/paquetes/importar"]')).not.toBeNull();
   });
 
   it('un estado desconocido se muestra con su clave', () => {
