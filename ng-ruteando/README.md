@@ -110,8 +110,9 @@ El mapa (`shared/map`) usa OpenLayers, que se carga solo en el navegador y bajo 
 |---|---|
 | `/paquetes` | Listado, cambio de estado, borrado y «Exportar CSV» |
 | `/paquetes/nuevo`, `/paquetes/:id` | Alta y edición (ubicación en el mapa o con coordenadas) |
+| `/paquetes/importar` | Importar paquetes desde un CSV: plantilla, vista previa con errores por fila, importación con progreso y cancelación, resumen, reintento de fallidas e informe de errores |
 
-Acceso para `tenant_admin`, `super_admin` y `agent` (`OPERATIONS_ROLES`). La guía es única por empresa. El CSV usa `;`, UTF-8 con BOM y las columnas del legacy; los textos que empiezan por `=`, `+`, `-` o `@` llevan un apóstrofo para que la hoja de cálculo no los ejecute. La importación de CSV llegará con las jornadas.
+Acceso para `tenant_admin`, `super_admin` y `agent` (`OPERATIONS_ROLES`). La guía es única por empresa. El CSV usa `;`, UTF-8 con BOM y las columnas del legacy; los textos que empiezan por `=`, `+`, `-` o `@` llevan un apóstrofo para que la hoja de cálculo no los ejecute. La importación (`/paquetes/importar`) lee el CSV en el navegador (máximo 2 MB y 2000 filas) y crea los paquetes de 4 en 4; como la aplicación no geocodifica, el archivo debe traer `LONGITUD` y `LATITUD`. Descarga la plantilla desde la propia pantalla.
 
 ## Configuraciones
 
