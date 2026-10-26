@@ -39,10 +39,40 @@ feature -> core/api/data/<x>.api.ts -> HttpClient -> interceptores -> /gateway/*
 - **Formato de error:** `{ "error": "BAD_REQUEST" | "NOT_FOUND" | "CONFLICT", "message": "<texto en inglés>", "timestamp": "...", "path": "..." }`. `ApiError.code` toma `error`. Códigos vistos: `BAD_REQUEST` (400), `NOT_FOUND` (404), `CONFLICT` (409). El 401 y el 403 sin cuerpo útil llegan sin código.
 - **Refresco:** `POST /auth/refresh` no cambió el token de refresco en la prueba (no hubo rotación observable); el código sigue tratando la respuesta como sustitución completa.
 - **`guideNumber` único por tenant:** crear dos paquetes con `guideNumber` nulo da 409 `CONFLICT`. Hay que enviar uno distinto en cada paquete.
-- **`POST /journeys/plan` falla con ids reales (defecto del backend):** responde 400 `For input string: "<id del paquete>"` porque intenta convertir el id hexadecimal en número. Los ejemplos de la colección solo usan ids con dígitos (`000...001`) y por eso funcionan. Sin arreglo en el gateway, la planificación no es utilizable desde el cliente.
+- **`POST /journeys/plan` falla con ids reales (defecto del backend):** responde 400 `For input string: "<id del paquete>"` porque intenta convertir el id hexadecimal del paquete en número; reconfirmado el 2026-10-26 (ver «Verificado contra el gateway real (2026-10-26)»). Los ejemplos de la colección solo usan ids con dígitos (`000...001`) y por eso funcionan.
 - **Un solo refresco** ante varios 401 simultáneos: comprobado en vivo (3 peticiones, 1 renovación).
 - **Roles:** un usuario `driver` recibe 403 en `GET /users/drivers`; un `tenant_admin` puede crear conductores con `POST /users` (rol `driver`).
 - El registro (`POST /auth/register`) crea tenant y usuario con `emailVerified: false`, y el login funciona sin verificar el correo.
+
+## Verificado contra el gateway real (2026-10-26)
+
+Comprobación manual por el proxy local con un tenant desechable (`POST /auth/register`; no hay endpoint conocido para borrarlo, así que queda un tenant de prueba en el gateway). Solo conclusiones: sin identificadores, correos ni tokens.
+
+**Confirmado**
+- **Disponibilidad:** el 530 con código 1033 de Cloudflare de la víspera era el túnel caído; ahora `GET /journeys` sin sesión da 401.
+- **Sesión:** `register` responde 201 con `user`, `tenant` (`plan`) y `message`, sin tokens; `login` da 200 con `accessToken`, `refreshToken`, `expiresIn` (~3600) y `user`; `auth/me` devuelve el mismo `user`. `refresh` devuelve un `accessToken` nuevo y **el mismo `refreshToken`** (sin rotación). El rol de un registro es `tenant_admin` y `emailVerified` es `false` sin que impida usar la sesión.
+- **Formas:** las respuestas de `places`, `resource-types`, `resources`, `settings` y `packages` coinciden con los modelos de `core/api/models` y con los fixtures (campos y nulos incluidos); los ids son hexadecimales de 24 caracteres. Los fixtures no necesitaron cambios.
+- **Cambio de estado de un paquete:** `PATCH /packages/{id}/status/{status}` responde 200 con el paquete actualizado y un `GET` posterior lo confirma, en unos 300 ms. Las claves válidas son las **activas** de `PackageStatus`.
+- **Errores:** `GET /journeys/<id inexistente>` y `GET /packages/<id inexistente>` dan 404 `NOT_FOUND`; un id mal formado (`/journeys/abc`) da **400** `BAD_REQUEST` («hexString has 24 characters»), no 404, y la pantalla lo muestra como error genérico, no como «El registro ya no existe».
+- **Paginación y orden:** `GET /packages` devuelve **lo más reciente primero** por defecto, y el parámetro `sort` se **ignora por completo** (todas las variantes, incluso con un campo inexistente, dan 200 y el mismo orden). Para `journeys` no se pudo comprobar (ver abajo), pero es el mismo backend: se asume lo mismo y la home ordena por `createdAt` en el cliente.
+
+**Defectos del gateway (no de este repositorio)**
+- **`POST /journeys/plan` sigue fallando con paquetes reales:** 400 `For input string: "<id del paquete>"`, también con un solo paquete. Falla al interpretar **el id del paquete** (el `settingsId` hexadecimal sí lo acepta: con ids de solo dígitos el error es 404 «Settings not found»). Los ids los asigna el servidor y **ignora el `id` enviado en el cuerpo** de `POST /packages`, así que no hay forma de crear una jornada con rutas a través del gateway.
+- **`PackageStatus` trae valores inactivos** (`returned` y una clave de pruebas `demo_…`): el gateway los rechaza con 400 «Unknown PackageStatus key» (comprobado con `returned`). Los listados de estados de `/paquetes` y de las visitas ofrecen todas las claves del dominio, incluidas las inactivas: ver «Pendiente» más abajo.
+
+**No verificable (y por qué)**
+- **Premisa de las visitas** (una visita es una parada con `packageId`): sin jornadas con rutas no hay paradas que mirar. El único ejemplo con paradas (la colección Postman) trae `packageId: null`, `packageInfo: null` y `placeId: null` en las paradas de servicio. Queda como «no verificable»; el seguimiento de visitas no puede comprobarse con datos reales hasta que el gateway arregle la planificación o aporte una jornada real.
+- **Orden de `GET /journeys`, tiempo de una planificación y unidades de distancia y duración:** no hay jornadas en el tenant desechable y el plan no funciona.
+- **Jornadas del tenant real:** no se tocó ningún dato real; con un usuario real se podría revisar si ya existen jornadas con rutas.
+
+**Pendiente**
+- Filtrar los estados inactivos (`active: false`) al ofrecer un cambio de estado en `/paquetes`, en el formulario de paquetes y en las visitas; se propone como change aparte porque cambia el escenario «Estados ofrecidos» de `package-management` y de `route-visits`.
+
+## Inicio (`home/`, `features/journeys/latest-journeys.ts`)
+
+- **Accesos:** las áreas del rol salen de `layout/nav-items.ts` (`areaLinksFor`), las mismas del menú lateral.
+- **Últimas jornadas** (solo `OPERATIONS_ROLES` y solo en el navegador; el render del servidor no pide nada): `fetchLatestJourneys` pide `page=0&size=5` y ordena en el cliente con `latestJourneys` por `createdAt` descendente (estable; sin fecha, al final). El gateway **ignora `sort`** (comprobado en `/packages` el 2026-10-26), así que no se envía. El orden por defecto de `/journeys` no se pudo comprobar (no hay jornadas creables); por eso la función **detecta el orden en tiempo de ejecución**: si la primera página viene de más antigua a más nueva y hay más jornadas, pide la última página (y la anterior si queda corta) y se queda con las cinco más nuevas. Con el orden esperado (más nueva primero, como `/packages`) basta una petición.
+- Estados de la sección: carga (indicador accesible), vacío (enlace a planificar), error con «Reintentar»; los accesos no esperan a la lista.
 
 ## Pantallas de acceso (`features/access/`)
 
