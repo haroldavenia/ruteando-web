@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 import { DomainRoute } from '../../core/api/models';
 import { formatCount, formatDateTime, formatDistance, formatDuration, formatLatLng, formatPercent } from '../../shared/format';
@@ -14,13 +15,15 @@ import { StopRef } from './routes-map.component';
  */
 @Component({
   selector: 'app-journey-routes',
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './journey-routes.component.html',
   styleUrl: './journey-routes.component.scss',
 })
 export class JourneyRoutesComponent {
   readonly routes = input.required<readonly DomainRoute[]>();
+  /** Jornada a la que pertenecen las rutas, para enlazar a cada una. */
+  readonly journeyId = input.required<string>();
   /** Ruta enfocada en el mapa, para marcar su fila. */
   readonly selectedRoute = input<number | null>(null);
   /** Se pide enfocar una ruta o una parada en el mapa. */

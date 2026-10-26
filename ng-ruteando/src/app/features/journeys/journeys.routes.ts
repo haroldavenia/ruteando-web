@@ -14,6 +14,10 @@ export const JOURNEYS_ROUTES: Routes = [
     loadComponent: () => import('./journey-form.component').then((m) => m.JourneyFormComponent),
   },
   {
+    path: ':id/rutas/:routeIndex',
+    loadComponent: () => import('./route-detail.component').then((m) => m.RouteDetailComponent),
+  },
+  {
     path: ':id',
     loadComponent: () => import('./journey-detail.component').then((m) => m.JourneyDetailComponent),
   },

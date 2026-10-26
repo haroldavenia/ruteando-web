@@ -14,6 +14,7 @@
         <th scope="col">Inicio</th>
         <th scope="col">Fin</th>
         <th scope="col"><span class="visually-hidden">Mapa</span></th>
+        <th scope="col"><span class="visually-hidden">Detalle</span></th>
       </tr>
     </thead>
     <tbody>
@@ -45,10 +46,13 @@
               Ver en el mapa
             </button>
           </td>
+          <td>
+            <a mat-stroked-button [routerLink]="['/jornadas', journeyId(), 'rutas', route.routeIndex]" [attr.aria-label]="'Ver la ruta ' + route.name">Ver ruta</a>
+          </td>
         </tr>
         @if (isOpen(route)) {
           <tr class="stops" [id]="'stops-' + route.routeIndex">
-            <td colspan="11">
+            <td colspan="12">
               @if (route.waypoints.length === 0) {
                 <p>Esta ruta no tiene paradas.</p>
               } @else {

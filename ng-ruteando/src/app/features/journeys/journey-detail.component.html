@@ -45,7 +45,7 @@
         @if (journey.routes.length === 0) {
           <p>Esta jornada no tiene rutas.</p>
         } @else {
-          <app-journey-routes [routes]="journey.routes" [selectedRoute]="selectedRoute()" (routeFocus)="focusRoute($event)" (stopFocus)="focusStop($event)" />
+          <app-journey-routes [routes]="journey.routes" [journeyId]="journey.id" [selectedRoute]="selectedRoute()" (routeFocus)="focusRoute($event)" (stopFocus)="focusStop($event)" />
         }
       </section>
 

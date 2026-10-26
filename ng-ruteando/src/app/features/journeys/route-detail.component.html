@@ -1,0 +1,54 @@
+@switch (loader.status()) {
+  @case ('loading') {
+    <h1>Ruta</h1>
+    <mat-progress-bar mode="indeterminate" aria-label="Cargando la ruta" />
+  }
+  @case ('missing') {
+    <h1>Ruta</h1>
+    <app-form-result [error]="loader.error()" />
+    <a mat-stroked-button routerLink="/jornadas">Volver al listado</a>
+  }
+  @case ('error') {
+    <h1>Ruta</h1>
+    <app-form-result [error]="loader.error()" />
+    <a mat-stroked-button routerLink="/jornadas">Volver al listado</a>
+  }
+  @default {
+    @if (route(); as route) {
+      <h1>{{ route.name }}</h1>
+      <a mat-button [routerLink]="['/jornadas', journeyId]">← Volver a la jornada {{ loader.record()?.name }}</a>
+
+      <section aria-labelledby="summary-title">
+        <h2 id="summary-title">Resumen</h2>
+        <dl class="summary">
+          <div><dt>Vehículo</dt><dd>{{ vehicle(route) }}</dd></div>
+          <div><dt>Paradas</dt><dd>{{ count(route.waypoints.length) }}</dd></div>
+          <div><dt>Distancia</dt><dd>{{ distance(route.distanceTraveled) }}</dd></div>
+          <div><dt>Duración</dt><dd>{{ duration(route.duration) }}</dd></div>
+          <div><dt>Uso de peso</dt><dd>{{ percent(route.weightUsagePercent) }}</dd></div>
+          <div><dt>Uso de volumen</dt><dd>{{ percent(route.volumeUsagePercent) }}</dd></div>
+          <div><dt>Inicio</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
+          <div><dt>Fin</dt><dd>{{ dateTime(route.finishRouteUtc) }}</dd></div>
+        </dl>
+      </section>
+
+      <section #mapSection aria-labelledby="map-title">
+        <h2 id="map-title">Mapa de la ruta</h2>
+        <app-routes-map [routes]="routes()" [(selectedStop)]="selectedStop" />
+      </section>
+
+      <section aria-labelledby="stops-title">
+        <h2 id="stops-title">Paradas</h2>
+        @if (route.waypoints.length === 0) {
+          <p>Esta ruta no tiene paradas.</p>
+        } @else {
+          <app-route-visits [route]="route" (stopFocus)="focusStop($event)" />
+        }
+      </section>
+    } @else if (routeMissing()) {
+      <h1>Ruta</h1>
+      <app-form-result [error]="gone" />
+      <a mat-stroked-button [routerLink]="['/jornadas', journeyId]">Volver a la jornada</a>
+    }
+  }
+}

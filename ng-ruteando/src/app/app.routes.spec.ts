@@ -350,7 +350,7 @@ describe('rutas de la aplicación', () => {
 
     it('driver es llevado a /sin-permiso en cualquier ruta de /jornadas', async () => {
       currentUser.set(makeUser({ role: 'driver' }));
-      for (const url of ['/jornadas', '/jornadas/nueva', '/jornadas/abc']) {
+      for (const url of ['/jornadas', '/jornadas/nueva', '/jornadas/abc', '/jornadas/abc/rutas/0']) {
         await harness.navigateByUrl(url);
         expect(router.url).withContext(url).toBe('/sin-permiso');
       }
@@ -359,12 +359,31 @@ describe('rutas de la aplicación', () => {
     for (const [url, selector, title] of [
       ['/jornadas/nueva', 'app-journey-form', 'Planificar jornada'],
       ['/jornadas/abc', 'app-journey-detail', 'Jornada'],
+      ['/jornadas/abc/rutas/0', 'app-route-detail', 'Ruta'],
     ]) {
       it(`${url} muestra "${title}"`, async () => {
         currentUser.set(makeUser({ role: 'agent' }));
         await harness.navigateByUrl(url);
         harness.detectChanges();
         expect(document.querySelector(`${selector} h1`)?.textContent).toContain(title);
+      });
+    }
+  });
+
+  describe('detalle de ruta', () => {
+    it('un anónimo en /jornadas/:id/rutas/:routeIndex va a /acceso recordando el destino', async () => {
+      await harness.navigateByUrl('/jornadas/abc/rutas/0');
+      expect(router.url).toBe('/acceso?returnUrl=%2Fjornadas%2Fabc%2Frutas%2F0');
+    });
+
+    for (const role of ['tenant_admin', 'super_admin', 'agent'] as const) {
+      it(`${role} abre el detalle de una ruta dentro del shell`, async () => {
+        currentUser.set(makeUser({ role }));
+        await harness.navigateByUrl('/jornadas/abc/rutas/0');
+        harness.detectChanges();
+        expect(router.url).toBe('/jornadas/abc/rutas/0');
+        expect(document.querySelector('mat-toolbar')).not.toBeNull();
+        expect(document.querySelector('app-route-detail')).not.toBeNull();
       });
     }
   });

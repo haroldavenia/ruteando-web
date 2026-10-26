@@ -1,0 +1,117 @@
+<div class="progress">
+  <p class="progress-text">{{ progressText() }}</p>
+  @if (hasVisits()) {
+    <div class="bar" aria-hidden="true"><span [style.width.%]="progressPercent()"></span></div>
+  }
+</div>
+
+<app-form-result [error]="store.error()" [success]="store.success()" />
+
+@if (hasVisits()) {
+  <div class="filters" role="search" aria-label="Filtrar visitas">
+    <mat-form-field>
+      <mat-label>Estado</mat-label>
+      <select matNativeControl [value]="store.filters().status" (change)="setStatusFilter($event)">
+        <option value="">Todos los estados</option>
+        @for (status of statuses(); track status) {
+          <option [value]="status">{{ statusLabel(status) }}</option>
+        }
+        <option [value]="unavailable">No disponible</option>
+      </select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Buscar por nombre o dirección</mat-label>
+      <input matInput type="search" [value]="store.filters().text" (input)="setTextFilter($event)" />
+    </mat-form-field>
+    <button mat-stroked-button type="button" (click)="store.reload()">
+      <mat-icon aria-hidden="true">refresh</mat-icon>Actualizar
+    </button>
+  </div>
+  <p class="count" role="status">
+    @if (store.pending() > 0) {
+      Cargando {{ store.pending() }} {{ store.pending() === 1 ? 'paquete' : 'paquetes' }}…
+    } @else if (store.filtering()) {
+      {{ rows().length }} de {{ store.visits().length }} visitas coinciden con los filtros
+    }
+  </p>
+}
+
+@if (noMatches()) {
+  <p>Ninguna visita coincide con los filtros.</p>
+  <button mat-stroked-button type="button" (click)="store.clearFilters()">Limpiar filtros</button>
+} @else if (rows().length > 0) {
+  <div class="scroll">
+    <table>
+      <caption class="visually-hidden">Paradas y visitas de la ruta</caption>
+      <thead>
+        <tr>
+          <th scope="col">Orden</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Paquete</th>
+          <th scope="col">Llegada</th>
+          <th scope="col">Salida</th>
+          <th scope="col">Estado</th>
+          <th scope="col"><span class="visually-hidden">Acciones</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.stop.sequence) {
+          <tr>
+            <td>{{ row.stop.sequence }}</td>
+            <td>{{ stopType(row.stop.stopType) }}</td>
+            <td>
+              @if (row.visit; as visit) {
+                <span class="name">{{ visitName(visit) }}</span>
+                @if (visit.pkg?.address) {
+                  <span class="address">{{ visit.pkg?.address }}</span>
+                }
+              } @else {
+                —
+              }
+            </td>
+            <td>{{ dateTime(row.stop.arrivalUtc) }}</td>
+            <td>{{ dateTime(row.stop.departureUtc) }}</td>
+            <td>
+              @if (row.visit; as visit) {
+                {{ statusText(visit) }}
+              } @else {
+                —
+              }
+            </td>
+            <td class="actions">
+              @if (row.visit; as visit) {
+                <button
+                  mat-icon-button
+                  type="button"
+                  [matMenuTriggerFor]="statusMenu"
+                  [matMenuTriggerData]="{ visit: visit }"
+                  [disabled]="visit.state !== 'ready' || store.isBusy(visit)"
+                  [attr.aria-label]="'Cambiar el estado de la visita ' + store.label(visit)"
+                >
+                  <mat-icon aria-hidden="true">published_with_changes</mat-icon>
+                </button>
+              }
+              <button
+                mat-stroked-button
+                type="button"
+                [disabled]="!row.stop.position"
+                (click)="focus(row)"
+                [attr.aria-label]="'Ver la parada ' + row.stop.sequence + ' de ' + route().name + ' en el mapa'"
+              >
+                Ver en el mapa
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<mat-menu #statusMenu="matMenu">
+  <ng-template matMenuContent let-visit="visit">
+    @for (status of statusesExcept(visit); track status) {
+      <button mat-menu-item type="button" (click)="store.change(visit, status)">{{ statusLabel(status) }}</button>
+    }
+  </ng-template>
+</mat-menu>

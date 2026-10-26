@@ -80,7 +80,7 @@ describe('JourneyDetailComponent', () => {
   it('la tabla de rutas muestra nombre, vehículo, paradas, distancia, duración y usos', () => {
     setup(listed.id, fx(get).response.body);
     // [botón, ruta, vehículo, paradas, distancia, duración, peso, volumen, inicio, fin]
-    expect(cells(root().querySelector('tr.route')!).slice(1)).toEqual(['Postman route', 'Postman resource', '0', '1,0 km', '10 min', '—', '—', '—', '—', 'Ver en el mapa']);
+    expect(cells(root().querySelector('tr.route')!).slice(1)).toEqual(['Postman route', 'Postman resource', '0', '1,0 km', '10 min', '—', '—', '—', '—', 'Ver en el mapa', 'Ver ruta']);
   });
 
   it('las paradas se abren y se cierran, en orden y con el tipo en español', () => {
@@ -110,6 +110,14 @@ describe('JourneyDetailComponent', () => {
     (root().querySelector('tr.route button') as HTMLButtonElement).click();
     fixture.detectChanges();
     expect(root().querySelector('tr.stops')?.textContent).toContain('Esta ruta no tiene paradas');
+  });
+
+  it('cada ruta enlaza a su detalle con un nombre accesible', () => {
+    setup(listed.id, fx(get).response.body);
+    const link = root().querySelector('tr.route a') as HTMLAnchorElement;
+    expect(link.getAttribute('href')).toBe(`/jornadas/${listed.id}/rutas/0`);
+    expect(link.getAttribute('aria-label')).toBe('Ver la ruta Postman route');
+    expect(link.textContent).toContain('Ver ruta');
   });
 
   it('el botón de paradas nombra la ruta', () => {

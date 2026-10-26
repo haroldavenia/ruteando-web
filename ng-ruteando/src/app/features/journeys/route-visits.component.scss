@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.progress-text {
+  margin: 0 0 8px;
+  font: var(--mat-sys-title-small);
+}
+
+.bar {
+  height: 8px;
+  max-width: 360px;
+  overflow: hidden;
+  background: var(--mat-sys-surface-container-highest);
+  border-radius: 4px;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--mat-sys-primary);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: baseline;
+  margin-top: 16px;
+}
+
+.count {
+  margin: 0 0 8px;
+  min-height: 1.5em;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--mat-sys-body-medium);
+}
+
+th,
+td {
+  padding: 8px 12px;
+  text-align: start;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  vertical-align: middle;
+}
+
+thead th {
+  font: var(--mat-sys-title-small);
+  white-space: nowrap;
+}
+
+.name,
+.address {
+  display: block;
+}
+
+.address {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
