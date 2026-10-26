@@ -170,4 +170,22 @@ describe('DataTableComponent', () => {
     expect(link?.getAttribute('href')).toBe('/flota/ABC123');
     expect(root().querySelectorAll('td a').length).toBe(1);
   });
+
+  it('una columna con muestra de color pinta el cuadro antes del texto y nada si no hay color', async () => {
+    fixture = TestBed.createComponent(HostComponent);
+    host = fixture.componentInstance;
+    host.fetch = () => of(page([{ name: 'Con color', plate: '#0072B2' }, { name: 'Sin color', plate: '' }]));
+    (host as { columns: DataColumn<Row>[] }).columns = [{ ...COLUMNS[0], swatch: (r) => r.plate || null }, COLUMNS[1]];
+    host.state.load(0);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const rows = root().querySelectorAll('tr.mat-mdc-row');
+    const swatch = rows[0].querySelector('.swatch') as HTMLElement;
+    expect(swatch.style.background).toContain('rgb(0, 114, 178)');
+    expect(swatch.getAttribute('aria-hidden')).toBe('true');
+    expect(rows[1].querySelector('.swatch')).toBeNull();
+    expect(rows[0].querySelector('td')!.textContent!.trim()).toBe('Con color');
+  });
 });

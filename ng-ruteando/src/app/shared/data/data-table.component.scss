@@ -43,3 +43,13 @@ table {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+.swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-inline-end: 8px;
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 3px;
+  vertical-align: -2px;
+}

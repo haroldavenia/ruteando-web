@@ -19,6 +19,8 @@ export interface DataColumn<T> {
   cell: (row: T) => string;
   /** Si se indica, el texto de la celda es un enlace a esta ruta. */
   link?: (row: T) => string | readonly string[];
+  /** Si se indica, antes del texto se pinta una muestra de este color (`#RRGGBB`); `null` no pinta nada. */
+  swatch?: (row: T) => string | null;
 }
 
 /** Normaliza para comparar sin distinguir mayúsculas ni acentos. */

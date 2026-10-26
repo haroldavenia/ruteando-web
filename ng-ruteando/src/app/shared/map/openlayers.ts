@@ -6,7 +6,7 @@ import { InjectionToken } from '@angular/core';
  * y la promesa se memoriza para cargarlo una vez.
  */
 async function importOpenLayers() {
-  const [map, view, tileLayer, xyz, vectorLayer, vectorSource, feature, point, translate, proj, style, circle, fill, stroke, controls, lineString, text, extent] =
+  const [map, view, tileLayer, xyz, vectorLayer, vectorSource, feature, point, translate, proj, style, circle, fill, stroke, controls, lineString, text, extent, draw, modify, polygon] =
     await Promise.all([
       import('ol/Map'),
       import('ol/View'),
@@ -26,6 +26,9 @@ async function importOpenLayers() {
       import('ol/geom/LineString'),
       import('ol/style/Text'),
       import('ol/extent'),
+      import('ol/interaction/Draw'),
+      import('ol/interaction/Modify'),
+      import('ol/geom/Polygon'),
     ]);
   return {
     Map: map.default,
@@ -46,6 +49,9 @@ async function importOpenLayers() {
     defaultControls: controls.defaults,
     LineString: lineString.default,
     TextStyle: text.default,
+    Draw: draw.default,
+    Modify: modify.default,
+    Polygon: polygon.default,
     extend: extent.extend,
     createEmptyExtent: extent.createEmpty,
     transformExtent: proj.transformExtent,
