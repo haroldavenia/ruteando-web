@@ -105,7 +105,7 @@ La aplicación SHALL explicar por qué falla una planificación y SHALL permitir
 - **THEN** el botón vuelve a estar activo con los mismos datos
 
 ### Requirement: Detalle de la jornada
-El detalle SHALL mostrar el resumen de la jornada, el mapa de sus rutas, sus rutas y paradas y los paquetes que no se pudieron planificar.
+El detalle SHALL mostrar el resumen de la jornada, el mapa de sus rutas, sus rutas y paradas, un enlace al detalle de cada ruta y los paquetes que no se pudieron planificar.
 
 #### Scenario: Resumen
 - **WHEN** abre `/jornadas/:id`
@@ -126,6 +126,10 @@ El detalle SHALL mostrar el resumen de la jornada, el mapa de sus rutas, sus rut
 #### Scenario: Enfocar desde la tabla
 - **WHEN** pulsa «Ver en el mapa» en una ruta o en una parada de la tabla
 - **THEN** el mapa resalta esa ruta o centra esa parada
+
+#### Scenario: Abrir una ruta
+- **WHEN** pulsa «Ver ruta» en una ruta de la tabla
+- **THEN** va a `/jornadas/:id/rutas/:routeIndex` y el enlace nombra la ruta para lectores de pantalla
 
 #### Scenario: Paquetes no planificables
 - **WHEN** el gateway informa de paquetes que no entraron en ninguna ruta
