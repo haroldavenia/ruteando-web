@@ -67,6 +67,7 @@ src/app/
   features/packages/   paquetes (administradores y agentes): CRUD, cambio de estado y exportación a CSV
   features/settings/   configuraciones de planificación (administradores): CRUD con secciones según la restricción
   features/journeys/   jornadas (administradores y agentes): planificar, listar y detalle con rutas y paradas
+  features/zones/      zonas (administradores): listado, alta y edición con editor de polígonos
   layout/              shell: barra superior, menú de usuario y menú lateral (solo con sesión)
   shared/              piezas reutilizables: confirmación, formularios (shared/form), listados/borrado/guardado (shared/data) y mapa (shared/map)
   home/                página de inicio (privada)
@@ -134,3 +135,13 @@ Solo `tenant_admin` y `super_admin`. Una configuración elige topología de la r
 Acceso para `tenant_admin`, `super_admin` y `agent`. La optimización la hace el gateway: la aplicación envía el nombre, la configuración y los ids de los paquetes. Si la planificación tarda más que `GATEWAY_TIMEOUT_MS` (30 s por defecto) el proxy responde 504; súbelo en `.env`. Conocido: el gateway real rechaza ids de paquete hexadecimales en `journeys/plan` (400 `For input string`). El detalle muestra las rutas en un mapa (una línea de color por ruta, paradas numeradas y depósitos con «D») con una leyenda y una ficha de parada operables con teclado; elegir una ruta o una parada en las tablas («Ver en el mapa») la enfoca en el mapa.
 
 El tema de Angular Material se define una sola vez en `src/styles.scss`.
+
+## Zonas
+
+| Ruta | Pantalla |
+|---|---|
+| `/zonas` | Listado y borrado (el gateway rechaza borrar una zona en uso) |
+| `/zonas/nueva` | Alta: nombre, código, color y polígono |
+| `/zonas/:id` | Edición |
+
+Solo `tenant_admin` y `super_admin`. El polígono se dibuja en el mapa (clics y doble clic o «Terminar polígono»; Escape cancela), se ajusta arrastrando vértices y también se escribe en la tabla de vértices, que es la alternativa accesible con teclado. Se exige un mínimo de 3 vértices, área distinta de cero y lados sin cruces; el resumen bajo el mapa lo anuncia. Sin verificar contra el gateway real: validación de geometría, formato de `color` y borrado de una zona en uso.
