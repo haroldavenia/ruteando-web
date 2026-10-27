@@ -17,7 +17,7 @@
 
 ## 4. Primera ejecución y fusión de la cadena
 
-- [ ] 4.1 Publicar la rama, abrir su PR y comprobar con `gh run list` y `gh pr checks` que el flujo se ejecuta en verde y que `ci` aparece como una sola comprobación; si falla, corregir el flujo (no desactivar pasos) y volver a ejecutarlo
+- [x] 4.1 Publicar la rama, abrir su PR y comprobar con `gh run list` y `gh pr checks` que el flujo se ejecuta en verde y que `ci` aparece como una sola comprobación; si falla, corregir el flujo (no desactivar pasos) y volver a ejecutarlo
 - [ ] 4.2 Fusionar con quien mantiene el repositorio los PR de la cadena en orden (#4, #5, #6, #7, #8, #9 y el de este change), comprobando tras cada uno que la base del siguiente pasa a `main` (o cambiándola a mano), resolviendo los conflictos que aparezcan y viendo el CI en verde; verificar con `gh pr list --state merged` y con `git log main` que todo está en `main`
 - [ ] 4.3 Configurar en GitHub la protección de `main` (pull request obligatorio, comprobación `ci` en verde, una aprobación o la excepción acordada y sin pushes directos) y activar los avisos privados de seguridad; verificar con `gh api repos/haroldavenia/ruteando-web/branches/main/protection` y `.../private-vulnerability-reporting`, y con un pull request de prueba cuya verificación falla y no puede fusionarse
 
