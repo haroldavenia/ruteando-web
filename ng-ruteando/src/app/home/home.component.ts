@@ -13,55 +13,28 @@ import { CurrentUser } from '../core/auth/current-user';
 import { messageFor } from '../shared/data/api-messages';
 import { FormResultComponent } from '../shared/form/form-result.component';
 import { formatDateTime } from '../shared/format';
+import { StatusBadgeComponent } from '../shared/ui/status-badge.component';
+import { statusTone } from '../shared/ui/status-tone';
 import { journeyStatusLabel } from '../features/journeys/journey-labels';
 import { fetchLatestJourneys } from '../features/journeys/latest-journeys';
 import { areaLinksFor } from '../layout/nav-items';
 
-/** Inicio: accesos a las áreas que el rol puede abrir (los mismos del menú lateral) y las últimas jornadas. */
+/**
+ * Inicio: saludo, accesos a las áreas que el rol puede abrir (los mismos del menú lateral) como mosaicos y las últimas
+ * jornadas en una tarjeta. El estilo de página, mosaicos y tarjetas es el del sistema de interfaz.
+ */
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule, FormResultComponent],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule, FormResultComponent, StatusBadgeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
-    :host {
-      display: block;
-    }
-    h1 {
-      margin: 0 0 8px;
-      font: var(--mat-sys-headline-small);
-    }
-    h2 {
-      margin: 24px 0 8px;
-      font: var(--mat-sys-title-medium);
-    }
-    .areas {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .area {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      padding: 16px;
-      color: var(--mat-sys-on-surface);
-      text-decoration: none;
-      background: var(--mat-sys-surface-container-low);
-      border: 1px solid var(--mat-sys-outline-variant);
-      border-radius: var(--mat-sys-corner-medium, 12px);
-    }
-    .area:hover {
-      background: var(--mat-sys-surface-container);
-    }
-    .area:focus-visible {
-      outline: 3px solid var(--mat-sys-primary);
-      outline-offset: 2px;
+    .greeting {
+      margin: -16px 0 0;
+      color: var(--mat-sys-on-surface-variant);
+      font: var(--mat-sys-body-large);
     }
     .journeys {
-      margin: 0 0 12px;
+      margin: 0 0 16px;
       padding: 0;
       list-style: none;
     }
@@ -69,11 +42,12 @@ import { areaLinksFor } from '../layout/nav-items';
       display: flex;
       flex-wrap: wrap;
       gap: 4px 16px;
-      align-items: baseline;
-      padding: 8px 0;
+      align-items: center;
+      padding: 10px 0;
       border-bottom: 1px solid var(--mat-sys-outline-variant);
     }
     .journeys a {
+      flex: 1 1 160px;
       font: var(--mat-sys-title-small);
     }
     .meta {
@@ -82,18 +56,18 @@ import { areaLinksFor } from '../layout/nav-items';
   `,
   template: `
     <h1>Ruteando</h1>
-    <p>Planificación de rutas.</p>
+    <p class="greeting">Hola, {{ name() }}. Planificación de rutas.</p>
 
     <section aria-labelledby="areas-title">
       <h2 id="areas-title">Áreas</h2>
       @if (areas().length === 0) {
         <p>Tu rol no tiene áreas disponibles en la aplicación web.</p>
       } @else {
-        <ul class="areas">
+        <ul class="tile-grid">
           @for (area of areas(); track area.link) {
             <li>
-              <a class="area" [routerLink]="area.link">
-                <mat-icon aria-hidden="true">{{ area.icon }}</mat-icon>
+              <a class="area tile" [routerLink]="area.link">
+                <div class="tile-icon"><mat-icon aria-hidden="true">{{ area.icon }}</mat-icon></div>
                 <span>{{ area.label }}</span>
               </a>
             </li>
@@ -103,7 +77,7 @@ import { areaLinksFor } from '../layout/nav-items';
     </section>
 
     @if (showJourneys()) {
-      <section aria-labelledby="journeys-title">
+      <section class="card" aria-labelledby="journeys-title">
         <h2 id="journeys-title">Últimas jornadas</h2>
         @switch (status()) {
           @case ('loading') {
@@ -122,7 +96,7 @@ import { areaLinksFor } from '../layout/nav-items';
                 @for (journey of journeys(); track journey.id) {
                   <li>
                     <a [routerLink]="['/jornadas', journey.id]">{{ journey.name }}</a>
-                    <span class="meta">{{ statusLabel(journey.status) }}</span>
+                    <app-status-badge [label]="statusLabel(journey.status)" [tone]="tone(journey.status)" />
                     <span class="meta">{{ dateTime(journey.createdAt) }}</span>
                   </li>
                 }
@@ -143,6 +117,11 @@ export class HomeComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly areas = computed(() => areaLinksFor(this.currentUser.role()));
+  /** Cómo se saluda a la persona: su nombre o, sin él, su correo. */
+  protected readonly name = computed(() => {
+    const user = this.currentUser.user();
+    return user?.firstName?.trim() || user?.email || '';
+  });
   /** Solo quien puede abrir `/jornadas` ve las últimas jornadas, y solo en el navegador (nunca en el render del servidor). */
   protected readonly showJourneys = computed(() => {
     const role = this.currentUser.role();
@@ -154,6 +133,7 @@ export class HomeComponent {
   protected readonly error = signal<string | null>(null);
 
   protected readonly statusLabel = journeyStatusLabel;
+  protected readonly tone = (status: string) => statusTone('journey', status);
   protected readonly dateTime = formatDateTime;
 
   private loading: Subscription | null = null;
