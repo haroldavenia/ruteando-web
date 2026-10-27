@@ -23,8 +23,8 @@
 
 ## 5. Cierre de los changes abiertos
 
-- [ ] 5.1 Con `modernize-access-ui` ya en `main`, archivarlo y, con `access-screens` ya sincronizada, retirar el escenario «El resto de la aplicación no cambia» (tarea 1.1 de `modernize-app-ui`) mediante un delta de ese change; verificar con `openspec validate --specs --strict` y que el CI sigue en verde
-- [ ] 5.2 Archivar `modernize-app-ui`, `validate-against-gateway` y este change, anotando en cada uno lo que sigue sin verificar (movimiento reducido y colores forzados, y las visitas con datos reales); verificar con `openspec list` que no queda ningún change abierto y con `openspec validate --specs --strict`
+- [x] 5.1 Con `modernize-access-ui` ya en `main`, archivarlo y, con `access-screens` ya sincronizada, retirar el escenario «El resto de la aplicación no cambia» (tarea 1.1 de `modernize-app-ui`) mediante un delta de ese change; verificar con `openspec validate --specs --strict` y que el CI sigue en verde
+- [x] 5.2 Archivar `modernize-app-ui`, `validate-against-gateway` y este change, anotando en cada uno lo que sigue sin verificar (movimiento reducido y colores forzados, y las visitas con datos reales); verificar con `openspec list` que no queda ningún change abierto y con `openspec validate --specs --strict`
 
 ## Workflow follow-up
 

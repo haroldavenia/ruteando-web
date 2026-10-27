@@ -2,7 +2,7 @@
 
 ## 1. Punto de partida y tema único
 
-- [ ] 1.1 Confirmar que `modernize-access-ui` está archivado (o que se trabaja sobre su rama) y, con `access-screens` ya con el requisito «Tema claro y oscuro automático», añadir a este change el delta que lo modifica retirando el escenario «El resto de la aplicación no cambia», con todos sus demás escenarios intactos; verificar con `openspec validate modernize-app-ui --strict`
+- [x] 1.1 Con `modernize-access-ui` archivado y `access-screens` ya con el requisito «Tema claro y oscuro automático», añadir a este change el delta que retira ese requisito (su escenario «El resto de la aplicación no cambia» dejó de ser cierto y los demás los cubre `app-ui-system`; con `MODIFIED` no se puede quitar un escenario, por eso se retira el requisito entero); verificado con `openspec validate modernize-app-ui --strict`
 - [x] 1.2 Mover el tema claro y oscuro (`theme-type: color-scheme`) de `_access-theme.scss` al `html` de `styles.scss` y dejar en `_access-theme.scss` solo los estilos comunes de las pantallas de acceso; actualizar `access-theme.spec.ts` para comprobar que todo el documento cambia con `color-scheme`; verificar con `npm run test:ci`, que `npm run build` no emite avisos y que en el navegador el área privada ya sigue la preferencia del sistema
 - [x] 1.3 Crear el parcial `shared/ui/_ui-system.scss` (`.page`, `.card`, `.card-title`, `.stat-grid`, `.stat`, `.section`, `.visually-hidden` único) con selectores `:where` y cargarlo desde `styles.scss`; verificar con una prueba que monta un elemento con cada clase y comprueba radio, borde y ancho máximo, y que el contraste de las superficies nuevas cumple 4,5 a 1 en ambos esquemas (ampliando la prueba de contraste a un spec compartido)
 
