@@ -49,7 +49,8 @@ function normalize(lon: number, lat: number): LatLng {
     .map {
       height: var(--app-map-height, 320px);
       background: var(--mat-sys-surface-container);
-      border-radius: var(--mat-sys-corner-medium, 12px);
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: 16px;
       overflow: hidden;
     }
     .failed {

@@ -287,4 +287,13 @@ describe('RoutesMapComponent', () => {
       opener.remove();
     });
   });
+
+  it('el contenedor del mapa tiene borde suave y esquinas redondeadas del sistema de interfaz', async () => {
+    await create([]);
+    const container = root().querySelector('.map') as HTMLElement;
+    const style = getComputedStyle(container);
+    expect(style.borderTopWidth).toBe('1px');
+    expect(style.borderTopLeftRadius).toBe('16px');
+    expect(style.overflow).toBe('hidden');
+  });
 });

@@ -269,4 +269,23 @@ describe('RouteVisitsComponent', () => {
       expect(changeButton('Tienda Sur').disabled).toBeFalse();
     });
   });
+
+  describe('etiquetas de estado', () => {
+    it('cada visita muestra su estado como etiqueta con el tono de su significado', () => {
+      loadAll('attended');
+      const badges = rows().map((r) => r.querySelector('app-status-badge'));
+      expect(badges[0]).toBeNull();
+      expect(badges[1]?.getAttribute('data-tone')).toBe('success');
+      expect(badges[2]?.getAttribute('data-tone')).toBe('neutral');
+      expect(badges[3]?.querySelector('span')?.textContent).toBe('No disponible');
+      expect(badges[3]?.getAttribute('data-tone')).toBe('neutral');
+    });
+
+    it('mientras carga, la etiqueta dice «Cargando…» en tono neutro', () => {
+      const badge = rows()[1].querySelector('app-status-badge') as HTMLElement;
+      expect(badge.querySelector('span')?.textContent).toBe('Cargando…');
+      expect(badge.getAttribute('data-tone')).toBe('neutral');
+      loadAll();
+    });
+  });
 });

@@ -138,4 +138,13 @@ describe('MapViewComponent', () => {
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('[role="region"]')?.getAttribute('aria-label')).toBe('Mapa para elegir la ubicación');
   });
+
+  it('el contenedor del mapa tiene borde suave y esquinas redondeadas del sistema de interfaz', async () => {
+    await create();
+    const container = (fixture.nativeElement as HTMLElement).querySelector('.map') as HTMLElement;
+    const style = getComputedStyle(container);
+    expect(style.borderTopWidth).toBe('1px');
+    expect(style.borderTopLeftRadius).toBe('16px');
+    expect(style.overflow).toBe('hidden');
+  });
 });

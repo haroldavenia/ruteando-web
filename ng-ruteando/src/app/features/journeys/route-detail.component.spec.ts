@@ -117,4 +117,21 @@ describe('RouteDetailComponent', () => {
     expect(root().querySelector('[role="alert"]')?.textContent?.trim()).toBeTruthy();
     expect(root().querySelector('a[href="/jornadas"]')).not.toBeNull();
   });
+
+  describe('presentación', () => {
+    it('el resumen, el mapa y las paradas van en tarjetas, con el resumen como rejilla de datos', () => {
+      setup('0');
+      const ids = Array.from(root().querySelectorAll('section.card')).map((s) => s.getAttribute('aria-labelledby'));
+      expect(ids).toEqual(['summary-title', 'map-title', 'stops-title']);
+      const grid = root().querySelector('dl.summary.stat-grid') as HTMLElement;
+      expect(getComputedStyle(grid).display).toBe('grid');
+    });
+
+    it('el enlace de vuelta a la jornada va sobre el título', () => {
+      setup('0');
+      const head = root().querySelector('.page-head') as HTMLElement;
+      expect(head.firstElementChild?.tagName).toBe('A');
+      expect(head.querySelector('h1')?.textContent).toBe('Capture vehicle');
+    });
+  });
 });

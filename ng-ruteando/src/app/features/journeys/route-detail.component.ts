@@ -21,7 +21,6 @@ import { RoutesMapComponent, StopRef } from './routes-map.component';
   imports: [RouterLink, MatButtonModule, MatProgressBarModule, FormResultComponent, RoutesMapComponent, RouteVisitsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-detail.component.html',
-  styleUrl: './route-detail.component.scss',
 })
 export class RouteDetailComponent {
   private readonly api = inject(JourneysApi);

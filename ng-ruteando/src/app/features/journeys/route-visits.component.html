@@ -73,7 +73,7 @@
             <td>{{ dateTime(row.stop.departureUtc) }}</td>
             <td>
               @if (row.visit; as visit) {
-                {{ statusText(visit) }}
+                <app-status-badge [label]="statusText(visit)" [tone]="tone(visit)" />
               } @else {
                 —
               }

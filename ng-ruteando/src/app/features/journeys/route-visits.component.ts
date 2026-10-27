@@ -8,6 +8,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MasterDomainsService } from '../../core/api/data/master-domains.service';
 import { DomainRoute, DomainWaypoint } from '../../core/api/models';
 import { FormResultComponent } from '../../shared/form/form-result.component';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
+import { StatusTone, statusTone } from '../../shared/ui/status-tone';
 import { formatDateTime, formatLatLng } from '../../shared/format';
 import { DEFAULT_PACKAGE_STATUSES, packageStatusLabel } from '../packages/package-labels';
 
@@ -28,7 +30,7 @@ interface StopRow {
  */
 @Component({
   selector: 'app-route-visits',
-  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, FormResultComponent],
+  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, FormResultComponent, StatusBadgeComponent],
   providers: [RouteVisitsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-visits.component.html',
@@ -87,6 +89,10 @@ export class RouteVisitsComponent {
       const waypoints = this.route().waypoints;
       untracked(() => this.store.load(waypoints));
     });
+  }
+
+  protected tone(visit: RouteVisit): StatusTone {
+    return statusTone('visit', visitStatus(visit));
   }
 
   protected statusText(visit: RouteVisit): string {
