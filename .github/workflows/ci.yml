@@ -20,10 +20,11 @@ env:
   # Misma versión del CLI de specs que se usa en local; se actualiza a mano junto con ella
   OPENSPEC_VERSION: 1.14.3
 
+# El ejecutor está fijado a ubuntu-24.04 (no `ubuntu-latest`, que migra a Ubuntu 26): se cambia a propósito, no por sorpresa
 jobs:
   frontend:
     name: Frontend (pruebas y compilación)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -51,7 +52,7 @@ jobs:
 
   server:
     name: Servidor (pruebas)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -73,7 +74,7 @@ jobs:
 
   specs:
     name: Specs (validación estricta)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -87,7 +88,7 @@ jobs:
 
   audit:
     name: Auditoría (dependencias de producción)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -108,7 +109,7 @@ jobs:
     name: ci
     if: always()
     needs: [frontend, server, specs, audit]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Resumen
