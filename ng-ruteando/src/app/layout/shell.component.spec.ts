@@ -187,6 +187,69 @@ describe('ShellComponent', () => {
     expect(root.querySelector('button[aria-label="Abrir menú de navegación"]')).not.toBeNull();
   });
 
+  describe('aspecto', () => {
+    const root = () => fixture.nativeElement as HTMLElement;
+    const setUser = (overrides: Parameters<typeof makeUser>[0]) => {
+      TestBed.inject(CurrentUser).set(makeUser(overrides));
+      fixture.detectChanges();
+    };
+
+    it('la barra superior muestra la marca compacta, sin teñirse con el color primario', () => {
+      const brand = root().querySelector('mat-toolbar app-brand') as HTMLElement;
+      expect(brand).not.toBeNull();
+      expect(brand.classList.contains('compact')).toBeTrue();
+      expect(brand.querySelector('.name')?.textContent).toBe('Ruteando');
+      expect(root().querySelector('mat-toolbar')!.classList.contains('mat-primary')).toBeFalse();
+    });
+
+    it('el avatar muestra las iniciales de nombre y apellido, y es decorativo', () => {
+      setUser({ firstName: 'Ana', lastName: 'Pérez', email: 'ana@example.invalid' });
+      const avatar = root().querySelector('button[aria-label="Menú de usuario"] .avatar') as HTMLElement;
+      expect(avatar.textContent?.trim()).toBe('AP');
+      expect(avatar.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('sin nombre el avatar usa la primera letra del correo, en mayúscula', () => {
+      setUser({ firstName: null, lastName: null, email: 'zoe@example.invalid' });
+      expect(root().querySelector('.avatar')?.textContent?.trim()).toBe('Z');
+    });
+
+    it('con un solo nombre el avatar usa su inicial', () => {
+      setUser({ firstName: 'Álvaro', lastName: null, email: 'a@example.invalid' });
+      expect(root().querySelector('.avatar')?.textContent?.trim()).toBe('Á');
+    });
+
+    it('el botón del avatar sigue siendo un botón con etiqueta en español', () => {
+      const button = root().querySelector('button[aria-label="Menú de usuario"]') as HTMLButtonElement;
+      expect(button.tagName).toBe('BUTTON');
+    });
+
+    it('el menú lateral tiene un encabezado que no es un h3 de sección ni un enlace', () => {
+      const title = root().querySelector('mat-sidenav .nav-title') as HTMLElement;
+      expect(title.textContent).toContain('Menú principal');
+      expect(title.tagName).toBe('P');
+    });
+
+    it('el contenido enrutado va en el marco centrado de la página', () => {
+      const frame = root().querySelector('mat-sidenav-content .page') as HTMLElement;
+      expect(frame).not.toBeNull();
+      expect(frame.querySelector('router-outlet')).not.toBeNull();
+      expect(getComputedStyle(frame).maxWidth).toBe('1200px');
+    });
+
+    it('la entrada activa se marca con fondo propio y con aria-current, no solo con el peso de la letra', async () => {
+      TestBed.inject(CurrentUser).set(makeUser({ role: 'tenant_admin' }));
+      await TestBed.inject(Router).navigateByUrl('/');
+      fixture.detectChanges();
+      const active = root().querySelector('mat-sidenav a.active') as HTMLElement;
+      expect(active).not.toBeNull();
+      expect(active.getAttribute('aria-current')).toBe('page');
+      const style = getComputedStyle(active);
+      expect(style.getPropertyValue('--mat-list-list-item-container-color').trim()).toBe(style.getPropertyValue('--mat-sys-secondary-container').trim());
+      expect(style.getPropertyValue('--mat-sys-secondary-container').trim()).not.toBe('');
+    });
+  });
+
   describe('menú de usuario', () => {
     let overlay: HTMLElement;
     let logout: jasmine.Spy;

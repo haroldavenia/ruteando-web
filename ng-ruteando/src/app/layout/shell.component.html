@@ -1,13 +1,13 @@
-<mat-toolbar color="primary">
+<mat-toolbar>
   @if (!isWide()) {
     <button mat-icon-button type="button" aria-label="Abrir menú de navegación" (click)="drawer.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
   }
-  <span class="title">Ruteando</span>
+  <app-brand size="compact" />
   <span class="spacer"></span>
-  <button mat-icon-button type="button" aria-label="Menú de usuario" [matMenuTriggerFor]="userMenu">
-    <mat-icon aria-hidden="true">account_circle</mat-icon>
+  <button class="avatar-button" mat-icon-button type="button" aria-label="Menú de usuario" [matMenuTriggerFor]="userMenu">
+    <span class="avatar" aria-hidden="true">{{ initials() }}</span>
   </button>
   <mat-menu #userMenu="matMenu">
     <div class="user-info" role="group" aria-label="Sesión iniciada">
@@ -23,6 +23,7 @@
 
 <mat-sidenav-container class="container">
   <mat-sidenav #drawer [mode]="mode()" [opened]="isWide()" role="navigation" aria-label="Navegación principal">
+    <p class="nav-title">Menú principal</p>
     <mat-nav-list>
       @for (item of items(); track item.label) {
         @if (item.children; as children) {
@@ -38,7 +39,9 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="content">
-    <router-outlet />
+    <div class="page">
+      <router-outlet />
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
 

@@ -21,6 +21,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../core/auth/auth.service';
 import { CurrentUser } from '../core/auth/current-user';
+import { BrandComponent } from '../shared/brand/brand.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 
 import { navItemsFor } from './nav-items';
@@ -28,6 +29,7 @@ import { navItemsFor } from './nav-items';
 @Component({
   selector: 'app-shell',
   imports: [
+    BrandComponent,
     NgTemplateOutlet,
     RouterLink,
     RouterLinkActive,
@@ -66,6 +68,14 @@ export class ShellComponent {
     return name || user?.email || '';
   });
   readonly email = computed(() => this.currentUser.user()?.email ?? '');
+  /** Iniciales para el avatar: nombre y apellido o, sin ellos, la primera letra del correo. */
+  readonly initials = computed(() => {
+    const user = this.currentUser.user();
+    const letters = [user?.firstName, user?.lastName]
+      .filter((part): part is string => !!part?.trim())
+      .map((part) => part.trim()[0]);
+    return (letters.length ? letters.slice(0, 2).join('') : (user?.email?.[0] ?? '?')).toUpperCase();
+  });
 
   readonly isWide = signal(true);
   readonly mode = computed(() => (this.isWide() ? 'side' : 'over'));
