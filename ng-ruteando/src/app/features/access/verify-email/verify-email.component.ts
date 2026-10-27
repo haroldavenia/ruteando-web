@@ -53,23 +53,6 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
       <p class="alt"><a routerLink="/acceso">Ir a iniciar sesión</a></p>
     }
   `,
-  styles: `
-    h1 {
-      margin: 0 0 16px;
-      font: var(--mat-sys-headline-small);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .field {
-      width: 100%;
-    }
-    .alt {
-      margin-top: 16px;
-    }
-  `,
 })
 export class VerifyEmailComponent {
   private readonly auth = inject(AuthService);

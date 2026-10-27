@@ -13,6 +13,7 @@
   "scripts": {
     "start": "node server/server.js",
     "build:web": "npm --prefix ng-ruteando run build",
-    "test:server": "node --test server/test/*.test.js"
+    "test:server": "node --test server/test/*.test.js",
+    "mock:gateway": "node scripts/mock-gateway.mjs"
   }
 }

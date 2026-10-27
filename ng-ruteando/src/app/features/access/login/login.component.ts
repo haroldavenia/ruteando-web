@@ -52,26 +52,6 @@ import { PasswordFieldComponent } from '../../../shared/form/password-field.comp
       <a routerLink="/acceso/registro">Crear cuenta</a>
     </nav>
   `,
-  styles: `
-    h1 {
-      margin: 0 0 16px;
-      font: var(--mat-sys-headline-small);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .field {
-      width: 100%;
-    }
-    .links {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 16px;
-    }
-  `,
 })
 export class LoginComponent {
   private readonly auth = inject(AuthService);

@@ -48,23 +48,6 @@ const NEUTRAL_MESSAGE = 'Si el correo existe, recibirás instrucciones para rest
     }
     <p class="alt"><a routerLink="/acceso">Volver a iniciar sesión</a></p>
   `,
-  styles: `
-    h1 {
-      margin: 0 0 16px;
-      font: var(--mat-sys-headline-small);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .field {
-      width: 100%;
-    }
-    .alt {
-      margin-top: 16px;
-    }
-  `,
 })
 export class ForgotPasswordComponent {
   private readonly auth = inject(AuthService);

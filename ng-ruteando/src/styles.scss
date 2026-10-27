@@ -1,6 +1,7 @@
 @use '@angular/material' as mat;
+@use './app/features/access/access-theme';
 
-// Tema Material 3: único punto de definición del tema de la aplicación.
+// Tema Material 3: tema de la aplicación (la vista de acceso añade el suyo, claro y oscuro, en `access-theme`).
 html {
   color-scheme: light;
 

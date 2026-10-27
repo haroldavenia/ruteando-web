@@ -19,6 +19,17 @@ npm start                               # http://localhost:3000
 
 Sin `.env` el servidor arranca y avisa, pero `/gateway/**` responde 503. `PORT` cambia el puerto y `WEB_DIST` el directorio que se publica.
 
+## Probar sin el gateway real
+
+`scripts/mock-gateway.mjs` es un gateway falso con datos en memoria (lugares, flota, paquetes, jornadas ya planificadas con rutas y paradas, zonas), para iniciar sesión y recorrer la aplicación sin el gateway real. No es el contrato oficial y los datos se pierden al pararlo.
+
+```
+npm run mock:gateway                                              # puerto 4010 (MOCK_GATEWAY_PORT)
+GATEWAY_URL=http://localhost:4010 GATEWAY_API_KEY=mock npm start  # la app contra el mock, en otra terminal
+```
+
+Usuarios (contraseña `demo1234`): `admin@example.invalid` (administración), `agente@example.invalid` (agente) y `conductor@example.invalid` (conductor, sin áreas). Las variables del entorno tienen prioridad sobre `.env`.
+
 ## Desarrollo
 
 Desde `ng-ruteando/`: `npm start` (puerto 4200, con el mismo proxy `/gateway` y las mismas variables), `npm run test:ci` (Karma con Chrome sin interfaz) y `npm run build`.
