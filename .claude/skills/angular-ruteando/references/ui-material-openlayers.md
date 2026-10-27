@@ -98,7 +98,7 @@ import { fromLonLat } from 'ol/proj';
 - CSS: `@import 'ol/ol.css'` en `styles.scss`.
 - Contenedor del mapa con alto explícito dentro de `mat-sidenav-content`/`mat-card`.
 
-## jsPDF 2.5
+## jsPDF (retirado de las dependencias; notas para cuando se vuelva a añadir)
 
 - Import dinámico en navegador: `const { jsPDF } = await import('jspdf');`.
 - Tablas: `jspdf-autotable` compatible con jspdf 2.x.

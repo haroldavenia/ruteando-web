@@ -1,0 +1,125 @@
+name: CI
+
+# Verifica cada cambio antes de llegar a main: pruebas y compilación del frontend, pruebas del servidor, validación
+# estricta de las specs y auditoría de las dependencias de producción. La comprobación obligatoria de main es `ci`.
+on:
+  # Sin filtro de ramas: los pull requests están apilados y su base no siempre es main
+  pull_request:
+  push:
+    branches: [main]
+
+# Una ejecución nueva sobre la misma rama cancela la anterior
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Misma versión del CLI de specs que se usa en local; se actualiza a mano junto con ella
+  OPENSPEC_VERSION: 1.14.3
+
+# El ejecutor está fijado a ubuntu-24.04 (no `ubuntu-latest`, que migra a Ubuntu 26): se cambia a propósito, no por sorpresa
+jobs:
+  frontend:
+    name: Frontend (pruebas y compilación)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ng-ruteando/.nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            ng-ruteando/package-lock.json
+      # npm 10.9 (el de Node 22) puede fallar al instalar desde cero con `edgesOut`
+      - name: Instalar npm 11
+        run: npm install -g npm@11
+      - name: Instalar dependencias
+        run: npm ci
+        working-directory: ng-ruteando
+      - name: Pruebas (Chrome sin interfaz)
+        run: npm run test:ci
+        working-directory: ng-ruteando
+      - name: Compilación de producción
+        run: npm run build
+        working-directory: ng-ruteando
+
+  server:
+    name: Servidor (pruebas)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ng-ruteando/.nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            ng-ruteando/package-lock.json
+      - name: Instalar npm 11
+        run: npm install -g npm@11
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Pruebas del servidor
+        run: npm run test:server
+
+  specs:
+    name: Specs (validación estricta)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ng-ruteando/.nvmrc
+      - name: Validar las specs
+        run: npx --yes "@fission-ai/openspec@${OPENSPEC_VERSION}" validate --specs --strict
+
+  audit:
+    name: Auditoría (dependencias de producción)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ng-ruteando/.nvmrc
+      # Solo producción y solo altas o críticas: las de desarrollo no llegan al producto
+      - name: Auditar la raíz
+        run: npm audit --omit=dev --audit-level=high
+      - name: Auditar el frontend
+        run: npm audit --omit=dev --audit-level=high
+        working-directory: ng-ruteando
+
+  # Comprobación única que exige la protección de main: solo está en verde si todas las demás lo están
+  ci:
+    name: ci
+    if: always()
+    needs: [frontend, server, specs, audit]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Resumen
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Resultados: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != "success" ]; then
+              echo "Alguna comprobación no terminó en éxito (fallo, cancelada u omitida)"
+              exit 1
+            fi
+          done
