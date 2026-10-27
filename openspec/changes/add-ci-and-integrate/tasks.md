@@ -9,11 +9,11 @@
 
 - [x] 2.1 Resolver con `gh api repos/actions/checkout/git/ref/tags/<versión>` y `repos/actions/setup-node/git/ref/tags/<versión>` el SHA de cada acción y crear `.github/workflows/ci.yml` con los trabajos `frontend`, `server`, `specs`, `audit` y `ci` (disparadores `pull_request` sin filtro de ramas y `push` a `main`, `concurrency` con cancelación, `permissions: contents: read`, `timeout-minutes`, Node de `ng-ruteando/.nvmrc`, `npm@11`, caché de npm de los dos lockfiles y el CLI de OpenSpec fijado a 1.14.3); verificar que el YAML es válido (`actionlint` si está disponible o un análisis con Python), que no hay secretos ni acciones sin SHA, y que el trabajo `ci` falla si un `needs` falla o se cancela
 - [x] 2.2 Crear `.github/dependabot.yml` (npm en `/` y en `/ng-ruteando`, `github-actions` en `/`, semanal, agrupando menores y parches, máximo 5 PR abiertos); verificar que el YAML es válido y que los directorios citados existen
-- [ ] 2.3 Hacer un clon limpio del repositorio en el scratchpad y ejecutar en él los mismos comandos del flujo (instalación con `npm ci`, `test:ci`, `build`, `test:server`, validación de specs y auditoría); verificar que pasan sin depender de ficheros sin versionar, y ejecutar la suite del frontend dos veces más para descartar pruebas intermitentes
+- [x] 2.3 Hacer un clon limpio del repositorio en el scratchpad y ejecutar en él los mismos comandos del flujo (instalación con `npm ci`, `test:ci`, `build`, `test:server`, validación de specs y auditoría); verificar que pasan sin depender de ficheros sin versionar, y ejecutar la suite del frontend dos veces más para descartar pruebas intermitentes
 
 ## 3. Documentación
 
-- [ ] 3.1 Documentar en `README.md` y `CLAUDE.md` qué verifica el CI, cómo ejecutar lo mismo en local, cuál es la comprobación obligatoria (`ci`) y cómo se actualizan el CLI de OpenSpec fijado y las acciones; verificar que cada comando citado se ejecuta tal cual y que los ficheros citados existen
+- [x] 3.1 Documentar en `README.md` y `CLAUDE.md` qué verifica el CI, cómo ejecutar lo mismo en local, cuál es la comprobación obligatoria (`ci`) y cómo se actualizan el CLI de OpenSpec fijado y las acciones; verificar que cada comando citado se ejecuta tal cual y que los ficheros citados existen
 
 ## 4. Primera ejecución y fusión de la cadena
 

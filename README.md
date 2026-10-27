@@ -34,6 +34,21 @@ Usuarios (contraseña `demo1234`): `admin@example.invalid` (administración), `a
 
 Desde `ng-ruteando/`: `npm start` (puerto 4200, con el mismo proxy `/gateway` y las mismas variables), `npm run test:ci` (Karma con Chrome sin interfaz) y `npm run build`.
 
+## Integración continua
+
+`.github/workflows/ci.yml` verifica cada pull request (a cualquier rama base) y cada push a `main` con cinco trabajos: `Frontend` (pruebas con Chrome sin interfaz y compilación de producción), `Servidor` (pruebas), `Specs` (`openspec validate --specs --strict`), `Auditoría` (`npm audit` de las dependencias de producción, nivel alto) y `ci`, que resume los anteriores. **La comprobación obligatoria de `main` es `ci`.** Usa el Node de `ng-ruteando/.nvmrc`, `npm@11` y `npm ci`, y no necesita secretos ni el gateway real.
+
+Lo mismo en local:
+
+```
+npm --prefix ng-ruteando ci && npm --prefix ng-ruteando run test:ci && npm --prefix ng-ruteando run build
+npm ci && npm run test:server
+npx --yes @fission-ai/openspec@1.14.3 validate --specs --strict
+npm audit --omit=dev --audit-level=high && npm --prefix ng-ruteando audit --omit=dev --audit-level=high
+```
+
+Dependabot propone cada semana las actualizaciones de npm (raíz y frontend) y de las acciones, que pasan por el mismo CI. La versión del CLI de OpenSpec (`OPENSPEC_VERSION` en el flujo) y los SHA de las acciones se actualizan a mano o con esos pull requests.
+
 ## Pruebas del servidor
 
 ```

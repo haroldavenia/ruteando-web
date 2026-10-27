@@ -1,6 +1,6 @@
 ---
 name: angular-ruteando
-description: Experto en Angular 21 para el repo ruteando-web (planificación de rutas). Úsalo al crear, modificar o depurar código Angular en ng-ruteando/, al añadir UI con Angular Material, mapas con OpenLayers, PDFs con jsPDF, auth JWT, SSR, o al revisar la subida de versión de Angular.
+description: Experto en Angular 21 para el repo ruteando-web (planificación de rutas). Úsalo al crear, modificar o depurar código Angular en ng-ruteando/, al añadir UI con Angular Material, mapas con OpenLayers, PDFs, auth JWT, SSR, o al revisar la subida de versión de Angular.
 ---
 
 # Angular 21 en ruteando-web
@@ -66,7 +66,7 @@ Para APIs de las versiones intermedias (`@let`, `@defer`, `httpResource`, `linke
 
 ## 6. UI
 
-Ver `references/ui-material-openlayers.md`. Resumen: UI con **Angular Material + CDK** alineado con la versión de Angular (`ng-ruteando`: Material 21.2 con tema M3, ya aplicado). No uses Bootstrap ni ng-bootstrap ni los mezcles. `ng-ruteando` tiene un shell Material (barra y menú), sin pantallas de negocio todavía. Legacy usa Bootstrap 3 + tema Angle + Google Maps; **no copies esos estilos**, solo su funcionalidad. Mapas nuevos con OpenLayers (`ol` ^10.5, teselas OSM, sin tokens Mapbox: el commit `1b42631` los eliminó). PDFs con `jspdf` ^2.5.1.
+Ver `references/ui-material-openlayers.md`. Resumen: UI con **Angular Material + CDK** alineado con la versión de Angular (`ng-ruteando`: Material 21.2 con tema M3, ya aplicado). No uses Bootstrap ni ng-bootstrap ni los mezcles. `ng-ruteando` tiene un shell Material moderno y todas las pantallas de negocio sobre el sistema de interfaz común (`shared/ui/`). Mapas con OpenLayers (`ol` ^10.5, teselas OSM, sin tokens Mapbox: el commit `1b42631` los eliminó). PDFs: `jspdf` se retiró de las dependencias por no usarse (arrastraba `dompurify` con vulnerabilidades altas); al hacer la exportación a PDF hay que volver a añadirlo con la versión vigente y cargarlo bajo demanda.
 
 ## 7. Trampas conocidas (lee `references/gotchas.md`)
 
