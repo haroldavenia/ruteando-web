@@ -1,0 +1,42 @@
+<div class="scroll">
+  <table>
+    <caption>Vértices del polígono</caption>
+    <thead>
+      <tr>
+        <th scope="col">Vértice</th>
+        <th scope="col">Latitud</th>
+        <th scope="col">Longitud</th>
+        <th scope="col"><span class="visually-hidden">Quitar</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows.controls; track $index; let i = $index) {
+        <tr [formGroup]="row">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>
+            <input type="number" step="any" inputmode="decimal" formControlName="lat" [attr.aria-label]="'Latitud del vértice ' + (i + 1)" [attr.aria-invalid]="row.controls.lat.invalid" />
+            @if (row.controls.lat.invalid) {
+              <span class="error" role="alert">{{ error(row, 'lat') }}</span>
+            }
+          </td>
+          <td>
+            <input type="number" step="any" inputmode="decimal" formControlName="lng" [attr.aria-label]="'Longitud del vértice ' + (i + 1)" [attr.aria-invalid]="row.controls.lng.invalid" />
+            @if (row.controls.lng.invalid) {
+              <span class="error" role="alert">{{ error(row, 'lng') }}</span>
+            }
+          </td>
+          <td>
+            <button mat-icon-button type="button" (click)="remove(i)" [attr.aria-label]="'Quitar el vértice ' + (i + 1)">
+              <mat-icon aria-hidden="true">delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="4">Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+<button mat-stroked-button type="button" (click)="add()"><mat-icon aria-hidden="true">add</mat-icon>Añadir vértice</button>

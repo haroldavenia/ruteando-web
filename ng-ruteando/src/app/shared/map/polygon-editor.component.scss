@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hint {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.map {
+  height: var(--app-map-height, 360px);
+  background: var(--mat-sys-surface-container);
+  border-radius: var(--mat-sys-corner-medium, 12px);
+  overflow: hidden;
+}
+
+.notice {
+  margin: 8px 0 0;
+}
+
+.error {
+  color: var(--mat-sys-error);
+}
+
+.summary {
+  margin: 8px 0;
+  font: var(--mat-sys-title-small);
+}
+
+.summary.problem {
+  color: var(--mat-sys-error);
+}

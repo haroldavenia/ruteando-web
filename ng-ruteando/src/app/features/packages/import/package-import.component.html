@@ -1,0 +1,174 @@
+<h1>Importar paquetes</h1>
+<a mat-button routerLink="/paquetes">← Volver a los paquetes</a>
+
+<section aria-labelledby="guide-title">
+  <h2 id="guide-title">1. Prepara el archivo</h2>
+  <p>
+    El archivo debe ser un CSV en UTF-8 con una fila por paquete. <strong>La aplicación no calcula la ubicación a partir de la dirección:</strong>
+    cada fila necesita su longitud y su latitud. Máximo 2 MB y {{ maxRows }} filas.
+  </p>
+  <button mat-stroked-button type="button" (click)="downloadTemplate()"><mat-icon aria-hidden="true">download</mat-icon>Descargar plantilla</button>
+  <div class="scroll">
+    <table>
+      <caption>Columnas del archivo</caption>
+      <thead>
+        <tr><th scope="col">Columna</th><th scope="col">Obligatoria</th><th scope="col">Qué lleva</th><th scope="col">Si falta</th></tr>
+      </thead>
+      <tbody>
+        @for (column of columns; track column.key) {
+          <tr>
+            <th scope="row">{{ column.header }}</th>
+            <td>{{ column.required ? 'Sí' : 'No' }}</td>
+            <td>{{ column.description }}</td>
+            <td>{{ column.fallback }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section aria-labelledby="file-title">
+  <h2 id="file-title">2. Elige el archivo</h2>
+  <label class="file" for="csv-file">Archivo CSV</label>
+  <input
+    #file
+    id="csv-file"
+    type="file"
+    accept=".csv,text/csv"
+    [disabled]="phase() === 'importing' || phase() === 'reading'"
+    (change)="onFile($event)"
+  />
+  @if (fileName()) {
+    <p class="selected" role="status">Archivo elegido: {{ fileName() }}</p>
+  }
+  @if (phase() === 'reading') {
+    <mat-progress-bar mode="indeterminate" aria-label="Leyendo el archivo" />
+  }
+  @if (problem(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+  @if (phase() === 'preview' || phase() === 'importing' || phase() === 'done') {
+    <button mat-button type="button" (click)="clearFile(file)" [disabled]="phase() === 'importing'">Quitar archivo</button>
+  }
+</section>
+
+@if (validation(); as result) {
+  <section aria-labelledby="preview-title">
+    <h2 id="preview-title">3. Revisa y confirma</h2>
+    <p class="summary" role="status" aria-live="polite">
+      {{ result.totalRows }} filas leídas: {{ validCount() }} válidas y {{ invalidRows() }} rechazadas.
+    </p>
+    @for (warning of warnings(); track warning) {
+      <p class="warning" role="status">{{ warning }}</p>
+    }
+
+    @if (result.errors.length > 0) {
+      <div class="scroll">
+        <table>
+          <caption>Filas rechazadas (no se importarán)</caption>
+          <thead>
+            <tr><th scope="col">Línea</th><th scope="col">Campo</th><th scope="col">Motivo</th></tr>
+          </thead>
+          <tbody>
+            @for (error of shownErrors(); track $index) {
+              <tr><td>{{ error.line }}</td><td>{{ error.field }}</td><td>{{ error.message }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (hiddenErrors() > 0) {
+        <p>… y {{ hiddenErrors() }} errores más; están todos en el informe de errores.</p>
+      }
+    }
+
+    @if (preview().length > 0) {
+      <div class="scroll">
+        <table>
+          <caption>Primeras {{ previewLimit }} filas válidas</caption>
+          <thead>
+            <tr>
+              <th scope="col">Línea</th><th scope="col">Guía</th><th scope="col">Nombre</th><th scope="col">Dirección</th>
+              <th scope="col">Latitud / longitud</th><th scope="col">Peso</th><th scope="col">Volumen</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of preview(); track row.line) {
+              <tr>
+                <td>{{ row.line }}</td>
+                <td>{{ row.input.guideNumber ?? '' }}</td>
+                <td>{{ row.input.name }}</td>
+                <td>{{ row.input.address }}</td>
+                <td>{{ location(row) }}</td>
+                <td>{{ row.input.weight }}</td>
+                <td>{{ row.input.volume }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (phase() === 'preview') {
+      @if (validCount() === 0) {
+        <p class="error" role="alert">Ninguna fila es válida: corrige el archivo y vuelve a elegirlo.</p>
+      }
+      <div class="actions">
+        <button mat-flat-button type="button" (click)="start()" [disabled]="validCount() === 0">Importar {{ validCount() }} paquetes</button>
+        @if (result.errors.length > 0) {
+          <button mat-stroked-button type="button" (click)="downloadReport()">Descargar informe de errores</button>
+        }
+      </div>
+    }
+  </section>
+}
+
+@if (phase() === 'importing') {
+  <section aria-labelledby="progress-title">
+    <h2 id="progress-title">Importando</h2>
+    <mat-progress-bar mode="determinate" [value]="progress().total ? (progress().done / progress().total) * 100 : 0" aria-label="Progreso de la importación" />
+    <p role="status" aria-live="polite">Importando… {{ progress().done }} de {{ progress().total }}</p>
+    <button mat-stroked-button type="button" (click)="cancel()" [disabled]="cancelling()">
+      {{ cancelling() ? 'Cancelando…' : 'Cancelar importación' }}
+    </button>
+  </section>
+}
+
+@if (phase() === 'done') {
+  <section aria-labelledby="result-title">
+    <h2 id="result-title">Resultado</h2>
+    <p class="summary" role="status" aria-live="polite">{{ summaryText() }}</p>
+    <dl class="counts">
+      <div><dt>Creados</dt><dd>{{ counts().created }}</dd></div>
+      <div><dt>Ya existían</dt><dd>{{ counts().existed }}</dd></div>
+      <div><dt>Fallidos</dt><dd>{{ counts().failed }}</dd></div>
+      <div><dt>Sin procesar</dt><dd>{{ counts().skipped }}</dd></div>
+    </dl>
+    @if (failedRows().length > 0) {
+      <div class="scroll">
+        <table>
+          <caption>Filas que fallaron</caption>
+          <thead>
+            <tr><th scope="col">Línea</th><th scope="col">Dirección</th><th scope="col">Motivo</th></tr>
+          </thead>
+          <tbody>
+            @for (item of failedRows(); track item.row.line) {
+              <tr><td>{{ item.row.line }}</td><td>{{ item.row.input.address }}</td><td>{{ item.message }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    <div class="actions">
+      @if (counts().created > 0 || counts().existed > 0) {
+        <a mat-flat-button routerLink="/paquetes">Ver los paquetes</a>
+      }
+      @if (failedRows().length > 0) {
+        <button mat-stroked-button type="button" (click)="retryFailed()">Reintentar las fallidas</button>
+      }
+      @if (reportEntries().length > 0) {
+        <button mat-stroked-button type="button" (click)="downloadReport()">Descargar informe de errores</button>
+      }
+    </div>
+  </section>
+}

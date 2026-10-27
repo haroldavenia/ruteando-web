@@ -1,0 +1,64 @@
+@switch (loader.status()) {
+  @case ('loading') {
+    <h1>Jornada</h1>
+    <mat-progress-bar mode="indeterminate" aria-label="Cargando la jornada" />
+  }
+  @case ('missing') {
+    <h1>Jornada</h1>
+    <app-form-result [error]="loader.error()" />
+    <a mat-stroked-button routerLink="/jornadas">Volver al listado</a>
+  }
+  @case ('error') {
+    <h1>Jornada</h1>
+    <app-form-result [error]="loader.error()" />
+    <a mat-stroked-button routerLink="/jornadas">Volver al listado</a>
+  }
+  @default {
+    @if (loader.record(); as journey) {
+      <h1>{{ journey.name }}</h1>
+      <a mat-button routerLink="/jornadas">← Volver a las jornadas</a>
+
+      <section aria-labelledby="summary-title">
+        <h2 id="summary-title">Resumen</h2>
+        <dl class="summary">
+          <div><dt>Estado</dt><dd>{{ status(journey.status) }}</dd></div>
+          <div><dt>Configuración</dt><dd>{{ journey.settings?.name ?? '—' }}</dd></div>
+          <div><dt>Servicios</dt><dd>{{ count(journey.totalServices) }}</dd></div>
+          <div><dt>Vehículos</dt><dd>{{ count(journey.totalResources) }}</dd></div>
+          <div><dt>Zonas</dt><dd>{{ count(journey.totalZones) }}</dd></div>
+          <div><dt>Tiempo mínimo</dt><dd>{{ duration(journey.stats?.minTime) }}</dd></div>
+          <div><dt>Tiempo medio</dt><dd>{{ duration(journey.stats?.avgTime) }}</dd></div>
+          <div><dt>Tiempo máximo</dt><dd>{{ duration(journey.stats?.maxTime) }}</dd></div>
+          <div><dt>Creada</dt><dd>{{ dateTime(journey.createdAt) }}</dd></div>
+        </dl>
+      </section>
+
+      @if (journey.routes.length > 0) {
+        <section #mapSection aria-labelledby="map-title">
+          <h2 id="map-title">Mapa de las rutas</h2>
+          <app-routes-map [routes]="journey.routes" [(selectedRoute)]="selectedRoute" [(selectedStop)]="selectedStop" />
+        </section>
+      }
+
+      <section aria-labelledby="routes-title">
+        <h2 id="routes-title">Rutas</h2>
+        @if (journey.routes.length === 0) {
+          <p>Esta jornada no tiene rutas.</p>
+        } @else {
+          <app-journey-routes [routes]="journey.routes" [journeyId]="journey.id" [selectedRoute]="selectedRoute()" (routeFocus)="focusRoute($event)" (stopFocus)="focusStop($event)" />
+        }
+      </section>
+
+      @if (journey.invalidPackageIds?.length) {
+        <section aria-labelledby="invalid-title">
+          <h2 id="invalid-title">Paquetes que no se pudieron planificar</h2>
+          <ul>
+            @for (packageId of journey.invalidPackageIds; track packageId) {
+              <li><a [routerLink]="['/paquetes', packageId]">{{ packageId }}</a></li>
+            }
+          </ul>
+        </section>
+      }
+    }
+  }
+}

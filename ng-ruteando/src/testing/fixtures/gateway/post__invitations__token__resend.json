@@ -1,0 +1,25 @@
+{
+  "name": "POST /api/v1/invitations/{token}/resend",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/invitations/{invitation_token}/resend",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99b1a2fa810fb39fb5ae",
+      "tenantId": "6acb99aca2fa810fb39fb599",
+      "email": "invite-postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+      "role": "agent",
+      "status": "pending",
+      "expiresAt": "2026-10-18T14:14:10.191Z",
+      "createdAt": "2026-10-11T14:14:09.754Z",
+      "invitedBy": {
+        "id": "6acb99aca2fa810fb39fb59a",
+        "firstName": "Postman",
+        "lastName": "Fixture"
+      }
+    }
+  }
+}

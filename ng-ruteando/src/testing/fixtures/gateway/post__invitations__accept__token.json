@@ -1,0 +1,33 @@
+{
+  "name": "POST /api/v1/invitations/accept/{token}",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/invitations/accept/{invitation_token}",
+    "body": {
+      "password": "contraseña-ficticia",
+      "firstName": "Postman",
+      "lastName": "Invitee"
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "message": null,
+      "accessToken": "acceso-ficticio",
+      "refreshToken": "refresco-ficticio",
+      "expiresIn": 3599,
+      "user": {
+        "id": "6acb99b2a2fa810fb39fb5b0",
+        "email": "invite-postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+        "firstName": "Postman",
+        "lastName": "Invitee",
+        "phone": null,
+        "role": "agent",
+        "tenantId": "6acb99aca2fa810fb39fb599",
+        "emailVerified": true,
+        "phoneVerified": false,
+        "createdAt": "2026-10-11T14:14:10.927Z"
+      }
+    }
+  }
+}

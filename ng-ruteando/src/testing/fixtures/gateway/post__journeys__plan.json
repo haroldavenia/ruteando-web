@@ -1,0 +1,151 @@
+{
+  "name": "POST /api/v1/journeys/plan",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/journeys/plan",
+    "body": {
+      "settingsId": "660000000000000000000014",
+      "packageIds": [
+        "000000000000000000000001",
+        "000000000000000000000002"
+      ],
+      "name": "Capture timed probe"
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "id": "6acb99bcd1e627deb8710a4a",
+      "tenantId": "660000000000000000000001",
+      "createdBy": "66000000000000000000000b",
+      "settingsId": "660000000000000000000014",
+      "settings": {
+        "id": "660000000000000000000014",
+        "name": "Capture settings 20",
+        "routeTopology": "round_trip",
+        "restrictionType": "fixed_routes"
+      },
+      "name": "Capture timed probe",
+      "status": "completed",
+      "totalServices": 2,
+      "totalResources": 1,
+      "totalZones": null,
+      "stats": {
+        "minTime": 532,
+        "avgTime": 532,
+        "maxTime": 532
+      },
+      "invalidPackageIds": null,
+      "routes": [
+        {
+          "routeIndex": 0,
+          "name": "Capture vehicle",
+          "resourceId": null,
+          "resource": null,
+          "geoJson": "olc[tedcMfBtAy@rAgA`BeA`BOVeA`BwA|BED[OgBw@ICKEGCm@WIECAu@]g@Y}@m@cBmA[WUQGEIIYUEE_@W[YOMUQ_@[w@m@e@_@AC}@o@IE_@WEEECUQYU}@s@AAIGQMBCt@{@f@m@DEJO??DEX[|@iAV]p@{@[YSUo@y@u@sAIUIWCSAIAGAKD?hEWLIx@c@lBeAcA_B_A{AiDrBKF}Az@CBWg@c@q@AEGKGKA??A}BuDWa@uA{BS[]m@GIEEPMZQXQjAq@hBiAz@o@f@a@jEmCFCh@_@ZUl@a@ZQZOrAs@bAk@h@[VOPKVIf@Qr@Wr@UtA[FCHAH?HAD?H@TDNFJD~B|@RJFBLFHD~BhAHDFBTL`CnAJDNHNHhB|@|BjA`ClATJJFHDEFaAvAGHEF_ArAk@x@MRKN}@tAk@x@CDEFGHILEHEF_BhCmAnBsCrEm@`ACDZRHFbC`B`@Vv@h@rAx@DDDBB@z@h@vAz@GHqB|CDDjD~B~AhAf@Z|@p@PNBB@BSTy@`AiBtBGJGEECmA_AuB}AYU}BeBOMgBuA",
+          "startRouteUtc": null,
+          "finishRouteUtc": null,
+          "distanceTraveled": 5928.5,
+          "duration": 532,
+          "weightUsed": 1,
+          "volumeUsed": 1,
+          "weightUsagePercent": null,
+          "volumeUsagePercent": null,
+          "fuelCost": null,
+          "avgStayTime": null,
+          "legsCount": 2,
+          "badPackageIds": null,
+          "waypoints": [
+            {
+              "sequence": 0,
+              "stopType": "depot",
+              "packageId": null,
+              "packageInfo": null,
+              "placeId": "66000000000000000000001e",
+              "coordinates": [
+                -74.08175,
+                4.60971
+              ],
+              "arrivalUtc": null,
+              "departureUtc": null,
+              "distance": null,
+              "distanceAccum": null,
+              "duration": null,
+              "durationAccum": null,
+              "weight": null,
+              "weightAccum": null,
+              "volume": null,
+              "volumeAccum": null
+            },
+            {
+              "sequence": 1,
+              "stopType": "service",
+              "packageId": null,
+              "packageInfo": null,
+              "placeId": null,
+              "coordinates": [
+                -74.078,
+                4.615
+              ],
+              "arrivalUtc": null,
+              "departureUtc": null,
+              "distance": 0,
+              "distanceAccum": 0,
+              "duration": 120,
+              "durationAccum": 0,
+              "weight": 1,
+              "weightAccum": 1,
+              "volume": 1,
+              "volumeAccum": 1
+            },
+            {
+              "sequence": 2,
+              "stopType": "service",
+              "packageId": null,
+              "packageInfo": null,
+              "placeId": null,
+              "coordinates": [
+                -74.075,
+                4.618
+              ],
+              "arrivalUtc": null,
+              "departureUtc": null,
+              "distance": 0,
+              "distanceAccum": 0,
+              "duration": 120,
+              "durationAccum": 0,
+              "weight": 1,
+              "weightAccum": 2,
+              "volume": 1,
+              "volumeAccum": 2
+            },
+            {
+              "sequence": 3,
+              "stopType": "depot",
+              "packageId": null,
+              "packageInfo": null,
+              "placeId": "66000000000000000000001e",
+              "coordinates": [
+                -74.08175,
+                4.60971
+              ],
+              "arrivalUtc": null,
+              "departureUtc": null,
+              "distance": null,
+              "distanceAccum": null,
+              "duration": null,
+              "durationAccum": null,
+              "weight": null,
+              "weightAccum": null,
+              "volume": null,
+              "volumeAccum": null
+            }
+          ]
+        }
+      ],
+      "resourceSummary": null,
+      "createdAt": "2026-10-11T14:14:20.870Z",
+      "updatedAt": "2026-10-11T14:14:20.870Z"
+    }
+  }
+}

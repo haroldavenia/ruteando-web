@@ -1,0 +1,49 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.title {
+  margin-left: 8px;
+}
+
+.container {
+  flex: 1;
+}
+
+mat-sidenav {
+  width: 240px;
+}
+
+.content {
+  padding: 16px;
+}
+
+.active {
+  font-weight: 500;
+  // Con varias entradas el peso de la letra no basta para ver dónde está la persona
+  --mat-list-list-item-container-color: var(--mat-sys-secondary-container);
+  --mat-list-list-item-label-text-color: var(--mat-sys-on-secondary-container);
+  --mat-list-list-item-leading-icon-color: var(--mat-sys-on-secondary-container);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 12px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.user-name {
+  font: var(--mat-sys-title-small);
+}
+
+.user-email {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}

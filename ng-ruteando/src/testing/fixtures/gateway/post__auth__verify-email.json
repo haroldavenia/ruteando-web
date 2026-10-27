@@ -1,0 +1,31 @@
+{
+  "name": "POST /api/v1/auth/verify-email",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/auth/verify-email",
+    "body": {
+      "token": "{verification_token}"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "message": null,
+      "accessToken": "acceso-ficticio",
+      "refreshToken": "refresco-ficticio",
+      "expiresIn": 3599,
+      "user": {
+        "id": "6acb99aca2fa810fb39fb59a",
+        "email": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+        "firstName": "Postman",
+        "lastName": "Fixture",
+        "phone": null,
+        "role": "tenant_admin",
+        "tenantId": "6acb99aca2fa810fb39fb599",
+        "emailVerified": true,
+        "phoneVerified": false,
+        "createdAt": "2026-10-11T14:14:04.598Z"
+      }
+    }
+  }
+}

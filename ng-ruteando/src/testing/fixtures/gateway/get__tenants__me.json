@@ -1,0 +1,34 @@
+{
+  "name": "GET /api/v1/tenants/me",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/tenants/me",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99aca2fa810fb39fb599",
+      "name": "postman-5f6f1325079242c7807dd3c411677b3c",
+      "slug": "postman-5f6f1325079242c7807dd3c411677b3c",
+      "country": null,
+      "timezone": "America/Bogota",
+      "plan": "free",
+      "companySize": null,
+      "industry": null,
+      "subscriptionStatus": "free",
+      "createdAt": "2026-10-11T14:14:04.326Z",
+      "billing": {
+        "email": null,
+        "taxId": null,
+        "address": null
+      },
+      "seats": {
+        "limit": 100,
+        "available": 99,
+        "used": 1
+      },
+      "trial": null
+    }
+  }
+}

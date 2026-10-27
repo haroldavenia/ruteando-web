@@ -1,0 +1,32 @@
+{
+  "name": "GET /api/v1/journeys/{journeyId}/navigations/{routeIndex}",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/journeys/{journey_id}/navigations/{route_index}",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": {
+        "date": "2026-10-11T14:14:13.000Z",
+        "timestamp": 1791728053
+      },
+      "tenantId": {
+        "date": "2026-10-11T14:14:04.000Z",
+        "timestamp": 1791728044
+      },
+      "journeyId": {
+        "date": "2020-09-26T10:08:37.000Z",
+        "timestamp": 1601114917
+      },
+      "routeIndex": 0,
+      "osrmVersion": "v4",
+      "instructionsLegacy": [],
+      "viaPointsLegacy": [],
+      "legs": null,
+      "snappedWaypoints": null,
+      "createdAt": null
+    }
+  }
+}

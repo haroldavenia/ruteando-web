@@ -1,0 +1,32 @@
+{
+  "name": "GET /api/v1/billing/subscription",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/billing/subscription",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99b7d80a2f0e8fecd3b9",
+      "stripeSubscriptionId": "postman-5f6f1325079242c7807dd3c411677b3c",
+      "stripeCustomerId": null,
+      "plan": "basic",
+      "billingInterval": "monthly",
+      "status": "active",
+      "quantity": 1,
+      "unitAmount": 1000,
+      "amount": 1000,
+      "currency": "usd",
+      "currentPeriodStart": null,
+      "currentPeriodEnd": null,
+      "trialStart": null,
+      "trialEnd": null,
+      "cancelAtPeriodEnd": false,
+      "canceledAt": null,
+      "latestInvoiceId": null,
+      "latestInvoiceStatus": null,
+      "latestInvoicePdfUrl": null
+    }
+  }
+}

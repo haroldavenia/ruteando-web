@@ -1,0 +1,56 @@
+{
+  "name": "GET /api/v1/packages",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/packages",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "content": [
+        {
+          "id": "6acb99b48275a26dbdf8fcf6",
+          "tenantId": "6acb99aca2fa810fb39fb599",
+          "guideNumber": null,
+          "name": "Postman package",
+          "serviceType": "delivery",
+          "address": "Fixture address",
+          "standardizedAddress": null,
+          "location": {
+            "coordinates": [
+              -74.07728,
+              4.60872
+            ],
+            "type": "Point"
+          },
+          "geocodingScore": null,
+          "geocodingStatus": null,
+          "city": null,
+          "country": null,
+          "postalCode": null,
+          "zoneId": null,
+          "weight": 1,
+          "volume": 0.1,
+          "pieceNumber": 1,
+          "measure": null,
+          "durationStay": null,
+          "timeWindow": null,
+          "category": null,
+          "goodsTags": null,
+          "customerId": null,
+          "receiver": null,
+          "sender": null,
+          "observation": null,
+          "status": "pending",
+          "createdAt": "2026-10-11T14:14:12.218Z",
+          "updatedAt": "2026-10-11T14:14:12.218Z"
+        }
+      ],
+      "totalElements": 1,
+      "totalPages": 1,
+      "page": 0,
+      "size": 20
+    }
+  }
+}

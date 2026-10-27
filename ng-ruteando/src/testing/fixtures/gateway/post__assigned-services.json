@@ -1,0 +1,21 @@
+{
+  "name": "POST /api/v1/assigned-services",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/assigned-services",
+    "body": {
+      "state": "ACTIVO"
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "id": "6acb99b50d4a57e6b309af60",
+      "vehicle": null,
+      "route": null,
+      "driver": null,
+      "state": "ACTIVO",
+      "executionDate": null
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "GET /api/v1/billing/invoices",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/billing/invoices",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": []
+  }
+}

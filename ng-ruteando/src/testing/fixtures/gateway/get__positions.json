@@ -1,0 +1,12 @@
+{
+  "name": "GET /api/v1/positions",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/positions",
+    "body": null
+  },
+  "response": {
+    "status": 202,
+    "body": []
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "GET /api/v1/auth/verify-email",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/auth/verify-email?token={verification_token}",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": "<!doctype html><html lang='es'><h1>Correo verificado</h1><p>Tu cuenta quedó activada. Puedes iniciar sesión en la aplicación.</p></html>"
+  }
+}
