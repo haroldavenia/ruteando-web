@@ -58,7 +58,7 @@ Comprobación manual por el proxy local con un tenant desechable (`POST /auth/re
 
 **Defectos del gateway (no de este repositorio)**
 - **`POST /journeys/plan` sigue fallando con paquetes reales:** 400 `For input string: "<id del paquete>"`, también con un solo paquete. Falla al interpretar **el id del paquete** (el `settingsId` hexadecimal sí lo acepta: con ids de solo dígitos el error es 404 «Settings not found»). Los ids los asigna el servidor y **ignora el `id` enviado en el cuerpo** de `POST /packages`, así que no hay forma de crear una jornada con rutas a través del gateway.
-- **`PackageStatus` trae valores inactivos** (`returned` y una clave de pruebas `demo_…`): el gateway los rechaza con 400 «Unknown PackageStatus key» (comprobado con `returned`). Los listados de estados de `/paquetes` y de las visitas ofrecen todas las claves del dominio, incluidas las inactivas: ver «Pendiente» más abajo.
+- **`PackageStatus` trae valores inactivos** (`returned` y una clave de pruebas `demo_…`): el gateway los rechaza con 400 «Unknown PackageStatus key» (comprobado con `returned`). Corregido en el change `fix-inactive-package-statuses`: `MasterDomainsService.activeValues()` y el menú de estados de `/paquetes` y de las visitas ofrecen solo los activos; un paquete que ya tenga un estado inactivo se sigue mostrando con su etiqueta, y el filtro de visitas incluye los inactivos presentes en la ruta.
 
 **No verificable (y por qué)**
 - **Premisa de las visitas** (una visita es una parada con `packageId`): sin jornadas con rutas no hay paradas que mirar. El único ejemplo con paradas (la colección Postman) trae `packageId: null`, `packageInfo: null` y `placeId: null` en las paradas de servicio. Queda como «no verificable»; el seguimiento de visitas no puede comprobarse con datos reales hasta que el gateway arregle la planificación o aporte una jornada real.
@@ -66,7 +66,7 @@ Comprobación manual por el proxy local con un tenant desechable (`POST /auth/re
 - **Jornadas del tenant real:** no se tocó ningún dato real; con un usuario real se podría revisar si ya existen jornadas con rutas.
 
 **Pendiente**
-- Filtrar los estados inactivos (`active: false`) al ofrecer un cambio de estado en `/paquetes`, en el formulario de paquetes y en las visitas; se propone como change aparte porque cambia el escenario «Estados ofrecidos» de `package-management` y de `route-visits`.
+- Comprobar en el gateway real si otros dominios que se ofrecen con `values()` en formularios (`ServiceType`, `PlaceType`, `RouteTopology`, `OsrmProfile`) también traen valores inactivos; si es así, usar `activeValues()` (conservando el valor actual al editar un registro que ya lo tenga).
 
 ## Inicio (`home/`, `features/journeys/latest-journeys.ts`)
 

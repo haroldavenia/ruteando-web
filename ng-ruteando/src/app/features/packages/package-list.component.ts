@@ -99,9 +99,9 @@ export class PackageListComponent {
   protected readonly state = new ListState<Package>((params) => this.api.list(params));
   protected readonly statusLabel = packageStatusLabel;
 
-  /** Estados del dominio `PackageStatus` del gateway o, si aún no hay, los habituales. */
+  /** Estados activos del dominio `PackageStatus` del gateway (el gateway rechaza los inactivos) o, si aún no hay, los habituales. */
   private readonly statuses = computed(() => {
-    const values = this.masters.values('PackageStatus');
+    const values = this.masters.activeValues('PackageStatus');
     return values.length ? values.map((v) => v.key) : DEFAULT_PACKAGE_STATUSES;
   });
 

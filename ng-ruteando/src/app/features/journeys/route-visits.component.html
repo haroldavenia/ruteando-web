@@ -13,7 +13,7 @@
       <mat-label>Estado</mat-label>
       <select matNativeControl [value]="store.filters().status" (change)="setStatusFilter($event)">
         <option value="">Todos los estados</option>
-        @for (status of statuses(); track status) {
+        @for (status of filterStatuses(); track status) {
           <option [value]="status">{{ statusLabel(status) }}</option>
         }
         <option [value]="unavailable">No disponible</option>

@@ -97,11 +97,11 @@ describe('PackageListComponent', () => {
   });
 
   describe('estado', () => {
-    it('ofrece los estados menos el actual, con su etiqueta en español', async () => {
+    it('sin catálogo ofrece los cuatro estados activos menos el actual, con su etiqueta en español', async () => {
       load();
       await openStatusMenu();
       const items = Array.from(overlay.querySelectorAll('[mat-menu-item]')).map((b) => b.textContent!.trim());
-      expect(items).toEqual(['Atendido', 'No atendido', 'Cancelado', 'Devuelto']);
+      expect(items).toEqual(['Atendido', 'No atendido', 'Cancelado']);
     });
 
     it('cambia el estado directamente y recarga la fila', async () => {

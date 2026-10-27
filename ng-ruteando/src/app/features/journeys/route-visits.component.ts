@@ -48,10 +48,20 @@ export class RouteVisitsComponent {
   protected readonly latLng = formatLatLng;
   protected readonly stopType = stopTypeLabel;
 
-  /** Estados del dominio `PackageStatus` del gateway o, si aún no hay, los habituales. */
+  /** Estados activos del dominio `PackageStatus` del gateway (el gateway rechaza los inactivos) o, si aún no hay, los habituales: los que se ofrecen como destino de un cambio. */
   protected readonly statuses = computed(() => {
-    const values = this.masters.values('PackageStatus');
+    const values = this.masters.activeValues('PackageStatus');
     return values.length ? values.map((v) => v.key) : DEFAULT_PACKAGE_STATUSES;
+  });
+
+  /** Opciones del filtro por estado: los activos y, además, los inactivos que tengan visitas de esta ruta (para poder encontrarlas). */
+  protected readonly filterStatuses = computed(() => {
+    const active = this.statuses();
+    const present = this.store
+      .visits()
+      .map((visit) => visit.pkg?.status)
+      .filter((status): status is string => !!status && !active.includes(status));
+    return [...active, ...new Set(present)];
   });
 
   protected readonly rows = computed<StopRow[]>(() => {

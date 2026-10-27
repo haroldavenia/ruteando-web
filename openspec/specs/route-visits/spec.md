@@ -38,6 +38,10 @@ La aplicación SHALL permitir filtrar las visitas por estado y por texto.
 - **WHEN** elige un estado en el filtro
 - **THEN** solo se muestran las visitas con ese estado y se indica cuántas hay
 
+#### Scenario: Estado inactivo presente en la ruta
+- **WHEN** algún paquete de la ruta tiene un estado inactivo, como «Devuelto»
+- **THEN** ese estado aparece también en el filtro mientras haya visitas con él, aunque no se pueda elegir como destino de un cambio
+
 #### Scenario: Por texto
 - **WHEN** escribe parte del nombre o de la dirección de un paquete
 - **THEN** solo se muestran las visitas que coinciden, sin distinguir mayúsculas ni acentos
@@ -47,7 +51,7 @@ La aplicación SHALL permitir filtrar las visitas por estado y por texto.
 - **THEN** se muestra un mensaje y una acción para limpiar los filtros
 
 ### Requirement: Cambio de estado de una visita
-La aplicación SHALL permitir cambiar el estado del paquete de una visita a otro valor de `PackageStatus` y SHALL pedir confirmación antes de cancelarlo.
+La aplicación SHALL permitir cambiar el estado del paquete de una visita a otro valor activo de `PackageStatus` y SHALL pedir confirmación antes de cancelarlo.
 
 #### Scenario: Cambiar el estado
 - **WHEN** elige "Atendido" en la acción de una visita pendiente
@@ -55,7 +59,7 @@ La aplicación SHALL permitir cambiar el estado del paquete de una visita a otro
 
 #### Scenario: Estados ofrecidos
 - **WHEN** abre la acción de estado
-- **THEN** se ofrecen los valores de `PackageStatus` menos el actual, con su etiqueta en español
+- **THEN** se ofrecen los valores activos de `PackageStatus` menos el actual, con su etiqueta en español, y ninguno inactivo
 
 #### Scenario: Cancelar
 - **WHEN** elige "Cancelado"

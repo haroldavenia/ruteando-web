@@ -71,7 +71,7 @@ La aplicación SHALL permitir crear y editar un paquete con nombre, tipo de serv
 - **THEN** la dirección se guarda como texto y la ubicación se elige en el mapa o con las coordenadas
 
 ### Requirement: Cambio de estado
-La aplicación SHALL permitir cambiar el estado de un paquete a cualquier otro valor de `PackageStatus` y SHALL pedir confirmación antes de cancelarlo.
+La aplicación SHALL permitir cambiar el estado de un paquete a cualquier otro valor activo de `PackageStatus` y SHALL pedir confirmación antes de cancelarlo.
 
 #### Scenario: Cambiar el estado
 - **WHEN** el usuario elige "Atendido" en la acción de estado de un paquete pendiente
@@ -79,7 +79,11 @@ La aplicación SHALL permitir cambiar el estado de un paquete a cualquier otro v
 
 #### Scenario: Estados ofrecidos
 - **WHEN** abre la acción de estado
-- **THEN** se ofrecen los valores de `PackageStatus` menos el actual, con su etiqueta en español
+- **THEN** se ofrecen los valores activos de `PackageStatus` menos el actual, con su etiqueta en español, y ninguno inactivo
+
+#### Scenario: Paquete con un estado inactivo
+- **WHEN** un paquete tiene un estado que el gateway marca como inactivo, como «Devuelto»
+- **THEN** su fila sigue mostrando ese estado con su etiqueta, y la acción de estado ofrece solo los valores activos
 
 #### Scenario: Cancelar un paquete
 - **WHEN** elige "Cancelado"

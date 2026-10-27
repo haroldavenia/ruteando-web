@@ -1,6 +1,7 @@
 import { OPERATIONS_ROLES } from '../../core/auth/admin-roles';
 
 import {
+  DEFAULT_PACKAGE_STATUSES,
   formatPackageLocation,
   geocodingStatusLabel,
   packageStatusLabel,
@@ -22,6 +23,12 @@ describe('etiquetas de paquetes', () => {
       'Cancelado',
       'Devuelto',
     ]);
+  });
+
+  it('los estados que se ofrecen por defecto son los cuatro activos, sin «Devuelto», que solo se etiqueta', () => {
+    expect(DEFAULT_PACKAGE_STATUSES).toEqual(['pending', 'attended', 'unattended', 'cancelled']);
+    expect(DEFAULT_PACKAGE_STATUSES).not.toContain('returned');
+    expect(packageStatusLabel('returned')).toBe('Devuelto');
   });
 
   it('traduce los estados de geocodificación como el legacy', () => {
