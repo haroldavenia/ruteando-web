@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
  * Marca de Ruteando: emblema (un cronómetro con tres flechas de ruta, recreado en SVG a partir del logo original)
@@ -8,6 +8,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
   selector: 'app-brand',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.compact]': "size() === 'compact'" },
   template: `
     <svg class="emblem" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
       <rect class="button" x="20" y="1.5" width="8" height="4" rx="1.5" />
@@ -55,6 +56,16 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       stroke-linejoin: round;
       stroke-width: 1.5;
     }
+    :host(.compact) {
+      gap: 8px;
+    }
+    :host(.compact) .emblem {
+      width: 32px;
+      height: 32px;
+    }
+    :host(.compact) .name {
+      font-size: 1.25rem;
+    }
     .name {
       color: var(--mat-sys-on-surface);
       font: 500 1.75rem/1 Roboto, sans-serif;
@@ -63,4 +74,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     }
   `,
 })
-export class BrandComponent {}
+export class BrandComponent {
+  /** `compact` para la barra superior del área autenticada. */
+  readonly size = input<'regular' | 'compact'>('regular');
+}

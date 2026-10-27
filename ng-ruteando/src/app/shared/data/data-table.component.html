@@ -1,18 +1,24 @@
 @let s = state();
+<section class="card flush">
+<div class="toolbar">
 <mat-form-field class="filter" subscriptSizing="dynamic">
   <mat-label>Filtrar esta página</mat-label>
   <mat-icon matPrefix aria-hidden="true">search</mat-icon>
   <input matInput type="search" autocomplete="off" [ngModel]="filter()" (ngModelChange)="filter.set($event)" />
 </mat-form-field>
+</div>
 
 @if (s.status() === 'loading') {
   <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
-  <p class="state" role="status">Cargando {{ entityPlural() }}…</p>
+  <div class="state" role="status">
+    <mat-icon class="state-icon" aria-hidden="true">hourglass_empty</mat-icon>
+    <p>Cargando {{ entityPlural() }}…</p>
+  </div>
 }
 
 @if (s.status() === 'error') {
   <div class="state error" role="alert">
-    <mat-icon aria-hidden="true">error</mat-icon>
+    <mat-icon class="state-icon" aria-hidden="true">error</mat-icon>
     <span>{{ s.error() }}</span>
     <button mat-stroked-button type="button" (click)="s.reload()">Reintentar</button>
   </div>
@@ -20,6 +26,7 @@
 
 @if (s.status() === 'empty') {
   <div class="state">
+    <mat-icon class="state-icon" aria-hidden="true">inbox</mat-icon>
     <p>{{ emptyMessage() }}</p>
     <ng-content select="[empty-action]" />
   </div>
@@ -39,6 +46,8 @@
             }
             @if (column.link) {
               <a [routerLink]="column.link(row)">{{ column.cell(row) }}</a>
+            } @else if (column.tone) {
+              <app-status-badge [label]="column.cell(row)" [tone]="column.tone(row)" />
             } @else {
               {{ column.cell(row) }}
             }
@@ -60,6 +69,7 @@
 
   @if (visibleRows().length === 0) {
     <div class="state" role="status">
+      <mat-icon class="state-icon" aria-hidden="true">search_off</mat-icon>
       <p>No hay resultados</p>
       <button mat-button type="button" (click)="clearFilter()">Limpiar búsqueda</button>
     </div>
@@ -74,3 +84,4 @@
     [attr.aria-label]="'Paginación de ' + entityPlural()"
   />
 }
+</section>

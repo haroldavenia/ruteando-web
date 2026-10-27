@@ -10,6 +10,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
+import { StatusBadgeComponent } from '../ui/status-badge.component';
+import { StatusTone } from '../ui/status-tone';
+
 import { ListState } from './list-state';
 
 export interface DataColumn<T> {
@@ -21,6 +24,8 @@ export interface DataColumn<T> {
   link?: (row: T) => string | readonly string[];
   /** Si se indica, antes del texto se pinta una muestra de este color (`#RRGGBB`); `null` no pinta nada. */
   swatch?: (row: T) => string | null;
+  /** Si se indica, la celda se muestra como etiqueta de estado con este tono (el texto es el de `cell`). */
+  tone?: (row: T) => StatusTone;
 }
 
 /** Normaliza para comparar sin distinguir mayúsculas ni acentos. */
@@ -53,7 +58,7 @@ class SpanishPaginatorIntl extends MatPaginatorIntl {
  */
 @Component({
   selector: 'app-data-table',
-  imports: [NgTemplateOutlet, RouterLink, FormsModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressBarModule],
+  imports: [NgTemplateOutlet, RouterLink, FormsModule, MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressBarModule, StatusBadgeComponent],
   providers: [{ provide: MatPaginatorIntl, useClass: SpanishPaginatorIntl }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './data-table.component.html',

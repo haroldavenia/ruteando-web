@@ -2,6 +2,10 @@
   display: block;
 }
 
+.toolbar {
+  padding: 16px 20px 8px;
+}
+
 .filter {
   width: 100%;
   max-width: 360px;
@@ -12,7 +16,23 @@
 }
 
 table {
+  --mat-table-background-color: transparent;
   width: 100%;
+}
+
+th.mat-mdc-header-cell {
+  background: var(--mat-sys-surface-container);
+  font-weight: 500;
+}
+
+tr.mat-mdc-row:hover {
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  tr.mat-mdc-row {
+    transition: background-color 120ms ease-out;
+  }
 }
 
 .actions {
@@ -20,28 +40,43 @@ table {
   white-space: nowrap;
 }
 
+// Estados de carga, vacío, sin resultados y error: un bloque centrado con icono
 .state {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 32px 16px;
+  padding: 40px 16px;
   text-align: center;
 }
 
+.state p {
+  margin: 0;
+}
+
+.state-icon {
+  width: 56px;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 16px;
+  border-radius: 50%;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 24px;
+}
+
 .state.error {
-  flex-direction: row;
-  justify-content: center;
   color: var(--mat-sys-error);
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+.state.error .state-icon {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+mat-paginator {
+  --mat-paginator-container-background-color: transparent;
+  border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
 .swatch {
