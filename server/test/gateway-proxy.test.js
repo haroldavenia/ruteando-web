@@ -173,13 +173,13 @@ test('un 404 del gateway llega tal cual, no como la página de la aplicación', 
   assert.deepEqual(JSON.parse(text), { message: 'del gateway' });
 });
 
-test('las rutas propias /api y /auth siguen siendo atendidas por el servidor, no por el proxy', async () => {
+test('las rutas /api y /auth ya no existen: 404 en JSON y el proxy no las recibe', async () => {
   const before = received.length;
   const me = await fetch(proxied.base + '/api/me');
-  assert.equal(me.status, 401);
+  assert.equal(me.status, 404);
   assert.match(me.headers.get('content-type'), /application\/json/);
-  const account = await fetch(proxied.base + '/api/account', { method: 'POST' });
-  assert.equal(account.status, 200);
+  const login = await fetch(proxied.base + '/auth/login', { method: 'POST' });
+  assert.equal(login.status, 404);
   assert.equal(received.length, before, 'el gateway falso no debe recibir estas peticiones');
 });
 

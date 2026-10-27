@@ -25,7 +25,6 @@ async function startServer({ webDist, env = {} } = {}) {
   const childEnv = {
     ...process.env,
     PORT: String(port),
-    MONGO_URI: 'mongodb://127.0.0.1:1/prueba',
     NODE_ENV: 'test',
     ...(webDist ? { WEB_DIST: webDist } : {}),
     ...env,

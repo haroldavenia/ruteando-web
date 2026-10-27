@@ -1,10 +1,5 @@
-master/node_modules
-master/bower_components
 node_modules
 start_server.sh
 cosas
 .idea/*
-app
-!ng-ruteando/src/app/
-vendor
 .env
