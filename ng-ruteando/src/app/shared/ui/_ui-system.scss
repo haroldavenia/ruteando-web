@@ -1,0 +1,181 @@
+// Sistema de interfaz común de la aplicación: página, superficies y datos resumen.
+// Selectores de baja especificidad (`:where`) para que un componente pueda sobrescribirlos si lo necesita.
+// Las pantallas usan estas clases en lugar de repetir el estilo del título, del resumen o de la superficie.
+
+// Marco de las pantallas del área autenticada: centrado y con ancho máximo. Lo enrutado dentro (la pantalla) es una
+// columna con espacio entre bloques, de modo que las pantallas no repiten ese espaciado.
+:where(.page) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+:where(.page > :not(router-outlet)) {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+:where(.page h1) {
+  margin: 0;
+  font: var(--mat-sys-headline-medium);
+  letter-spacing: -0.01em;
+}
+
+:where(.page h2) {
+  margin: 0 0 12px;
+  font: var(--mat-sys-title-large);
+}
+
+// Superficie redondeada con borde suave: agrupa un resumen, una tabla, un formulario o un mapa.
+:where(.card) {
+  box-sizing: border-box;
+  padding: 20px 24px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 20px;
+  background: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-on-surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+}
+
+// Sin relleno: la tabla o el mapa llegan hasta el borde de la tarjeta.
+:where(.card.flush) {
+  padding: 0;
+  overflow: hidden;
+}
+
+:where(.card-title) {
+  margin: 0 0 12px;
+  font: var(--mat-sys-title-medium);
+}
+
+// Rejilla de datos resumen: `dl` con una `div` por dato (`dt` etiqueta y `dd` valor).
+:where(.stat-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px 24px;
+  margin: 0;
+}
+
+:where(.stat-grid > div) {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+:where(.stat-grid dt) {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-medium);
+}
+
+:where(.stat-grid dd) {
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+}
+
+// Texto solo para lectores de pantalla.
+:where(.visually-hidden) {
+  position: absolute;
+  // Anclado al borde: sin esto, dentro de una tabla ancha su posición estática queda lejos a la derecha y amplía el área desplazable de toda la página
+  inset-inline-start: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Mosaico de acceso: enlace con icono en un círculo tonal y un nombre; se usa en rejillas de accesos.
+:where(.tile-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.tile) {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  background: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-title-small);
+  text-decoration: none;
+}
+
+:where(.tile:hover) {
+  background: color-mix(in srgb, var(--mat-sys-primary) 8%, var(--mat-sys-surface-container-low));
+}
+
+:where(.tile:focus-visible) {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+:where(.tile-icon) {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :where(.tile) {
+    transition: background-color 120ms ease-out;
+  }
+}
+
+// Formulario de datos: tarjeta con los campos en una columna (`form.card`) o, con `form-grid`, en dos columnas desde
+// 720px; todo lo que no es un campo (resultados, mapas, acciones) ocupa el ancho completo.
+:where(form.card) {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 880px;
+  padding: 24px 28px;
+}
+
+:where(form.form-grid) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 20px;
+}
+
+@media (min-width: 720px) {
+  :where(form.form-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+:where(form.form-grid > :not(mat-form-field)) {
+  grid-column: 1 / -1;
+}
+
+// Acciones del formulario: al final, separadas del contenido
+:where(.form-actions) {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+// Cabecera de una pantalla de detalle: enlace de vuelta sobre el título
+:where(.page-head) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}

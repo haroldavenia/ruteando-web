@@ -40,6 +40,15 @@ function resolve(host: HTMLElement, token: string): string {
 
 /** Pares (primer plano, fondo) que usan las pantallas de acceso. */
 const TEXT_PAIRS: [string, string, string][] = [
+  ['etiqueta de estado neutra', '--mat-sys-on-surface', '--mat-sys-surface-container-highest'],
+  ['etiqueta de estado de éxito', '--mat-sys-on-primary-container', '--mat-sys-primary-container'],
+  ['etiqueta de estado informativa', '--mat-sys-on-secondary-container', '--mat-sys-secondary-container'],
+  ['etiqueta de estado de aviso', '--mat-sys-on-tertiary-container', '--mat-sys-tertiary-container'],
+  ['etiqueta de estado de peligro', '--mat-sys-on-error-container', '--mat-sys-error-container'],
+  ['texto sobre tarjeta', '--mat-sys-on-surface', '--mat-sys-surface-container-low'],
+  ['etiquetas de resumen sobre tarjeta', '--mat-sys-on-surface-variant', '--mat-sys-surface-container-low'],
+  ['enlaces sobre tarjeta', '--mat-sys-primary', '--mat-sys-surface-container-low'],
+  ['texto sobre cabecera de tabla', '--mat-sys-on-surface', '--mat-sys-surface-container'],
   ['título y texto', '--mat-sys-on-surface', '--mat-sys-surface'],
   ['etiquetas y ayudas', '--mat-sys-on-surface-variant', '--mat-sys-surface'],
   ['enlaces', '--mat-sys-primary', '--mat-sys-surface'],
@@ -51,13 +60,12 @@ const CONTROL_PAIRS: [string, string, string][] = [
   ['indicador de foco', '--mat-sys-primary', '--mat-sys-surface'],
 ];
 
-describe('contraste de la vista de acceso', () => {
+describe('contraste de la interfaz', () => {
   let host: HTMLElement;
 
   function open(scheme: Scheme): void {
     host?.remove();
     host = document.createElement('div');
-    host.className = 'access-theme';
     host.style.colorScheme = scheme;
     document.body.appendChild(host);
   }

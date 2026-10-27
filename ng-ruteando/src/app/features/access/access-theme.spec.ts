@@ -12,39 +12,33 @@ function resolve(host: HTMLElement, token: string): string {
   return value;
 }
 
-function themed(scheme: Scheme, accessTheme = true): HTMLElement {
-  const host = document.createElement('div');
-  if (accessTheme) {
-    host.className = 'access-theme';
-  }
-  host.style.colorScheme = scheme;
-  document.body.appendChild(host);
-  return host;
-}
-
-describe('tema de la vista de acceso', () => {
+describe('tema de la aplicación', () => {
   const hosts: HTMLElement[] = [];
-  const make = (scheme: Scheme, accessTheme = true) => {
-    const host = themed(scheme, accessTheme);
+  const make = (scheme: Scheme, className = '') => {
+    const host = document.createElement('div');
+    host.className = className;
+    host.style.colorScheme = scheme;
+    document.body.appendChild(host);
     hosts.push(host);
     return host;
   };
   afterEach(() => hosts.splice(0).forEach((host) => host.remove()));
 
-  it('con .access-theme los tokens cambian entre el esquema claro y el oscuro', () => {
-    const light = resolve(make('light'), '--mat-sys-surface');
-    const dark = resolve(make('dark'), '--mat-sys-surface');
-    expect(light).not.toBe(dark);
+  it('el documento declara el tema claro y oscuro', () => {
+    expect(getComputedStyle(document.documentElement).colorScheme).toMatch(/light\s+dark|only light|light dark/);
+    expect(getComputedStyle(document.documentElement).colorScheme).toContain('dark');
+  });
+
+  it('cualquier elemento cambia de tokens entre el esquema claro y el oscuro, sin clases especiales', () => {
+    expect(resolve(make('light'), '--mat-sys-surface')).not.toBe(resolve(make('dark'), '--mat-sys-surface'));
     expect(resolve(make('light'), '--mat-sys-on-surface')).not.toBe(resolve(make('dark'), '--mat-sys-on-surface'));
   });
 
-  it('fuera de .access-theme el tema sigue siendo el claro, aunque el esquema sea oscuro', () => {
-    const light = resolve(make('light'), '--mat-sys-surface');
-    const outsideDark = resolve(make('dark', false), '--mat-sys-surface');
-    expect(outsideDark).toBe(light);
-  });
-
-  it('el esquema claro de la vista de acceso coincide con el tema de la aplicación', () => {
-    expect(resolve(make('light'), '--mat-sys-primary')).toBe(resolve(make('light', false), '--mat-sys-primary'));
+  it('.access-theme no redefine el tema: usa los mismos tokens que el resto de la aplicación', () => {
+    for (const scheme of ['light', 'dark'] as const) {
+      for (const token of ['--mat-sys-surface', '--mat-sys-primary', '--mat-sys-on-surface']) {
+        expect(resolve(make(scheme, 'access-theme'), token)).withContext(`${scheme} ${token}`).toBe(resolve(make(scheme), token));
+      }
+    }
   });
 });

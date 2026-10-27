@@ -1,20 +1,4 @@
-@use '@angular/material' as mat;
-
-// Tema de la vista de acceso: claro u oscuro según la preferencia del sistema (`light-dark()` con `color-scheme`).
-// Va acotado a esta clase: el `html` y el área privada conservan el tema claro de `styles.scss`.
-.access-theme {
-  color-scheme: light dark;
-
-  @include mat.theme((
-    color: (
-      primary: mat.$violet-palette,
-      tertiary: mat.$rose-palette,
-      theme-type: color-scheme,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
-}
+// Estilos de la vista de acceso. El tema (claro y oscuro) es el de toda la aplicación y se define en `styles.scss`.
 
 // Aspecto común de las pantallas de acceso (título, formulario, botón principal y enlaces secundarios).
 // Selectores de baja especificidad (`:where`) para que una pantalla pueda sobrescribirlos si lo necesita.
