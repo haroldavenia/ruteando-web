@@ -16,6 +16,7 @@ import { DeleteFlow } from '../../shared/data/delete-flow';
 import { ListState } from '../../shared/data/list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
+import { statusTone } from '../../shared/ui/status-tone';
 
 import { EXPORT_FILE_NAME, ExportProgress, fetchAllPackages, packagesToCsv } from './package-export';
 import {
@@ -110,7 +111,7 @@ export class PackageListComponent {
     { id: 'name', header: 'Nombre', cell: (p) => p.name },
     { id: 'serviceType', header: 'Servicio', cell: (p) => serviceTypeLabel(p.serviceType) },
     { id: 'address', header: 'Dirección', cell: (p) => p.address },
-    { id: 'status', header: 'Estado', cell: (p) => packageStatusLabel(p.status) },
+    { id: 'status', header: 'Estado', cell: (p) => packageStatusLabel(p.status), tone: (p) => statusTone('package', p.status) },
     { id: 'location', header: 'Latitud / longitud', cell: (p) => formatPackageLocation(p) },
   ];
 

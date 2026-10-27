@@ -12,7 +12,7 @@
     <a mat-stroked-button routerLink="/configuraciones">Volver al listado</a>
   }
   @default {
-    <form [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
+    <form class="card" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
       <mat-form-field>
         <mat-label>Descripción</mat-label>
         <input matInput formControlName="description" autocomplete="off" />
@@ -130,7 +130,7 @@
       }
 
       <app-form-result [error]="submit.error()" />
-      <div class="buttons">
+      <div class="form-actions">
         <a mat-button routerLink="/configuraciones">Cancelar</a>
         <button mat-flat-button type="submit" [disabled]="submit.submitting()">Guardar</button>
       </div>

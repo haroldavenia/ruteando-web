@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { BrandComponent } from './brand.component';
+import { BrandComponent } from '../../shared/brand/brand.component';
+
 import { RouteBackdropComponent } from './route-backdrop.component';
 
 /**
  * Layout de las pantallas de acceso, sin barra ni menú lateral: fondo decorativo de rutas, y una tarjeta centrada con la
- * marca y el contenido enrutado. `access-theme` da a esta rama del DOM tema claro u oscuro según el sistema (el resto de la
- * aplicación no cambia). La tarjeta es de cristal solo si el navegador lo soporta y no se pide más contraste.
+ * marca y el contenido enrutado. El tema claro y oscuro es el de toda la aplicación (`styles.scss`); `access-theme` solo acota
+ * los estilos comunes de estas pantallas. La tarjeta es de cristal solo si el navegador lo soporta y no se pide más contraste.
  */
 @Component({
   selector: 'app-access-layout',

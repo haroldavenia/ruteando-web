@@ -106,6 +106,49 @@ describe('HomeComponent', () => {
     });
   });
 
+  describe('presentación', () => {
+    it('saluda a la persona por su nombre o, sin nombre, por su correo', () => {
+      open('agent');
+      expect(root().querySelector('.greeting')?.textContent).toContain('Hola, Prueba');
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [HomeComponent],
+        providers: [provideRouter([]), { provide: API_BASE_URL, useValue: '/gateway' }, provideHttpClient(withInterceptors([errorInterceptor])), provideHttpClientTesting()],
+      });
+      TestBed.inject(CurrentUser).set(makeUser({ role: 'driver', firstName: null, lastName: null, email: 'zoe@example.invalid' }));
+      const nameless = TestBed.createComponent(HomeComponent);
+      nameless.detectChanges();
+      expect((nameless.nativeElement as HTMLElement).querySelector('.greeting')?.textContent).toContain('Hola, zoe@example.invalid');
+      expect((nameless.nativeElement as HTMLElement).textContent).toContain('Planificación de rutas');
+    });
+
+    it('los accesos son mosaicos con el icono en un círculo tonal y siguen siendo enlaces', () => {
+      open('tenant_admin');
+      const tile = root().querySelector('a.area.tile') as HTMLElement;
+      expect(tile.querySelector('.tile-icon mat-icon')?.getAttribute('aria-hidden')).toBe('true');
+      expect(getComputedStyle(tile).borderTopLeftRadius).toBe('16px');
+      expect(getComputedStyle(tile.querySelector('.tile-icon')!).borderTopLeftRadius).toBe('12px');
+      expect(tile.getAttribute('href')).toBeTruthy();
+    });
+
+    it('las últimas jornadas están en una tarjeta', () => {
+      open('agent', page([journey(1)]));
+      expect(root().querySelector('section.card #journeys-title')).not.toBeNull();
+    });
+
+    it('con el tema oscuro del sistema la tarjeta y el mosaico cambian de fondo', () => {
+      open('agent', page([journey(1)]));
+      const card = root().querySelector('section.card') as HTMLElement;
+      root().style.colorScheme = 'light';
+      document.body.appendChild(root());
+      const light = getComputedStyle(card).backgroundColor;
+      root().style.colorScheme = 'dark';
+      const dark = getComputedStyle(card).backgroundColor;
+      root().remove();
+      expect(dark).not.toBe(light);
+    });
+  });
+
   describe('últimas jornadas', () => {
     it('pide cinco jornadas a quien opera jornadas y las muestra con nombre, estado, fecha y enlace', () => {
       open('agent', null);
@@ -120,6 +163,7 @@ describe('HomeComponent', () => {
       expect(journeyLinks().map((a) => a.getAttribute('href'))).toEqual(['/jornadas/j3', '/jornadas/j2', '/jornadas/j1']);
       const first = root().querySelector('.journeys li')!.textContent!;
       expect(first).toContain('Completada');
+      expect(root().querySelector('.journeys li app-status-badge')?.getAttribute('data-tone')).toBe('success');
       expect(first).not.toContain('2026-10-03T');
     });
 

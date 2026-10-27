@@ -221,4 +221,35 @@ describe('JourneyDetailComponent', () => {
       expect(root().querySelector('tr.route')?.classList.contains('focused')).toBeFalse();
     });
   });
+
+  describe('presentación', () => {
+    const ownStyles = () => ((JourneyDetailComponent as unknown as { ɵcmp: { styles?: string[] } }).ɵcmp.styles ?? []).join('\n');
+
+    it('el resumen, el mapa, las rutas y los paquetes no planificables van en tarjetas', () => {
+      setup(planned.id, { ...(fx(plan).response.body as object), invalidPackageIds: ['p1'] });
+      const ids = Array.from(root().querySelectorAll('section.card')).map((s) => s.getAttribute('aria-labelledby'));
+      expect(ids).toEqual(['summary-title', 'map-title', 'routes-title', 'invalid-title']);
+    });
+
+    it('el resumen es una rejilla de datos con el marcado dl > div > dt y dd, y el estado como etiqueta', () => {
+      setup(planned.id, fx(plan).response.body);
+      const grid = root().querySelector('dl.summary.stat-grid') as HTMLElement;
+      expect(getComputedStyle(grid).display).toBe('grid');
+      expect(grid.querySelector('div > dt')).not.toBeNull();
+      const badge = grid.querySelector('dd app-status-badge') as HTMLElement;
+      expect(badge.querySelector('span')?.textContent).toBe('Completada');
+      expect(badge.getAttribute('data-tone')).toBe('success');
+    });
+
+    it('el enlace de vuelta va sobre el título, en la cabecera de la pantalla', () => {
+      setup(planned.id, fx(plan).response.body);
+      const head = root().querySelector('.page-head') as HTMLElement;
+      expect(head.firstElementChild?.tagName).toBe('A');
+      expect(head.querySelector('h1')?.textContent).toBe('Capture timed probe');
+    });
+
+    it('no declara estilos propios de título, de resumen ni de sección', () => {
+      expect(ownStyles()).not.toMatch(/h1|h2|summary|dt|dd/);
+    });
+  });
 });

@@ -37,4 +37,16 @@ describe('BrandComponent', () => {
     expect(color).toBeTruthy();
     expect(root().innerHTML).not.toMatch(/#[0-9a-f]{3,8}\b/i);
   });
+
+  it('la variante compacta reduce el emblema y el nombre sin cambiar el texto', () => {
+    const regular = root().querySelector('svg') as SVGElement;
+    document.body.appendChild(root());
+    const regularWidth = regular.getBoundingClientRect().width;
+    fixture.componentRef.setInput('size', 'compact');
+    fixture.detectChanges();
+    expect(root().classList.contains('compact')).toBeTrue();
+    expect(regular.getBoundingClientRect().width).toBeLessThan(regularWidth);
+    expect(root().querySelector('.name')?.textContent).toBe('Ruteando');
+    root().remove();
+  });
 });

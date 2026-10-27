@@ -31,6 +31,12 @@ describe('ConfirmDialogComponent', () => {
   const buttons = () => Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[];
   const byText = (text: string) => buttons().find((b) => b.textContent?.trim() === text)!;
 
+  it('el diálogo tiene las esquinas redondeadas del sistema de interfaz', async () => {
+    await open();
+    const surface = overlay.querySelector('.mat-mdc-dialog-surface') as HTMLElement;
+    expect(getComputedStyle(surface).borderTopLeftRadius).toBe('24px');
+  });
+
   it('muestra el título, el mensaje y los textos recibidos', async () => {
     await open();
 

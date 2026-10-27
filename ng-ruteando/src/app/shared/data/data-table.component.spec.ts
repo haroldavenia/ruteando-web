@@ -48,10 +48,13 @@ describe('DataTableComponent', () => {
   const root = () => fixture.nativeElement as HTMLElement;
   const text = () => root().textContent ?? '';
 
-  async function render(fetch: (p: PageParams) => Observable<Page<Row>>, load = true): Promise<void> {
+  async function render(fetch: (p: PageParams) => Observable<Page<Row>>, load = true, columns?: DataColumn<Row>[]): Promise<void> {
     fixture = TestBed.createComponent(HostComponent);
     host = fixture.componentInstance;
     host.fetch = fetch;
+    if (columns) {
+      host.columns = columns;
+    }
     if (load) {
       host.state.load(0);
     }
@@ -187,5 +190,62 @@ describe('DataTableComponent', () => {
     expect(swatch.getAttribute('aria-hidden')).toBe('true');
     expect(rows[1].querySelector('.swatch')).toBeNull();
     expect(rows[0].querySelector('td')!.textContent!.trim()).toBe('Con color');
+  });
+
+  describe('presentación', () => {
+    const icon = (selector: string) => root().querySelector(`${selector} .state-icon`)?.textContent?.trim();
+
+    it('filtro, tabla y paginador están dentro de una misma tarjeta', async () => {
+      await render(() => of(page([{ name: 'Furgoneta', plate: 'ABC-123' }])));
+      const card = root().querySelector('section.card.flush')!;
+      expect(card.querySelector('.filter')).not.toBeNull();
+      expect(card.querySelector('table')).not.toBeNull();
+      expect(card.querySelector('mat-paginator')).not.toBeNull();
+      expect(getComputedStyle(card).borderTopLeftRadius).toBe('20px');
+    });
+
+    it('la cabecera de columnas y las filas tienen su propio estilo dentro de la tarjeta', async () => {
+      await render(() => of(page([{ name: 'Furgoneta', plate: 'ABC-123' }])));
+      const header = getComputedStyle(root().querySelector('th.mat-mdc-header-cell')!);
+      const table = root().querySelector('table')!;
+      expect(header.backgroundColor).not.toBe(getComputedStyle(table).backgroundColor);
+      expect(getComputedStyle(table).getPropertyValue('--mat-table-background-color').trim()).toBe('transparent');
+    });
+
+    it('la carga, el vacío, el error y la falta de coincidencias llevan un icono', async () => {
+      await render(() => new Subject<Page<Row>>(), true);
+      expect(icon('.state[role="status"]')).toBe('hourglass_empty');
+
+      await render(() => of(page([])));
+      expect(icon('.state')).toBe('inbox');
+      expect(text()).toContain('No hay vehículos');
+      expect(root().querySelector('[empty-action]')).not.toBeNull();
+
+      await render(() => throwError(() => new ApiError({ status: 500, message: 'caído' })));
+      expect(icon('.state.error')).toBe('error');
+      expect(root().querySelector('.state.error')?.getAttribute('role')).toBe('alert');
+
+      await render(() => of(page([{ name: 'Furgoneta', plate: 'ABC-123' }])));
+      const input = root().querySelector('input[type="search"]') as HTMLInputElement;
+      input.value = 'zzz';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      expect(icon('.state[role="status"]')).toBe('search_off');
+    });
+
+    it('los iconos de los bloques son decorativos', async () => {
+      await render(() => of(page([])));
+      expect(root().querySelector('.state-icon')?.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('una columna con tono pinta el texto como etiqueta de estado con icono y tono', async () => {
+      await render(() => of(page([{ name: 'Atendido', plate: 'a' }, { name: 'Cancelado', plate: 'b' }])), true, [
+        { id: 'name', header: 'Estado', cell: (r) => r.name, tone: (r) => (r.name === 'Atendido' ? 'success' : 'danger') },
+      ]);
+      const badges = Array.from(root().querySelectorAll('app-status-badge'));
+      expect(badges.map((b) => b.querySelector('span')?.textContent)).toEqual(['Atendido', 'Cancelado']);
+      expect(badges.map((b) => b.getAttribute('data-tone'))).toEqual(['success', 'danger']);
+      expect(badges[0].querySelector('mat-icon')?.getAttribute('aria-hidden')).toBe('true');
+    });
   });
 });

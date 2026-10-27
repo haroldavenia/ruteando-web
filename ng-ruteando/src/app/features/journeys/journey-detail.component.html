@@ -15,13 +15,15 @@
   }
   @default {
     @if (loader.record(); as journey) {
-      <h1>{{ journey.name }}</h1>
-      <a mat-button routerLink="/jornadas">← Volver a las jornadas</a>
+      <div class="page-head">
+        <a mat-button routerLink="/jornadas">← Volver a las jornadas</a>
+        <h1>{{ journey.name }}</h1>
+      </div>
 
-      <section aria-labelledby="summary-title">
+      <section class="card" aria-labelledby="summary-title">
         <h2 id="summary-title">Resumen</h2>
-        <dl class="summary">
-          <div><dt>Estado</dt><dd>{{ status(journey.status) }}</dd></div>
+        <dl class="summary stat-grid">
+          <div><dt>Estado</dt><dd><app-status-badge [label]="status(journey.status)" [tone]="tone(journey.status)" /></dd></div>
           <div><dt>Configuración</dt><dd>{{ journey.settings?.name ?? '—' }}</dd></div>
           <div><dt>Servicios</dt><dd>{{ count(journey.totalServices) }}</dd></div>
           <div><dt>Vehículos</dt><dd>{{ count(journey.totalResources) }}</dd></div>
@@ -34,13 +36,13 @@
       </section>
 
       @if (journey.routes.length > 0) {
-        <section #mapSection aria-labelledby="map-title">
+        <section #mapSection class="card" aria-labelledby="map-title">
           <h2 id="map-title">Mapa de las rutas</h2>
           <app-routes-map [routes]="journey.routes" [(selectedRoute)]="selectedRoute" [(selectedStop)]="selectedStop" />
         </section>
       }
 
-      <section aria-labelledby="routes-title">
+      <section class="card" aria-labelledby="routes-title">
         <h2 id="routes-title">Rutas</h2>
         @if (journey.routes.length === 0) {
           <p>Esta jornada no tiene rutas.</p>
@@ -50,7 +52,7 @@
       </section>
 
       @if (journey.invalidPackageIds?.length) {
-        <section aria-labelledby="invalid-title">
+        <section class="card" aria-labelledby="invalid-title">
           <h2 id="invalid-title">Paquetes que no se pudieron planificar</h2>
           <ul>
             @for (packageId of journey.invalidPackageIds; track packageId) {

@@ -1,29 +1,25 @@
 @use '@angular/material' as mat;
 @use './app/features/access/access-theme';
+@use './app/shared/ui/ui-system';
 
-// Tema Material 3: tema de la aplicación (la vista de acceso añade el suyo, claro y oscuro, en `access-theme`).
+// Tema Material 3: único punto de definición del tema de la aplicación. Claro u oscuro según la preferencia del sistema
+// (`light-dark()` con `color-scheme`).
 html {
-  color-scheme: light;
+  color-scheme: light dark;
 
   @include mat.theme((
     color: (
       primary: mat.$violet-palette,
       tertiary: mat.$rose-palette,
-      theme-type: light,
+      theme-type: color-scheme,
     ),
     typography: Roboto,
     density: 0,
   ));
-}
 
-// En M3 `color="primary"` ya no tiñe la barra por defecto: se conserva con los tokens del sistema.
-.mat-toolbar.mat-primary {
-  @include mat.toolbar-overrides((
-    container-background-color: var(--mat-sys-primary),
-    container-text-color: var(--mat-sys-on-primary),
-  ));
-  @include mat.icon-button-overrides((
-    icon-color: var(--mat-sys-on-primary),
+  // Diálogos con las mismas esquinas redondeadas que las tarjetas
+  @include mat.dialog-overrides((
+    container-shape: 24px,
   ));
 }
 

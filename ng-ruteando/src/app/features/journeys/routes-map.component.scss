@@ -5,7 +5,8 @@
 .map {
   height: var(--app-routes-map-height, 440px);
   background: var(--mat-sys-surface-container);
-  border-radius: var(--mat-sys-corner-medium, 12px);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
   overflow: hidden;
 }
 
@@ -123,13 +124,4 @@ dt {
 
 dd {
   margin: 0;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }

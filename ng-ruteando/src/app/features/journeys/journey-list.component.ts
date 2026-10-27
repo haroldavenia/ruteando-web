@@ -11,6 +11,7 @@ import { ListState } from '../../shared/data/list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { formatCount, formatDateTime } from '../../shared/format';
+import { statusTone } from '../../shared/ui/status-tone';
 
 import { journeyStatusLabel } from './journey-labels';
 
@@ -43,7 +44,7 @@ export class JourneyListComponent {
   protected readonly state = new ListState<Journey>((params) => this.api.list(params));
   protected readonly columns: DataColumn<Journey>[] = [
     { id: 'name', header: 'Nombre', cell: (j) => j.name, link: (j) => ['/jornadas', j.id] },
-    { id: 'status', header: 'Estado', cell: (j) => journeyStatusLabel(j.status) },
+    { id: 'status', header: 'Estado', cell: (j) => journeyStatusLabel(j.status), tone: (j) => statusTone('journey', j.status) },
     { id: 'settings', header: 'Configuración', cell: (j) => j.settings?.name ?? '' },
     { id: 'services', header: 'Servicios', cell: (j) => (j.totalServices === null ? '' : formatCount(j.totalServices)) },
     { id: 'resources', header: 'Vehículos', cell: (j) => (j.totalResources === null ? '' : formatCount(j.totalResources)) },

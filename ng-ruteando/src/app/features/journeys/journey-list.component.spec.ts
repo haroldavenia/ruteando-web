@@ -75,6 +75,22 @@ describe('JourneyListComponent', () => {
     expect(cells[4]).toBe('3');
   });
 
+  for (const [status, label, tone] of [
+    ['planned', 'Planificada', 'info'],
+    ['completed', 'Completada', 'success'],
+    ['failed', 'Fallida', 'danger'],
+  ] as const) {
+    it(`el estado «${label}» se muestra como etiqueta con icono y texto, de tono ${tone}`, () => {
+      const body = JSON.parse(JSON.stringify(fx(list).response.body));
+      body.content[0].status = status;
+      load(body);
+      const badge = root().querySelector('tr.mat-mdc-row app-status-badge') as HTMLElement;
+      expect(badge.querySelector('span')?.textContent).toBe(label);
+      expect(badge.getAttribute('data-tone')).toBe(tone);
+      expect(badge.querySelector('mat-icon')?.getAttribute('aria-hidden')).toBe('true');
+    });
+  }
+
   it('un estado desconocido se muestra con su clave', () => {
     const body = JSON.parse(JSON.stringify(fx(list).response.body));
     body.content[0].status = 'archived';

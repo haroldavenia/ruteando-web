@@ -11,14 +11,16 @@ import { formatCount, formatDateTime, formatDuration } from '../../shared/format
 
 import { JourneyRoutesComponent } from './journey-routes.component';
 import { RoutesMapComponent, StopRef } from './routes-map.component';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
+import { statusTone } from '../../shared/ui/status-tone';
+
 import { journeyStatusLabel } from './journey-labels';
 
 @Component({
   selector: 'app-journey-detail',
-  imports: [RouterLink, MatButtonModule, MatProgressBarModule, FormResultComponent, JourneyRoutesComponent, RoutesMapComponent],
+  imports: [RouterLink, MatButtonModule, MatProgressBarModule, FormResultComponent, JourneyRoutesComponent, RoutesMapComponent, StatusBadgeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './journey-detail.component.html',
-  styleUrl: './journey-detail.component.scss',
 })
 export class JourneyDetailComponent {
   private readonly api = inject(JourneysApi);
@@ -27,6 +29,7 @@ export class JourneyDetailComponent {
   protected readonly loader = new RecordLoader<PlannedJourney>(this.id, (id) => this.api.get(id));
 
   protected readonly status = journeyStatusLabel;
+  protected readonly tone = (status: string) => statusTone('journey', status);
   protected readonly duration = formatDuration;
   protected readonly count = formatCount;
   protected readonly dateTime = formatDateTime;

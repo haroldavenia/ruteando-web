@@ -72,6 +72,23 @@ describe('PackageListComponent', () => {
     expect(row).toContain('4,60872 / -74,07728');
   });
 
+  it('el estado se muestra como etiqueta con icono y texto, de tono neutro para «Pendiente»', () => {
+    load();
+    const badge = root().querySelector('tr.mat-mdc-row app-status-badge') as HTMLElement;
+    expect(badge.querySelector('span')?.textContent).toBe('Pendiente');
+    expect(badge.getAttribute('data-tone')).toBe('neutral');
+    expect(badge.querySelector('mat-icon')?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('un estado desconocido sale como etiqueta neutra con su clave', () => {
+    const body = JSON.parse(JSON.stringify(fx(list).response.body));
+    body.content[0].status = 'inventado';
+    load(body);
+    const badge = root().querySelector('tr.mat-mdc-row app-status-badge') as HTMLElement;
+    expect(badge.querySelector('span')?.textContent).toBe('inventado');
+    expect(badge.getAttribute('data-tone')).toBe('neutral');
+  });
+
   it('con la lista vacía ofrece crear el primero', () => {
     load({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     expect(root().textContent).toContain('Todavía no hay paquetes');
