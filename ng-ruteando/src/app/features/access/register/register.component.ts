@@ -81,29 +81,6 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
       <p class="alt">¿Ya tienes cuenta? <a routerLink="/acceso">Iniciar sesión</a></p>
     }
   `,
-  styles: `
-    h1 {
-      margin: 0 0 16px;
-      font: var(--mat-sys-headline-small);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .field {
-      width: 100%;
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
-    }
-    .alt {
-      margin-top: 16px;
-    }
-  `,
 })
 export class RegisterComponent {
   private readonly auth = inject(AuthService);

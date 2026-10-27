@@ -56,20 +56,6 @@ const LINK_ERRORS = [400, 401, 404, 410];
       </form>
     }
   `,
-  styles: `
-    h1 {
-      margin: 0 0 16px;
-      font: var(--mat-sys-headline-small);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .alt {
-      margin-top: 16px;
-    }
-  `,
 })
 export class ResetPasswordComponent {
   private readonly auth = inject(AuthService);

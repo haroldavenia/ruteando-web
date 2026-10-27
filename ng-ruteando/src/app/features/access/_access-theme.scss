@@ -1,0 +1,73 @@
+@use '@angular/material' as mat;
+
+// Tema de la vista de acceso: claro u oscuro según la preferencia del sistema (`light-dark()` con `color-scheme`).
+// Va acotado a esta clase: el `html` y el área privada conservan el tema claro de `styles.scss`.
+.access-theme {
+  color-scheme: light dark;
+
+  @include mat.theme((
+    color: (
+      primary: mat.$violet-palette,
+      tertiary: mat.$rose-palette,
+      theme-type: color-scheme,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+// Aspecto común de las pantallas de acceso (título, formulario, botón principal y enlaces secundarios).
+// Selectores de baja especificidad (`:where`) para que una pantalla pueda sobrescribirlos si lo necesita.
+.access-theme {
+  :where(h1) {
+    margin: 0 0 20px;
+    font: var(--mat-sys-headline-medium);
+    letter-spacing: -0.01em;
+  }
+
+  :where(form) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  :where(.field) {
+    width: 100%;
+  }
+
+  // Botón principal: ocupa todo el ancho del formulario
+  :where(form button[mat-flat-button][type='submit']) {
+    width: 100%;
+    height: 48px;
+    margin-top: 4px;
+  }
+
+  :where(.actions) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  // Enlaces secundarios agrupados bajo el formulario
+  :where(.links) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-top: 24px;
+  }
+
+  :where(.alt) {
+    margin: 24px 0 0;
+  }
+
+  :where(a) {
+    border-radius: 4px;
+  }
+
+  :where(a:focus-visible) {
+    outline: 3px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
