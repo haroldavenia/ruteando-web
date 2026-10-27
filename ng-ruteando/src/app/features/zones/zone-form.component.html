@@ -12,7 +12,7 @@
     <a mat-stroked-button routerLink="/zonas">Volver al listado</a>
   }
   @default {
-    <form [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
+    <form class="card" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
       <div class="row">
         <mat-form-field>
           <mat-label>Nombre</mat-label>
@@ -47,7 +47,7 @@
       </section>
 
       <app-form-result [error]="submit.error()" />
-      <div class="buttons">
+      <div class="form-actions">
         <a mat-button routerLink="/zonas">Cancelar</a>
         <button mat-flat-button type="submit" [disabled]="submit.submitting()">Guardar</button>
       </div>

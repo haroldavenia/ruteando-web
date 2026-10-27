@@ -42,7 +42,7 @@ const FIELD_ERRORS = {
         <a mat-stroked-button routerLink="/flota/tipos">Volver al listado</a>
       }
       @default {
-        <form [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
+        <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
           <mat-form-field>
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="name" autocomplete="off" />
@@ -73,32 +73,12 @@ const FIELD_ERRORS = {
             <mat-error>{{ error('gasMileage') }}</mat-error>
           </mat-form-field>
           <app-form-result [error]="submit.error()" />
-          <div class="buttons">
+          <div class="form-actions">
             <a mat-button routerLink="/flota/tipos">Cancelar</a>
             <button mat-flat-button type="submit" [disabled]="submit.submitting()">Guardar</button>
           </div>
         </form>
       }
-    }
-  `,
-  styles: `
-    :host {
-      display: block;
-      max-width: 520px;
-    }
-    h1 {
-      margin: 0 0 16px;
-      font: var(--mat-sys-headline-small);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
     }
   `,
 })

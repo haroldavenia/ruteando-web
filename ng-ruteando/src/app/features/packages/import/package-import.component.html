@@ -1,7 +1,7 @@
 <h1>Importar paquetes</h1>
 <a mat-button routerLink="/paquetes">← Volver a los paquetes</a>
 
-<section aria-labelledby="guide-title">
+<section class="card" aria-labelledby="guide-title">
   <h2 id="guide-title">1. Prepara el archivo</h2>
   <p>
     El archivo debe ser un CSV en UTF-8 con una fila por paquete. <strong>La aplicación no calcula la ubicación a partir de la dirección:</strong>
@@ -28,7 +28,7 @@
   </div>
 </section>
 
-<section aria-labelledby="file-title">
+<section class="card" aria-labelledby="file-title">
   <h2 id="file-title">2. Elige el archivo</h2>
   <label class="file" for="csv-file">Archivo CSV</label>
   <input
@@ -54,7 +54,7 @@
 </section>
 
 @if (validation(); as result) {
-  <section aria-labelledby="preview-title">
+  <section class="card" aria-labelledby="preview-title">
     <h2 id="preview-title">3. Revisa y confirma</h2>
     <p class="summary" role="status" aria-live="polite">
       {{ result.totalRows }} filas leídas: {{ validCount() }} válidas y {{ invalidRows() }} rechazadas.
@@ -124,7 +124,7 @@
 }
 
 @if (phase() === 'importing') {
-  <section aria-labelledby="progress-title">
+  <section class="card" aria-labelledby="progress-title">
     <h2 id="progress-title">Importando</h2>
     <mat-progress-bar mode="determinate" [value]="progress().total ? (progress().done / progress().total) * 100 : 0" aria-label="Progreso de la importación" />
     <p role="status" aria-live="polite">Importando… {{ progress().done }} de {{ progress().total }}</p>
@@ -135,7 +135,7 @@
 }
 
 @if (phase() === 'done') {
-  <section aria-labelledby="result-title">
+  <section class="card" aria-labelledby="result-title">
     <h2 id="result-title">Resultado</h2>
     <p class="summary" role="status" aria-live="polite">{{ summaryText() }}</p>
     <dl class="counts">
