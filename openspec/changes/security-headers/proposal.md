@@ -12,6 +12,7 @@ La compilación actual lo permite: no contiene ningún `<script>` en línea y so
 - La política: `default-src 'self'`; `script-src 'self'`; `style-src 'self' 'unsafe-inline'` más Google Fonts; `font-src 'self'` más Google Fonts; `img-src 'self' data: blob:` más el servidor de teselas; `connect-src 'self'`; `object-src 'none'`; `base-uri 'self'`; `form-action 'self'`; `frame-ancestors 'none'`.
 - El modo se controla con `CSP_MODE` (`report-only` por defecto, `enforce` o `off`) y los orígenes extra de imágenes con `CSP_IMG_SRC` (el proveedor de teselas se cambia en `environment*.ts`, y la política debe poder seguirlo sin tocar código).
 - Se verifica la política en un navegador real **a través del servidor** (no solo con pruebas unitarias): sin violaciones en acceso, inicio, listados, mapa y editor de zonas. Pasar a `enforce` es una decisión aparte, con OK explícito, tras esa verificación.
+- La compilación de producción desactiva `optimization.styles.inlineCritical` en `angular.json`: la carga diferida de estilos críticos añade un `onload` que una CSP en bloqueo impide (verificado: sin él, sin violaciones y sin diferencias visuales).
 - Fuera de alcance: autohospedar las fuentes (S7, change aparte: permitiría quitar Google de la política), `style-src` sin `'unsafe-inline'` (Angular Material añade estilos en línea en tiempo de ejecución; exigiría nonces), cambiar el refresh token a cookie `HttpOnly` (S3, decisión pendiente), lista blanca del proxy (S4) y límite de intentos (S5).
 
 ## Capabilities
@@ -25,6 +26,6 @@ Ninguna.
 
 ## Impact
 
-- `server/security-headers.js` (nuevo) y `server/server.js` (registro del middleware antes del proxy), `server/test/security-headers.test.js` (nuevo), `.env.example` y `README.md` (variables `CSP_MODE` y `CSP_IMG_SRC`), `CLAUDE.md` (una línea).
+- `ng-ruteando/angular.json` (configuración de producción), `server/security-headers.js` (nuevo) y `server/server.js` (registro del middleware antes del proxy), `server/test/security-headers.test.js` (nuevo), `.env.example` y `README.md` (variables `CSP_MODE` y `CSP_IMG_SRC`), `CLAUDE.md` (una línea).
 - Sin dependencias nuevas (no se usa `helmet`: son pocas cabeceras y la política es propia).
 - Riesgo: una CSP en `enforce` mal calibrada rompe la aplicación (mapa, fuentes). Por eso arranca en solo informe, que no bloquea nada, y la verificación en navegador es una tarea del change.
