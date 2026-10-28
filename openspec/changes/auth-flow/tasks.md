@@ -1,0 +1,38 @@
+# Tasks
+
+## 1. Política de contraseña y campo
+
+- [x] 1.1 Añadir en `core/auth/password-policy.ts` (y no en `form-utils.ts`: `access.messages.ts` en `shared/` y `auth-messages.ts` en `core/` también la necesitan, y ni `shared/` ni `core/` importan de `features/`) la política (16 caracteres; mayúscula, minúscula, dígito y un símbolo de `@$!%*?&`) y el validador `passwordPolicy`, que devuelve un error `policy` con lo que falta (`length`, `upper`, `lower`, `digit`, `symbol`); sin tocar `PASSWORD_MIN_LENGTH`; verificar con `core/auth/password-policy.spec.ts` (cada regla por separado, la contraseña `Ruteando#2026x` de 14 caracteres falla por longitud, una de 20 con las cuatro clases pasa, vacía no da error `policy` porque lo cubre `required`, `PASSWORD_MIN_LENGTH` sigue siendo 8, comprobado en `form-utils.spec.ts`)
+- [x] 1.2 Añadir en `shared/form/access.messages.ts` el texto único de la regla, el mensaje de error que nombra lo que falta (a partir del error `policy`) y mantener `minlength` para el formulario de conductores; verificar con un spec de `firstErrorMessage` (una contraseña a la que le falta una mayúscula dice que añada una mayúscula; a la que le faltan varias las nombra todas; `minlength` sigue diciendo «Usa al menos 8 caracteres») — sustituido por el grupo 6: el mensaje pasa a ser breve y lo que falta lo dice la lista
+- [x] 1.3 Añadir a `PasswordFieldComponent` el `input` opcional `hint` que pinta un `mat-hint` enlazado al campo; verificar con `password-field.component.spec.ts` (con `hint` el texto aparece y el input queda descrito por él, sin `hint` no hay sugerencia, el campo de inicio de sesión no cambia) — sustituido por el grupo 6: la sugerencia de texto se reemplaza por la lista de requisitos
+
+## 2. Mensajes por código del gateway
+
+- [x] 2.1 Crear `src/testing/fixtures/gateway-errors/` con los cuerpos reales de `PASSWORD_POLICY_VIOLATION`, `INVALID_TOKEN`, `VALIDATION_ERROR`, `EMAIL_ALREADY_EXISTS` e `INVALID_CREDENTIALS` capturados el 2026-10-28 (datos ficticios) y un `README` breve de por qué están aparte; verificar que `grep` no encuentra correos, contraseñas ni tokens reales en el directorio
+- [x] 2.2 En `core/auth/auth-messages.ts` mapear `PASSWORD_POLICY_VIOLATION` a la regla en `registerErrors()` y `linkErrors()`, y hacer que `linkErrors()` use `INVALID_TOKEN` y los estados 401, 404 y 410, y un 400 sin código reconocible, para «El enlace no es válido o ha caducado», mientras que `PASSWORD_POLICY_VIOLATION` da la regla y `VALIDATION_ERROR` «Revisa los datos…»; verificar con `auth.service.access.spec.ts` (registro con la política incumplida lleva la regla, registro con `VALIDATION_ERROR` lleva «Revisa los datos…», restablecer con `INVALID_TOKEN` lleva enlace no válido, restablecer con `PASSWORD_POLICY_VIOLATION` lleva la regla, verificar el correo con `INVALID_TOKEN` sigue igual)
+
+## 3. Registro
+
+- [x] 3.1 Hacer que `register.component.ts` use `passwordPolicy` y la sugerencia, muestre la regla cuando el gateway responde `PASSWORD_POLICY_VIOLATION`, conserve los datos escritos salvo las contraseñas y enfoque el campo de contraseña; verificar con `register.component.spec.ts` (la regla se ve al abrir la pantalla, `corta` no envía y dice qué falta, una contraseña válida se envía, un `400` con `PASSWORD_POLICY_VIOLATION` muestra la regla con el correo y el nombre conservados y las contraseñas vacías y el foco en la contraseña, un `409` y un `400` con `VALIDATION_ERROR` mantienen sus mensajes)
+
+## 4. Restablecer contraseña
+
+- [x] 4.1 Hacer que `reset-password.component.ts` use `passwordPolicy` y la sugerencia, y que decida «enlace no válido» por `INVALID_TOKEN`, 401, 404 y 410 (y un 400 sin código) y no por cualquier 400; con `PASSWORD_POLICY_VIOLATION` o `VALIDATION_ERROR` mantiene el formulario, muestra el error, vacía las contraseñas, enfoca la contraseña nueva y conserva el token para reintentar; verificar con `reset-password.component.spec.ts` (con `INVALID_TOKEN` aparece «Solicitar un enlace nuevo»; con `PASSWORD_POLICY_VIOLATION` sigue el formulario con la regla, sin ese enlace, y un segundo envío con otra contraseña llega al gateway con el mismo token; la política local impide enviar una contraseña corta)
+
+## 5. Documentación e integración
+
+- [x] 5.1 En `.claude/skills/angular-ruteando/references/gateway-api.md` añadir los códigos de error observados el 2026-10-28 (`INVALID_CREDENTIALS`, `VALIDATION_ERROR`, `PASSWORD_POLICY_VIOLATION`, `INVALID_TOKEN`, `EMAIL_ALREADY_EXISTS`), la política de contraseña, el orden de validación del registro y del restablecimiento y que el correo sin verificar no restringe el acceso; verificar con `grep` que cada código aparece y que el texto de «Pantallas de acceso» ya no habla de una política de 8 caracteres como la real
+- [x] 5.2 Ejecutar `npm --prefix ng-ruteando run test:ci`, `npm --prefix ng-ruteando run build` y `npx --yes @fission-ai/openspec@1.14.3 validate --specs --strict`; verificar que pasan sin errores ni avisos nuevos y que `git status` solo muestra los ficheros previstos
+
+## 6. Lista de requisitos de la contraseña
+
+- [x] 6.1 En `core/auth/password-policy.ts` añadir `PASSWORD_REQUIREMENTS` (etiquetas) y `missingRules(value)` (compartido por el validador), y eliminar `passwordPolicyMessage`; en `shared/form/access.messages.ts` el error `policy` pasa a decir «La contraseña no cumple los requisitos»; verificar con `password-policy.spec.ts` y `form-utils.spec.ts` (cada regla, el texto de las cinco etiquetas, el mensaje breve, y que `PASSWORD_MIN_LENGTH` sigue en 8)
+- [x] 6.2 En `PasswordFieldComponent` sustituir el `input` `hint` por `requirements`: lista con icono y texto de estado, visible al enfocar o mientras esté tocada y falte algún requisito, oculta visualmente pero descrita por `aria-describedby` cuando está cerrada, en las columnas que caben y sin cambios para el campo de inicio de sesión; verificar con `password-field.component.spec.ts` (cerrada al empezar y descrita por el input, se abre al enfocar, se marcan los puntos al escribir y se desmarcan si deja de cumplirse, tras un envío fallido queda visible con los que faltan como no cumplidos, se cierra al salir con todo cumplido, el estado tiene texto además del icono, sin `requirements` no cambia nada)
+- [x] 6.3 Hacer que registro y restablecer usen `requirements` en lugar de la sugerencia y actualizar sus pruebas; verificar con `register.component.spec.ts` y `reset-password.component.spec.ts` (la lista aparece al enfocar y no antes, los puntos se marcan al escribir, una contraseña corta o incompleta no envía y muestra el error breve con la lista visible, el rechazo del gateway sigue mostrando la regla y manteniendo el formulario)
+- [x] 6.4 Actualizar `gateway-api.md` (la lista sustituye al texto) y repetir la verificación en navegador en móvil, tableta y escritorio, claro y oscuro: la lista no se corta ni se solapa con el campo siguiente, el espaciado es el mismo que entre los demás campos y no hay desborde horizontal; verificar con el script de verificación (medidas y capturas) y la suite completa (`test:ci`, `build`, `validate`)
+
+## Workflow follow-up
+
+- Con el gateway real: registrar una cuenta con una contraseña de 10 caracteres y comprobar que la pantalla muestra la regla antes y después de enviar; si hay un token de restablecimiento válido, comprobar que una contraseña débil no descarta el enlace.
+- Preguntar al equipo del gateway si rechaza símbolos fuera de `@$!%*?&` y si `POST /users` aplica la misma política (decide si el formulario de conductores adopta `passwordPolicy`).
+- Archivar el change con `/opsx:archive` tras la revisión.
