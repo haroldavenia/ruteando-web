@@ -68,6 +68,30 @@ Comprobación manual por el proxy local con un tenant desechable (`POST /auth/re
 **Pendiente**
 - Comprobar en el gateway real si otros dominios que se ofrecen con `values()` en formularios (`ServiceType`, `PlaceType`, `RouteTopology`, `OsrmProfile`) también traen valores inactivos; si es así, usar `activeValues()` (conservando el valor actual al editar un registro que ya lo tenga).
 
+## Verificado contra el gateway real (2026-10-28)
+
+Comprobación por el proxy local con una cuenta de prueba creada en el tenant desechable `ruteando-prueba-auth` (sin borrado conocido) y el usuario de pruebas de la colección. Solo conclusiones: sin identificadores, correos ni tokens.
+
+**Errores (formato `{ error, message, timestamp, path }`; `details` por campo en `VALIDATION_ERROR`)**
+- Login incorrecto: 401 `INVALID_CREDENTIALS`. Campos vacíos: 400 `VALIDATION_ERROR`.
+- Contraseña fuera de la política: 400 `PASSWORD_POLICY_VIOLATION`, con el texto «Password must be at least 16 characters and contain uppercase, lowercase, digit and special character (@$!%*?&).». **La política real es de 16 caracteres o más, no de 8**; comprobado en el registro (3, 8 y 14 caracteres rechazados, 20 con las cuatro clases aceptado). No se probó si rechaza otros símbolos (`#`, `_`).
+- Orden de validación: en el registro se valida el correo antes que la contraseña (con un correo inválido solo se ve «Invalid email»); en restablecer, el token antes que la contraseña (con un token falso siempre `INVALID_TOKEN`). Por eso un 400 de restablecer puede ser el token **o** la contraseña, y hay que distinguirlos por el código.
+- Token inválido en verificar o restablecer: 400 `INVALID_TOKEN`. Token vacío: 400 `VALIDATION_ERROR`. Correo duplicado: 409 `EMAIL_ALREADY_EXISTS`. `refresh` con un token inválido: 401 con cuerpo de texto («Unauthorized access»), no JSON.
+- `forgot-password` y `resend-verification` responden 200 con un mensaje neutro tanto para un correo existente como para uno inexistente.
+
+**Sesión**
+- El token de acceso es un JWT de 3600 s (`exp`, `iat`, `jti`, `role`, `sub`, `tenantId`); el de refresco es opaco, así que su vida real no se puede leer del cliente (pregunta abierta para el equipo del gateway).
+- `refresh` **no rota** el token de refresco (devuelve el mismo y el anterior sigue valiendo). `logout` lo revoca (refresh posterior = 401), pero el token de acceso sigue siendo válido hasta que caduque.
+- Una cuenta con `emailVerified: false` puede iniciar sesión y usar `/auth/me`, `/journeys` y `/users/drivers`: el gateway no restringe nada por no haber verificado el correo.
+
+**Otros**
+- `GET /auth/verify-email?token=` devuelve una página HTML del propio gateway (400 «Enlace no válido» con un token falso), no redirige a la aplicación.
+- Cloudflare bloquea la firma del cliente HTTP de Python (error 1010); `curl` y los navegadores pasan. Un 530 es el túnel caído y un 502 el servicio que aún arranca.
+
+**Pendiente**
+- Los correos de verificación y de recuperación **no llegaron** a una bandeja real tras el registro y tras dos solicitudes: el envío de correo del gateway de este entorno parece no operar. Sin ellos no se ha podido comprobar a qué URL apunta el enlace ni probar la verificación y el restablecimiento con un token real.
+- ¿Qué vida tiene el token de refresco? ¿Rechaza símbolos fuera de `@$!%*?&`? ¿`POST /users` aplica la misma política de contraseña?
+
 ## Inicio (`home/`, `features/journeys/latest-journeys.ts`)
 
 - **Accesos:** las áreas del rol salen de `layout/nav-items.ts` (`areaLinksFor`), las mismas del menú lateral.
@@ -88,8 +112,8 @@ Comprobación manual por el proxy local con un tenant desechable (`POST /auth/re
 - **Destino tras el login:** `safeReturnUrl(returnUrl)` (`core/auth/return-url.ts`) solo admite rutas internas; rechaza `//host`, `/\host`, esquemas, espacios y caracteres de control y rutas de `/acceso`. Nunca navegues a un `returnUrl` sin pasarlo por esta función.
 - **Tokens de un solo uso** (verificar y restablecer): se leen al crear la pantalla, se retiran de la URL con `replaceUrl`, y la llamada de verificación solo se hace en el navegador (el SSR no debe consumirlo).
 - **Cierre de sesión:** `POST /auth/logout` lleva `{ refreshToken }`; sin token de refresco solo limpia el estado local.
-- **Mensajes por operación** en `core/auth/auth-messages.ts` (login 401, registro 409/400, enlace no válido 400/401/404/410). Los estados reales del gateway para un token inválido no están documentados.
-- **Formularios:** reactivos y tipados; piezas en `shared/form/` (`PasswordFieldComponent`, `FocusFirstInvalidDirective`, `FormResultComponent`, `notify`) y `features/access/shared/` (`matchesSibling`, `revalidateOnPasswordChange`). Los campos se localizan en las pruebas por `autocomplete`, porque `matInput` gestiona el atributo `name`. Validación de contraseña en el cliente: obligatoria, mínimo 8 y coincidencia; la política real es del gateway (pendiente de documentar).
+- **Mensajes por operación** en `core/auth/auth-messages.ts`, por **código** del gateway antes que por estado (`INVALID_TOKEN` y 401/404/410 y un 400 sin código = enlace no válido; `PASSWORD_POLICY_VIOLATION` = la regla de la contraseña; `VALIDATION_ERROR` = «Revisa los datos…»; login 401; registro 409/400). Códigos reales en «Verificado contra el gateway real (2026-10-28)».
+- **Formularios:** reactivos y tipados; piezas en `shared/form/` (`PasswordFieldComponent`, `FocusFirstInvalidDirective`, `FormResultComponent`, `notify`) y `features/access/shared/` (`matchesSibling`, `revalidateOnPasswordChange`). Los campos se localizan en las pruebas por `autocomplete`, porque `matInput` gestiona el atributo `name`. Contraseña en registro y restablecer: obligatoria, coincidencia y la política del gateway (`core/auth/password-policy.ts`: 16 caracteres o más, mayúscula, minúscula, dígito y un símbolo de `@$!%*?&`), con una lista de requisitos que se marca punto por punto (`requirements` de `PasswordFieldComponent`: aparece al enfocar el campo, queda visible mientras falte alguno una vez tocado y llega a los lectores de pantalla por `aria-describedby`; el error del campo es breve y lo que falta lo dice la lista); el formulario de conductores conserva su mínimo de 8 porque `POST /users` no se ha comprobado.
 - **Correos:** las plantillas del gateway deben apuntar a `/acceso/verificar-email?token=...` y `/acceso/restablecer?token=...`.
 - **Fuera de alcance:** acceso social, aceptar invitaciones, cambiar contraseña y editar perfil.
 

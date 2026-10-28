@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { firstErrorMessage } from '../../../shared/form/access.messages';
-import { matchesSibling, revalidateOnPasswordChange } from './form-utils';
+import { PASSWORD_MIN_LENGTH, matchesSibling, revalidateOnPasswordChange } from './form-utils';
 
 @Component({ template: '' })
 class HostComponent {
@@ -58,6 +58,13 @@ describe('firstErrorMessage', () => {
     expect(firstErrorMessage({ email: true })).toBe('Introduce un correo válido');
     expect(firstErrorMessage({ minlength: {} })).toBe('Usa al menos 8 caracteres');
     expect(firstErrorMessage({ mismatch: true })).toBe('Las contraseñas no coinciden');
+  });
+
+  it('la política da un mensaje breve (lo que falta lo dice la lista) y minlength sigue en 8 para el formulario de conductores', () => {
+    expect(firstErrorMessage({ policy: { length: true } })).toBe('La contraseña no cumple los requisitos');
+    expect(firstErrorMessage({ policy: { upper: true, symbol: true } })).toBe('La contraseña no cumple los requisitos');
+    expect(firstErrorMessage({ policy: { digit: true } }, { policy: 'Otro texto' })).toBe('Otro texto');
+    expect(PASSWORD_MIN_LENGTH).toBe(8);
   });
 
   it('los mensajes propios tienen prioridad y sin errores devuelve vacío', () => {

@@ -1,5 +1,5 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 
@@ -20,8 +20,17 @@ import forgotFx from '../../../testing/fixtures/gateway/post__auth__forgot-passw
 import resetFx from '../../../testing/fixtures/gateway/post__auth__reset-password.json';
 import logoutFx from '../../../testing/fixtures/gateway/post__auth__logout.json';
 
+import policyFx from '../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
+import duplicateFx from '../../../testing/fixtures/gateway-errors/post__auth__register__email-already-exists.json';
+import invalidTokenFx from '../../../testing/fixtures/gateway-errors/post__auth__reset-password__invalid-token.json';
+import validationFx from '../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
+
 const fx = (f: unknown) => f as unknown as Fixture;
 const INVALID_LINK = 'El enlace no es válido o ha caducado';
+const REVIEW_DATA = 'Revisa los datos e inténtalo de nuevo';
+const POLICY_REJECTED = 'La contraseña no cumple la política. Mínimo 16 caracteres, con mayúscula, minúscula, número y un símbolo (@$!%*?&)';
+const flushError = (req: TestRequest, f: unknown) =>
+  req.flush(fx(f).response.body as object, { status: fx(f).response.status, statusText: 'Error' });
 
 describe('AuthService: operaciones de acceso', () => {
   let service: AuthService;
@@ -68,6 +77,16 @@ describe('AuthService: operaciones de acceso', () => {
       expect((await result).message).toBe('Correo o contraseña incorrectos');
     });
 
+    it('429 y 423 explican el límite de intentos y el bloqueo', async () => {
+      const limited = fail(service.login('a@example.invalid', 'x'));
+      controller.expectOne('/gateway/auth/login').flush({ error: 'TOO_MANY' }, { status: 429, statusText: 'x' });
+      expect((await limited).message).toBe('Demasiados intentos. Espera unos minutos e inténtalo de nuevo');
+
+      const locked = fail(service.login('a@example.invalid', 'x'));
+      controller.expectOne('/gateway/auth/login').flush({ error: 'LOCKED' }, { status: 423, statusText: 'x' });
+      expect((await locked).message).toBe('La cuenta está bloqueada temporalmente. Inténtalo más tarde');
+    });
+
     it('sin conexión y con error del servidor da el mensaje genérico del estado', async () => {
       const offline = fail(service.login('a@example.invalid', 'x'));
       controller.expectOne('/gateway/auth/login').error(new ProgressEvent('error'));
@@ -104,6 +123,31 @@ describe('AuthService: operaciones de acceso', () => {
       const error = await result;
       expect(error.message).toBe('Ya existe una cuenta con ese correo');
       expect(error.code).toBe('CONFLICT');
+    });
+
+    it('409 real (EMAIL_ALREADY_EXISTS): "Ya existe una cuenta con ese correo" y conserva el código', async () => {
+      const result = fail(service.register(input));
+      flushError(controller.expectOne('/gateway/auth/register'), duplicateFx);
+
+      const error = await result;
+      expect(error.message).toBe('Ya existe una cuenta con ese correo');
+      expect(error.code).toBe('EMAIL_ALREADY_EXISTS');
+    });
+
+    it('400 PASSWORD_POLICY_VIOLATION: la regla de la contraseña, no el mensaje genérico', async () => {
+      const result = fail(service.register(input));
+      flushError(controller.expectOne('/gateway/auth/register'), policyFx);
+
+      const error = await result;
+      expect(error.message).toBe(POLICY_REJECTED);
+      expect(error.code).toBe('PASSWORD_POLICY_VIOLATION');
+    });
+
+    it('400 VALIDATION_ERROR: "Revisa los datos e inténtalo de nuevo"', async () => {
+      const result = fail(service.register(input));
+      flushError(controller.expectOne('/gateway/auth/register'), validationFx);
+
+      expect((await result).message).toBe(REVIEW_DATA);
     });
 
     it('400: "Revisa los datos e inténtalo de nuevo"', async () => {
@@ -188,6 +232,36 @@ describe('AuthService: operaciones de acceso', () => {
         expect((await result).message).toBe(INVALID_LINK);
       });
     }
+
+    it('resetPassword con 400 INVALID_TOKEN real: enlace no válido', async () => {
+      const result = fail(service.resetPassword('MALO', 'Ficticia@2026abcdef'));
+      flushError(controller.expectOne('/gateway/auth/reset-password'), invalidTokenFx);
+
+      const error = await result;
+      expect(error.message).toBe(INVALID_LINK);
+      expect(error.code).toBe('INVALID_TOKEN');
+    });
+
+    it('resetPassword con 400 PASSWORD_POLICY_VIOLATION: la regla, no "enlace no válido"', async () => {
+      const result = fail(service.resetPassword('BUENO', 'corta'));
+      flushError(controller.expectOne('/gateway/auth/reset-password'), policyFx);
+
+      expect((await result).message).toBe(POLICY_REJECTED);
+    });
+
+    it('resetPassword con 400 VALIDATION_ERROR: revisa los datos, no "enlace no válido"', async () => {
+      const result = fail(service.resetPassword('BUENO', 'x'));
+      flushError(controller.expectOne('/gateway/auth/reset-password'), validationFx);
+
+      expect((await result).message).toBe(REVIEW_DATA);
+    });
+
+    it('verifyEmail con 400 INVALID_TOKEN sigue diciendo enlace no válido', async () => {
+      const result = fail(service.verifyEmail('MALO'));
+      flushError(controller.expectOne('/gateway/auth/verify-email'), invalidTokenFx);
+
+      expect((await result).message).toBe(INVALID_LINK);
+    });
 
     it('un fallo del servidor en forgotPassword conserva el mensaje genérico', async () => {
       const result = fail(service.forgotPassword('a@example.invalid'));

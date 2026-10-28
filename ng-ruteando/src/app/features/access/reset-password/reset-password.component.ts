@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, PLATFORM_ID, afterNextRender, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, PLATFORM_ID, afterNextRender, inject, signal, viewChild } from '@angular/core';
+import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -8,14 +8,17 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { INVALID_LINK_MESSAGE } from '../../../core/auth/auth-messages';
+import { passwordPolicy } from '../../../core/auth/password-policy';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
-import { PASSWORD_MIN_LENGTH, matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
+import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
 import { notify } from '../../../shared/form/notify';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 
 /** Estados del gateway que indican que el enlace ya no sirve (el gateway no documenta cuál usa). */
 const LINK_ERRORS = [400, 401, 404, 410];
+/** Códigos de un 400 que culpan a la contraseña o a los datos escritos, no al enlace: el token sigue valiendo. */
+const FORM_ERROR_CODES = ['PASSWORD_POLICY_VIOLATION', 'VALIDATION_ERROR'];
 
 @Component({
   selector: 'app-reset-password',
@@ -40,6 +43,7 @@ const LINK_ERRORS = [400, 401, 404, 410];
           [control]="form.controls.password"
           label="Contraseña nueva"
           autocomplete="new-password"
+          [requirements]="true"
           [messages]="{ required: 'Introduce una contraseña' }"
         />
         <app-password-field
@@ -63,15 +67,17 @@ export class ResetPasswordComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly injector = inject(Injector);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   /** El token se guarda en memoria hasta el envío; en la URL solo está hasta que se lee. */
   private readonly token = this.route.snapshot.queryParamMap.get('token');
 
   protected readonly invalidMessage = INVALID_LINK_MESSAGE;
   protected readonly linkInvalid = signal(!this.token);
   protected readonly form = inject(FormBuilder).nonNullable.group({
-    password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)]],
+    password: ['', [Validators.required, passwordPolicy]],
     confirm: ['', [Validators.required, matchesSibling('password')]],
   });
+  private readonly formDirective = viewChild(FormGroupDirective);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
 
@@ -97,11 +103,16 @@ export class ResetPasswordComponent {
       },
       error: (error: ApiError) => {
         this.loading.set(false);
-        this.form.reset({ password: '', confirm: '' });
-        if (LINK_ERRORS.includes(error.status)) {
+        this.formDirective()?.resetForm({ password: '', confirm: '' });
+        const blamesForm = error.code !== null && FORM_ERROR_CODES.includes(error.code);
+        if (LINK_ERRORS.includes(error.status) && !blamesForm) {
           this.linkInvalid.set(true);
-        } else {
-          this.error.set(error.message);
+          return;
+        }
+        this.error.set(error.message);
+        if (blamesForm) {
+          // El enlace sigue siendo válido: con las contraseñas vacías, el foco vuelve a la nueva para reintentar
+          setTimeout(() => this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="new-password"]')?.focus());
         }
       },
     });

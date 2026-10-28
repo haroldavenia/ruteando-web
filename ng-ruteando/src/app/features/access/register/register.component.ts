@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,10 +8,11 @@ import { RouterLink } from '@angular/router';
 
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
+import { passwordPolicy } from '../../../core/auth/password-policy';
 import { firstErrorMessage } from '../../../shared/form/access.messages';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
-import { PASSWORD_MIN_LENGTH, matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
+import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 
 interface TextField {
@@ -64,6 +65,7 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
           [control]="form.controls.password"
           label="Contraseña"
           autocomplete="new-password"
+          [requirements]="true"
           [messages]="{ required: 'Introduce una contraseña' }"
         />
         <app-password-field
@@ -84,6 +86,7 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
 })
 export class RegisterComponent {
   private readonly auth = inject(AuthService);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected readonly textFields: readonly TextField[] = [
     { name: 'firstName', label: 'Nombre', type: 'text', autocomplete: 'given-name', required: 'Introduce tu nombre' },
@@ -97,10 +100,11 @@ export class RegisterComponent {
     lastName: ['', Validators.required],
     tenantName: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)]],
+    password: ['', [Validators.required, passwordPolicy]],
     confirm: ['', [Validators.required, matchesSibling('password')]],
   });
 
+  private readonly formDirective = viewChild(FormGroupDirective);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   /** Correo con el que se registró: al tener valor se muestra el panel "Revisa tu correo". */
@@ -135,6 +139,10 @@ export class RegisterComponent {
         this.loading.set(false);
         this.clearPasswords();
         this.error.set(error.message);
+        if (error.code === 'PASSWORD_POLICY_VIOLATION') {
+          // Las contraseñas se han vaciado: el foco vuelve a la primera para escribir otra
+          setTimeout(() => this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="new-password"]')?.focus());
+        }
       },
     });
   }
@@ -159,7 +167,7 @@ export class RegisterComponent {
   }
 
   private clearPasswords(): void {
-    this.form.controls.password.reset('');
-    this.form.controls.confirm.reset('');
+    // resetForm también borra «enviado»: sin él, los campos vacíos saldrían en rojo
+    this.formDirective()?.resetForm({ ...this.form.getRawValue(), password: '', confirm: '' });
   }
 }

@@ -19,6 +19,8 @@ npm start                               # http://localhost:3000
 
 Sin `.env` el servidor arranca y avisa, pero `/gateway/**` responde 503. `PORT` cambia el puerto y `WEB_DIST` el directorio que se publica.
 
+El servidor añade cabeceras de seguridad a todas las respuestas (`server/security-headers.js`). La política de contenido (CSP) va por defecto en modo solo informe (`CSP_MODE=report-only`: el navegador anota las violaciones en la consola y no bloquea nada); `CSP_MODE=enforce` la aplica y `off` la quita. Si cambias el proveedor de teselas del mapa, añade su origen a `CSP_IMG_SRC` (varios, separados por espacios). La compilación de producción no lleva manejadores en línea (`optimization.styles.inlineCritical = false` en `angular.json`), así que `enforce` no rompe nada hoy; tras añadir recursos externos o scripts en línea, recorre la aplicación con `report-only` y sin violaciones antes de usarlo.
+
 ## Probar sin el gateway real
 
 `scripts/mock-gateway.mjs` es un gateway falso con datos en memoria (lugares, flota, paquetes, jornadas ya planificadas con rutas y paradas, zonas), para iniciar sesión y recorrer la aplicación sin el gateway real. No es el contrato oficial y los datos se pierden al pararlo.
