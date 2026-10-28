@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -104,6 +104,7 @@ export class RegisterComponent {
     confirm: ['', [Validators.required, matchesSibling('password')]],
   });
 
+  private readonly formDirective = viewChild(FormGroupDirective);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   /** Correo con el que se registró: al tener valor se muestra el panel "Revisa tu correo". */
@@ -166,7 +167,7 @@ export class RegisterComponent {
   }
 
   private clearPasswords(): void {
-    this.form.controls.password.reset('');
-    this.form.controls.confirm.reset('');
+    // resetForm también borra «enviado»: sin él, los campos vacíos saldrían en rojo
+    this.formDirective()?.resetForm({ ...this.form.getRawValue(), password: '', confirm: '' });
   }
 }

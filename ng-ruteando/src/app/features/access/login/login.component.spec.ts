@@ -163,6 +163,8 @@ describe('LoginComponent', () => {
     expect(email().value).toBe('persona@example.invalid');
     expect(document.activeElement).toBe(password());
     expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
+    // La contraseña vaciada no se marca como obligatoria en rojo: el formulario ya no cuenta como enviado
+    expect(document.querySelector('mat-error')).toBeNull();
   });
 
   it('con la conexión caída muestra el mensaje genérico y permite reintentar sin perder el correo', async () => {

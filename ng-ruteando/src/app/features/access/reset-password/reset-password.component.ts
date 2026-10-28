@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, Injector, PLATFORM_ID, afterNextRender, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, PLATFORM_ID, afterNextRender, inject, signal, viewChild } from '@angular/core';
+import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -77,6 +77,7 @@ export class ResetPasswordComponent {
     password: ['', [Validators.required, passwordPolicy]],
     confirm: ['', [Validators.required, matchesSibling('password')]],
   });
+  private readonly formDirective = viewChild(FormGroupDirective);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
 
@@ -102,7 +103,7 @@ export class ResetPasswordComponent {
       },
       error: (error: ApiError) => {
         this.loading.set(false);
-        this.form.reset({ password: '', confirm: '' });
+        this.formDirective()?.resetForm({ password: '', confirm: '' });
         const blamesForm = error.code !== null && FORM_ERROR_CODES.includes(error.code);
         if (LINK_ERRORS.includes(error.status) && !blamesForm) {
           this.linkInvalid.set(true);

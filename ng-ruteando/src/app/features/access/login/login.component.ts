@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -63,6 +63,7 @@ export class LoginComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
+  private readonly formDirective = viewChild(FormGroupDirective);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
 
@@ -91,7 +92,8 @@ export class LoginComponent {
         this.error.set(error.message);
         if (error.status === 401) {
           // Credenciales rechazadas: se vacía la contraseña y recibe el foco (el correo se conserva)
-          this.form.controls.password.reset('');
+          // resetForm también borra «enviado»: sin él, el campo vacío saldría en rojo
+          this.formDirective()?.resetForm({ email, password: '' });
           setTimeout(() => this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="current-password"]')?.focus());
         }
       },

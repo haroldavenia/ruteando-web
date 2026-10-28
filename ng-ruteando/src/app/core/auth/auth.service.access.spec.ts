@@ -77,6 +77,16 @@ describe('AuthService: operaciones de acceso', () => {
       expect((await result).message).toBe('Correo o contraseña incorrectos');
     });
 
+    it('429 y 423 explican el límite de intentos y el bloqueo', async () => {
+      const limited = fail(service.login('a@example.invalid', 'x'));
+      controller.expectOne('/gateway/auth/login').flush({ error: 'TOO_MANY' }, { status: 429, statusText: 'x' });
+      expect((await limited).message).toBe('Demasiados intentos. Espera unos minutos e inténtalo de nuevo');
+
+      const locked = fail(service.login('a@example.invalid', 'x'));
+      controller.expectOne('/gateway/auth/login').flush({ error: 'LOCKED' }, { status: 423, statusText: 'x' });
+      expect((await locked).message).toBe('La cuenta está bloqueada temporalmente. Inténtalo más tarde');
+    });
+
     it('sin conexión y con error del servidor da el mensaje genérico del estado', async () => {
       const offline = fail(service.login('a@example.invalid', 'x'));
       controller.expectOne('/gateway/auth/login').error(new ProgressEvent('error'));
