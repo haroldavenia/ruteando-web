@@ -4,6 +4,8 @@ export const FIELD_ERRORS: Readonly<Record<string, string>> = {
   email: 'Introduce un correo válido',
   minlength: 'Usa al menos 8 caracteres',
   mismatch: 'Las contraseñas no coinciden',
+  // Lo que falta lo dice la lista de requisitos del campo de contraseña
+  policy: 'La contraseña no cumple los requisitos',
 };
 
 export type FieldMessages = Readonly<Record<string, string>>;

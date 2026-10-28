@@ -16,10 +16,13 @@ import { RegisterComponent } from './register.component';
 
 import registerFx from '../../../../testing/fixtures/gateway/post__auth__register.json';
 import resendFx from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
+import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
+import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
 
 const fx = (f: unknown) => f as unknown as Fixture;
 const REGISTER = '/gateway/auth/register';
 const RESEND = '/gateway/auth/resend-verification';
+const VALID_PASSWORD = 'Ruteando@2026abcdef';
 
 describe('RegisterComponent', () => {
   let harness: RouterTestingHarness;
@@ -29,6 +32,7 @@ describe('RegisterComponent', () => {
   // Orden visual: nombre, apellidos, empresa, correo, contraseña y confirmación
   const inputs = () => Array.from(root.querySelectorAll('input')) as HTMLInputElement[];
   const submit = () => root.querySelector('form')!.dispatchEvent(new Event('submit'));
+  const list = () => root.querySelector('ul.requirements') as HTMLElement;
   const alertText = () => root.querySelector('[role="alert"]')?.textContent?.trim() ?? '';
   const errors = () => Array.from(root.querySelectorAll('mat-error')).map((e) => e.textContent?.trim());
 
@@ -37,7 +41,7 @@ describe('RegisterComponent', () => {
     input.dispatchEvent(new Event('input'));
   }
   function fill(values: Partial<Record<'first' | 'last' | 'company' | 'email' | 'pass' | 'confirm', string>> = {}): void {
-    const v = { first: 'Ana', last: 'Pérez', company: 'Mi empresa', email: 'ana@example.invalid', pass: 'una-clave-larga', confirm: 'una-clave-larga', ...values };
+    const v = { first: 'Ana', last: 'Pérez', company: 'Mi empresa', email: 'ana@example.invalid', pass: VALID_PASSWORD, confirm: VALID_PASSWORD, ...values };
     [v.first, v.last, v.company, v.email, v.pass, v.confirm].forEach((value, i) => type(inputs()[i], value));
   }
 
@@ -81,7 +85,7 @@ describe('RegisterComponent', () => {
       submit();
       const req = controller.expectOne(REGISTER);
       expect(Object.keys(req.request.body).sort()).toEqual(['email', 'firstName', 'lastName', 'password', 'tenantName']);
-      expect(req.request.body).toEqual({ firstName: 'Ana', lastName: 'Pérez', tenantName: 'Mi empresa', email: 'ana@example.invalid', password: 'una-clave-larga' });
+      expect(req.request.body).toEqual({ firstName: 'Ana', lastName: 'Pérez', tenantName: 'Mi empresa', email: 'ana@example.invalid', password: VALID_PASSWORD });
       respondWith(req, fx(registerFx));
       harness.detectChanges();
     });
@@ -127,7 +131,7 @@ describe('RegisterComponent', () => {
   });
 
   it('con las contraseñas distintas no envía y dice "Las contraseñas no coinciden" en la confirmación', () => {
-    fill({ confirm: 'otra-clave-larga' });
+    fill({ confirm: 'Otra@2026clavelarga' });
     submit();
     harness.detectChanges();
 
@@ -135,13 +139,51 @@ describe('RegisterComponent', () => {
     expect(errors()).toEqual(['Las contraseñas no coinciden']);
   });
 
-  it('con una contraseña de menos de 8 caracteres no envía y dice "Usa al menos 8 caracteres"', () => {
-    fill({ pass: 'corta', confirm: 'corta' });
+  describe('lista de requisitos de la contraseña', () => {
+    const checks = () => Array.from(list().querySelectorAll('li')).map((li) => li.querySelector('.visually-hidden')?.textContent?.replace(/[,.\s]+/g, ' ').trim());
+
+    it('está cerrada al abrir la pantalla pero descrita por el campo de contraseña', () => {
+      expect(list().classList).toContain('visually-hidden');
+      expect(inputs()[4].getAttribute('aria-describedby')).toContain(list().id);
+      expect(list().querySelectorAll('li').length).toBe(5);
+    });
+
+    it('al enfocar la contraseña se abre con todo pendiente y no hay otra lista bajo la confirmación', () => {
+      inputs()[4].dispatchEvent(new Event('focus'));
+      harness.detectChanges();
+
+      expect(list().classList).not.toContain('visually-hidden');
+      expect(checks()).toEqual(Array(5).fill('pendiente'));
+      expect(root.querySelectorAll('ul.requirements').length).toBe(1);
+    });
+
+    it('al escribir se marcan los puntos que se cumplen', () => {
+      inputs()[4].dispatchEvent(new Event('focus'));
+      type(inputs()[4], 'Ruteando@2026');
+      harness.detectChanges();
+
+      expect(checks()).toEqual(['pendiente', 'cumplido', 'cumplido', 'cumplido', 'cumplido']);
+    });
+  });
+
+  it('con una contraseña de 15 caracteres no envía, dice que no cumple los requisitos y marca la longitud', () => {
+    fill({ pass: 'Abcdefghijkl1@x', confirm: 'Abcdefghijkl1@x' });
     submit();
     harness.detectChanges();
 
     controller.expectNone(REGISTER);
-    expect(errors()).toEqual(['Usa al menos 8 caracteres']);
+    expect(errors()).toEqual(['La contraseña no cumple los requisitos']);
+    expect(Array.from(list().querySelectorAll('li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(['Al menos 16 caracteres']);
+  });
+
+  it('con 16 caracteres pero sin mayúscula ni símbolo no envía y marca los que faltan', () => {
+    fill({ pass: 'abcdefghijklmnop1234', confirm: 'abcdefghijklmnop1234' });
+    submit();
+    harness.detectChanges();
+
+    controller.expectNone(REGISTER);
+    expect(errors()).toEqual(['La contraseña no cumple los requisitos']);
+    expect(Array.from(list().querySelectorAll('li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(['Una mayúscula', 'Un símbolo (@$!%*?&)']);
   });
 
   it('con campos obligatorios vacíos muestra el error de cada uno, no envía y enfoca el primero', () => {
@@ -189,6 +231,33 @@ describe('RegisterComponent', () => {
     harness.detectChanges();
 
     expect(alertText()).toContain('Revisa los datos e inténtalo de nuevo');
+  });
+
+  it('si el gateway rechaza la contraseña (PASSWORD_POLICY_VIOLATION) muestra la regla, conserva los datos, vacía las contraseñas y enfoca la contraseña', async () => {
+    fill();
+    submit();
+    controller.expectOne(REGISTER).flush(fx(policyFx).response.body as object, { status: 400, statusText: 'x' });
+    harness.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(alertText()).toContain('La contraseña no cumple la política');
+    expect(alertText()).toContain('Mínimo 16 caracteres');
+    expect(alertText()).not.toContain('Revisa los datos');
+    expect(inputs().slice(0, 4).map((i) => i.value)).toEqual(['Ana', 'Pérez', 'Mi empresa', 'ana@example.invalid']);
+    expect(inputs()[4].value).toBe('');
+    expect(inputs()[5].value).toBe('');
+    expect(document.activeElement).toBe(inputs()[4]);
+  });
+
+  it('con un VALIDATION_ERROR muestra "Revisa los datos e inténtalo de nuevo" y no mueve el foco', async () => {
+    fill();
+    submit();
+    controller.expectOne(REGISTER).flush(fx(validationFx).response.body as object, { status: 400, statusText: 'x' });
+    harness.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(alertText()).toContain('Revisa los datos e inténtalo de nuevo');
+    expect(document.activeElement).not.toBe(inputs()[4]);
   });
 
   it('no se envía dos veces mientras espera la respuesta', () => {
