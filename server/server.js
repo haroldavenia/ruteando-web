@@ -10,6 +10,7 @@ var express = require('express');
 var logger = require('morgan');
 
 var gatewayProxy = require('./gateway-proxy');
+var securityHeaders = require('./security-headers').securityHeaders;
 gatewayProxy.loadEnvFile(); // carga ../.env (si existe) antes de leer la configuración
 
 // Directorio con la compilación de navegador de ng-ruteando (se puede cambiar con WEB_DIST)
@@ -18,7 +19,10 @@ var WEB_DIST = path.resolve(process.env.WEB_DIST || path.join(__dirname, '..', '
 var app = express();
 
 app.set('port', process.env.PORT || 3000);
+app.disable('x-powered-by');
 app.use(logger('dev'));
+// Cabeceras de seguridad en todas las respuestas, también las del proxy y el estático
+app.use(securityHeaders(process.env));
 // Proxy del gateway: antes del estático y del comodín del cliente
 app.use('/gateway', gatewayProxy.createGatewayProxy());
 
