@@ -8,10 +8,9 @@
 ## 2. Verificación en navegador
 
 - [x] 2.1 Compilar (`npm run build:web`), arrancar el servidor con `CSP_MODE=report-only` y recorrer con Chrome (CDP) acceso, inicio, un listado, el mapa de lugares y el editor de zonas leyendo las violaciones de CSP de la consola; verificar que no hay ninguna o, si las hay, ajustar la política o consultar antes de tocar la compilación (en especial el `onload` de la hoja de estilos: comprobar que los estilos se aplican) y repetir
-- [ ] 2.2 Repetir el recorrido con `CSP_MODE=enforce` en local y comprobar que la aplicación se ve y funciona igual (estilos, fuentes, mapa, login real contra el gateway); verificar con capturas en móvil y escritorio. El valor por defecto sigue siendo `report-only`: pasar a `enforce` en un despliegue es decisión aparte.
-  - Resultado del 2026-10-28: en `report-only` solo hay una violación, `script-src-attr` por el `onload` de la hoja de estilos (resto del recorrido y login real sin violaciones ni peticiones fallidas); en `enforce` ese `onload` se bloquea y los estilos se ven mal. Pendiente de decidir cómo arreglarlo (ver design.md, decisión 3) antes de dar esta tarea por cumplida
+- [x] 2.2 Desactivar `optimization.styles.inlineCritical` en la configuración de producción de `ng-ruteando/angular.json`, recompilar y repetir el recorrido con `CSP_MODE=enforce` en local (estilos, fuentes, mapa, login real contra el gateway); verificar que el HTML no contiene `onload`, que no hay violaciones ni peticiones fallidas y que las capturas coinciden con las de `report-only`. El valor por defecto sigue siendo `report-only`: pasar a `enforce` en un despliegue es decisión aparte
 
 ## 3. Documentación e integración
 
 - [x] 3.1 Documentar `CSP_MODE` y `CSP_IMG_SRC` en `.env.example`, `README.md` y una línea en `CLAUDE.md`, con el aviso de que cambiar el proveedor de teselas exige añadir su origen a `CSP_IMG_SRC`; verificar con `grep` que las dos variables aparecen en los tres ficheros
-- [ ] 3.2 Ejecutar `npm run test:server`, `npm --prefix ng-ruteando run test:ci`, `npm --prefix ng-ruteando run build` y `npx --yes @fission-ai/openspec@1.14.3 validate --specs --strict`; verificar que pasan sin avisos nuevos
+- [x] 3.2 Ejecutar `npm run test:server`, `npm --prefix ng-ruteando run test:ci`, `npm --prefix ng-ruteando run build` y `npx --yes @fission-ai/openspec@1.14.3 validate --specs --strict`; verificar que pasan sin avisos nuevos
