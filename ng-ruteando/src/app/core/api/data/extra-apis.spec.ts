@@ -162,7 +162,7 @@ describe('operaciones específicas de recursos, paquetes y usuarios', () => {
 
     const unassign = firstResult(api.unassignDriver('r1'));
     respondWith(controller.expectOne({ method: 'DELETE', url: '/gateway/resources/r1/driver' }), fx(unassignDriver));
-    await unassign;
+    expect((await unassign).driverId).toBeNull();
     controller.verify();
   });
 
@@ -190,7 +190,7 @@ describe('operaciones específicas de recursos, paquetes y usuarios', () => {
 
     const reset = firstResult(api.sendPasswordReset('u1'));
     respondWith(controller.expectOne({ method: 'POST', url: '/gateway/users/u1/reset-password' }), fx(resetPassword));
-    await reset;
+    expect((await reset).message).toBeTruthy();
     controller.verify();
   });
 });

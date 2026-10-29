@@ -199,7 +199,7 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
       }
     }
 
-    if (errors.length > 0 || lon === null || lat === null) {
+    if (errors.length > 0 || !serviceType || lon === null || lat === null) {
       result.errors.push(...errors);
       return;
     }
@@ -219,7 +219,7 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
     result.valid.push({
       line,
       original: record,
-      input: { name: cell('name') || guide || address, serviceType: serviceType as string, address, location, weight, volume, ...optional },
+      input: { name: cell('name') || guide || address, serviceType, address, location, weight, volume, ...optional },
     });
   });
 

@@ -101,7 +101,7 @@ export class RouteVisitsStore {
       .pipe(finalize(() => this.setBusy(visit.packageId, false)))
       .subscribe({
         next: (updated: Package) => {
-          this.patch(visit.packageId, { pkg: { ...(visit.pkg as Package), ...updated, status: updated.status ?? status } });
+          this.patch(visit.packageId, { pkg: { ...visit.pkg, ...updated, status: updated.status ?? status } });
           this.success.set(`La visita «${this.label(visit)}» ahora está ${packageStatusLabel(status).toLowerCase()}`);
         },
         error: (err: unknown) => this.error.set(messageFor(err)),

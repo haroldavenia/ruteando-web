@@ -144,7 +144,11 @@ export class MapViewComponent {
     this.translate = new ol.Translate({ layers: [markerLayer] });
     this.translate.setActive(this.selectable());
     this.translate.on('translateend', () => {
-      const [lon, lat] = ol.toLonLat((this.marker?.getGeometry() as InstanceType<OpenLayers['Point']>).getCoordinates());
+      const geometry = this.marker?.getGeometry();
+      if (!(geometry instanceof ol.Point)) {
+        return;
+      }
+      const [lon, lat] = ol.toLonLat(geometry.getCoordinates());
       this.pointChange.emit(normalize(lon, lat));
     });
     map.addInteraction(this.translate);

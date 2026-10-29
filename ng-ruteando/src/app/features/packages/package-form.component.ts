@@ -171,9 +171,13 @@ export class PackageFormComponent implements HasUnsavedChanges {
       observation: text(value.observation),
     };
     const pieces = value.pieceNumber as number;
+    const record = this.loader.record();
+    if (this.id !== null && !record) {
+      return;
+    }
 
     const request$ =
-      this.id === null
+      this.id === null || !record
         ? // En el alta solo se envía lo que tiene valor: una guía vacía repetida daría 409 en el gateway
           this.api.create({
             ...required,
@@ -182,7 +186,7 @@ export class PackageFormComponent implements HasUnsavedChanges {
           })
         : this.api.update(
             this.id,
-            buildUpdateBody(this.loader.record() as Package, {
+            buildUpdateBody(record, {
               ...required,
               pieceNumber: pieces,
               guideNumber: optional.guideNumber || null,

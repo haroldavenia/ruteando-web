@@ -138,7 +138,8 @@ export class PolygonEditorComponent {
     }
     this.draw = new ol.Draw({ type: 'Polygon', source: new ol.VectorSource() });
     this.draw.on('drawend', (event) => {
-      const ring = (event.feature.getGeometry() as unknown as { getCoordinates(): Coordinate[][] }).getCoordinates()[0].map((c) => ol.toLonLat(c));
+      const geometry = event.feature.getGeometry();
+      const ring = (geometry instanceof ol.Polygon ? geometry.getCoordinates()[0] : []).map((c) => ol.toLonLat(c));
       const vertices = verticesFromRing(ring);
       this.stopDrawing();
       if (vertices.length >= 3) {
@@ -258,10 +259,10 @@ export class PolygonEditorComponent {
     if (!ol || !geometry) {
       return;
     }
-    const type = geometry.getType();
-    const raw = (geometry as unknown as { getCoordinates(): unknown }).getCoordinates();
-    const positions = (type === 'Polygon' ? (raw as Coordinate[][])[0] : type === 'LineString' ? (raw as Coordinate[]) : [raw as Coordinate]).map((c) => ol.toLonLat(c));
-    const vertices = type === 'Polygon' ? verticesFromRing(positions) : verticesFromRing([...positions, positions[0]]);
+    const positions = (
+      geometry instanceof ol.Polygon ? geometry.getCoordinates()[0] : geometry instanceof ol.LineString ? geometry.getCoordinates() : geometry instanceof ol.Point ? [geometry.getCoordinates()] : []
+    ).map((c) => ol.toLonLat(c));
+    const vertices = geometry instanceof ol.Polygon ? verticesFromRing(positions) : verticesFromRing([...positions, positions[0]]);
     this.fromMap = vertices;
     this.vertices.set(vertices);
   }

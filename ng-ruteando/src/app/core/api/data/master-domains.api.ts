@@ -26,11 +26,13 @@ export class MasterDomainsApi {
     return this.http.get<MasterDomainValue[]>(this.url(code, 'values'));
   }
 
-  addValue(code: string, value: MasterDomainValueInput): Observable<MasterDomainValue> {
-    return this.http.post<MasterDomainValue>(this.url(code, 'values'), value);
+  /** El gateway responde con el dominio completo (con sus valores), no con el valor creado. */
+  addValue(code: string, value: MasterDomainValueInput): Observable<MasterDomain> {
+    return this.http.post<MasterDomain>(this.url(code, 'values'), value);
   }
 
-  toggleValue(code: string, key: string): Observable<MasterDomainValue> {
-    return this.http.patch<MasterDomainValue>(this.url(code, 'values', key, 'toggle'), null);
+  /** Igual que `addValue`: responde con el dominio completo. */
+  toggleValue(code: string, key: string): Observable<MasterDomain> {
+    return this.http.patch<MasterDomain>(this.url(code, 'values', key, 'toggle'), null);
   }
 }
