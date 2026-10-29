@@ -31,7 +31,7 @@ export const MAX_ATTEMPTS = 3;
 export const SATURATED = [429, 503];
 
 const statusOf = (error: unknown): number | null =>
-  typeof error === 'object' && error !== null && typeof (error as { status?: unknown }).status === 'number' ? (error as { status: number }).status : null;
+  typeof error === 'object' && error !== null && 'status' in error && typeof error.status === 'number' ? error.status : null;
 
 const messageOf = (error: unknown): string => (error instanceof Error && error.message ? error.message : 'No se pudo completar la solicitud');
 

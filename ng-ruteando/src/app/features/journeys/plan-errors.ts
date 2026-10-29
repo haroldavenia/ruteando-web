@@ -3,8 +3,8 @@ import { ApiError } from '../../core/api/api-error';
 /** Mensaje técnico que el gateway pone en el cuerpo del error (`{ error, message, ... }`), si lo hay. */
 export function gatewayMessage(error: ApiError): string | null {
   const details = error.details;
-  if (details && typeof details === 'object' && 'message' in details && typeof (details as { message: unknown }).message === 'string') {
-    return (details as { message: string }).message;
+  if (details && typeof details === 'object' && 'message' in details && typeof details.message === 'string') {
+    return details.message;
   }
   return typeof details === 'string' && details ? details : null;
 }
