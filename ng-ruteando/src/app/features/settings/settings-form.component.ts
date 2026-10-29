@@ -242,6 +242,10 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     const stayFixed = value.typeLengthOfStay === FIXED_STAY;
     const hasStayType = value.typeLengthOfStay !== NO_STAY;
 
+    const record = this.loader.record();
+    if (this.id !== null && !record) {
+      return;
+    }
     const required: SettingsInput = {
       description: value.description.trim(),
       routeTopology: value.routeTopology,
@@ -256,7 +260,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     };
 
     const request$ =
-      this.id === null
+      this.id === null || !record
         ? // En el alta solo se envía lo que aplica y lo que se aparta del valor por defecto
           this.api.create({
             ...required,
@@ -269,7 +273,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
           })
         : this.api.update(
             this.id,
-            buildSettingsUpdateBody(this.loader.record() as Settings, {
+            buildSettingsUpdateBody(record, {
               ...required,
               placeEndId: value.placeEndId || value.placeStartId,
               evaluateWeight: value.evaluateWeight,

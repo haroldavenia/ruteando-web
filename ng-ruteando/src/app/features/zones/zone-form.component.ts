@@ -129,10 +129,14 @@ export class ZoneFormComponent implements HasUnsavedChanges {
     const boundary = { type: 'Polygon' as const, coordinates: [ringFromVertices(this.vertices())] };
     const base: ZoneInput = { name: name.trim(), code: code.trim(), boundary };
 
+    const record = this.loader.record();
+    if (this.id !== null && !record) {
+      return;
+    }
     const request$ =
-      this.id === null
+      this.id === null || !record
         ? this.api.create(color ? { ...base, color } : base)
-        : this.api.update(this.id, buildZoneUpdateBody(this.loader.record() as Zone, { ...base, color }));
+        : this.api.update(this.id, buildZoneUpdateBody(record, { ...base, color }));
 
     this.submit.submit(
       request$,
