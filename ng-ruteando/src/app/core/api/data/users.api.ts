@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CrudApi } from '../crud-api';
+import { MessageResponse } from '../../auth/session.model';
 import { User, UserInput } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -14,7 +15,7 @@ export class UsersApi extends CrudApi<User, UserInput> {
   }
 
   /** Envía al usuario un enlace para restablecer la contraseña. */
-  sendPasswordReset(id: string): Observable<void> {
-    return this.http.post<void>(this.url(id, 'reset-password'), null);
+  sendPasswordReset(id: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(this.url(id, 'reset-password'), null);
   }
 }

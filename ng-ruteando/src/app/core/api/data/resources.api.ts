@@ -12,7 +12,8 @@ export class ResourcesApi extends CrudApi<Resource, ResourceInput> {
     return this.http.put<Resource>(this.url(resourceId, 'driver', driverId), null);
   }
 
-  unassignDriver(resourceId: string): Observable<void> {
-    return this.http.delete<void>(this.url(resourceId, 'driver'));
+  /** Responde con el recurso ya sin conductor (200), no 204. */
+  unassignDriver(resourceId: string): Observable<Resource> {
+    return this.http.delete<Resource>(this.url(resourceId, 'driver'));
   }
 }

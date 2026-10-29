@@ -91,7 +91,7 @@ export class AuthService {
   logout(): Observable<void> {
     const refreshToken = this.tokens.getRefreshToken();
     const notified$: Observable<void> = refreshToken
-      ? this.http.post<void>(`${this.baseUrl}/auth/logout`, { refreshToken }).pipe(
+      ? this.http.post<MessageResponse>(`${this.baseUrl}/auth/logout`, { refreshToken }).pipe(
           map(() => undefined),
           catchError(() => of(undefined)),
         )

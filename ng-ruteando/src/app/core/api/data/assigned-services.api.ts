@@ -31,9 +31,9 @@ export class AssignedServicesApi {
     return this.http.delete<void>(`${this.baseUrl}/${encodeURIComponent(id)}`);
   }
 
-  /** Borra varios a la vez (`DELETE /assigned-services?ids=a,b`). */
-  removeMany(ids: readonly string[]): Observable<unknown> {
-    return this.http.delete(this.baseUrl, { params: new HttpParams().set('ids', ids.join(',')) });
+  /** Borra varios a la vez (`DELETE /assigned-services?ids=a,b`); responde 200 con `[]`. */
+  removeMany(ids: readonly string[]): Observable<unknown[]> {
+    return this.http.delete<unknown[]>(this.baseUrl, { params: new HttpParams().set('ids', ids.join(',')) });
   }
 
   summary(): Observable<unknown[]> {

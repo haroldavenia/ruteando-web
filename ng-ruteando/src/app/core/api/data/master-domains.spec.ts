@@ -34,11 +34,11 @@ describe('MasterDomainsApi', () => {
     const addReq = controller.expectOne({ method: 'POST', url: '/gateway/master-domains/PackageStatus/values' });
     expect(addReq.request.body).toEqual(addValue.request.body);
     respondWith(addReq, fx(addValue));
-    await add;
+    expect((await add).values.length).toBeGreaterThan(0);
 
     const tog = firstResult(api.toggleValue('PackageStatus', 'returned'));
     respondWith(controller.expectOne({ method: 'PATCH', url: '/gateway/master-domains/PackageStatus/values/returned/toggle' }), fx(toggle));
-    await tog;
+    expect((await tog).values.length).toBeGreaterThan(0);
     controller.verify();
   });
 });
