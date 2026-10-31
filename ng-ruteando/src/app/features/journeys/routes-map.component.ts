@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,11 +25,14 @@ import type VectorSource from 'ol/source/Vector';
 
 import { DomainRoute } from '../../core/api/models';
 import { toOlCoordinate } from '../../core/geo/lat-lng';
+import { ThemeService } from '../../core/theme/theme.service';
 import { formatDateTime, formatDistance } from '../../shared/format';
 import { MAP_CONFIG } from '../../shared/map/map-config';
+import { MapPalette, readMapPalette, readableOn, toRgba } from '../../shared/map/map-palette';
 import { OPENLAYERS_LOADER, OpenLayers } from '../../shared/map/openlayers';
-import { routeColor } from '../../shared/map/route-colors';
+import { routeColorFor } from '../../shared/map/route-colors';
 import { LonLat, lonLatBounds, routeCoordinates, routeLine, routeStops } from '../../shared/map/route-geometry';
+import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 
 import { stopTypeLabel } from './journey-labels';
 
@@ -52,12 +55,6 @@ const FIT_PADDING = [48, 48, 48, 48];
 const MAX_FIT_ZOOM = 16;
 const SINGLE_POINT_ZOOM = 15;
 
-/** `#RRGGBB` + opacidad 0..1 → color `rgba(...)`. */
-function withAlpha(hex: string, alpha: number): string {
-  const n = parseInt(hex.slice(1), 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
-}
-
 /**
  * Mapa de solo lectura con las rutas de una jornada: una línea por ruta con su color, paradas
  * numeradas y depósitos con una «D». Se dibuja solo en el navegador (OpenLayers se carga bajo demanda).
@@ -66,7 +63,7 @@ function withAlpha(hex: string, alpha: number): string {
  */
 @Component({
   selector: 'app-routes-map',
-  imports: [MatButtonModule, MatIconModule, RouterLink],
+  imports: [MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './routes-map.component.html',
   styleUrl: './routes-map.component.scss',
@@ -84,8 +81,12 @@ export class RoutesMapComponent {
   private readonly host = viewChild.required<ElementRef<HTMLElement>>('host');
   private readonly platformId = inject(PLATFORM_ID);
   private readonly load = inject(OPENLAYERS_LOADER);
+  private readonly theme = inject(ThemeService);
+  private readonly document = inject(DOCUMENT);
 
   private ol: OpenLayers | null = null;
+  /** Colores de las marcas con el tema que se ve; se renuevan al cambiar el tema. */
+  private palette: MapPalette | null = null;
   private routeLayer: VectorLayer<VectorSource> | null = null;
   private stopLayer: VectorLayer<VectorSource> | null = null;
   private destroyed = false;
@@ -101,7 +102,7 @@ export class RoutesMapComponent {
       name: route.name,
       vehicle: route.resource ? (route.resource.plate ? `${route.resource.name} (${route.resource.plate})` : route.resource.name) : '—',
       distance: formatDistance(route.distanceTraveled),
-      color: routeColor(route.routeIndex),
+      color: routeColorFor(route.routeIndex, this.theme.scheme()),
       dashed: routeLine(route)?.dashed ?? false,
     })),
   );
@@ -120,7 +121,7 @@ export class RoutesMapComponent {
       ? {
           route,
           waypoint,
-          color: routeColor(route.routeIndex),
+          color: routeColorFor(route.routeIndex, this.theme.scheme()),
           type: stopTypeLabel(waypoint.stopType),
           arrival: formatDateTime(waypoint.arrivalUtc),
           departure: formatDateTime(waypoint.departureUtc),
@@ -150,6 +151,17 @@ export class RoutesMapComponent {
         if (this.ol && routes !== this.drawn) {
           this.drawRoutes(routes);
           this.fit(this.selectedRoute());
+        }
+      });
+    });
+    // Cambio de tema: el canvas no se entera solo; se renuevan los colores y se vuelve a pintar
+    effect(() => {
+      const scheme = this.theme.scheme();
+      untracked(() => {
+        if (this.ol) {
+          this.palette = readMapPalette(scheme, this.document);
+          this.routeLayer?.changed();
+          this.stopLayer?.changed();
         }
       });
     });
@@ -216,7 +228,9 @@ export class RoutesMapComponent {
     this.ol = ol;
     const { tilesUrl, attribution, center, zoom } = this.config;
 
-    const tiles = new ol.TileLayer({ source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
+    this.palette = readMapPalette(this.theme.scheme(), this.document);
+    // `app-tiles`: en el tema oscuro las teselas se oscurecen con un filtro de la hoja global (rutas y paradas no se tocan)
+    const tiles = new ol.TileLayer({ className: 'app-tiles', source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
     tiles.getSource()?.on('tileloaderror', () => this.failed.set(true));
     tiles.getSource()?.on('tileloadend', () => this.failed.set(false));
 
@@ -228,7 +242,7 @@ export class RoutesMapComponent {
       target: this.host().nativeElement,
       layers: [tiles, this.routeLayer, this.stopLayer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false } }),
+      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: 'Acercar el mapa', zoomOutTipLabel: 'Alejar el mapa' } }),
     });
 
     map.on('click', (event) => {
@@ -317,10 +331,12 @@ export class RoutesMapComponent {
     const selected = this.selectedRoute();
     const dim = selected !== null && selected !== index;
     const width = selected === index ? 6 : 4;
-    const color = dim ? withAlpha(routeColor(index), 0.35) : routeColor(index);
+    const palette = this.palette!;
+    const base = routeColorFor(index, this.theme.scheme());
+    const color = dim ? toRgba(base, 0.35) : base;
     const dash = feature.get('dashed') ? [10, 8] : undefined;
     return [
-      new ol.Style({ stroke: new ol.Stroke({ color: dim ? 'rgba(255, 255, 255, 0.5)' : '#ffffff', width: width + 3, lineDash: dash }) }),
+      new ol.Style({ stroke: new ol.Stroke({ color: dim ? toRgba(palette.halo, 0.5) : palette.halo, width: width + 3, lineDash: dash }) }),
       new ol.Style({ stroke: new ol.Stroke({ color, width, lineDash: dash }) }),
     ];
   }
@@ -334,25 +350,29 @@ export class RoutesMapComponent {
     const dim = selectedRoute !== null && selectedRoute !== index;
     const picked = this.selectedStop();
     const isPicked = picked?.routeIndex === index && picked.sequence === sequence;
-    const color = routeColor(index);
+    const palette = this.palette!;
+    const dark = this.theme.scheme() === 'dark';
+    const color = routeColorFor(index, this.theme.scheme());
     const label = depot ? 'D' : `${index + 1}·${sequence}`;
+    // Con el tema claro el número es blanco con un borde oscuro, como siempre; con el oscuro, las rutas son luminosas y el número va en el tono que más contraste da
+    const numberColor = dark ? readableOn(color) : '#ffffff';
 
     const styles: InstanceType<OpenLayers['Style']>[] = [];
     if (isPicked) {
-      styles.push(new ol.Style({ image: new ol.CircleStyle({ radius: 22, fill: new ol.Fill({ color: 'rgba(0, 0, 0, 0.12)' }), stroke: new ol.Stroke({ color: '#000000', width: 3 }) }) }));
+      styles.push(new ol.Style({ image: new ol.CircleStyle({ radius: 22, fill: new ol.Fill({ color: toRgba(palette.ink, 0.12) }), stroke: new ol.Stroke({ color: palette.ink, width: 3 }) }) }));
     }
     styles.push(
       new ol.Style({
         image: new ol.CircleStyle({
           radius: depot ? 13 : 14,
-          fill: new ol.Fill({ color: depot ? '#ffffff' : dim ? withAlpha(color, 0.45) : color }),
-          stroke: new ol.Stroke({ color: depot ? (dim ? withAlpha(color, 0.45) : color) : '#ffffff', width: depot ? 4 : 2 }),
+          fill: new ol.Fill({ color: depot ? palette.halo : dim ? toRgba(color, 0.45) : color }),
+          stroke: new ol.Stroke({ color: depot ? (dim ? toRgba(color, 0.45) : color) : palette.halo, width: depot ? 4 : 2 }),
         }),
         text: new ol.TextStyle({
           text: label,
           font: '700 11px sans-serif',
-          fill: new ol.Fill({ color: depot ? '#000000' : '#ffffff' }),
-          stroke: depot ? undefined : new ol.Stroke({ color: 'rgba(0, 0, 0, 0.45)', width: 2 }),
+          fill: new ol.Fill({ color: depot ? palette.ink : numberColor }),
+          stroke: depot || dark ? undefined : new ol.Stroke({ color: 'rgba(0, 0, 0, 0.45)', width: 2 }),
         }),
       }),
     );

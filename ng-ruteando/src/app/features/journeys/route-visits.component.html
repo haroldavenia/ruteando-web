@@ -40,26 +40,26 @@
   <p>Ninguna visita coincide con los filtros.</p>
   <button mat-stroked-button type="button" (click)="store.clearFilters()">Limpiar filtros</button>
 } @else if (rows().length > 0) {
-  <div class="scroll">
-    <table>
+  <div class="scroll stack-scope">
+    <table class="grid stack-table" role="table">
       <caption class="visually-hidden">Paradas y visitas de la ruta</caption>
-      <thead>
-        <tr>
-          <th scope="col">Orden</th>
-          <th scope="col">Tipo</th>
-          <th scope="col">Paquete</th>
-          <th scope="col">Llegada</th>
-          <th scope="col">Salida</th>
-          <th scope="col">Estado</th>
-          <th scope="col"><span class="visually-hidden">Acciones</span></th>
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader">Orden</th>
+          <th scope="col" role="columnheader">Tipo</th>
+          <th scope="col" role="columnheader">Paquete</th>
+          <th scope="col" role="columnheader">Llegada</th>
+          <th scope="col" role="columnheader">Salida</th>
+          <th scope="col" role="columnheader">Estado</th>
+          <th scope="col" role="columnheader"><span class="visually-hidden">Acciones</span></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody role="rowgroup">
         @for (row of rows(); track row.stop.sequence) {
-          <tr>
-            <td>{{ row.stop.sequence }}</td>
-            <td>{{ stopType(row.stop.stopType) }}</td>
-            <td>
+          <tr role="row">
+            <td role="cell" class="primary-cell"><span class="seq" [style.--route-color]="color()" [style.--seq-text]="seqText()">{{ row.stop.sequence }}</span></td>
+            <td role="cell" data-label="Tipo">{{ stopType(row.stop.stopType) }}</td>
+            <td role="cell" data-label="Paquete">
               @if (row.visit; as visit) {
                 <span class="name">{{ visitName(visit) }}</span>
                 @if (visit.pkg?.address) {
@@ -69,16 +69,16 @@
                 —
               }
             </td>
-            <td>{{ dateTime(row.stop.arrivalUtc) }}</td>
-            <td>{{ dateTime(row.stop.departureUtc) }}</td>
-            <td>
+            <td role="cell" data-label="Llegada">{{ dateTime(row.stop.arrivalUtc) }}</td>
+            <td role="cell" data-label="Salida">{{ dateTime(row.stop.departureUtc) }}</td>
+            <td role="cell" data-label="Estado">
               @if (row.visit; as visit) {
                 <app-status-badge [label]="statusText(visit)" [tone]="tone(visit)" />
               } @else {
                 —
               }
             </td>
-            <td class="actions">
+            <td role="cell" class="actions">
               @if (row.visit; as visit) {
                 <button
                   mat-icon-button

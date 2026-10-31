@@ -36,6 +36,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       flex-wrap: wrap;
       gap: 8px;
     }
+    /* En pantallas estrechas las acciones ocupan su fila; cómo se reparten las proyectadas lo dice _ui-system.scss (Angular acota
+       aquí cada selector a este componente y no llegaría a los botones de la pantalla) */
+    @media (max-width: 479.98px) {
+      .actions {
+        flex: 1 1 100%;
+      }
+    }
   `,
 })
 export class PageHeaderComponent {

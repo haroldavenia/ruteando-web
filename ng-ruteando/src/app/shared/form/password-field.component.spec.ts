@@ -9,12 +9,13 @@ import { PasswordFieldComponent } from './password-field.component';
 
 @Component({
   imports: [PasswordFieldComponent],
-  template: `<app-password-field [control]="control" label="Contraseña" autocomplete="new-password" [messages]="messages" [requirements]="requirements" />`,
+  template: `<app-password-field [control]="control" label="Contraseña" autocomplete="new-password" [messages]="messages" [requirements]="requirements" [leadingIcon]="leadingIcon" />`,
 })
 class HostComponent {
   control = new FormControl('', { nonNullable: true, validators: [Validators.required] });
   messages = { required: 'Introduce tu contraseña' };
   requirements = false;
+  leadingIcon: string | null = null;
 }
 
 describe('PasswordFieldComponent', () => {
@@ -33,6 +34,15 @@ describe('PasswordFieldComponent', () => {
   it('muestra la etiqueta y pasa autocomplete al input', () => {
     expect(root.querySelector('mat-label')?.textContent).toContain('Contraseña');
     expect(input().getAttribute('autocomplete')).toBe('new-password');
+  });
+
+  it('el botón del ojo lleva título con lo que hace y lo cambia al alternar', () => {
+    expect(toggle().getAttribute('title')).toBe('Mostrar contraseña');
+
+    toggle().click();
+    fixture.detectChanges();
+
+    expect(toggle().getAttribute('title')).toBe('Ocultar contraseña');
   });
 
   it('empieza oculta y el botón alterna el tipo con su etiqueta y aria-pressed', () => {
@@ -151,6 +161,47 @@ describe('PasswordFieldComponent', () => {
       ]);
       expect(items().every((li) => li.querySelector('mat-icon')?.getAttribute('aria-hidden') === 'true')).toBeTrue();
       expect(items()[2].classList).toContain('met');
+    });
+
+    it('sin icono a la izquierda el campo no lleva ninguno, y con él, la barra de seguridad cuenta los requisitos cumplidos', () => {
+      expect(root.querySelector('mat-icon[matPrefix]')).toBeNull();
+      show();
+      focus();
+      type('Abc');
+      const segments = () => Array.from(root.querySelectorAll('.strength i'));
+      expect(segments().length).toBe(5);
+      expect(segments().filter((segment) => segment.classList.contains('on')).length).toBe(2);
+      expect(root.querySelector('.strength')?.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('con icono a la izquierda, el candado del campo mide lo mismo que el de los demás campos y no el de las etiquetas', () => {
+      fixture.componentInstance.leadingIcon = 'lock';
+      fixture.detectChanges();
+      show();
+      focus();
+      const lock = root.querySelector('mat-form-field mat-icon[matPrefix]') as HTMLElement;
+      const chip = root.querySelector('ul.requirements li mat-icon') as HTMLElement;
+      expect(lock.textContent?.trim()).toBe('lock');
+      expect(parseFloat(getComputedStyle(lock).width)).toBe(24);
+      expect(parseFloat(getComputedStyle(chip).width)).toBe(18);
+    });
+
+    it('cada requisito es una etiqueta redondeada y su fondo cambia según esté pendiente, cumplido o no cumplido', () => {
+      show();
+      focus();
+      type('r');
+      // `getComputedStyle` es una vista viva: se guardan los valores antes de cambiar el estado
+      const pendingBackground = getComputedStyle(items()[0]).backgroundColor;
+      const metBackground = getComputedStyle(items()[2]).backgroundColor;
+      expect(getComputedStyle(items()[0]).borderTopLeftRadius).toBe('999px');
+      expect(parseFloat(getComputedStyle(items()[2]).minHeight)).toBeGreaterThanOrEqual(28);
+      expect(metBackground).not.toBe(pendingBackground);
+
+      blur();
+      expect(items()[0].classList).toContain('failed');
+      const failedBackground = getComputedStyle(items()[0]).backgroundColor;
+      expect(failedBackground).not.toBe(pendingBackground);
+      expect(failedBackground).not.toBe(metBackground);
     });
 
     it('al salir con todo cumplido se cierra', () => {

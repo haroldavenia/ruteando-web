@@ -1,29 +1,157 @@
 // Estilos de la vista de acceso. El tema (claro y oscuro) es el de toda la aplicación y se define en `styles.scss`.
+@use '@angular/material' as mat;
 
 // Aspecto común de las pantallas de acceso (título, formulario, botón principal y enlaces secundarios).
 // Selectores de baja especificidad (`:where`) para que una pantalla pueda sobrescribirlos si lo necesita.
 .access-theme {
+  // Botones de 48px (las esquinas de 12px de botones y campos son las de toda la aplicación, en `styles.scss`), con los tokens
+  // oficiales de Material (nada de tocar sus clases internas)
+  @include mat.button-overrides((
+    filled-container-height: 48px,
+    outlined-container-height: 48px,
+    text-container-height: 48px,
+  ));
+
   :where(h1) {
     margin: 0 0 20px;
     font: var(--mat-sys-headline-medium);
+    font-weight: 500;
     letter-spacing: -0.01em;
   }
 
   :where(form) {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
   }
 
   :where(.field) {
     width: 100%;
   }
 
-  // Botón principal: ocupa todo el ancho del formulario
+  // Roboto se carga en pesos 300 a 500: la negrita (700) la inventaría el navegador, con trazo emborronado
+  :where(strong, b) {
+    font-weight: 500;
+  }
+
+  // Dos campos cortos en una fila (nombre y apellidos); los demás ocupan el ancho. En pantallas muy estrechas, una columna
+  :where(.field-grid) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 12px;
+  }
+
+  :where(.field-grid > :not(.half)) {
+    grid-column: 1 / -1;
+  }
+
+  // Botón principal: ocupa todo el ancho del formulario (su altura, 48px, sale del token de Material de arriba) y lleva
+  // el hilo de la marca. Material solo pone `background-color`: el degradado va encima y, desactivado, vuelve al color liso
   :where(form button[mat-flat-button][type='submit']) {
     width: 100%;
-    height: 48px;
     margin-top: 4px;
+  }
+
+  // Sin `:where()`: `.mdc-button` de Material trae `background: transparent`, que reinicia `background-image`, y una regla de
+  // especificidad cero perdería contra ella
+  form button[mat-flat-button][type='submit']:not(:disabled) {
+    background-image: var(--app-brand-gradient);
+  }
+
+  // Frase de apoyo bajo el título: se acerca al título (su margen de 20px es parte de la prueba de coherencia)
+  :where(.lead) {
+    margin: -12px 0 20px;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-large);
+  }
+
+  // «¿Olvidaste tu contraseña?», a la derecha, entre la contraseña y el botón
+  :where(.forgot) {
+    display: flex;
+    justify-content: flex-end;
+    margin-block: -8px -4px;
+  }
+
+  :where(.forgot a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  // Panel de estado (correo enviado, verificando, enlace no válido): icono, título y texto centrados; un formulario dentro se queda a su ancho
+  :where(.state) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  :where(.state > form, .state > .actions) {
+    align-self: stretch;
+    text-align: start;
+  }
+
+  :where(.state .actions) {
+    justify-content: center;
+  }
+
+  :where(.state-icon) {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+
+  :where(.state-icon.bad) {
+    background: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+  }
+
+  :where(.state-icon mat-icon) {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+  }
+
+  // Verificando: un anillo punteado gira alrededor del icono (quieto con movimiento reducido)
+  :where(.state-icon.spin)::after {
+    position: absolute;
+    inset: -7px;
+    content: '';
+    border: 3px dotted var(--mat-sys-primary);
+    border-radius: 50%;
+  }
+
+  // Tarjeta de presentación (la usan `AccessPitchComponent` y `AccessStepsComponent`): solo en el diseño ancho. El degradado
+  // de la marca solo adorna una palabra del título; en colores forzados vuelve al texto normal
+  .pitch-card {
+    display: none;
+
+    .title {
+      margin: 0;
+      font: var(--mat-sys-headline-large);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .accent {
+      background: var(--app-brand-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    @media (forced-colors: active) {
+      .accent {
+        background: none;
+        color: inherit;
+      }
+    }
   }
 
   :where(.actions) {
@@ -42,16 +170,61 @@
     margin-top: 24px;
   }
 
-  :where(.alt) {
-    margin: 24px 0 0;
+  // Cada enlace del bloque es un objetivo táctil de al menos 44px de alto
+  :where(.links a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 
+  :where(.alt) {
+    margin: 24px 0 0;
+    text-align: center;
+  }
+
+  // Enlaces con el color de la marca (el del navegador es un azul fuera del tema); los botones de Material conservan el suyo
   :where(a) {
     border-radius: 4px;
+    color: var(--mat-sys-primary);
+    text-underline-offset: 3px;
   }
 
   :where(a:focus-visible) {
     outline: 3px solid var(--mat-sys-primary);
     outline-offset: 2px;
+  }
+}
+
+@media (max-width: 420px) {
+  .access-theme :where(.field-grid) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// Desde 1024px la presentación se muestra como una tarjeta sobre la ilustración (en estrecho queda oculta)
+@media (min-width: 1024px) {
+  .access-theme .pitch-card {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 440px;
+    padding: 28px;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 24px;
+    background: var(--mat-sys-surface);
+    box-shadow: 0 8px 32px rgb(0 0 0 / 0.1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .access-theme .state-icon.spin::after {
+    animation: access-spin 2.4s linear infinite;
+  }
+
+  @keyframes access-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }

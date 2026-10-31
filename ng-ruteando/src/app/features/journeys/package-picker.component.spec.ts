@@ -64,6 +64,23 @@ describe('PackagePickerComponent', () => {
     expect(root().textContent).toContain('2 paquetes seleccionados');
   });
 
+  it('en una caja estrecha cada paquete es una tarjeta con su nombre de título y la casilla dice «Seleccionar»', () => {
+    firstPage().flush(page([item(1)], 0, 1));
+    fixture.detectChanges();
+    const row = root().querySelector('tbody tr') as HTMLElement;
+    const label = row.querySelector('.stack-only') as HTMLElement;
+
+    root().style.display = 'block';
+    root().style.width = '900px';
+    expect(getComputedStyle(label).display).toBe('none');
+
+    root().style.width = '360px';
+    expect(getComputedStyle(label).display).not.toBe('none');
+    expect(label.textContent).toBe('Seleccionar');
+    expect(row.querySelector('td.primary-cell')?.getAttribute('data-label')).toBe('Nombre');
+    expect(checkbox('Seleccionar paquete G-1')).not.toBeNull();
+  });
+
   it('la selección sobrevive al cambio de página', () => {
     firstPage().flush(page([item(1), item(2)], 0, 45));
     fixture.detectChanges();

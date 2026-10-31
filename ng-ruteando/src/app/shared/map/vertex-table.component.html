@@ -1,39 +1,39 @@
-<div class="scroll">
-  <table>
+<div class="scroll stack-scope">
+  <table class="stack-table" role="table">
     <caption>Vértices del polígono</caption>
-    <thead>
-      <tr>
-        <th scope="col">Vértice</th>
-        <th scope="col">Latitud</th>
-        <th scope="col">Longitud</th>
-        <th scope="col"><span class="visually-hidden">Quitar</span></th>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th scope="col" role="columnheader">Vértice</th>
+        <th scope="col" role="columnheader">Latitud</th>
+        <th scope="col" role="columnheader">Longitud</th>
+        <th scope="col" role="columnheader"><span class="visually-hidden">Quitar</span></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody role="rowgroup">
       @for (row of rows.controls; track $index; let i = $index) {
-        <tr [formGroup]="row">
-          <th scope="row">{{ i + 1 }}</th>
-          <td>
+        <tr role="row" [formGroup]="row">
+          <th scope="row" role="rowheader" class="primary-cell">{{ i + 1 }}</th>
+          <td role="cell" data-label="Latitud">
             <input type="number" step="any" inputmode="decimal" formControlName="lat" [attr.aria-label]="'Latitud del vértice ' + (i + 1)" [attr.aria-invalid]="row.controls.lat.invalid" />
             @if (row.controls.lat.invalid) {
               <span class="error" role="alert">{{ error(row, 'lat') }}</span>
             }
           </td>
-          <td>
+          <td role="cell" data-label="Longitud">
             <input type="number" step="any" inputmode="decimal" formControlName="lng" [attr.aria-label]="'Longitud del vértice ' + (i + 1)" [attr.aria-invalid]="row.controls.lng.invalid" />
             @if (row.controls.lng.invalid) {
               <span class="error" role="alert">{{ error(row, 'lng') }}</span>
             }
           </td>
-          <td>
+          <td role="cell" class="actions">
             <button mat-icon-button type="button" (click)="remove(i)" [attr.aria-label]="'Quitar el vértice ' + (i + 1)">
               <mat-icon aria-hidden="true">delete</mat-icon>
             </button>
           </td>
         </tr>
       } @empty {
-        <tr>
-          <td colspan="4">Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.</td>
+        <tr role="row">
+          <td role="cell" colspan="4">Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.</td>
         </tr>
       }
     </tbody>

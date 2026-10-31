@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,8 +16,10 @@ import {
 import type OlMap from 'ol/Map';
 
 import { LatLng, latLng, toOlCoordinate } from '../../core/geo/lat-lng';
+import { ThemeService } from '../../core/theme/theme.service';
 
 import { MAP_CONFIG } from './map-config';
+import { readMapPalette } from './map-palette';
 import { OPENLAYERS_LOADER, OpenLayers } from './openlayers';
 
 /** Redondea a 6 decimales (~10 cm) y lleva la longitud a -180..180 si el mapa dio la vuelta al mundo. */
@@ -73,8 +75,12 @@ export class MapViewComponent {
   private readonly host = viewChild.required<ElementRef<HTMLElement>>('host');
   private readonly platformId = inject(PLATFORM_ID);
   private readonly load = inject(OPENLAYERS_LOADER);
+  private readonly theme = inject(ThemeService);
+  private readonly document = inject(DOCUMENT);
 
   private ol: OpenLayers | null = null;
+  private markerLayer: InstanceType<OpenLayers['VectorLayer']> | null = null;
+  private markerStyle: InstanceType<OpenLayers['Style']> | null = null;
   private marker: InstanceType<OpenLayers['Feature']> | null = null;
   private translate: InstanceType<OpenLayers['Translate']> | null = null;
   private destroyed = false;
@@ -98,6 +104,14 @@ export class MapViewComponent {
       const selectable = this.selectable();
       this.translate?.setActive(selectable);
     });
+    // Cambio de tema: el canvas no se entera solo, así que se le vuelve a dar el estilo con los colores del tema nuevo
+    effect(() => {
+      const scheme = this.theme.scheme();
+      if (this.ol && this.markerLayer) {
+        this.markerStyle = this.paintMarker(this.ol, scheme);
+        this.markerLayer.changed();
+      }
+    });
   }
 
   private async init(): Promise<void> {
@@ -117,17 +131,11 @@ export class MapViewComponent {
     const source = new ol.VectorSource();
     this.marker = new ol.Feature();
     source.addFeature(this.marker);
-    const markerLayer = new ol.VectorLayer({
-      source,
-      style: new ol.Style({
-        image: new ol.CircleStyle({
-          radius: 9,
-          fill: new ol.Fill({ color: '#6200ee' }),
-          stroke: new ol.Stroke({ color: '#ffffff', width: 3 }),
-        }),
-      }),
-    });
-    const tiles = new ol.TileLayer({ source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
+    this.markerStyle = this.paintMarker(ol, this.theme.scheme());
+    const markerLayer = new ol.VectorLayer({ source, style: () => this.markerStyle! });
+    this.markerLayer = markerLayer;
+    // `app-tiles`: en el tema oscuro las teselas se oscurecen con un filtro de la hoja global (el marcador no se toca)
+    const tiles = new ol.TileLayer({ className: 'app-tiles', source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
     tiles.getSource()?.on('tileloaderror', () => this.failed.set(true));
     tiles.getSource()?.on('tileloadend', () => this.failed.set(false));
 
@@ -138,7 +146,7 @@ export class MapViewComponent {
       layers: [tiles, markerLayer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
       // La atribución del proveedor debe verse siempre: sin el botón que la pliega
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false } }),
+      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: 'Acercar el mapa', zoomOutTipLabel: 'Alejar el mapa' } }),
     });
 
     this.translate = new ol.Translate({ layers: [markerLayer] });
@@ -165,6 +173,14 @@ export class MapViewComponent {
 
     this.olMap.set(map);
     this.showPoint(initial, false);
+  }
+
+  /** Estilo del marcador con los colores del tema que se ve. */
+  private paintMarker(ol: OpenLayers, scheme: 'light' | 'dark'): InstanceType<OpenLayers['Style']> {
+    const palette = readMapPalette(scheme, this.document);
+    return new ol.Style({
+      image: new ol.CircleStyle({ radius: 9, fill: new ol.Fill({ color: palette.accent }), stroke: new ol.Stroke({ color: palette.halo, width: 3 }) }),
+    });
   }
 
   /** Coloca (o quita) el marcador; con `recenter` mueve el mapa si el punto queda fuera de la vista. */

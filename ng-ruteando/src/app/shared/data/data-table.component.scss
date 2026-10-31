@@ -2,15 +2,6 @@
   display: block;
 }
 
-.toolbar {
-  padding: 16px 20px 8px;
-}
-
-.filter {
-  width: 100%;
-  max-width: 360px;
-}
-
 .table-scroll {
   overflow-x: auto;
 }
@@ -22,11 +13,39 @@ table {
 
 th.mat-mdc-header-cell {
   background: var(--mat-sys-surface-container);
-  font-weight: 500;
 }
 
 tr.mat-mdc-row:hover {
   background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+}
+
+// Los enlaces de una celda (el nombre del registro) son un objetivo de 44px y se distinguen del texto
+td a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--mat-sys-primary);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+// La columna fija necesita su propio fondo: el de la tabla es transparente y el texto de debajo se vería al desplazar
+td.mat-mdc-table-sticky {
+  background: var(--mat-sys-surface-container-low);
+}
+
+th.mat-mdc-table-sticky {
+  background: var(--mat-sys-surface-container);
+}
+
+tr.mat-mdc-row:hover td.mat-mdc-table-sticky {
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, var(--mat-sys-surface-container-low));
+}
+
+@media (max-width: 719.98px) {
+  .mat-mdc-table-sticky {
+    box-shadow: 8px 0 8px -8px rgb(0 0 0 / 0.3);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

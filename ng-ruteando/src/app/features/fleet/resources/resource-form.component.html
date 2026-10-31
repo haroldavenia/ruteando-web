@@ -1,4 +1,4 @@
-<h1>{{ isNew ? 'Nuevo vehículo' : 'Editar vehículo' }}</h1>
+<app-form-head [title]="isNew ? 'Nuevo vehículo' : 'Editar vehículo'" backLabel="Vehículos" backLink="/flota/vehiculos" />
 @switch (loader.status()) {
   @case ('loading') {
     <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
@@ -13,75 +13,79 @@
   }
   @default {
     <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
-      <mat-form-field>
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="name" autocomplete="off" />
-        <mat-error>{{ error('name') }}</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Matrícula (opcional)</mat-label>
-        <input matInput formControlName="licensePlate" autocomplete="off" />
-      </mat-form-field>
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="directions_car" />Identificación</h2>
+        <mat-form-field>
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" autocomplete="off" />
+          <mat-error>{{ error('name') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Matrícula (opcional)</mat-label>
+          <input matInput formControlName="licensePlate" autocomplete="off" />
+        </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>Tipo de vehículo</mat-label>
-        <mat-select formControlName="resourceTypeId">
-          @for (type of types(); track type.id) {
-            <mat-option [value]="type.id">{{ type.name }}</mat-option>
-          }
-        </mat-select>
-        <mat-error>{{ error('resourceTypeId') }}</mat-error>
-      </mat-form-field>
-      @if (typesLoaded() && types().length === 0) {
-        <p class="hint">Todavía no hay tipos de vehículo. Primero <a routerLink="/flota/tipos">crea un tipo</a>.</p>
-      }
-      @if (typesTruncated()) {
-        <p class="hint" role="status">Se muestran solo los primeros {{ selectLimit }} tipos.</p>
-      }
+        <mat-form-field>
+          <mat-label>Tipo de vehículo</mat-label>
+          <mat-select formControlName="resourceTypeId">
+            @for (type of types(); track type.id) {
+              <mat-option [value]="type.id">{{ type.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-error>{{ error('resourceTypeId') }}</mat-error>
+        </mat-form-field>
+        @if (typesLoaded() && types().length === 0) {
+          <p class="hint">Todavía no hay tipos de vehículo. Primero <a routerLink="/flota/tipos">crea un tipo</a>.</p>
+        }
+        @if (typesTruncated()) {
+          <p class="hint" role="status">Se muestran solo los primeros {{ selectLimit }} tipos.</p>
+        }
+      </section>
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="schedule" />Depósito y turno</h2>
+        <mat-form-field>
+          <mat-label>Depósito</mat-label>
+          <mat-select formControlName="depotId">
+            @for (place of places(); track place.id) {
+              <mat-option [value]="place.id">{{ place.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-error>{{ error('depotId') }}</mat-error>
+        </mat-form-field>
+        @if (placesLoaded() && places().length === 0) {
+          <p class="hint">Todavía no hay lugares que usar como depósito. Primero <a routerLink="/lugares/nuevo">crea un lugar</a>.</p>
+        }
+        @if (placesTruncated()) {
+          <p class="hint" role="status">Se muestran solo los primeros {{ selectLimit }} lugares.</p>
+        }
 
-      <mat-form-field>
-        <mat-label>Depósito</mat-label>
-        <mat-select formControlName="depotId">
-          @for (place of places(); track place.id) {
-            <mat-option [value]="place.id">{{ place.name }}</mat-option>
-          }
-        </mat-select>
-        <mat-error>{{ error('depotId') }}</mat-error>
-      </mat-form-field>
-      @if (placesLoaded() && places().length === 0) {
-        <p class="hint">Todavía no hay lugares que usar como depósito. Primero <a routerLink="/lugares/nuevo">crea un lugar</a>.</p>
-      }
-      @if (placesTruncated()) {
-        <p class="hint" role="status">Se muestran solo los primeros {{ selectLimit }} lugares.</p>
-      }
-
-      <mat-form-field>
-        <mat-label>Inicio del turno</mat-label>
-        <input matInput type="time" formControlName="shiftStart" />
-        <mat-hint>Hora local de tu navegador</mat-hint>
-        <mat-error>{{ error('shiftStart') }}</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Duración del turno (minutos)</mat-label>
-        <input matInput type="number" step="1" formControlName="shiftDurationMin" autocomplete="off" />
-        <mat-error>{{ error('shiftDurationMin') }}</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Duración del descanso (minutos)</mat-label>
-        <input matInput type="number" step="1" formControlName="breakDurationMin" autocomplete="off" />
-        <mat-error>{{ error('breakDurationMin') }}</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Cantidad</mat-label>
-        <input matInput type="number" step="1" min="1" formControlName="quantity" autocomplete="off" />
-        <mat-error>{{ error('quantity') }}</mat-error>
-      </mat-form-field>
-
+        <mat-form-field>
+          <mat-label>Inicio del turno</mat-label>
+          <input matInput type="time" formControlName="shiftStart" />
+          <mat-hint>Hora local de tu navegador</mat-hint>
+          <mat-error>{{ error('shiftStart') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Duración del turno (minutos)</mat-label>
+          <input matInput type="number" step="1" formControlName="shiftDurationMin" autocomplete="off" />
+          <mat-error>{{ error('shiftDurationMin') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Duración del descanso (minutos)</mat-label>
+          <input matInput type="number" step="1" formControlName="breakDurationMin" autocomplete="off" />
+          <mat-error>{{ error('breakDurationMin') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Cantidad</mat-label>
+          <input matInput type="number" step="1" min="1" formControlName="quantity" autocomplete="off" />
+          <mat-error>{{ error('quantity') }}</mat-error>
+        </mat-form-field>
+      </section>
       <app-form-result [error]="submit.error()" />
-      <div class="form-actions">
+      <app-form-actions [dirty]="hasUnsavedChanges()">
         <a mat-button routerLink="/flota/vehiculos">Cancelar</a>
-        <button mat-flat-button type="submit" [disabled]="submit.submitting()">Guardar</button>
-      </div>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+      </app-form-actions>
     </form>
   }
 }

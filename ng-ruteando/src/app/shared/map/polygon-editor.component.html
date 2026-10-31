@@ -21,6 +21,8 @@
   <p class="notice error" role="alert">No se pudo cargar el mapa. Puedes seguir escribiendo los vértices en la tabla.</p>
 }
 
-<p class="summary" [class.problem]="!valid() && vertices().length > 0" role="status" aria-live="polite">{{ summary() }}</p>
+<div class="side">
+  <p class="summary" [class.problem]="!valid() && vertices().length > 0" role="status" aria-live="polite">{{ summary() }}</p>
 
-<app-vertex-table [(vertices)]="vertices" />
+  <app-vertex-table [(vertices)]="vertices" />
+</div>

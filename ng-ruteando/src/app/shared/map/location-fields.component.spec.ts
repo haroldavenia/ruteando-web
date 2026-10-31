@@ -56,6 +56,38 @@ describe('LocationFieldsComponent', () => {
     await settle();
   }
 
+  describe('disposición', () => {
+    it('los campos van primero en el orden de lectura y el mapa después, también cuando se ven lado a lado', async () => {
+      await create();
+      const coordinates = root().querySelector('.coordinates')!;
+      const map = root().querySelector('app-map-view')!;
+
+      expect(coordinates.compareDocumentPosition(map) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('desde 720px el mapa queda a la derecha de los campos y los campos van uno sobre otro', async () => {
+      if (!window.matchMedia('(min-width: 720px)').matches) {
+        pending('la ventana de pruebas es estrecha: aquí van uno sobre otro');
+      }
+      await create();
+      const coordinates = root().querySelector('.coordinates') as HTMLElement;
+      const map = root().querySelector('app-map-view') as HTMLElement;
+      const [lat, lng] = Array.from(coordinates.querySelectorAll('mat-form-field')).map((f) => f.getBoundingClientRect());
+
+      expect(map.getBoundingClientRect().left).toBeGreaterThanOrEqual(coordinates.getBoundingClientRect().right);
+      expect(lng.top).toBeGreaterThanOrEqual(lat.bottom - 1);
+    });
+
+    it('en pantallas estrechas el mapa va debajo de los campos', async () => {
+      if (window.matchMedia('(min-width: 720px)').matches) {
+        pending('la ventana de pruebas es ancha: aquí van lado a lado');
+      }
+      await create();
+
+      expect(root().querySelector('app-map-view')!.getBoundingClientRect().top).toBeGreaterThanOrEqual(root().querySelector('.coordinates')!.getBoundingClientRect().bottom);
+    });
+  });
+
   it('escribir latitud y longitud válidas mueve el marcador', async () => {
     await create();
     type('Latitud', '4.60872');

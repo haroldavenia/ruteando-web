@@ -20,6 +20,7 @@ export class DeleteConfirmation {
           title: `Eliminar ${entity}`,
           message: `¿Eliminar ${entity} «${name}»? Esta acción no se puede deshacer.`,
           confirmLabel: 'Eliminar',
+          destructive: true,
         },
       })
       .afterClosed()

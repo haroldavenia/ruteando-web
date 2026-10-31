@@ -91,4 +91,30 @@ describe('ListState', () => {
     second.next(page(['nuevo'], 1, 21));
     expect(state.rows()).toEqual(['nuevo']);
   });
+
+  describe('countText', () => {
+    it('dice el total que informa el gateway, en singular o en plural', () => {
+      const state = make(() => of(page(['a', 'b'], 0, 137)));
+      state.load(0);
+      expect(state.countText('paquete', 'paquetes')).toBe('137 paquetes');
+
+      const one = make(() => of(page(['a'], 0, 1)));
+      one.load(0);
+      expect(one.countText('paquete', 'paquetes')).toBe('1 paquete');
+    });
+
+    it('no dice nada mientras carga, si no hay registros ni si falló', () => {
+      const loading = make(() => new Subject<Page<string>>());
+      loading.load(0);
+      expect(loading.countText('lugar', 'lugares')).toBeNull();
+
+      const empty = make(() => of(page<string>([], 0, 0)));
+      empty.load(0);
+      expect(empty.countText('lugar', 'lugares')).toBeNull();
+
+      const failed = make(() => throwError(() => new ApiError({ status: 500, message: 'x' })));
+      failed.load(0);
+      expect(failed.countText('lugar', 'lugares')).toBeNull();
+    });
+  });
 });

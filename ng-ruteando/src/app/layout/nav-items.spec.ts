@@ -1,6 +1,6 @@
 import { UserRole } from '../core/auth/session.model';
 
-import { areaLinksFor, navItemsFor } from './nav-items';
+import { NAV_ITEMS, areaLinksFor, navItemsFor, quickActionsFor } from './nav-items';
 
 const labels = (items: { label: string }[]) => items.map((i) => i.label);
 
@@ -44,6 +44,30 @@ describe('nav-items', () => {
       expect(labels(areaLinksFor('agent'))).toEqual(['Paquetes', 'Jornadas']);
       expect(areaLinksFor('driver')).toEqual([]);
       expect(areaLinksFor(null)).toEqual([]);
+    });
+  });
+
+  describe('nombre corto del riel', () => {
+    it('solo Configuraciones lo necesita, y el nombre accesible sigue siendo el largo', () => {
+      const withShort = NAV_ITEMS.filter((item) => item.short);
+      expect(withShort.map((item) => [item.label, item.short])).toEqual([['Configuraciones', 'Config.']]);
+    });
+  });
+
+  describe('quickActionsFor', () => {
+    it('administración y agentes pueden planificar una jornada, crear un paquete e importar paquetes', () => {
+      for (const role of ['tenant_admin', 'super_admin', 'agent'] as UserRole[]) {
+        expect(quickActionsFor(role).map((action) => [action.label, action.link])).toEqual([
+          ['Planificar jornada', '/jornadas/nueva'],
+          ['Nuevo paquete', '/paquetes/nuevo'],
+          ['Importar paquetes', '/paquetes/importar'],
+        ]);
+      }
+    });
+
+    it('el conductor y quien no tiene rol no tienen acciones', () => {
+      expect(quickActionsFor('driver')).toEqual([]);
+      expect(quickActionsFor(null)).toEqual([]);
     });
   });
 });

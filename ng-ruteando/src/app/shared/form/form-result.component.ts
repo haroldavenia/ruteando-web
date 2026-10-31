@@ -23,19 +23,31 @@ import { MatIconModule } from '@angular/material/icon';
     </div>
   `,
   styles: `
+    /* Sin caja propia: vacío no deja un hueco extra entre bloques de la pantalla (el marco .page separa cada hijo 24px) */
+    :host {
+      display: contents;
+    }
     .result {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: flex-start;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font: var(--mat-sys-body-medium);
     }
     .result:empty {
       display: none;
     }
+    .result mat-icon {
+      flex: none;
+    }
     .error {
-      color: var(--mat-sys-error);
+      background: var(--mat-sys-error-container);
+      color: var(--mat-sys-on-error-container);
     }
     .success {
-      color: var(--mat-sys-primary);
+      background: var(--app-success-container);
+      color: var(--app-on-success-container);
     }
   `,
 })

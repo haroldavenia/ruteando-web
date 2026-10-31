@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 @Component({
   selector: 'app-brand',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.compact]': "size() === 'compact'" },
+  host: { '[class.compact]': "size() === 'compact'", '[class.mark]': "size() === 'mark'" },
   template: `
     <svg class="emblem" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
       <rect class="button" x="20" y="1.5" width="8" height="4" rx="1.5" />
@@ -59,12 +59,31 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     :host(.compact) {
       gap: 8px;
     }
+    /* Solo el emblema (el riel de iconos): el nombre sigue en el DOM para los lectores de pantalla */
+    :host(.mark) .name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
     :host(.compact) .emblem {
       width: 32px;
       height: 32px;
     }
     :host(.compact) .name {
       font-size: 1.25rem;
+    }
+    @media (max-width: 479.98px) {
+      :host(.compact) .name {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
     }
     .name {
       color: var(--mat-sys-on-surface);
@@ -75,6 +94,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   `,
 })
 export class BrandComponent {
-  /** `compact` para la barra superior del área autenticada. */
-  readonly size = input<'regular' | 'compact'>('regular');
+  /** `compact` para la barra del área autenticada en pantallas estrechas (bajo 480px, solo el emblema); `mark`, solo el emblema, para el riel de iconos. */
+  readonly size = input<'regular' | 'compact' | 'mark'>('regular');
 }

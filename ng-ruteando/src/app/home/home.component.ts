@@ -7,112 +7,49 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 
 import { JourneysApi } from '../core/api/data/journeys.api';
+import { PackagesApi } from '../core/api/data/packages.api';
 import { Journey } from '../core/api/models';
 import { OPERATIONS_ROLES } from '../core/auth/admin-roles';
 import { CurrentUser } from '../core/auth/current-user';
 import { messageFor } from '../shared/data/api-messages';
+import { CityMapComponent } from '../shared/brand/city-map.component';
 import { FormResultComponent } from '../shared/form/form-result.component';
 import { formatDateTime } from '../shared/format';
+import { ProgressRingComponent } from '../shared/ui/progress-ring.component';
 import { StatusBadgeComponent } from '../shared/ui/status-badge.component';
 import { statusTone } from '../shared/ui/status-tone';
 import { journeyStatusLabel } from '../features/journeys/journey-labels';
 import { fetchLatestJourneys } from '../features/journeys/latest-journeys';
 import { areaLinksFor } from '../layout/nav-items';
 
+import { FIGURES_SAMPLE_SIZE, PackageFigures, packageFigures } from './package-figures';
+
 /**
- * Inicio: saludo, accesos a las áreas que el rol puede abrir (los mismos del menú lateral) como mosaicos y las últimas
+ * Inicio: cabecera con el saludo y las acciones principales (planificar una jornada e importar paquetes, solo para quienes
+ * operan jornadas), accesos a las áreas que el rol puede abrir (los mismos del menú lateral) como mosaicos y las últimas
  * jornadas en una tarjeta. El estilo de página, mosaicos y tarjetas es el del sistema de interfaz.
  */
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule, FormResultComponent, StatusBadgeComponent],
+  imports: [
+    RouterLink,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressBarModule,
+    FormResultComponent,
+    ProgressRingComponent,
+    CityMapComponent,
+    StatusBadgeComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: `
-    .greeting {
-      margin: -16px 0 0;
-      color: var(--mat-sys-on-surface-variant);
-      font: var(--mat-sys-body-large);
-    }
-    .journeys {
-      margin: 0 0 16px;
-      padding: 0;
-      list-style: none;
-    }
-    .journeys li {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px 16px;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--mat-sys-outline-variant);
-    }
-    .journeys a {
-      flex: 1 1 160px;
-      font: var(--mat-sys-title-small);
-    }
-    .meta {
-      color: var(--mat-sys-on-surface-variant);
-    }
-  `,
-  template: `
-    <h1>Ruteando</h1>
-    <p class="greeting">Hola, {{ name() }}. Planificación de rutas.</p>
-
-    <section aria-labelledby="areas-title">
-      <h2 id="areas-title">Áreas</h2>
-      @if (areas().length === 0) {
-        <p>Tu rol no tiene áreas disponibles en la aplicación web.</p>
-      } @else {
-        <ul class="tile-grid">
-          @for (area of areas(); track area.link) {
-            <li>
-              <a class="area tile" [routerLink]="area.link">
-                <div class="tile-icon"><mat-icon aria-hidden="true">{{ area.icon }}</mat-icon></div>
-                <span>{{ area.label }}</span>
-              </a>
-            </li>
-          }
-        </ul>
-      }
-    </section>
-
-    @if (showJourneys()) {
-      <section class="card" aria-labelledby="journeys-title">
-        <h2 id="journeys-title">Últimas jornadas</h2>
-        @switch (status()) {
-          @case ('loading') {
-            <mat-progress-bar mode="indeterminate" aria-label="Cargando las últimas jornadas" />
-          }
-          @case ('error') {
-            <app-form-result [error]="error()" />
-            <button mat-stroked-button type="button" (click)="load()">Reintentar</button>
-          }
-          @case ('ready') {
-            @if (journeys().length === 0) {
-              <p>Todavía no hay jornadas.</p>
-              <a mat-stroked-button routerLink="/jornadas/nueva">Planificar la primera jornada</a>
-            } @else {
-              <ul class="journeys">
-                @for (journey of journeys(); track journey.id) {
-                  <li>
-                    <a [routerLink]="['/jornadas', journey.id]">{{ journey.name }}</a>
-                    <app-status-badge [label]="statusLabel(journey.status)" [tone]="tone(journey.status)" />
-                    <span class="meta">{{ dateTime(journey.createdAt) }}</span>
-                  </li>
-                }
-              </ul>
-              <a mat-stroked-button routerLink="/jornadas">Ver todas las jornadas</a>
-            }
-          }
-        }
-      </section>
-    }
-  `,
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   private readonly currentUser = inject(CurrentUser);
 
   private readonly api = inject(JourneysApi);
+  private readonly packagesApi = inject(PackagesApi);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -122,27 +59,105 @@ export class HomeComponent {
     const user = this.currentUser.user();
     return user?.firstName?.trim() || user?.email || '';
   });
-  /** Solo quien puede abrir `/jornadas` ve las últimas jornadas, y solo en el navegador (nunca en el render del servidor). */
-  protected readonly showJourneys = computed(() => {
-    const role = this.currentUser.role();
-    return role !== null && OPERATIONS_ROLES.includes(role) && isPlatformBrowser(this.platformId);
+  /** Saludo según la hora: «Buenos días», «Buenas tardes» o «Buenas noches», con el nombre. */
+  protected readonly greeting = computed(() => {
+    const hour = new Date().getHours();
+    const salute = hour < 12 ? 'Buenos días' : hour < 20 ? 'Buenas tardes' : 'Buenas noches';
+    return `${salute}, ${this.name()}`;
   });
+  /** «viernes 30 de octubre» (se muestra en mayúsculas con estilos). */
+  protected readonly today = new Intl.DateTimeFormat('es', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()).replace(',', '');
+  /** Quien puede abrir `/jornadas` y `/paquetes` (administradores y agentes) ve las acciones principales. */
+  protected readonly canOperate = computed(() => {
+    const role = this.currentUser.role();
+    return role !== null && OPERATIONS_ROLES.includes(role);
+  });
+  /** Las últimas jornadas se piden solo a quien opera jornadas, y solo en el navegador (nunca en el render del servidor). */
+  protected readonly showJourneys = computed(() => this.canOperate() && isPlatformBrowser(this.platformId));
 
   protected readonly status = signal<'loading' | 'ready' | 'error'>('loading');
   protected readonly journeys = signal<readonly Journey[]>([]);
   protected readonly error = signal<string | null>(null);
 
+  /** Cifras de paquetes (atendidos, pendientes, sin atender), de la misma página de los más recientes; solo para quien opera. */
+  protected readonly figures = signal<PackageFigures | null>(null);
+  protected readonly figuresStatus = signal<'loading' | 'ready' | 'error'>('loading');
+  protected readonly figuresError = signal<string | null>(null);
+
   protected readonly statusLabel = journeyStatusLabel;
   protected readonly tone = (status: string) => statusTone('journey', status);
-  protected readonly dateTime = formatDateTime;
 
   private loading: Subscription | null = null;
+  private loadingFigures: Subscription | null = null;
 
   constructor() {
-    this.destroyRef.onDestroy(() => this.loading?.unsubscribe());
+    this.destroyRef.onDestroy(() => {
+      this.loading?.unsubscribe();
+      this.loadingFigures?.unsubscribe();
+    });
     if (this.showJourneys()) {
       this.load();
+      this.loadFigures();
     }
+  }
+
+  /**
+   * Resumen bajo el saludo con lo que ya se sabe, sin pedir nada más: las jornadas en curso entre las últimas que se muestran y los
+   * paquetes pendientes de las cifras (si son solo los más recientes, lo dice). Sin datos, la frase de siempre.
+   */
+  protected readonly summary = computed(() => {
+    const parts: string[] = [];
+    if (this.status() === 'ready') {
+      const running = this.journeys().filter((journey) => journey.status === 'in_progress').length;
+      if (running > 0) {
+        parts.push(`${running} de las últimas jornadas ${running === 1 ? 'está' : 'están'} en curso`);
+      }
+    }
+    const figures = this.figures();
+    if (this.figuresStatus() === 'ready' && figures && figures.pending > 0) {
+      const noun = figures.pending === 1 ? 'paquete esperando' : 'paquetes esperando';
+      parts.push(`hay ${figures.pending} ${noun} ruta${figures.exact ? '' : ' entre los más recientes'}`);
+    }
+    if (parts.length === 0) {
+      return 'Planificación de rutas.';
+    }
+    const text = parts.join(' y ');
+    return `${text[0].toUpperCase()}${text.slice(1)}.`;
+  });
+
+  /** «98 de 137 paquetes» si son todos; si no, dice que son los más recientes. */
+  protected figuresSummary(figures: PackageFigures): string {
+    const of = `${figures.attended} de ${figures.sample} paquetes`;
+    return figures.exact ? of : `${of} (los más recientes de ${figures.total})`;
+  }
+
+  protected loadFigures(): void {
+    this.loadingFigures?.unsubscribe();
+    this.figuresStatus.set('loading');
+    this.figuresError.set(null);
+    this.loadingFigures = this.packagesApi.list({ page: 0, size: FIGURES_SAMPLE_SIZE }).subscribe({
+      next: (page) => {
+        this.figures.set(packageFigures(page));
+        this.figuresStatus.set('ready');
+      },
+      error: (err: unknown) => {
+        this.figuresError.set(messageFor(err));
+        this.figuresStatus.set('error');
+      },
+    });
+  }
+
+  /** Servicios y vehículos (si el gateway los informa en el listado) y fecha de creación, en una línea. */
+  protected details(journey: Journey): string {
+    const parts: string[] = [];
+    if (typeof journey.totalServices === 'number') {
+      parts.push(`${journey.totalServices} ${journey.totalServices === 1 ? 'servicio' : 'servicios'}`);
+    }
+    if (typeof journey.totalResources === 'number') {
+      parts.push(`${journey.totalResources} ${journey.totalResources === 1 ? 'vehículo' : 'vehículos'}`);
+    }
+    parts.push(formatDateTime(journey.createdAt));
+    return parts.join(' · ');
   }
 
   protected load(): void {

@@ -6,6 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../testing/api-testing';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
@@ -50,6 +51,18 @@ describe('SettingsListComponent', () => {
     http.expectOne((r) => r.url === '/gateway/settings').flush(body as object);
     fixture.detectChanges();
   };
+
+  it('las acciones de fila, que son solo un icono, llevan título con lo que hacen', () => {
+    load();
+    expect(root().querySelectorAll('.mat-mdc-icon-button').length).toBeGreaterThan(1);
+    expect(iconButtonsWithoutTitle(root())).toEqual([]);
+  });
+
+  it('bajo el título dice cuántos hay y crear es la acción principal de la pantalla', () => {
+    load();
+    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(/^\d+ (configuración|configuraciones)$/);
+    expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
+  });
 
   it('muestra descripción, topología, restricción, salida, vehículos y estado (fixture real)', () => {
     load();

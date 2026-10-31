@@ -6,9 +6,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../testing/api-testing';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
+
+import { formatRelativeTime } from '../../shared/format';
 
 import { PackageListComponent } from './package-list.component';
 
@@ -62,14 +65,33 @@ describe('PackageListComponent', () => {
     await wait();
   }
 
-  it('muestra guía, nombre, tipo, dirección, estado y ubicación con etiquetas en español', () => {
+  it('las acciones de fila, que son solo un icono, llevan título con lo que hacen', () => {
+    load();
+    expect(root().querySelectorAll('.mat-mdc-icon-button').length).toBeGreaterThan(1);
+    expect(iconButtonsWithoutTitle(root())).toEqual([]);
+  });
+
+  it('bajo el título dice cuántos hay y crear es la acción principal de la pantalla', () => {
+    load();
+    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(/^\d+ (paquete|paquetes)$/);
+    expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
+  });
+
+  it('muestra guía, nombre, dirección, tipo, estado y cuándo se actualizó, con etiquetas en español', () => {
     load();
     const row = root().querySelector('tr.mat-mdc-row')!.textContent!;
     expect(row).toContain('Postman package');
     expect(row).toContain('Entrega');
     expect(row).toContain('Fixture address');
     expect(row).toContain('Pendiente');
-    expect(row).toContain('4,60872 / -74,07728');
+    expect(row).toContain(formatRelativeTime((fx(list).response.body as { content: { updatedAt: string }[] }).content[0].updatedAt));
+  });
+
+  it('pide los paquetes de 100 en 100 para tenerlos todos en la tabla', () => {
+    const req = http.expectOne((r) => r.url === '/gateway/packages');
+    expect(req.request.params.get('page')).toBe('0');
+    expect(req.request.params.get('size')).toBe('100');
+    req.flush(fx(list).response.body as object);
   });
 
   it('el estado se muestra como etiqueta con icono y texto, de tono neutro para «Pendiente»', () => {
@@ -210,6 +232,131 @@ describe('PackageListComponent', () => {
     });
   });
 
+  describe('chips de estado y selección', () => {
+    const base = (fx(list).response.body as { content: object[] }).content[0];
+    /** Una página con un paquete por estado indicado (de «P0» en adelante). */
+    const withStatuses = (statuses: string[]) => ({
+      content: statuses.map((status, i) => ({ ...base, id: 'p' + i, name: 'P' + i, guideNumber: 'G' + i, status })),
+      totalElements: statuses.length,
+      totalPages: 1,
+      page: 0,
+      size: 100,
+    });
+    const chips = () => Array.from(root().querySelectorAll('.chips .chip')).map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
+    const pick = (row: number) => {
+      (root().querySelectorAll('tbody tr.mat-mdc-row')[row].querySelector('mat-checkbox input') as HTMLInputElement).click();
+      fixture.detectChanges();
+    };
+    const bar = () => root().querySelector('.selbar') as HTMLElement;
+    const barButton = (text: string) => (Array.from(bar().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
+
+    it('ofrece un chip por estado con su recuento y, al elegirlo, filtra todos los paquetes', () => {
+      load(withStatuses(['pending', 'attended', 'attended', 'cancelled']));
+      expect(chips()).toEqual(['Todos 4', 'Pendiente 1', 'Atendido 2', 'Cancelado 1']);
+
+      (Array.from(root().querySelectorAll('.chips .chip')) as HTMLButtonElement[])[2].click();
+      fixture.detectChanges();
+
+      const rows = Array.from(root().querySelectorAll('tbody tr.mat-mdc-row')).map((r) => r.textContent!);
+      expect(rows.length).toBe(2);
+      expect(rows[0]).toContain('P1');
+      expect(rows[1]).toContain('P2');
+    });
+
+    it('un estado que la aplicación no conoce también tiene su chip, con su clave', () => {
+      load(withStatuses(['pending', 'inventado']));
+
+      expect(chips()).toEqual(['Todos 2', 'Pendiente 1', 'inventado 1']);
+    });
+
+    it('busca por guía, nombre o dirección en todos los paquetes', () => {
+      load(withStatuses(['pending', 'attended', 'cancelled']));
+      const input = root().querySelector('input[type="search"]') as HTMLInputElement;
+      input.value = 'g2';
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      expect(root().querySelectorAll('tbody tr.mat-mdc-row').length).toBe(1);
+      expect(input.placeholder).toBe('Buscar por guía, nombre o dirección');
+    });
+
+    it('elegir paquetes muestra la barra con cuántos hay y las acciones sobre ellos', () => {
+      load(withStatuses(['pending', 'attended', 'cancelled']));
+      expect(bar()).toBeNull();
+
+      pick(0);
+      pick(2);
+
+      expect(bar().querySelector('.count')?.textContent?.trim()).toBe('2 seleccionados');
+      expect(bar().textContent).toContain('Cambiar estado');
+      expect(bar().textContent).toContain('Exportar');
+      expect(iconButtonsWithoutTitle(root())).toEqual([]);
+    });
+
+    it('cambia el estado de los elegidos, uno por petición, y recarga todos los paquetes', async () => {
+      load(withStatuses(['pending', 'pending', 'cancelled']));
+      pick(0);
+      pick(1);
+      barButton('Cambiar estado').click();
+      fixture.detectChanges();
+      await wait();
+      overlayButton('Atendido').click();
+      await wait();
+
+      const patches = http.match((r) => r.method === 'PATCH' && r.url.endsWith('/status/attended'));
+      expect(patches.map((p) => p.request.url).sort()).toEqual(['/gateway/packages/p0/status/attended', '/gateway/packages/p1/status/attended']);
+      patches.forEach((p) => respondWith(p, fx(setStatus)));
+      fixture.detectChanges();
+
+      expect(root().textContent).toContain('El estado de 2 paquetes ahora es «Atendido»');
+      expect(bar()).toBeNull();
+      reloadAnswer(withStatuses(['attended', 'attended', 'cancelled']));
+    });
+
+    it('si el gateway rechaza alguno, lo dice con su nombre y cambia los demás', async () => {
+      load(withStatuses(['pending', 'pending']));
+      pick(0);
+      pick(1);
+      barButton('Cambiar estado').click();
+      fixture.detectChanges();
+      await wait();
+      overlayButton('No atendido').click();
+      await wait();
+
+      const [first, second] = http.match((r) => r.method === 'PATCH');
+      respondWith(first, fx(setStatus));
+      second.flush({ message: 'no' }, { status: 400, statusText: 'Bad Request' });
+      fixture.detectChanges();
+
+      expect(root().textContent).toContain('El estado de 1 paquete ahora es «No atendido»');
+      expect(root().querySelector('[role="alert"]')?.textContent).toContain('No se pudo cambiar el estado de 1 paquete');
+      reloadAnswer(withStatuses(['unattended', 'pending']));
+    });
+
+    it('exporta solo los elegidos, sin volver a pedirlos', async () => {
+      const downloads: string[] = [];
+      const blobs: Blob[] = [];
+      spyOn(HTMLAnchorElement.prototype, 'click').and.callFake(function (this: HTMLAnchorElement) {
+        downloads.push(this.download);
+      });
+      spyOn(URL, 'createObjectURL').and.callFake((b: Blob | MediaSource) => {
+        blobs.push(b as Blob);
+        return 'blob:prueba';
+      });
+      load(withStatuses(['pending', 'attended', 'cancelled']));
+      pick(1);
+      barButton('Exportar').click();
+      fixture.detectChanges();
+
+      expect(downloads).toEqual(['paquetes.csv']);
+      const text = new TextDecoder('utf-8', { ignoreBOM: true }).decode(await blobs[0].arrayBuffer());
+      expect(text.trimEnd().split('\r\n').length).toBe(1 + 1);
+      expect(text).toContain('G1');
+      expect(root().textContent).toContain('Se exportaron 1 paquete elegido a paquetes.csv');
+      http.expectNone((r) => r.method === 'GET');
+    });
+  });
+
   describe('exportación a CSV', () => {
     let downloads: string[];
     let blobs: Blob[];
@@ -222,6 +369,16 @@ describe('PackageListComponent', () => {
       page: 0,
       size: 20,
     });
+
+    /** Responde las páginas de 100 que pide la lista para tener los `total` paquetes. */
+    const loadAll = (total: number) => {
+      for (let page = 0; page * 100 < total; page++) {
+        http
+          .expectOne((r) => r.method === 'GET' && r.url === '/gateway/packages' && r.params.get('page') === String(page) && r.params.get('size') === '100')
+          .flush({ ...withTotal(Math.min(100, total - page * 100), total), page });
+      }
+      fixture.detectChanges();
+    };
 
     beforeEach(() => {
       downloads = [];
@@ -236,7 +393,7 @@ describe('PackageListComponent', () => {
     });
 
     it('con paquetes recorre todas las páginas, muestra el progreso y descarga paquetes.csv', async () => {
-      load(withTotal(1, 201));
+      loadAll(201);
       expect(exportButton().disabled).toBeFalse();
       exportButton().click();
       fixture.detectChanges();
@@ -259,7 +416,7 @@ describe('PackageListComponent', () => {
     });
 
     it('si falla una página no descarga nada, avisa y permite reintentar', () => {
-      load(withTotal(1, 201));
+      loadAll(201);
       exportButton().click();
       http.expectOne((r) => r.params.get('size') === '200').flush(withTotal(200, 201));
       http.expectOne((r) => r.params.get('page') === '1').flush({ message: 'x' }, { status: 500, statusText: 'Server Error' });
@@ -276,7 +433,7 @@ describe('PackageListComponent', () => {
     });
 
     it('al salir de la pantalla a mitad de la exportación se cortan las peticiones', () => {
-      load(withTotal(1, 201));
+      loadAll(201);
       exportButton().click();
       const pending = http.expectOne((r) => r.params.get('size') === '200');
       fixture.destroy();

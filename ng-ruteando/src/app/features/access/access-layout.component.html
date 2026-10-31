@@ -1,0 +1,18 @@
+<main class="access access-theme">
+  <section class="panel">
+    <div class="panel-body">
+      <div class="tools"><app-theme-toggle /></div>
+      <app-brand />
+      <p class="tagline">Planifica y sigue tus rutas</p>
+      <router-outlet #outlet="outlet" (activate)="onActivate(outlet.activatedRouteData)" />
+    </div>
+  </section>
+  <div class="art">
+    <app-route-backdrop align="start" />
+    @if (steps()) {
+      <app-access-steps />
+    } @else {
+      <app-access-pitch />
+    }
+  </div>
+</main>

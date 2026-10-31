@@ -27,7 +27,7 @@ describe('StatusBadgeComponent', () => {
   it('muestra icono y nombre del estado en español', () => {
     render('Atendido', 'success');
     expect(root().querySelector('span')?.textContent).toBe('Atendido');
-    expect(root().querySelector('mat-icon')?.getAttribute('fontIcon')).toBe('check_circle');
+    expect(root().querySelector('mat-icon')?.getAttribute('fontIcon')).toBe('check');
   });
 
   it('el icono es decorativo: los lectores de pantalla anuncian solo el nombre', () => {
@@ -52,6 +52,29 @@ describe('StatusBadgeComponent', () => {
       return bg;
     });
     expect(new Set(backgrounds).size).toBe(5);
+  });
+
+  it('cada tono toma el color de su significado: verde, azul, ámbar y rojo, no los de la marca', () => {
+    const tokenBackground = (token: string) => {
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = `var(${token})`;
+      document.body.appendChild(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    };
+    const toneBackground = (tone: StatusTone) => {
+      render('x', tone);
+      document.body.appendChild(root());
+      const color = getComputedStyle(root()).backgroundColor;
+      root().remove();
+      return color;
+    };
+    expect(toneBackground('success')).toBe(tokenBackground('--app-success-container'));
+    expect(toneBackground('info')).toBe(tokenBackground('--app-info-container'));
+    expect(toneBackground('warning')).toBe(tokenBackground('--app-warning-container'));
+    expect(toneBackground('danger')).toBe(tokenBackground('--mat-sys-error-container'));
+    expect(toneBackground('success')).not.toBe(tokenBackground('--mat-sys-primary-container'));
   });
 
   it('permite un icono propio', () => {

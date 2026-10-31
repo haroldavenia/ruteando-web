@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, Injector, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { map, startWith } from 'rxjs';
 
 import { MasterDomainsService } from '../../core/api/data/master-domains.service';
 import { PlacesApi } from '../../core/api/data/places.api';
@@ -18,6 +20,8 @@ import { RecordLoader } from '../../shared/data/record-loader';
 import { SubmitState } from '../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../shared/data/unsaved-changes.guard';
 import { FocusFirstInvalidDirective } from '../../shared/form/focus-first-invalid.directive';
+import { FormActionsComponent } from '../../shared/form/form-actions.component';
+import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
 import { fromUtcIso, localDateOf, minutesToSeconds, secondsToMinutes, shiftErrors, toUtcIso, todayLocalDate } from '../../shared/time/shift-time';
@@ -26,6 +30,7 @@ import {
   DEFAULT_LENGTH_OF_STAY_TYPES,
   DEFAULT_RESTRICTION_TYPES,
   DEFAULT_ROUTE_TOPOLOGIES,
+  describeSettings,
   lengthOfStayLabel,
   restrictionTypeLabel,
   routeTopologyLabel,
@@ -90,12 +95,15 @@ export function buildSettingsUpdateBody(record: Settings, edited: Partial<Settin
     ReactiveFormsModule,
     RouterLink,
     MatButtonModule,
-    MatCheckboxModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatSelectModule,
+    MatSlideToggleModule,
     MatProgressBarModule,
     FocusFirstInvalidDirective,
+    FormActionsComponent,
+    FormHeadComponent,
     FormResultComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -145,6 +153,28 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     breakDurationMin: new FormControl<number | null>(60, [Validators.required, breakDuration]),
     typeLengthOfStay: new FormControl(NO_STAY, { nonNullable: true }),
     lengthOfStay: new FormControl<number | null>(null, [Validators.required, positive]),
+  });
+
+  private readonly value = toSignal(this.form.valueChanges.pipe(map(() => this.form.getRawValue()), startWith(this.form.getRawValue())), {
+    initialValue: this.form.getRawValue(),
+  });
+
+  /** La configuración que se está escribiendo, en una frase: solo da formato a lo que hay en el formulario. */
+  protected readonly summary = computed(() => {
+    const value = this.value();
+    const placeName = (id: string): string | null => this.places().find((place) => place.id === id)?.name ?? null;
+    return describeSettings({
+      restrictionType: value.restrictionType,
+      routeTopology: value.routeTopology,
+      fixedRoutes: value.fixedRoutes,
+      shiftDurationMin: value.shiftDurationMin,
+      placeStartName: value.placeStartId ? placeName(value.placeStartId) : null,
+      placeEndName: value.placeEndId ? placeName(value.placeEndId) : null,
+      vehicleCount: value.resourceIds.length,
+      evaluateWeight: value.evaluateWeight,
+      evaluateVolume: value.evaluateVolume,
+      evaluateItineraryZone: value.evaluateItineraryZone,
+    });
   });
 
   /** Tipo de restricción elegido, para decidir qué secciones se muestran. */

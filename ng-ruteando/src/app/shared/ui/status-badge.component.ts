@@ -31,16 +31,16 @@ import { StatusTone, TONE_ICONS } from './status-tone';
       font-size: 16px;
     }
     :host([data-tone='success']) {
-      background: var(--mat-sys-primary-container);
-      color: var(--mat-sys-on-primary-container);
+      background: var(--app-success-container);
+      color: var(--app-on-success-container);
     }
     :host([data-tone='info']) {
-      background: var(--mat-sys-secondary-container);
-      color: var(--mat-sys-on-secondary-container);
+      background: var(--app-info-container);
+      color: var(--app-on-info-container);
     }
     :host([data-tone='warning']) {
-      background: var(--mat-sys-tertiary-container);
-      color: var(--mat-sys-on-tertiary-container);
+      background: var(--app-warning-container);
+      color: var(--app-on-warning-container);
     }
     :host([data-tone='danger']) {
       background: var(--mat-sys-error-container);

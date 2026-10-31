@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -14,6 +15,8 @@ import { RecordLoader } from '../../../shared/data/record-loader';
 import { SubmitState } from '../../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../../shared/data/unsaved-changes.guard';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
+import { FormActionsComponent } from '../../../shared/form/form-actions.component';
+import { FormHeadComponent } from '../../../shared/form/form-head.component';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { notify } from '../../../shared/form/notify';
 import { RESOURCE_CATEGORIES, profileLabel } from '../fleet-labels';
@@ -25,10 +28,10 @@ const FIELD_ERRORS = {
 
 @Component({
   selector: 'app-resource-type-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressBarModule, FocusFirstInvalidDirective, FormResultComponent],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressBarModule, FocusFirstInvalidDirective, FormResultComponent, FormActionsComponent, FormHeadComponent, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>{{ isNew ? 'Nuevo tipo de vehículo' : 'Editar tipo de vehículo' }}</h1>
+    <app-form-head [title]="isNew ? 'Nuevo tipo de vehículo' : 'Editar tipo de vehículo'" backLabel="Tipos de vehículo" backLink="/flota/tipos" />
     @switch (loader.status()) {
       @case ('loading') {
         <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
@@ -43,40 +46,43 @@ const FIELD_ERRORS = {
       }
       @default {
         <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
-          <mat-form-field>
-            <mat-label>Nombre</mat-label>
-            <input matInput formControlName="name" autocomplete="off" />
-            <mat-error>{{ error('name') }}</mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Categoría</mat-label>
-            <input matInput formControlName="category" autocomplete="off" list="resource-categories" />
-            <datalist id="resource-categories">
-              @for (category of categories; track category) {
-                <option [value]="category"></option>
-              }
-            </datalist>
-            <mat-error>{{ error('category') }}</mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Perfil de ruteo</mat-label>
-            <mat-select formControlName="osrmProfile">
-              @for (profile of profiles(); track profile.key) {
-                <mat-option [value]="profile.key">{{ profile.label }}</mat-option>
-              }
-            </mat-select>
-            <mat-error>{{ error('osrmProfile') }}</mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Consumo de combustible (opcional)</mat-label>
-            <input matInput type="number" min="0" step="any" formControlName="gasMileage" autocomplete="off" />
-            <mat-error>{{ error('gasMileage') }}</mat-error>
-          </mat-form-field>
+          <section class="form-section">
+            <h2><mat-icon aria-hidden="true" fontIcon="local_shipping" />Datos del tipo</h2>
+            <mat-form-field>
+              <mat-label>Nombre</mat-label>
+              <input matInput formControlName="name" autocomplete="off" />
+              <mat-error>{{ error('name') }}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Categoría</mat-label>
+              <input matInput formControlName="category" autocomplete="off" list="resource-categories" />
+              <datalist id="resource-categories">
+                @for (category of categories; track category) {
+                  <option [value]="category"></option>
+                }
+              </datalist>
+              <mat-error>{{ error('category') }}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Perfil de ruteo</mat-label>
+              <mat-select formControlName="osrmProfile">
+                @for (profile of profiles(); track profile.key) {
+                  <mat-option [value]="profile.key">{{ profile.label }}</mat-option>
+                }
+              </mat-select>
+              <mat-error>{{ error('osrmProfile') }}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Consumo de combustible (opcional)</mat-label>
+              <input matInput type="number" min="0" step="any" formControlName="gasMileage" autocomplete="off" />
+              <mat-error>{{ error('gasMileage') }}</mat-error>
+            </mat-form-field>
+          </section>
           <app-form-result [error]="submit.error()" />
-          <div class="form-actions">
+          <app-form-actions [dirty]="hasUnsavedChanges()">
             <a mat-button routerLink="/flota/tipos">Cancelar</a>
-            <button mat-flat-button type="submit" [disabled]="submit.submitting()">Guardar</button>
-          </div>
+            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+          </app-form-actions>
         </form>
       }
     }

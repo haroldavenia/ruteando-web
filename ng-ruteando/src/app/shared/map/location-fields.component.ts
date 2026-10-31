@@ -28,33 +28,50 @@ export function createLocationGroup(point: LatLng | null = null): LocationGroup 
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MapViewComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="coordinates">
-      <mat-form-field>
-        <mat-label>Latitud</mat-label>
-        <input matInput type="number" step="any" inputmode="decimal" autocomplete="off" [formControl]="location().controls.lat" />
-        <mat-error>{{ error('lat') }}</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Longitud</mat-label>
-        <input matInput type="number" step="any" inputmode="decimal" autocomplete="off" [formControl]="location().controls.lng" />
-        <mat-error>{{ error('lng') }}</mat-error>
-      </mat-form-field>
+    <div class="layout">
+      <div class="coordinates">
+        <mat-form-field>
+          <mat-label>Latitud</mat-label>
+          <input matInput type="number" step="any" inputmode="decimal" autocomplete="off" [formControl]="location().controls.lat" />
+          <mat-error>{{ error('lat') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Longitud</mat-label>
+          <input matInput type="number" step="any" inputmode="decimal" autocomplete="off" [formControl]="location().controls.lng" />
+          <mat-error>{{ error('lng') }}</mat-error>
+        </mat-form-field>
+      </div>
+      <app-map-view
+        [point]="point()"
+        [selectable]="true"
+        ariaLabel="Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos."
+        (pointChange)="pick($event)"
+      />
     </div>
-    <app-map-view
-      [point]="point()"
-      [selectable]="true"
-      ariaLabel="Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en los campos de arriba."
-      (pointChange)="pick($event)"
-    />
   `,
   styles: `
     :host {
       display: block;
     }
+    /* Los campos primero (en el orden de lectura) y, desde 720px, el mapa a su lado; por debajo, uno sobre otro */
+    .layout {
+      display: grid;
+      gap: 12px 20px;
+    }
     .coordinates {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 0 16px;
+      gap: 12px 16px;
+      align-content: start;
+    }
+    @media (min-width: 720px) {
+      .layout {
+        grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr);
+        align-items: start;
+      }
+      .coordinates {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
   `,
 })

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChi
 import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
@@ -21,6 +22,8 @@ interface TextField {
   type: 'text' | 'email';
   autocomplete: string;
   required: string;
+  /** Icono (de Material) a la izquierda del campo. */
+  icon?: string;
 }
 
 const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verificación';
@@ -32,6 +35,7 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatProgressBarModule,
     FocusFirstInvalidDirective,
@@ -41,29 +45,39 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (registeredEmail(); as sentTo) {
-      <h1>Revisa tu correo</h1>
-      <p>
-        Hemos enviado un enlace de verificación a <strong>{{ sentTo }}</strong
-        >. Ábrelo para activar tu cuenta.
-      </p>
-      <app-form-result [error]="resendError()" [success]="resendDone() ? resendMessage : null" />
-      <div class="actions">
-        <button mat-stroked-button type="button" [disabled]="resending()" (click)="resend(sentTo)">Reenviar correo</button>
-        <a mat-button routerLink="/acceso">Ir a iniciar sesión</a>
+      <div class="state">
+        <span class="state-icon"><mat-icon aria-hidden="true">mark_email_read</mat-icon></span>
+        <h1>Revisa tu correo</h1>
+        <p>
+          Hemos enviado un enlace de verificación a <strong>{{ sentTo }}</strong
+          >. Ábrelo para activar tu cuenta.
+        </p>
+        <app-form-result [error]="resendError()" [success]="resendDone() ? resendMessage : null" />
+        <div class="actions">
+          <button mat-stroked-button type="button" [disabled]="resending()" (click)="resend(sentTo)">Reenviar correo</button>
+          <a mat-button routerLink="/acceso">Ir a iniciar sesión</a>
+        </div>
       </div>
     } @else {
-      <h1>Crear cuenta</h1>
+      <h1>Crea tu cuenta</h1>
+      <p class="lead">Empieza a planificar tus rutas.</p>
       <form [formGroup]="form" (ngSubmit)="submit()" appFocusFirstInvalid novalidate>
-        @for (field of textFields; track field.name) {
-          <mat-form-field class="field">
-            <mat-label>{{ field.label }}</mat-label>
-            <input matInput [type]="field.type" [formControlName]="field.name" [attr.autocomplete]="field.autocomplete" />
-            <mat-error>{{ textError(field) }}</mat-error>
-          </mat-form-field>
-        }
+        <div class="field-grid">
+          @for (field of textFields; track field.name; let i = $index) {
+            <mat-form-field class="field" [class.half]="i < 2">
+              <mat-label>{{ field.label }}</mat-label>
+              @if (field.icon) {
+                <mat-icon matPrefix aria-hidden="true">{{ field.icon }}</mat-icon>
+              }
+              <input matInput [type]="field.type" [formControlName]="field.name" [attr.autocomplete]="field.autocomplete" />
+              <mat-error>{{ textError(field) }}</mat-error>
+            </mat-form-field>
+          }
+        </div>
         <app-password-field
           [control]="form.controls.password"
           label="Contraseña"
+          leadingIcon="lock"
           autocomplete="new-password"
           [requirements]="true"
           [messages]="{ required: 'Introduce una contraseña' }"
@@ -71,6 +85,7 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
         <app-password-field
           [control]="form.controls.confirm"
           label="Confirmar contraseña"
+          leadingIcon="lock"
           autocomplete="new-password"
           [messages]="{ required: 'Confirma tu contraseña' }"
         />
@@ -92,7 +107,7 @@ export class RegisterComponent {
     { name: 'firstName', label: 'Nombre', type: 'text', autocomplete: 'given-name', required: 'Introduce tu nombre' },
     { name: 'lastName', label: 'Apellidos', type: 'text', autocomplete: 'family-name', required: 'Introduce tus apellidos' },
     { name: 'tenantName', label: 'Nombre de la empresa', type: 'text', autocomplete: 'organization', required: 'Introduce el nombre de tu empresa' },
-    { name: 'email', label: 'Correo electrónico', type: 'email', autocomplete: 'username', required: 'Introduce tu correo' },
+    { name: 'email', label: 'Correo electrónico', type: 'email', autocomplete: 'username', required: 'Introduce tu correo', icon: 'mail' },
   ];
 
   protected readonly form = inject(FormBuilder).nonNullable.group({

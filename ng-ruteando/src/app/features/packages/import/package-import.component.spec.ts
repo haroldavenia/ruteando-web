@@ -50,7 +50,15 @@ describe('PackageImportComponent', () => {
     transfer.items.add(new File([content], name, { type: 'text/csv' }));
     input.files = transfer.files;
     input.dispatchEvent(new Event('change'));
-    await wait(40);
+    // Se espera a que acabe la lectura del archivo (antes, 40ms fijos: bajo carga a veces no bastaban y la prueba fallaba al azar)
+    await wait(10);
+    for (let i = 0; i < 100; i++) {
+      fixture.detectChanges();
+      if (!root().querySelector('mat-progress-bar[aria-label="Leyendo el archivo"]')) {
+        break;
+      }
+      await wait(10);
+    }
     fixture.detectChanges();
   }
 
@@ -68,6 +76,87 @@ describe('PackageImportComponent', () => {
     }
   }
   const created = (req: TestRequest) => respondWith(req, create as unknown as Fixture);
+
+  describe('presentación', () => {
+    const steps = () => Array.from(root().querySelectorAll('ol.steps li')).map((li) => ({
+      text: li.textContent?.replace(/\s+/g, ' ').trim(),
+      current: li.getAttribute('aria-current') === 'step',
+      done: li.classList.contains('done'),
+    }));
+    const three = csvOf('G-1;Calle 1;-74.07728;4.60872', 'G-2;Calle 2;-74;4.6', 'G-3;Calle 3;-74;4.6');
+
+    it('la cabecera ofrece volver a los paquetes sobre el título', () => {
+      expect(root().querySelector('app-form-head h1')?.textContent).toBe('Importar paquetes');
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/paquetes');
+    });
+
+    it('muestra los cuatro pasos con nombre accesible y, al empezar, el segundo como actual con el primero hecho', () => {
+      expect(root().querySelector('ol.steps')?.getAttribute('aria-label')).toBe('Pasos de la importación');
+      expect(steps()).toEqual([
+        { text: 'Prepara el archivo', current: false, done: true },
+        { text: '2 Elige el archivo', current: true, done: false },
+        { text: '3 Revisa y confirma', current: false, done: false },
+        { text: '4 Importa', current: false, done: false },
+      ]);
+    });
+
+    it('el paso actual sigue a la fase: tras leer el archivo es «Revisa y confirma», con los dos anteriores hechos', async () => {
+      await choose(three);
+
+      expect(steps().map((s) => [s.current, s.done])).toEqual([[false, true], [false, true], [true, false], [false, false]]);
+    });
+
+    it('durante la importación el actual es «Importa» y al terminar los cuatro están hechos', async () => {
+      await choose(three);
+      button('Importar 3 paquetes')!.click();
+      fixture.detectChanges();
+      expect(steps().map((s) => s.current)).toEqual([false, false, false, true]);
+
+      await serve(created);
+
+      expect(steps().every((s) => s.done)).toBeTrue();
+      expect(steps().some((s) => s.current)).toBeFalse();
+    });
+
+    it('el botón del selector de archivo mide al menos 44px de alto y tiene las esquinas del sistema', () => {
+      const input = root().querySelector('input[type="file"]') as HTMLInputElement;
+      const style = getComputedStyle(input, '::file-selector-button');
+
+      expect(parseFloat(style.minHeight)).toBeGreaterThanOrEqual(44);
+      expect(style.borderTopLeftRadius).toBe('12px');
+    });
+
+    it('las tablas del importador usan el estilo común de tablas auxiliares', () => {
+      const tables = Array.from(root().querySelectorAll('table'));
+
+      expect(tables.length).toBeGreaterThan(0);
+      expect(tables.every((t) => t.classList.contains('grid'))).toBeTrue();
+      expect(getComputedStyle(tables[0].querySelector('td, th')!).borderBottomWidth).toBe('1px');
+    });
+
+    it('las tablas del importador se apilan en una caja estrecha: cada celda lleva su etiqueta', () => {
+      const tables = Array.from(root().querySelectorAll('table'));
+
+      expect(tables.every((t) => t.classList.contains('stack-table') && t.closest('.stack-scope') !== null)).toBeTrue();
+      expect(tables.every((t) => Array.from(t.querySelectorAll('tbody td')).every((td) => td.hasAttribute('data-label')))).toBeTrue();
+    });
+
+    it('el resultado muestra cada cifra en su tarjeta', async () => {
+      await choose(three);
+      button('Importar 3 paquetes')!.click();
+      fixture.detectChanges();
+      await serve(created);
+      const cards = Array.from(root().querySelectorAll('.counts > div'));
+
+      expect(cards.map((c) => [c.querySelector('dt')?.textContent?.trim(), c.querySelector('dd')?.textContent?.trim()])).toEqual([
+        ['Creados', '3'],
+        ['Ya existían', '0'],
+        ['Fallidos', '0'],
+        ['Sin procesar', '0'],
+      ]);
+      expect(getComputedStyle(cards[0]).borderTopWidth).toBe('1px');
+    });
+  });
 
   describe('elegir y leer el archivo', () => {
     it('explica las columnas y avisa de que se necesitan las coordenadas', () => {

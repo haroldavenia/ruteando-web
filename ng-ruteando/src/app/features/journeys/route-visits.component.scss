@@ -18,7 +18,7 @@
 .bar span {
   display: block;
   height: 100%;
-  background: var(--mat-sys-primary);
+  background: var(--app-brand-gradient);
 }
 
 .filters {
@@ -39,23 +39,27 @@
   overflow-x: auto;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font: var(--mat-sys-body-medium);
-}
-
-th,
+// La tabla toma su aspecto de `table.grid` (sistema de interfaz); aquí solo el alineado y que la cabecera no se parta
 td {
-  padding: 8px 12px;
-  text-align: start;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
   vertical-align: middle;
 }
 
 thead th {
-  font: var(--mat-sys-title-small);
   white-space: nowrap;
+}
+
+// El número de la parada, en el color de su ruta en el mapa (el color no es lo único: el número es el texto)
+.seq {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 14px;
+  background: var(--route-color, var(--mat-sys-primary));
+  color: var(--seq-text, #fff);
+  font: var(--mat-sys-label-large);
+  font-weight: 700;
 }
 
 .name,

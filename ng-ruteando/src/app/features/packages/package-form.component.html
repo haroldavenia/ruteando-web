@@ -1,4 +1,4 @@
-<h1>{{ isNew ? 'Nuevo paquete' : 'Editar paquete' }}</h1>
+<app-form-head [title]="isNew ? 'Nuevo paquete' : 'Editar paquete'" backLabel="Paquetes" backLink="/paquetes" />
 @switch (loader.status()) {
   @case ('loading') {
     <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
@@ -13,72 +13,84 @@
   }
   @default {
     <form class="card" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
-      <mat-form-field>
-        <mat-label>Número de guía (opcional)</mat-label>
-        <input matInput formControlName="guideNumber" autocomplete="off" />
-        <mat-hint>Único en tu empresa</mat-hint>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="name" autocomplete="off" />
-        <mat-error>{{ error('name') }}</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Tipo de servicio</mat-label>
-        <mat-select formControlName="serviceType">
-          @for (type of serviceTypes(); track type.key) {
-            <mat-option [value]="type.key">{{ type.label }}</mat-option>
-          }
-        </mat-select>
-        <mat-error>{{ error('serviceType') }}</mat-error>
-      </mat-form-field>
-      <mat-form-field subscriptSizing="dynamic">
-        <mat-label>Dirección</mat-label>
-        <input matInput formControlName="address" autocomplete="off" />
-        <mat-hint>Se guarda como texto: no se calcula la ubicación a partir de ella</mat-hint>
-        <mat-error>{{ error('address') }}</mat-error>
-      </mat-form-field>
-      <div class="row">
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="inventory_2" />Identificación</h2>
         <mat-form-field>
-          <mat-label>Ciudad (opcional)</mat-label>
-          <input matInput formControlName="city" autocomplete="off" />
+          <mat-label>Número de guía (opcional)</mat-label>
+          <input matInput formControlName="guideNumber" autocomplete="off" />
+          <mat-hint>Único en tu empresa</mat-hint>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>País (opcional)</mat-label>
-          <input matInput formControlName="country" autocomplete="off" />
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" autocomplete="off" />
+          <mat-error>{{ error('name') }}</mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Código postal (opcional)</mat-label>
-          <input matInput formControlName="postalCode" autocomplete="off" />
+          <mat-label>Tipo de servicio</mat-label>
+          <mat-select formControlName="serviceType">
+            @for (type of serviceTypes(); track type.key) {
+              <mat-option [value]="type.key">{{ type.label }}</mat-option>
+            }
+          </mat-select>
+          <mat-error>{{ error('serviceType') }}</mat-error>
         </mat-form-field>
-      </div>
-      <div class="row">
+      </section>
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="home_pin" />Dirección</h2>
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Dirección</mat-label>
+          <input matInput formControlName="address" autocomplete="off" />
+          <mat-hint>Se guarda como texto: no se calcula la ubicación a partir de ella</mat-hint>
+          <mat-error>{{ error('address') }}</mat-error>
+        </mat-form-field>
+        <div class="row">
+          <mat-form-field>
+            <mat-label>Ciudad (opcional)</mat-label>
+            <input matInput formControlName="city" autocomplete="off" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>País (opcional)</mat-label>
+            <input matInput formControlName="country" autocomplete="off" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Código postal (opcional)</mat-label>
+            <input matInput formControlName="postalCode" autocomplete="off" />
+          </mat-form-field>
+        </div>
+      </section>
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="scale" />Carga</h2>
+        <div class="row">
+          <mat-form-field>
+            <mat-label>Peso</mat-label>
+            <input matInput type="number" step="any" min="0" formControlName="weight" autocomplete="off" />
+            <mat-error>{{ error('weight') }}</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Volumen</mat-label>
+            <input matInput type="number" step="any" min="0" formControlName="volume" autocomplete="off" />
+            <mat-error>{{ error('volume') }}</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Número de piezas</mat-label>
+            <input matInput type="number" step="1" min="1" formControlName="pieceNumber" autocomplete="off" />
+            <mat-error>{{ error('pieceNumber') }}</mat-error>
+          </mat-form-field>
+        </div>
         <mat-form-field>
-          <mat-label>Peso</mat-label>
-          <input matInput type="number" step="any" min="0" formControlName="weight" autocomplete="off" />
-          <mat-error>{{ error('weight') }}</mat-error>
+          <mat-label>Observación (opcional)</mat-label>
+          <textarea matInput rows="2" formControlName="observation"></textarea>
         </mat-form-field>
-        <mat-form-field>
-          <mat-label>Volumen</mat-label>
-          <input matInput type="number" step="any" min="0" formControlName="volume" autocomplete="off" />
-          <mat-error>{{ error('volume') }}</mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Número de piezas</mat-label>
-          <input matInput type="number" step="1" min="1" formControlName="pieceNumber" autocomplete="off" />
-          <mat-error>{{ error('pieceNumber') }}</mat-error>
-        </mat-form-field>
-      </div>
-      <mat-form-field>
-        <mat-label>Observación (opcional)</mat-label>
-        <textarea matInput rows="2" formControlName="observation"></textarea>
-      </mat-form-field>
-      <app-location-fields [location]="form.controls.location" />
+      </section>
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="pin_drop" />Ubicación</h2>
+        <app-location-fields [location]="form.controls.location" />
+      </section>
       <app-form-result [error]="submit.error()" />
-      <div class="form-actions">
+      <app-form-actions [dirty]="hasUnsavedChanges()">
         <a mat-button routerLink="/paquetes">Cancelar</a>
-        <button mat-flat-button type="submit" [disabled]="submit.submitting()">Guardar</button>
-      </div>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+      </app-form-actions>
     </form>
   }
 }

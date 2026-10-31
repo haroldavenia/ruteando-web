@@ -20,12 +20,24 @@
 :where(.page h1) {
   margin: 0;
   font: var(--mat-sys-headline-medium);
+  // Manrope se carga de 400 a 800: con el peso normal el título sale fino frente a las cifras y los nombres de Inicio
+  font-weight: 700;
   letter-spacing: -0.01em;
+  // Con el texto muy ampliado una palabra larga («Configuraciones») es más ancha que la pantalla: se parte antes que desbordar
+  overflow-wrap: anywhere;
+}
+
+// Un campo nunca ensancha la pantalla: una etiqueta más larga que él (con el texto al 200 % pasa) se recorta en horizontal en lugar de
+// desplazar todo el contenido. Solo en horizontal: la etiqueta flotante sube por encima del campo.
+.mat-mdc-form-field {
+  overflow-x: clip;
 }
 
 :where(.page h2) {
   margin: 0 0 12px;
   font: var(--mat-sys-title-large);
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 // Superficie redondeada con borde suave: agrupa un resumen, una tabla, un formulario o un mapa.
@@ -53,7 +65,7 @@
 // Rejilla de datos resumen: `dl` con una `div` por dato (`dt` etiqueta y `dd` valor).
 :where(.stat-grid) {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
   gap: 16px 24px;
   margin: 0;
 }
@@ -72,6 +84,38 @@
 :where(.stat-grid dd) {
   margin: 0;
   font: var(--mat-sys-title-medium);
+}
+
+// Filas de esqueleto de una tabla que carga: tienen su forma antes de que lleguen los datos. Decorativas (`aria-hidden`): quien
+// no ve se entera por el mensaje de carga. Sin animación si se pide movimiento reducido.
+:where(.skeleton-rows) {
+  display: grid;
+}
+
+:where(.skeleton-row) {
+  display: grid;
+  grid-template-columns: 2fr 1fr 3fr 1fr;
+  gap: 24px;
+  padding: 18px 20px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+:where(.skeleton-row > span) {
+  height: 14px;
+  border-radius: 7px;
+  background: var(--mat-sys-surface-container-highest);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :where(.skeleton-row > span) {
+    animation: skeleton-pulse 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.45;
+  }
 }
 
 // Texto solo para lectores de pantalla.
@@ -111,6 +155,7 @@
 }
 
 :where(.tile:hover) {
+  border-color: color-mix(in srgb, var(--mat-sys-primary) 45%, var(--mat-sys-outline-variant));
   background: color-mix(in srgb, var(--mat-sys-primary) 8%, var(--mat-sys-surface-container-low));
 }
 
@@ -132,8 +177,150 @@
 
 @media (prefers-reduced-motion: no-preference) {
   :where(.tile) {
-    transition: background-color 120ms ease-out;
+    transition:
+      background-color 120ms ease-out,
+      border-color 120ms ease-out;
   }
+}
+
+// Filas con un nombre enlazado, un detalle debajo y una etiqueta de estado a la derecha (las últimas jornadas de Inicio). El
+// enlace lleva el color de la marca (el del navegador es un azul fuera del tema) y 44px de alto, un objetivo táctil cómodo; en
+// estrecho la etiqueta pasa debajo.
+:where(.status-rows) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.status-rows li) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+:where(.status-rows .row-main) {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  min-width: 0;
+}
+
+:where(.status-rows a) {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 44px;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-title-medium);
+  font-family: var(--mat-sys-title-large-font);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+:where(.status-rows a:hover) {
+  color: var(--mat-sys-primary);
+}
+
+:where(.status-rows .meta) {
+  margin-top: -6px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+// Cabecera de una tarjeta: el título a la izquierda y una acción a la derecha
+:where(.card-head) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+:where(.card-head h2) {
+  margin: 0;
+  font-weight: 700;
+}
+
+// Leyenda con puntos de color (el color acompaña al texto, nunca lo sustituye)
+:where(.legend) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+:where(.legend li) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+:where(.legend .dot) {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mat-sys-outline);
+}
+
+:where(.legend .dot.unattended) {
+  background: var(--app-on-warning-container);
+}
+
+// Cifras sueltas: lista de tarjetas con un icono tonal, el número grande y su nombre debajo. La variante `warn` es para lo que pide atención.
+:where(.kpis) {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.kpi) {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+:where(.kpi .ico) {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+:where(.kpi.warn .ico) {
+  background: var(--app-warning-container);
+  color: var(--app-on-warning-container);
+}
+
+:where(.kpi-text) {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.kpi .num) {
+  font: var(--mat-sys-headline-large);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+:where(.kpi .lbl) {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
 }
 
 // Formulario de datos: tarjeta con los campos en una columna (`form.card`) o, con `form-grid`, en dos columnas desde
@@ -149,7 +336,7 @@
 :where(form.form-grid) {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0 20px;
+  gap: 12px 20px;
 }
 
 @media (min-width: 720px) {
@@ -162,6 +349,255 @@
   grid-column: 1 / -1;
 }
 
+// Tabla auxiliar de una pantalla (resultados, errores, vértices): cabecera, celdas y título con el mismo aspecto. Va dentro de un
+// contenedor con desplazamiento horizontal para que, si no cabe, se mueva ella y no la página.
+:where(table.grid) {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--mat-sys-body-medium);
+}
+
+:where(table.grid caption) {
+  padding: 8px 0;
+  text-align: start;
+  font: var(--mat-sys-title-small);
+}
+
+:where(table.grid th, table.grid td) {
+  padding: 6px 12px;
+  text-align: start;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+:where(table.grid tbody th) {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+// Tablas que se apilan. Una tabla ancha no se desplaza dentro de su tarjeta en una pantalla estrecha: si la caja que la contiene
+// (`.stack-scope`, no la ventana: la misma tabla cabe de otra manera junto a un mapa) mide menos de 840px, cada fila pasa a ser un
+// bloque con su título, los pares «etiqueta / valor» (el `data-label` de cada celda, que repite su encabezado) y, al final, las
+// acciones. El marcado sigue siendo una tabla: algunos lectores de pantalla pierden su semántica si el CSS cambia el `display`, por eso
+// sus elementos llevan `role` explícito (Material ya lo pone en las suyas) y los encabezados se ocultan a la vista pero no a ellos.
+//   <div class="stack-scope"><table class="stack-table"> … <td data-label="Estado"> …; la primera celda lleva `primary-cell`.
+:where(.stack-scope) {
+  container: stack / inline-size;
+}
+
+:where(.stack-only) {
+  display: none;
+}
+
+@container stack (max-width: 839.98px) {
+  .stack-table,
+  .stack-table tbody {
+    display: block;
+  }
+
+  .stack-table caption {
+    display: block;
+  }
+
+  // Texto que solo tiene sentido en una tarjeta, donde no hay encabezado de columna que explique un control
+  .stack-table .stack-only {
+    display: inline;
+  }
+
+  .stack-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .stack-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
+    gap: 8px 16px;
+    height: auto;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  .stack-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .stack-table tbody :is(td, th) {
+    display: block;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    font: var(--mat-sys-body-medium);
+    overflow-wrap: anywhere;
+    text-align: start;
+    white-space: normal;
+  }
+
+  .stack-table tbody td[data-label]::before {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-medium);
+    content: attr(data-label);
+  }
+
+  .stack-table tbody :is(.primary-cell, .actions) {
+    grid-column: 1 / -1;
+  }
+
+  .stack-table tbody .primary-cell {
+    font: var(--mat-sys-title-medium);
+    font-weight: 600;
+  }
+
+  // El título no repite su encabezado, y un dato vacío no ocupa un hueco con solo su etiqueta
+  .stack-table tbody td.primary-cell::before,
+  .stack-table tbody .empty-cell {
+    display: none;
+  }
+
+  .stack-table tbody .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px 8px;
+  }
+
+  // Sin desplazamiento no hay columna fija (Material la coloca con estilos en línea, de ahí `!important`)
+  .stack-table .mat-mdc-table-sticky {
+    position: static !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+}
+
+// Sección de un formulario: un título con icono tonal y sus campos, que van en dos columnas desde 720px (lo que no es un campo, como
+// el título, una pista o un mapa, ocupa el ancho completo). Una sección tras otra se separa con una línea.
+// El espacio entre filas deja sitio a la pista o el error del campo de arriba: la etiqueta flotante del de abajo asoma media línea
+// sobre su borde y, sin él, pisaría ese texto
+:where(.form-section) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px 20px;
+}
+
+// Material no da color a las pistas bajo un campo (heredan el del texto): van en el secundario, como las demás pistas
+:where(.mat-mdc-form-field-hint) {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+:where(.form-section + .form-section) {
+  margin-top: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+@media (min-width: 720px) {
+  :where(.form-section) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+:where(.form-section > :not(mat-form-field)) {
+  grid-column: 1 / -1;
+}
+
+:where(.form-section > h2) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+  font: var(--mat-sys-title-medium);
+  font-family: var(--mat-sys-title-large-font);
+  font-weight: 700;
+}
+
+// El icono o el número de paso del título de una sección, en un cuadro tonal
+:where(.form-section > h2 mat-icon, .step-num) {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-size: 20px;
+}
+
+:where(.step-num) {
+  font: var(--mat-sys-label-large);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+// Título con un número de paso delante (fuera de un `.form-section`, por ejemplo el del resumen)
+:where(.step-title) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+// Vista dividida (el detalle de una jornada): una tarjeta fija, con el mapa, a un lado y otra con la lista al otro desde 1100px; por
+// debajo, una sobre otra. El mapa gana altura al quedar a un lado.
+:where(.split-view) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  :where(.split-view) {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+
+  :where(.split-view > .sticky) {
+    position: sticky;
+    top: 24px;
+    --app-routes-map-height: clamp(420px, 68vh, 720px);
+  }
+}
+
+// Un formulario y, a su lado desde 1100px, un resumen que acompaña al desplazar; por debajo, el resumen va después del formulario
+:where(.with-summary) {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  :where(.with-summary) {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+
+  :where(.with-summary > .summary) {
+    position: sticky;
+    top: 24px;
+  }
+}
+
+// Acción principal de la pantalla (como máximo una por pantalla): lleva el hilo de la marca. Sin `:where()`: `.mdc-button` de
+// Material trae `background: transparent`, que reinicia `background-image`, y una regla de especificidad cero perdería contra ella.
+// Desactivada vuelve al color liso del botón.
+.primary-action.mat-mdc-unelevated-button:not(:disabled) {
+  background-image: var(--app-brand-gradient);
+}
+
+// En pantallas estrechas las acciones de la cabecera se reparten el ancho de su fila y la principal ocupa una entera
+@media (max-width: 479.98px) {
+  :where(app-page-header .actions > *) {
+    flex: 1 1 auto;
+  }
+
+  app-page-header .actions > .primary-action {
+    flex-basis: 100%;
+  }
+}
+
 // Acciones del formulario: al final, separadas del contenido
 :where(.form-actions) {
   display: flex;
@@ -172,10 +608,17 @@
   border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
-// Cabecera de una pantalla de detalle: enlace de vuelta sobre el título
+// Cabecera de una pantalla de detalle: botón de vuelta sobre el título, con aire entre ambos
 :where(.page-head) {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 12px;
+}
+
+// El botón de vuelta lleva el color del texto, no el de la marca: es navegación, no una acción
+:where(.page-head .back) {
+  --mat-button-outlined-label-text-color: var(--mat-sys-on-surface);
+  --mat-button-outlined-state-layer-color: var(--mat-sys-on-surface);
+  --mat-button-outlined-ripple-color: color-mix(in srgb, var(--mat-sys-on-surface) 12%, transparent);
 }

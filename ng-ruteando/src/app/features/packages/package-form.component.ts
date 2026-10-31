@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal 
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,6 +16,8 @@ import { RecordLoader } from '../../shared/data/record-loader';
 import { SubmitState } from '../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../shared/data/unsaved-changes.guard';
 import { FocusFirstInvalidDirective } from '../../shared/form/focus-first-invalid.directive';
+import { FormActionsComponent } from '../../shared/form/form-actions.component';
+import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
 import { LocationFieldsComponent, createLocationGroup } from '../../shared/map/location-fields.component';
@@ -74,6 +77,9 @@ export function buildUpdateBody(record: Package, edited: Partial<PackageInput>):
     FocusFirstInvalidDirective,
     FormResultComponent,
     LocationFieldsComponent,
+    FormActionsComponent,
+    FormHeadComponent,
+    MatIconModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './package-form.component.html',

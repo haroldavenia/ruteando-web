@@ -55,16 +55,16 @@ describe('rutas de la aplicación', () => {
     expect(text()).toContain('Planificación de rutas');
   });
 
-  for (const [role, area] of [
-    ['tenant_admin', 'Configuraciones'],
-    ['agent', 'Jornadas'],
+  for (const [role, area, link] of [
+    ['tenant_admin', 'Configuraciones', '/configuraciones'],
+    ['agent', 'Jornadas', '/jornadas'],
   ] as const) {
-    it(`${role} ve en la página de inicio el acceso «${area}»`, async () => {
+    it(`${role} ve en el riel del shell el acceso «${area}»`, async () => {
       currentUser.set(makeUser({ role }));
       await harness.navigateByUrl('/');
       harness.detectChanges();
-      const names = Array.from(document.querySelectorAll('app-home a.area')).map((a) => a.textContent);
-      expect(names.some((n) => n?.includes(area))).toBeTrue();
+      const links = Array.from(document.querySelectorAll('app-nav-rail a.rail-item')).map((a) => a.getAttribute('href'));
+      expect(links).toContain(link);
     });
   }
 
@@ -110,8 +110,8 @@ describe('rutas de la aplicación', () => {
 
   describe('rutas de acceso', () => {
     const screens: [string, string][] = [
-      ['/acceso', 'Iniciar sesión'],
-      ['/acceso/registro', 'Crear cuenta'],
+      ['/acceso', 'Bienvenido de nuevo'],
+      ['/acceso/registro', 'Crea tu cuenta'],
       ['/acceso/recuperar', 'Recuperar contraseña'],
       ['/acceso/verificar-email', 'Verificar correo'],
       ['/acceso/restablecer', 'Restablecer contraseña'],

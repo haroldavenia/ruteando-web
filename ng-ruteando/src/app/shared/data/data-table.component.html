@@ -1,18 +1,66 @@
 @let s = state();
-<section class="card flush">
+<section class="card flush" [class.compact]="density() === 'compact'">
 <div class="toolbar">
-<mat-form-field class="filter" subscriptSizing="dynamic">
-  <mat-label>Filtrar esta página</mat-label>
-  <mat-icon matPrefix aria-hidden="true">search</mat-icon>
-  <input matInput type="search" autocomplete="off" [ngModel]="filter()" (ngModelChange)="filter.set($event)" />
-</mat-form-field>
+  <mat-form-field class="filter" subscriptSizing="dynamic">
+    <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+    <input
+      #search
+      matInput
+      type="search"
+      autocomplete="off"
+      [placeholder]="searchPlaceholder()"
+      [attr.aria-label]="searchPlaceholder()"
+      [ngModel]="filter()"
+      (ngModelChange)="setFilter($event)"
+    />
+    <kbd matSuffix class="slash" aria-hidden="true">/</kbd>
+  </mat-form-field>
+  @if (card()) {
+    <div class="seg" role="group" aria-label="Vista de la lista">
+      <button type="button" title="Ver como tarjetas" aria-label="Ver como tarjetas" [attr.aria-pressed]="view() === 'cards'" (click)="setView('cards')">
+        <mat-icon aria-hidden="true">grid_view</mat-icon>
+      </button>
+      <button type="button" title="Ver como tabla" aria-label="Ver como tabla" [attr.aria-pressed]="view() === 'table'" (click)="setView('table')">
+        <mat-icon aria-hidden="true">table_rows</mat-icon>
+      </button>
+    </div>
+  }
+  @if (view() === 'table') {
+    <div class="seg density" role="group" aria-label="Densidad de las filas">
+      <button type="button" title="Filas compactas" aria-label="Filas compactas" [attr.aria-pressed]="density() === 'compact'" (click)="setDensity('compact')">
+        <mat-icon aria-hidden="true">density_small</mat-icon>
+      </button>
+      <button type="button" title="Filas cómodas" aria-label="Filas cómodas" [attr.aria-pressed]="density() === 'comfortable'" (click)="setDensity('comfortable')">
+        <mat-icon aria-hidden="true">density_medium</mat-icon>
+      </button>
+    </div>
+  }
 </div>
+
+@if (chips(); as chipList) {
+  <div class="chips" role="group" [attr.aria-label]="facet()?.label">
+    @for (chip of chipList; track chip.label) {
+      <button type="button" class="chip" [class.on]="chip.on" [attr.aria-pressed]="chip.on" (click)="pickFacet(chip.key)">
+        {{ chip.label }} <b>{{ chip.count }}</b>
+      </button>
+    }
+  </div>
+}
+
+@if (scopeText(); as scope) {
+  <p class="scope" aria-live="polite">{{ scope }}</p>
+}
 
 @if (s.status() === 'loading') {
   <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
   <div class="state" role="status">
     <mat-icon class="state-icon" aria-hidden="true">hourglass_empty</mat-icon>
     <p>Cargando {{ entityPlural() }}…</p>
+  </div>
+  <div class="skeleton-rows" aria-hidden="true">
+    @for (row of skeletonRows; track row) {
+      <div class="skeleton-row"><span></span><span></span><span></span><span></span></div>
+    }
   </div>
 }
 
@@ -33,41 +81,75 @@
 }
 
 @if (s.status() === 'ready') {
-  <div class="table-scroll">
-    <table mat-table [dataSource]="visibleRows()">
-      @for (column of columns(); track column.id) {
-        <ng-container [matColumnDef]="column.id">
-          <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
-          <td mat-cell *matCellDef="let row">
-            @if (column.swatch; as swatch) {
-              @if (swatch(row); as color) {
-                <span class="swatch" [style.background]="color" aria-hidden="true"></span>
+  @if (view() === 'cards' && card(); as cardTemplate) {
+    <div class="card-grid">
+      @for (row of visibleRows(); track $index) {
+        <ng-container [ngTemplateOutlet]="cardTemplate" [ngTemplateOutletContext]="{ $implicit: row }" />
+      }
+    </div>
+  } @else {
+    <div class="table-scroll stack-scope">
+      <table mat-table class="stack-table" [dataSource]="visibleRows()">
+        @if (selectable()) {
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef class="select-cell">
+              <mat-checkbox
+                [checked]="allVisibleSelected()"
+                [indeterminate]="someVisibleSelected()"
+                (change)="toggleVisible()"
+                aria-label="Seleccionar las filas que se ven"
+              />
+            </th>
+            <td mat-cell *matCellDef="let row" class="select-cell">
+              <mat-checkbox [checked]="isSelected(row)" (change)="toggleRow(row)" [aria-label]="'Seleccionar ' + rowLabel(row)">
+                <span class="stack-only">Seleccionar</span>
+              </mat-checkbox>
+            </td>
+          </ng-container>
+        }
+        @for (column of columns(); track column.id) {
+          <ng-container [matColumnDef]="column.id" [sticky]="column.id === stickyId()">
+            <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
+            <td
+              mat-cell
+              *matCellDef="let row"
+              [attr.data-label]="column.header"
+              [class.primary-cell]="column.id === stickyId()"
+              [class.empty-cell]="column.cell(row) === ''"
+              [class.cell-id]="column.kind === 'id'"
+              [class.cell-strong]="column.kind === 'strong'"
+              [class.cell-muted]="column.kind === 'muted'"
+            >
+              @if (column.swatch; as swatch) {
+                @if (swatch(row); as color) {
+                  <span class="swatch" [style.background]="color" aria-hidden="true"></span>
+                }
               }
-            }
-            @if (column.link) {
-              <a [routerLink]="column.link(row)">{{ column.cell(row) }}</a>
-            } @else if (column.tone) {
-              <app-status-badge [label]="column.cell(row)" [tone]="column.tone(row)" />
-            } @else {
-              {{ column.cell(row) }}
-            }
-          </td>
-        </ng-container>
-      }
-      @if (rowActions(); as actions) {
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef><span class="visually-hidden">Acciones</span></th>
-          <td mat-cell *matCellDef="let row" class="actions">
-            <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
-          </td>
-        </ng-container>
-      }
-      <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
-    </table>
-  </div>
+              @if (column.link) {
+                <a [routerLink]="column.link(row)">{{ column.cell(row) }}</a>
+              } @else if (column.tone) {
+                <app-status-badge [label]="column.cell(row)" [tone]="column.tone(row)" />
+              } @else {
+                {{ column.cell(row) }}
+              }
+            </td>
+          </ng-container>
+        }
+        @if (rowActions(); as actions) {
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef><span class="visually-hidden">Acciones</span></th>
+            <td mat-cell *matCellDef="let row" class="actions">
+              <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
+            </td>
+          </ng-container>
+        }
+        <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns()" [class.selected]="isSelected(row)"></tr>
+      </table>
+    </div>
+  }
 
-  @if (visibleRows().length === 0) {
+  @if (filtered().length === 0) {
     <div class="state" role="status">
       <mat-icon class="state-icon" aria-hidden="true">search_off</mat-icon>
       <p>No hay resultados</p>
@@ -76,12 +158,22 @@
   }
 
   <mat-paginator
-    [length]="s.total()"
-    [pageIndex]="s.page()"
-    [pageSize]="s.size()"
+    [length]="length()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
     [pageSizeOptions]="pageSizeOptions()"
     (page)="pageChanged($event)"
     [attr.aria-label]="'Paginación de ' + entityPlural()"
   />
+
+  @if (selectable() && selectedRows().length > 0) {
+    <div class="selbar" role="region" aria-label="Acciones sobre la selección">
+      <span class="count" aria-live="polite">{{ selectedRows().length }} {{ selectedRows().length === 1 ? 'seleccionado' : 'seleccionados' }}</span>
+      @if (selectionActions(); as actions) {
+        <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: selectedRows(), clear: clearSelection }" />
+      }
+      <button mat-button type="button" (click)="clearSelection()">Quitar la selección</button>
+    </div>
+  }
 }
 </section>

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 import { appConfig } from './app.config';
 import { ApiError } from './core/api/api-error';
@@ -48,6 +49,10 @@ describe('appConfig: cadena de interceptores HTTP', () => {
     http.post('/gateway/auth/login', {}).subscribe();
 
     expect(controller.expectOne('/gateway/auth/login').request.headers.has('Authorization')).toBeFalse();
+  });
+
+  it('los campos de formulario tienen contorno por defecto en toda la aplicación', () => {
+    expect(TestBed.inject(MAT_FORM_FIELD_DEFAULT_OPTIONS).appearance).toBe('outline');
   });
 
   describe('inicializador de la sesión', () => {

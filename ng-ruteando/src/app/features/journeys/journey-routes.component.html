@@ -1,101 +1,90 @@
-<div class="scroll">
-  <table>
-    <caption class="visually-hidden">Rutas de la jornada</caption>
-    <thead>
-      <tr>
-        <th scope="col"><span class="visually-hidden">Paradas</span></th>
-        <th scope="col">Ruta</th>
-        <th scope="col">Vehículo</th>
-        <th scope="col">Paradas</th>
-        <th scope="col">Distancia</th>
-        <th scope="col">Duración</th>
-        <th scope="col">Peso</th>
-        <th scope="col">Volumen</th>
-        <th scope="col">Inicio</th>
-        <th scope="col">Fin</th>
-        <th scope="col"><span class="visually-hidden">Mapa</span></th>
-        <th scope="col"><span class="visually-hidden">Detalle</span></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (route of routes(); track route.routeIndex) {
-        <tr class="route" [class.focused]="selectedRoute() === route.routeIndex">
-          <td>
-            <button
-              mat-icon-button
-              type="button"
-              (click)="toggle(route)"
-              [attr.aria-expanded]="isOpen(route)"
-              [attr.aria-controls]="'stops-' + route.routeIndex"
-              [attr.aria-label]="(isOpen(route) ? 'Ocultar' : 'Ver') + ' las paradas de ' + route.name"
-            >
-              <mat-icon aria-hidden="true">{{ isOpen(route) ? 'expand_less' : 'expand_more' }}</mat-icon>
-            </button>
-          </td>
-          <th scope="row">{{ route.name }}</th>
-          <td>{{ vehicle(route) }}</td>
-          <td>{{ stops(route) }}</td>
-          <td>{{ distance(route.distanceTraveled) }}</td>
-          <td>{{ duration(route.duration) }}</td>
-          <td>{{ percent(route.weightUsagePercent) }}</td>
-          <td>{{ percent(route.volumeUsagePercent) }}</td>
-          <td>{{ dateTime(route.startRouteUtc) }}</td>
-          <td>{{ dateTime(route.finishRouteUtc) }}</td>
-          <td>
-            <button mat-stroked-button type="button" (click)="routeFocus.emit(route.routeIndex)" [attr.aria-label]="'Ver la ruta ' + route.name + ' en el mapa'">
-              Ver en el mapa
-            </button>
-          </td>
-          <td>
-            <a mat-stroked-button [routerLink]="['/jornadas', journeyId(), 'rutas', route.routeIndex]" [attr.aria-label]="'Ver la ruta ' + route.name">Ver ruta</a>
-          </td>
-        </tr>
-        @if (isOpen(route)) {
-          <tr class="stops" [id]="'stops-' + route.routeIndex">
-            <td colspan="12">
-              @if (route.waypoints.length === 0) {
-                <p>Esta ruta no tiene paradas.</p>
-              } @else {
-                <table class="inner">
-                  <caption class="visually-hidden">Paradas de {{ route.name }}</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Orden</th>
-                      <th scope="col">Tipo</th>
-                      <th scope="col">Latitud / longitud</th>
-                      <th scope="col">Llegada</th>
-                      <th scope="col">Salida</th>
-                      <th scope="col"><span class="visually-hidden">Mapa</span></th>
+<ul class="routes">
+  @for (route of routes(); track route.routeIndex) {
+    <li class="route" [class.focused]="selectedRoute() === route.routeIndex" [style.--route-color]="color(route)">
+      <div class="head">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>{{ route.name }}</h3>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="toggle(route)"
+          [attr.aria-expanded]="isOpen(route)"
+          [attr.aria-controls]="'stops-' + route.routeIndex"
+          [attr.aria-label]="(isOpen(route) ? 'Ocultar' : 'Ver') + ' las paradas de ' + route.name"
+        >
+          <mat-icon aria-hidden="true">{{ isOpen(route) ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
+      </div>
+      <p class="vehicle">{{ vehicle(route) }}</p>
+
+      <dl class="figures">
+        <div><dt>Paradas</dt><dd>{{ stops(route) }}</dd></div>
+        <div><dt>Distancia</dt><dd>{{ distance(route.distanceTraveled) }}</dd></div>
+        <div><dt>Duración</dt><dd>{{ duration(route.duration) }}</dd></div>
+        <div>
+          <dt>Peso</dt>
+          <dd>{{ percent(route.weightUsagePercent) }}<span class="bar" aria-hidden="true"><i [style.width.%]="level(route.weightUsagePercent)"></i></span></dd>
+        </div>
+        <div>
+          <dt>Volumen</dt>
+          <dd>{{ percent(route.volumeUsagePercent) }}<span class="bar" aria-hidden="true"><i [style.width.%]="level(route.volumeUsagePercent)"></i></span></dd>
+        </div>
+        <div><dt>Inicio</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
+        <div><dt>Fin</dt><dd>{{ dateTime(route.finishRouteUtc) }}</dd></div>
+      </dl>
+
+      <div class="actions">
+        <button mat-stroked-button type="button" (click)="routeFocus.emit(route.routeIndex)" [attr.aria-label]="'Ver la ruta ' + route.name + ' en el mapa'">
+          Ver en el mapa
+        </button>
+        <a mat-stroked-button [routerLink]="['/jornadas', journeyId(), 'rutas', route.routeIndex]" [attr.aria-label]="'Ver la ruta ' + route.name">Ver ruta</a>
+      </div>
+
+      @if (isOpen(route)) {
+        <div class="stops" [id]="'stops-' + route.routeIndex">
+          @if (route.waypoints.length === 0) {
+            <p>Esta ruta no tiene paradas.</p>
+          } @else {
+            <div class="scroll stack-scope">
+              <table class="grid stack-table" role="table">
+                <caption class="visually-hidden">Paradas de {{ route.name }}</caption>
+                <thead role="rowgroup">
+                  <tr role="row">
+                    <th scope="col" role="columnheader">Orden</th>
+                    <th scope="col" role="columnheader">Tipo</th>
+                    <th scope="col" role="columnheader">Latitud / longitud</th>
+                    <th scope="col" role="columnheader">Llegada</th>
+                    <th scope="col" role="columnheader">Salida</th>
+                    <th scope="col" role="columnheader"><span class="visually-hidden">Mapa</span></th>
+                  </tr>
+                </thead>
+                <tbody role="rowgroup">
+                  @for (stop of route.waypoints; track stop.sequence) {
+                    <tr role="row">
+                      <td role="cell" class="primary-cell">{{ stop.sequence }}</td>
+                      <td role="cell" data-label="Tipo">{{ stopType(stop.stopType) }}</td>
+                      <td role="cell" data-label="Latitud / longitud">{{ latLng(stop.position) }}</td>
+                      <td role="cell" data-label="Llegada">{{ dateTime(stop.arrivalUtc) }}</td>
+                      <td role="cell" data-label="Salida">{{ dateTime(stop.departureUtc) }}</td>
+                      <td role="cell" class="actions">
+                        <button
+                          mat-stroked-button
+                          type="button"
+                          [disabled]="!stop.position"
+                          (click)="stopFocus.emit({ routeIndex: route.routeIndex, sequence: stop.sequence })"
+                          [attr.aria-label]="'Ver la parada ' + stop.sequence + ' de ' + route.name + ' en el mapa'"
+                        >
+                          Ver en el mapa
+                        </button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    @for (stop of route.waypoints; track stop.sequence) {
-                      <tr>
-                        <td>{{ stop.sequence }}</td>
-                        <td>{{ stopType(stop.stopType) }}</td>
-                        <td>{{ latLng(stop.position) }}</td>
-                        <td>{{ dateTime(stop.arrivalUtc) }}</td>
-                        <td>{{ dateTime(stop.departureUtc) }}</td>
-                        <td>
-                          <button
-                            mat-stroked-button
-                            type="button"
-                            [disabled]="!stop.position"
-                            (click)="stopFocus.emit({ routeIndex: route.routeIndex, sequence: stop.sequence })"
-                            [attr.aria-label]="'Ver la parada ' + stop.sequence + ' de ' + route.name + ' en el mapa'"
-                          >
-                            Ver en el mapa
-                          </button>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              }
-            </td>
-          </tr>
-        }
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
       }
-    </tbody>
-  </table>
-</div>
+    </li>
+  }
+</ul>

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
@@ -21,6 +22,7 @@ const NEUTRAL_MESSAGE = 'Si el correo existe, recibirás instrucciones para rest
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatProgressBarModule,
     FocusFirstInvalidDirective,
@@ -28,14 +30,19 @@ const NEUTRAL_MESSAGE = 'Si el correo existe, recibirás instrucciones para rest
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>Recuperar contraseña</h1>
     @if (sent()) {
-      <app-form-result [success]="neutralMessage" />
+      <div class="state">
+        <span class="state-icon"><mat-icon aria-hidden="true">mark_email_unread</mat-icon></span>
+        <h1>Revisa tu correo</h1>
+        <app-form-result [success]="neutralMessage" />
+      </div>
     } @else {
-      <p>Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.</p>
+      <h1>Recuperar contraseña</h1>
+      <p class="lead">Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.</p>
       <form [formGroup]="form" (ngSubmit)="submit()" appFocusFirstInvalid novalidate>
         <mat-form-field class="field">
           <mat-label>Correo electrónico</mat-label>
+          <mat-icon matPrefix aria-hidden="true">mail</mat-icon>
           <input matInput type="email" formControlName="email" autocomplete="username" />
           <mat-error>{{ emailError() }}</mat-error>
         </mat-form-field>

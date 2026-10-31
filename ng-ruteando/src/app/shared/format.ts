@@ -42,6 +42,29 @@ export function formatDateTime(iso: string | null | undefined, zone?: string): s
   return (zone ? new Intl.DateTimeFormat('es', { dateStyle: 'short', timeStyle: 'short', timeZone: zone }) : DATE_TIME).format(date);
 }
 
+const SHORT_DATE = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'short', year: 'numeric' });
+
+/** Hace cuánto fue un instante: «ahora», «hace 12 min», «hace 3 h», «hace 4 d» y, pasados 30 días, la fecha; vacío o inválido da «—». */
+export function formatRelativeTime(iso: string | null | undefined, now: number = Date.now()): string {
+  const time = iso ? new Date(iso).getTime() : NaN;
+  if (Number.isNaN(time)) {
+    return PLACEHOLDER;
+  }
+  const minutes = Math.floor(Math.max(0, now - time) / 60_000);
+  if (minutes < 1) {
+    return 'ahora';
+  }
+  if (minutes < 60) {
+    return `hace ${minutes} min`;
+  }
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    return `hace ${hours} h`;
+  }
+  const days = Math.floor(hours / 24);
+  return days < 30 ? `hace ${days} d` : SHORT_DATE.format(time);
+}
+
 /** Cifra opcional («—» si falta). */
 export function formatCount(value: number | null | undefined): string {
   return value === null || value === undefined ? PLACEHOLDER : String(value);

@@ -1,0 +1,104 @@
+// Tarjeta de un vehículo (vista de tarjetas del listado): nombre y tipo, matrícula, conductor con sus iniciales y las acciones
+.vehicle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  background: var(--mat-sys-surface);
+}
+
+header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.vehicle-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.vehicle-name {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+h3 {
+  margin: 0;
+  overflow: hidden;
+  font: var(--mat-sys-title-medium);
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vehicle-name span,
+small {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.plate {
+  padding: 2px 10px;
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 8px;
+  font: 600 13px var(--app-font-mono, monospace);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.driver {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  min-height: 44px;
+}
+
+.avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--mat-sys-tertiary-container);
+  color: var(--mat-sys-on-tertiary-container);
+  font: 700 13px var(--mat-sys-title-large-font);
+}
+
+.avatar.none {
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.driver-name {
+  display: grid;
+  flex: 1 1 8rem;
+  min-width: 0;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.driver-name.none {
+  color: var(--mat-sys-on-surface-variant);
+  font-weight: 400;
+}
+
+footer {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  margin-top: auto;
+}

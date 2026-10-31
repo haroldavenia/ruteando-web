@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, Injector, PLATFORM_ID, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -26,6 +27,7 @@ const FORM_ERROR_CODES = ['PASSWORD_POLICY_VIOLATION', 'VALIDATION_ERROR'];
     ReactiveFormsModule,
     RouterLink,
     MatButtonModule,
+    MatIconModule,
     MatProgressBarModule,
     FocusFirstInvalidDirective,
     FormResultComponent,
@@ -33,15 +35,20 @@ const FORM_ERROR_CODES = ['PASSWORD_POLICY_VIOLATION', 'VALIDATION_ERROR'];
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>Restablecer contraseña</h1>
     @if (linkInvalid()) {
-      <app-form-result [error]="invalidMessage" />
-      <p class="alt"><a routerLink="/acceso/recuperar">Solicitar un enlace nuevo</a></p>
+      <div class="state">
+        <span class="state-icon bad"><mat-icon aria-hidden="true">link_off</mat-icon></span>
+        <h1>Restablecer contraseña</h1>
+        <app-form-result [error]="invalidMessage" />
+        <p class="alt"><a routerLink="/acceso/recuperar">Solicitar un enlace nuevo</a></p>
+      </div>
     } @else {
+      <h1>Restablecer contraseña</h1>
       <form [formGroup]="form" (ngSubmit)="submit()" appFocusFirstInvalid novalidate>
         <app-password-field
           [control]="form.controls.password"
           label="Contraseña nueva"
+          leadingIcon="lock"
           autocomplete="new-password"
           [requirements]="true"
           [messages]="{ required: 'Introduce una contraseña' }"
@@ -49,6 +56,7 @@ const FORM_ERROR_CODES = ['PASSWORD_POLICY_VIOLATION', 'VALIDATION_ERROR'];
         <app-password-field
           [control]="form.controls.confirm"
           label="Confirmar contraseña"
+          leadingIcon="lock"
           autocomplete="new-password"
           [messages]="{ required: 'Confirma tu contraseña' }"
         />

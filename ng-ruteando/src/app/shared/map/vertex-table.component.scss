@@ -28,11 +28,13 @@ td {
 }
 
 input {
+  box-sizing: border-box;
   width: 100%;
-  min-width: 110px;
-  padding: 8px;
+  min-width: 92px;
+  min-height: 44px;
+  padding: 8px 10px;
   border: 1px solid var(--mat-sys-outline);
-  border-radius: 6px;
+  border-radius: 12px;
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   font: inherit;
@@ -46,4 +48,48 @@ input[aria-invalid='true'] {
   display: block;
   color: var(--mat-sys-error);
   font: var(--mat-sys-body-small);
+}
+
+// En una caja estrecha cada vértice es una tarjeta: su número y «Quitar» arriba y los dos campos debajo (uno al lado del otro desde 420px)
+@container stack (max-width: 839.98px) {
+  table.stack-table tbody tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  table.stack-table tbody th.primary-cell {
+    grid-column: 1;
+    align-self: center;
+  }
+
+  table.stack-table tbody th.primary-cell::before {
+    content: 'Vértice ';
+  }
+
+  table.stack-table tbody td.actions {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+  }
+
+  table.stack-table tbody td:not(.actions) {
+    grid-column: 1 / -1;
+  }
+
+  input {
+    min-width: 0;
+  }
+}
+
+@container stack (min-width: 420px) and (max-width: 839.98px) {
+  table.stack-table tbody tr {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  table.stack-table tbody td:not(.actions) {
+    grid-column: auto;
+  }
+
+  table.stack-table tbody td[colspan] {
+    grid-column: 1 / -1;
+  }
 }

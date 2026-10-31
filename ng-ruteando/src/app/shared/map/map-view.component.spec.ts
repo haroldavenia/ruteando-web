@@ -4,12 +4,17 @@ import VectorSource from 'ol/source/Vector';
 import { toLonLat, fromLonLat } from 'ol/proj';
 import Translate from 'ol/interaction/Translate';
 import Point from 'ol/geom/Point';
+import type TileLayer from 'ol/layer/Tile';
+import type CircleStyle from 'ol/style/Circle';
+import type Style from 'ol/style/Style';
 
 import { LatLng } from '../../core/geo/lat-lng';
+import { ThemeService, THEME_STORAGE_KEY } from '../../core/theme/theme.service';
 
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 
 import { MAP_CONFIG } from './map-config';
+import { toHex } from './map-palette';
 import { MapViewComponent } from './map-view.component';
 
 describe('MapViewComponent', () => {
@@ -42,7 +47,84 @@ describe('MapViewComponent', () => {
   };
   const click = (lat: number, lng: number) => map().dispatchEvent({ type: 'click', coordinate: fromLonLat([lng, lat]) } as never);
 
-  afterEach(() => fixture?.destroy());
+  // Sin elección propia el tema sería el del sistema operativo de quien ejecuta las pruebas: estas dan por hecho el claro
+  beforeEach(() => localStorage.setItem(THEME_STORAGE_KEY, 'light'));
+
+  afterEach(() => {
+    fixture?.destroy();
+    localStorage.removeItem(THEME_STORAGE_KEY);
+    document.documentElement.removeAttribute('data-theme');
+  });
+
+  describe('colores del tema', () => {
+    const marker = () => {
+      const layer = map().getLayers().item(1) as VectorLayer<VectorSource>;
+      const style = layer.getStyleFunction()!(layer.getSource()!.getFeatures()[0], 1) as Style;
+      const image = style.getImage() as CircleStyle;
+      return { fill: image.getFill()!.getColor() as string, halo: image.getStroke()!.getColor() as string };
+    };
+    /** Color que resuelve un token con el tema que tenga el documento en este momento. */
+    const token = (name: string) => {
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = `var(${name})`;
+      document.body.appendChild(probe);
+      const color = toHex(getComputedStyle(probe).backgroundColor)!;
+      probe.remove();
+      return color;
+    };
+
+    afterEach(() => {
+      localStorage.removeItem(THEME_STORAGE_KEY);
+      document.documentElement.removeAttribute('data-theme');
+    });
+
+    it('solo la capa base lleva la clase que el tema oscuro oscurece: el marcador conserva sus colores', async () => {
+      await create({ point: { lat: 4.6, lng: -74.08 } });
+
+      expect((map().getLayers().item(0) as TileLayer).getClassName()).toBe('app-tiles');
+      expect((map().getLayers().item(1) as VectorLayer<VectorSource>).getClassName()).not.toBe('app-tiles');
+    });
+
+    it('con el tema claro el marcador es del acento del tema y su borde es blanco', async () => {
+      localStorage.setItem(THEME_STORAGE_KEY, 'light');
+      await create({ point: { lat: 4.6, lng: -74.08 } });
+
+      expect(marker()).toEqual({ fill: token('--mat-sys-primary'), halo: '#ffffff' });
+    });
+
+    it('con el tema oscuro el marcador es del acento oscuro y su borde, la superficie oscura', async () => {
+      localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+      await create({ point: { lat: 4.6, lng: -74.08 } });
+
+      expect(marker()).toEqual({ fill: token('--mat-sys-primary'), halo: token('--mat-sys-surface') });
+      expect(marker().halo).not.toBe('#ffffff');
+    });
+
+    it('al cambiar de tema con el mapa abierto se vuelve a pintar el marcador, sin recrear el mapa', async () => {
+      localStorage.setItem(THEME_STORAGE_KEY, 'light');
+      await create({ point: { lat: 4.6, lng: -74.08 } });
+      const before = map();
+      const light = marker();
+
+      TestBed.inject(ThemeService).set('dark');
+      fixture.detectChanges();
+
+      expect(map()).toBe(before);
+      expect(marker().fill).not.toBe(light.fill);
+      expect(marker().halo).toBe(token('--mat-sys-surface'));
+
+      TestBed.inject(ThemeService).set('light');
+      fixture.detectChanges();
+      expect(marker()).toEqual(light);
+    });
+  });
+
+  it('los botones de zoom llevan título en español, no el «Zoom in» de OpenLayers', async () => {
+    await create();
+    const titles = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.ol-zoom button')).map((b) => b.getAttribute('title'));
+
+    expect(titles).toEqual(['Acercar el mapa', 'Alejar el mapa']);
+  });
 
   it('muestra la atribución del proveedor sin plegar', async () => {
     await create();
