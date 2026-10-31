@@ -1,4 +1,4 @@
-export {};
+import { ROUTE_COLORS_DARK } from '../map/route-colors';
 
 type Scheme = 'light' | 'dark';
 
@@ -41,10 +41,20 @@ function resolve(host: HTMLElement, token: string): string {
 /** Pares (primer plano, fondo) que usan las pantallas de acceso. */
 const TEXT_PAIRS: [string, string, string][] = [
   ['etiqueta de estado neutra', '--mat-sys-on-surface', '--mat-sys-surface-container-highest'],
-  ['etiqueta de estado de éxito', '--mat-sys-on-primary-container', '--mat-sys-primary-container'],
-  ['etiqueta de estado informativa', '--mat-sys-on-secondary-container', '--mat-sys-secondary-container'],
-  ['etiqueta de estado de aviso', '--mat-sys-on-tertiary-container', '--mat-sys-tertiary-container'],
+  ['etiqueta de estado de éxito', '--app-on-success-container', '--app-success-container'],
+  ['etiqueta de estado informativa', '--app-on-info-container', '--app-info-container'],
+  ['etiqueta de estado de aviso', '--app-on-warning-container', '--app-warning-container'],
   ['etiqueta de estado de peligro', '--mat-sys-on-error-container', '--mat-sys-error-container'],
+  ['requisito de contraseña pendiente', '--mat-sys-on-surface-variant', '--mat-sys-surface-container-high'],
+  ['requisito de contraseña cumplido', '--app-on-success-container', '--app-success-container'],
+  ['requisito de contraseña no cumplido', '--mat-sys-on-error-container', '--mat-sys-error-container'],
+  ['icono de la presentación del acceso', '--mat-sys-on-primary-container', '--mat-sys-primary-container'],
+  // La cabecera de Inicio es un tinte de `primary-container` sobre `surface-container-low`: el peor caso es el contenedor puro
+  ['título de la cabecera de Inicio', '--mat-sys-on-surface', '--mat-sys-primary-container'],
+  ['saludo de la cabecera de Inicio', '--mat-sys-on-surface-variant', '--mat-sys-primary-container'],
+  ['texto del botón con degradado (extremo rosa; el violeta es «texto del botón principal»)', '--mat-sys-on-primary', '--mat-sys-tertiary'],
+  ['palabra con el degradado de la marca (extremo violeta)', '--mat-sys-primary', '--mat-sys-surface'],
+  ['palabra con el degradado de la marca (extremo rosa)', '--mat-sys-tertiary', '--mat-sys-surface'],
   ['texto sobre tarjeta', '--mat-sys-on-surface', '--mat-sys-surface-container-low'],
   ['etiquetas de resumen sobre tarjeta', '--mat-sys-on-surface-variant', '--mat-sys-surface-container-low'],
   ['enlaces sobre tarjeta', '--mat-sys-primary', '--mat-sys-surface-container-low'],
@@ -88,6 +98,17 @@ describe('contraste de la interfaz', () => {
       }
     });
   }
+
+  it('los colores de ruta para fondos oscuros superan 3 a 1 frente a la superficie oscura (también las líneas sobre el tinte de la marca)', () => {
+    open('dark');
+    const hex = (color: string) => `rgb(${[1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16)).join(', ')})`;
+    const surface = resolve(host, '--mat-sys-surface');
+    const tint = resolve(host, '--mat-sys-primary-container');
+    for (const color of ROUTE_COLORS_DARK) {
+      expect(contrast(hex(color), surface)).withContext(`${color} sobre la superficie`).toBeGreaterThanOrEqual(3);
+      expect(contrast(hex(color), tint)).withContext(`${color} sobre el tinte`).toBeGreaterThanOrEqual(3);
+    }
+  });
 
   it('la función de contraste da 21 a 1 para negro sobre blanco y 1 a 1 para el mismo color', () => {
     expect(contrast('rgb(0, 0, 0)', 'rgb(255, 255, 255)')).toBeCloseTo(21, 0);

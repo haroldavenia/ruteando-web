@@ -13,8 +13,10 @@ import { fromLonLat, toLonLat } from 'ol/proj';
 
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { LatLng } from '../../core/geo/lat-lng';
+import { ThemeService, THEME_STORAGE_KEY } from '../../core/theme/theme.service';
 
 import { MAP_CONFIG } from './map-config';
+import { toHex } from './map-palette';
 import { PolygonEditorComponent } from './polygon-editor.component';
 
 export const SQUARE: LatLng[] = [
@@ -60,9 +62,14 @@ describe('PolygonEditorComponent', () => {
   }
   const interaction = <T>(type: new (...args: never[]) => T): T | undefined => map().getInteractions().getArray().find((i) => i instanceof type) as T | undefined;
 
+  // Sin elección propia el tema sería el del sistema operativo de quien ejecuta las pruebas: estas dan por hecho el claro
+  beforeEach(() => localStorage.setItem(THEME_STORAGE_KEY, 'light'));
+
   afterEach(() => {
     TestBed.inject(MatDialog).closeAll();
     fixture?.destroy();
+    localStorage.removeItem(THEME_STORAGE_KEY);
+    document.documentElement.removeAttribute('data-theme');
   });
 
   describe('mostrar', () => {
@@ -262,8 +269,111 @@ describe('PolygonEditorComponent', () => {
       fixture.componentInstance.vertices.set([{ lat: 0, lng: 0 }, { lat: 1, lng: 1 }, { lat: 1, lng: 0 }, { lat: 0, lng: 1 }]);
       fixture.detectChanges();
       const bad = layer.getStyleFunction()!(source().getFeatures()[0], 1) as unknown as { getStroke(): { getColor(): string; getLineDash(): number[] | null } }[];
-      expect(bad.at(-1)!.getStroke().getColor()).toBe('#b3261e');
+      // El rojo de un polígono no válido es el error del tema (antes, un rojo fijo en el código)
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = 'var(--mat-sys-error)';
+      document.body.appendChild(probe);
+      const themeError = toHex(getComputedStyle(probe).backgroundColor);
+      probe.remove();
+      expect(bad.at(-1)!.getStroke().getColor()).toBe(themeError!);
       expect(bad.at(-1)!.getStroke().getLineDash()).toEqual([10, 8]);
+    });
+
+    describe('colores del tema', () => {
+      const token = (name: string) => {
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = `var(${name})`;
+        document.body.appendChild(probe);
+        const color = toHex(getComputedStyle(probe).backgroundColor)!;
+        probe.remove();
+        return color;
+      };
+      type Painted = { getStroke(): { getColor(): string }; getFill?(): { getColor(): string } };
+      const styles = () => {
+        const layer = map().getLayers().item(1) as VectorLayer<VectorSource>;
+        return layer.getStyleFunction()!(source().getFeatures()[0], 1) as unknown as Painted[];
+      };
+
+      afterEach(() => {
+        localStorage.removeItem(THEME_STORAGE_KEY);
+        document.documentElement.removeAttribute('data-theme');
+      });
+
+      it('la capa base lleva la clase que el tema oscuro oscurece, y el polígono no', async () => {
+        await create(SQUARE);
+
+        expect((map().getLayers().item(0) as { getClassName(): string }).getClassName()).toBe('app-tiles');
+        expect((map().getLayers().item(1) as { getClassName(): string }).getClassName()).not.toBe('app-tiles');
+      });
+
+      it('sin color propio el polígono usa el acento del tema y, no válido, el error del tema', async () => {
+        localStorage.setItem(THEME_STORAGE_KEY, 'light');
+        await create(SQUARE);
+        expect(toHex(styles().at(-1)!.getStroke().getColor())).toBe(token('--mat-sys-primary'));
+
+        fixture.componentInstance.vertices.set([{ lat: 0, lng: 0 }, { lat: 1, lng: 1 }, { lat: 1, lng: 0 }, { lat: 0, lng: 1 }]);
+        fixture.detectChanges();
+        expect(styles().at(-1)!.getStroke().getColor()).toBe(token('--mat-sys-error'));
+      });
+
+      it('con el tema oscuro el halo del polígono es la superficie oscura, no blanco', async () => {
+        localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+        await create(SQUARE);
+
+        expect(styles()[0].getStroke().getColor()).toBe(token('--mat-sys-surface'));
+      });
+
+      it('al cambiar de tema con el mapa abierto, el polígono se vuelve a pintar', async () => {
+        localStorage.setItem(THEME_STORAGE_KEY, 'light');
+        await create(SQUARE);
+        expect(styles()[0].getStroke().getColor()).toBe('#ffffff');
+        const accent = styles().at(-1)!.getStroke().getColor();
+
+        TestBed.inject(ThemeService).set('dark');
+        fixture.detectChanges();
+
+        expect(styles()[0].getStroke().getColor()).toBe(token('--mat-sys-surface'));
+        expect(styles().at(-1)!.getStroke().getColor()).not.toBe(accent);
+      });
+    });
+
+    describe('disposición', () => {
+      const bounds = (selector: string) => (root().querySelector(selector) as HTMLElement).getBoundingClientRect();
+
+      it('el orden de lectura es: herramientas, mapa, resumen y tabla de vértices', async () => {
+        await create(SQUARE);
+        const order = ['.toolbar', '.map', '.summary', 'app-vertex-table'].map((s) => root().querySelector(s)!);
+
+        for (let i = 0; i < order.length - 1; i++) {
+          expect(order[i].compareDocumentPosition(order[i + 1]) & Node.DOCUMENT_POSITION_FOLLOWING).withContext(String(i)).toBeTruthy();
+        }
+      });
+
+      it('por debajo de 1100px el mapa va sobre la tabla de vértices', async () => {
+        if (window.matchMedia('(min-width: 1100px)').matches) {
+          pending('la ventana de pruebas es ancha: aquí van lado a lado');
+        }
+        await create(SQUARE);
+
+        expect(bounds('app-vertex-table').top).toBeGreaterThanOrEqual(bounds('.map').bottom);
+      });
+
+      it('desde 1100px la tabla queda a la derecha del mapa', async () => {
+        if (!window.matchMedia('(min-width: 1100px)').matches) {
+          pending('la ventana de pruebas es estrecha: aquí van uno sobre otro (se comprueba en Chrome real)');
+        }
+        await create(SQUARE);
+
+        expect(bounds('app-vertex-table').left).toBeGreaterThanOrEqual(bounds('.map').right);
+      });
+
+      it('las entradas de la tabla de vértices miden al menos 44px de alto', async () => {
+        await create(SQUARE);
+        const inputs = Array.from(root().querySelectorAll('app-vertex-table input')) as HTMLElement[];
+
+        expect(inputs.length).toBe(8);
+        expect(inputs.every((i) => i.getBoundingClientRect().height >= 44)).toBeTrue();
+      });
     });
 
     it('la atribución del proveedor es visible', async () => {

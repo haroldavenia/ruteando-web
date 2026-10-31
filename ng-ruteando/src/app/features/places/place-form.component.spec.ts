@@ -139,6 +139,40 @@ describe('PlaceFormComponent', () => {
       form().markAsDirty();
       expect(fixture.componentInstance.hasUnsavedChanges()).toBeTrue();
     });
+
+    it('la cabecera ofrece volver a los lugares sobre el título', () => {
+      const head = root().querySelector('app-form-head')!;
+
+      expect(head.querySelector('h1')?.textContent).toBe('Nuevo lugar');
+      expect(head.querySelector('a.back')?.getAttribute('href')).toBe('/lugares');
+      expect(head.querySelector('a.back')?.textContent?.trim()).toBe('Lugares');
+    });
+
+    it('los campos van en dos secciones con icono y título: los datos del lugar y su ubicación', () => {
+      const sections = Array.from(root().querySelectorAll('form section.form-section'));
+
+      expect(sections.map((s) => s.querySelector('h2')?.textContent?.trim())).toEqual(['Datos del lugar', 'Ubicación']);
+      expect(sections[1].querySelector('app-location-fields')).not.toBeNull();
+      expect(sections.every((s) => s.querySelector('h2 mat-icon')?.getAttribute('aria-hidden') === 'true')).toBeTrue();
+    });
+
+    it('al escribir avisa de los cambios sin guardar, en la barra de acciones', () => {
+      const status = () => root().querySelector('app-form-actions [role="status"]')!.textContent?.trim();
+      expect(status()).toBe('');
+
+      type('name', 'Depósito norte');
+
+      expect(status()).toContain('Cambios sin guardar');
+    });
+
+    it('las acciones siguen siendo Cancelar (vuelve al listado) y Guardar (envía el formulario)', () => {
+      const actions = root().querySelector('app-form-actions')!;
+
+      expect(actions.querySelector('a')?.textContent?.trim()).toBe('Cancelar');
+      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/lugares');
+      expect(actions.querySelector('button')?.getAttribute('type')).toBe('submit');
+      expect(actions.querySelector('button')?.textContent?.trim()).toBe('Guardar');
+    });
   });
 
   describe('edición', () => {

@@ -80,6 +80,30 @@ describe('PackageFormComponent', () => {
   describe('alta', () => {
     beforeEach(() => setup(null));
 
+    it('la cabecera ofrece volver a los paquetes sobre el título', () => {
+      expect(root().querySelector('app-form-head h1')?.textContent).toBe('Nuevo paquete');
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/paquetes');
+    });
+
+    it('los campos van en cuatro secciones con icono: identificación, dirección, carga y ubicación', () => {
+      const sections = Array.from(root().querySelectorAll('form section.form-section'));
+
+      expect(sections.map((s) => s.querySelector('h2')?.textContent?.trim())).toEqual(['Identificación', 'Dirección', 'Carga', 'Ubicación']);
+      expect(sections[3].querySelector('app-location-fields')).not.toBeNull();
+      expect(sections[0].querySelector('[formcontrolname="guideNumber"]')).not.toBeNull();
+      expect(sections[1].querySelector('[formcontrolname="address"]')).not.toBeNull();
+      expect(sections[2].querySelector('[formcontrolname="weight"]')).not.toBeNull();
+      expect(sections[2].querySelector('[formcontrolname="observation"]')).not.toBeNull();
+    });
+
+    it('al escribir avisa de los cambios sin guardar en la barra de acciones', () => {
+      expect(root().querySelector('app-form-actions [role="status"]')?.textContent?.trim()).toBe('');
+
+      type('name', 'Caja 1');
+
+      expect(root().querySelector('app-form-actions [role="status"]')?.textContent).toContain('Cambios sin guardar');
+    });
+
     it('sin los obligatorios no envía nada y muestra los errores', () => {
       submit();
       http.expectNone((r) => r.method === 'POST');

@@ -79,6 +79,49 @@ describe('ZoneFormComponent', () => {
   describe('alta', () => {
     beforeEach(() => setup(null));
 
+    it('la cabecera ofrece volver a las zonas y los campos van en dos secciones con icono', () => {
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/zonas');
+      expect(Array.from(root().querySelectorAll('form section.form-section h2')).map((h) => h.textContent?.trim())).toEqual(['Datos de la zona', 'Polígono']);
+      expect(root().querySelector('section[aria-labelledby="polygon-title"] h2#polygon-title')).not.toBeNull();
+    });
+
+    it('cada color es una pastilla de al menos 44px de alto que se puede pulsar entera, con el mismo radio de siempre', () => {
+      const label = radio('Azul').closest('label') as HTMLElement;
+      const target = radio('Azul').getBoundingClientRect();
+
+      expect(label.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+      // El radio nativo cubre toda la pastilla (invisible, dentro de su borde de 1px), así que el objetivo de pulsación es la pastilla
+      // y no un círculo de 13px
+      expect(label.getBoundingClientRect().width - target.width).toBeLessThanOrEqual(2);
+      expect(label.getBoundingClientRect().height - target.height).toBeLessThanOrEqual(2);
+      expect(target.height).toBeGreaterThanOrEqual(44);
+      expect(radio('Azul').name).toBe('zone-color');
+      expect(radio('Azul').type).toBe('radio');
+      expect(getComputedStyle(radio('Azul')).opacity).toBe('0');
+    });
+
+    it('el color elegido se distingue por más que el tono: la pastilla cambia de borde y de fondo', () => {
+      const label = (name: string) => radio(name).closest('label') as HTMLElement;
+      const before = getComputedStyle(label('Azul')).borderTopColor;
+
+      radio('Azul').click();
+      fixture.detectChanges();
+
+      expect(label('Azul').classList).toContain('selected');
+      expect(getComputedStyle(label('Azul')).borderTopColor).not.toBe(before);
+      expect(getComputedStyle(label('Azul')).backgroundColor).not.toBe(getComputedStyle(label('Bermellón')).backgroundColor);
+    });
+
+    it('con cambios sin guardar lo dice la barra de acciones', () => {
+      type('name', 'Norte');
+
+      expect(root().querySelector('app-form-actions [role="status"]')?.textContent).toContain('Cambios sin guardar');
+    });
+
+    it('el formulario no se limita a 880px: el mapa y los vértices necesitan sitio', () => {
+      expect(getComputedStyle(root().querySelector('form.card')!).maxWidth).toBe('none');
+    });
+
     it('sin nombre, código ni polígono no envía nada y muestra los errores', () => {
       submit();
       http.expectNone((r) => r.method === 'POST');

@@ -72,4 +72,39 @@ describe('RouteBackdropComponent', () => {
     }
     expect(getComputedStyle(route).strokeDasharray).toMatch(/^1(px)?$/);
   });
+
+  describe('alineación', () => {
+    const aspect = () => root().querySelector('svg')!.getAttribute('preserveAspectRatio');
+
+    it('por defecto centra el dibujo al recortar', () => {
+      expect(aspect()).toBe('xMidYMid slice');
+    });
+
+    it('con `start` ancla el dibujo a la izquierda para que el depósito siempre se vea', () => {
+      fixture.componentRef.setInput('align', 'start');
+      fixture.detectChanges();
+      expect(aspect()).toBe('xMinYMid slice');
+    });
+  });
+
+  describe('color de las rutas', () => {
+    const stroke = (scheme: string) => {
+      const wrap = document.createElement('div');
+      wrap.style.colorScheme = scheme;
+      document.body.appendChild(wrap);
+      wrap.appendChild(root());
+      const color = getComputedStyle(root().querySelector('.route')!).stroke;
+      wrap.remove();
+      return color;
+    };
+
+    it('cada ruta pide el par claro y oscuro de su color (`light-dark()`)', () => {
+      const groups = Array.from(root().querySelectorAll('svg > g[style]'));
+      expect(groups.every((g) => /--c:\s*light-dark\(#[0-9A-F]{6}, #[0-9A-F]{6}\)/i.test(g.getAttribute('style') ?? ''))).toBeTrue();
+    });
+
+    it('en oscuro las rutas usan tonos distintos, más luminosos, que en claro', () => {
+      expect(stroke('light')).not.toBe(stroke('dark'));
+    });
+  });
 });

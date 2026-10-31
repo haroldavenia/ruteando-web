@@ -1,19 +1,38 @@
 :host {
   display: flex;
-  flex-direction: column;
   height: 100vh;
   height: 100dvh;
 }
 
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+// Barra superior: título de la pantalla, búsqueda, tema y cuenta
 mat-toolbar {
-  --mat-toolbar-container-background-color: var(--mat-sys-surface-container);
+  --mat-toolbar-container-background-color: var(--mat-sys-surface);
   --mat-toolbar-container-text-color: var(--mat-sys-on-surface);
-  gap: 8px;
+  --mat-toolbar-standard-height: 68px;
+  --mat-toolbar-mobile-height: 56px;
+  flex: none;
+  // 12px, y hasta 8px en 320px, donde la barra (botones de 44px) cabe justo
+  gap: clamp(8px, calc((100vw - 280px) / 10), 12px);
   border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.page-title {
+  min-width: 5rem;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-title-medium);
+  font-weight: 600;
 }
 
 .container {
   flex: 1;
+  min-height: 0;
   --mat-sidenav-content-background-color: var(--mat-sys-surface);
 }
 
@@ -37,7 +56,10 @@ mat-nav-list {
   --mat-list-list-item-container-shape: 999px;
 }
 
+// `border-box`: el área con desplazamiento mide el alto disponible incluyendo su relleno. Con `content-box` se salía de la
+// ventana en el doble del relleno y se recortaba el final de cada pantalla (la última tarjeta y su margen inferior).
 .content {
+  box-sizing: border-box;
   padding: 16px;
 }
 
@@ -47,9 +69,9 @@ mat-nav-list {
   }
 }
 
-.active {
+// Entrada activa del menú desplegable
+mat-nav-list .active {
   font-weight: 500;
-  // Con varias entradas el peso de la letra no basta para ver dónde está la persona
   --mat-list-list-item-container-color: var(--mat-sys-secondary-container);
   --mat-list-list-item-label-text-color: var(--mat-sys-on-secondary-container);
   --mat-list-list-item-leading-icon-color: var(--mat-sys-on-secondary-container);
@@ -59,7 +81,7 @@ mat-nav-list {
   flex: 1 1 auto;
 }
 
-// Avatar con las iniciales de la persona con sesión
+// Avatar con las iniciales de la persona con sesión, con el hilo de la marca
 .avatar-button {
   --mat-icon-button-state-layer-size: 44px;
   width: 44px;
@@ -70,12 +92,13 @@ mat-nav-list {
 .avatar {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: var(--mat-sys-primary-container);
-  color: var(--mat-sys-on-primary-container);
+  background: var(--app-brand-gradient);
+  color: var(--mat-sys-on-primary);
   font: var(--mat-sys-label-large);
+  font-weight: 700;
   letter-spacing: 0.02em;
 }
 

@@ -6,6 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../testing/api-testing';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
@@ -51,6 +52,55 @@ describe('JourneyListComponent', () => {
     fixture.detectChanges();
   };
   const reloadAnswer = () => http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/journeys').flush(fx(list).response.body as object);
+
+  it('las acciones de fila, que son solo un icono, llevan título con lo que hacen', () => {
+    load();
+    expect(root().querySelectorAll('.mat-mdc-icon-button').length).toBeGreaterThan(1);
+    expect(iconButtonsWithoutTitle(root())).toEqual([]);
+  });
+
+  it('bajo el título dice cuántos hay y crear es la acción principal de la pantalla', () => {
+    load();
+    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(/^\d+ (jornada|jornadas)$/);
+    expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
+  });
+
+  it('pide las jornadas de 100 en 100 para tenerlas todas en la tabla', () => {
+    const req = http.expectOne((r) => r.url === '/gateway/journeys');
+    expect(req.request.params.get('page')).toBe('0');
+    expect(req.request.params.get('size')).toBe('100');
+    req.flush(fx(list).response.body as object);
+  });
+
+  describe('chips de estado', () => {
+    const base = (fx(list).response.body as { content: object[] }).content[0];
+    const withStatuses = (statuses: string[]) => ({
+      content: statuses.map((status, i) => ({ ...base, id: 'j' + i, name: 'J' + i, status })),
+      totalElements: statuses.length,
+      totalPages: 1,
+      page: 0,
+      size: 100,
+    });
+    const chips = () => Array.from(root().querySelectorAll('.chips .chip')).map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
+
+    it('ofrecen un chip por estado con su recuento y filtran todas las jornadas al elegirlos', () => {
+      load(withStatuses(['in_progress', 'completed', 'completed', 'failed']));
+      expect(chips()).toEqual(['Todos 4', 'En curso 1', 'Completada 2', 'Fallida 1']);
+
+      (Array.from(root().querySelectorAll('.chips .chip')) as HTMLButtonElement[])[2].click();
+      fixture.detectChanges();
+
+      const names = Array.from(root().querySelectorAll('tbody tr.mat-mdc-row')).map((r) => r.querySelector('td a')!.textContent!.trim());
+      expect(names).toEqual(['J1', 'J2']);
+    });
+
+    it('un estado desconocido tiene su chip con su clave y la búsqueda dice por qué campos busca', () => {
+      load(withStatuses(['planned', 'raro']));
+
+      expect(chips()).toEqual(['Todos 2', 'Planificada 1', 'raro 1']);
+      expect((root().querySelector('input[type="search"]') as HTMLInputElement).placeholder).toBe('Buscar por nombre o configuración');
+    });
+  });
 
   it('muestra nombre como enlace, estado, configuración y deja vacíos servicios y vehículos nulos', () => {
     load();

@@ -1,6 +1,36 @@
-import { formatCount, formatDateTime, formatDistance, formatDuration, formatLatLng, formatPercent } from './format';
+import { formatCount, formatDateTime, formatDistance, formatDuration, formatLatLng, formatPercent, formatRelativeTime } from './format';
 
 describe('format', () => {
+  describe('formatRelativeTime', () => {
+    const now = Date.parse('2026-10-31T12:00:00Z');
+    const ago = (ms: number) => new Date(now - ms).toISOString();
+    const casos: [string, number, string][] = [
+      ['segundos', 20_000, 'ahora'],
+      ['un minuto', 60_000, 'hace 1 min'],
+      ['casi una hora', 59 * 60_000, 'hace 59 min'],
+      ['una hora', 3_600_000, 'hace 1 h'],
+      ['casi un día', 23 * 3_600_000, 'hace 23 h'],
+      ['un día', 24 * 3_600_000, 'hace 1 d'],
+      ['casi un mes', 29 * 86_400_000, 'hace 29 d'],
+    ];
+    for (const [nombre, ms, esperado] of casos) {
+      it(`${nombre} -> ${esperado}`, () => expect(formatRelativeTime(ago(ms), now)).toBe(esperado));
+    }
+
+    it('pasados 30 días da la fecha corta', () => {
+      expect(formatRelativeTime(ago(40 * 86_400_000), now)).toMatch(/^\d{1,2} [a-z]+\.? 2026$/);
+    });
+
+    it('un instante futuro (reloj adelantado) no da un tiempo negativo', () => {
+      expect(formatRelativeTime(new Date(now + 5 * 60_000).toISOString(), now)).toBe('ahora');
+    });
+
+    it('vacío o inválido da «—»', () => {
+      expect(formatRelativeTime(null, now)).toBe('—');
+      expect(formatRelativeTime('no es una fecha', now)).toBe('—');
+    });
+  });
+
   describe('formatDuration', () => {
     const casos: [number, string][] = [
       [0, '0 s'],

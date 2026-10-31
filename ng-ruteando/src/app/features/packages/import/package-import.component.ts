@@ -9,6 +9,7 @@ import { PackagesApi } from '../../../core/api/data/packages.api';
 import { downloadCsv, parseCsv } from '../../../shared/data/csv';
 import { HasUnsavedChanges } from '../../../shared/data/unsaved-changes.guard';
 import { formatLatLng } from '../../../shared/format';
+import { FormHeadComponent } from '../../../shared/form/form-head.component';
 
 import { RowResult, runImport } from './package-importer';
 import {
@@ -33,7 +34,7 @@ type Phase = 'empty' | 'reading' | 'preview' | 'importing' | 'done';
 
 @Component({
   selector: 'app-package-import',
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressBarModule],
+  imports: [RouterLink, FormHeadComponent, MatButtonModule, MatIconModule, MatProgressBarModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './package-import.component.html',
   styleUrl: './package-import.component.scss',
@@ -55,6 +56,17 @@ export class PackageImportComponent implements HasUnsavedChanges {
   protected readonly cancelling = signal(false);
   private cancelled = false;
   private destroyed = false;
+
+  /** Los cuatro pasos de la importación y en cuál va: la fase decide qué pasos están hechos, cuál es el actual y cuáles faltan. */
+  protected readonly steps = computed(() => {
+    const current = { empty: 2, reading: 2, preview: 3, importing: 4, done: 4 }[this.phase()];
+    const labels = ['Prepara el archivo', 'Elige el archivo', 'Revisa y confirma', 'Importa'];
+    return labels.map((label, index) => {
+      const number = index + 1;
+      const finished = this.phase() === 'done' && number === 4;
+      return { number, label, state: number < current || finished ? ('done' as const) : number === current ? ('current' as const) : ('todo' as const) };
+    });
+  });
 
   protected readonly shownErrors = computed<RowError[]>(() => (this.validation()?.errors ?? []).slice(0, MAX_ERRORS_SHOWN));
   protected readonly hiddenErrors = computed(() => Math.max(0, (this.validation()?.errors.length ?? 0) - MAX_ERRORS_SHOWN));

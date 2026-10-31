@@ -97,6 +97,87 @@ describe('SettingsFormComponent', () => {
       expect(root().textContent).toContain('Este campo es obligatorio');
     });
 
+    it('la cabecera ofrece volver a las configuraciones sobre el título', () => {
+      const head = root().querySelector('app-form-head')!;
+
+      expect(head.querySelector('h1')?.textContent).toBe('Nueva configuración');
+      expect(head.querySelector('a.back')?.getAttribute('href')).toBe('/configuraciones');
+    });
+
+    it('los campos van en cinco secciones con icono y título', () => {
+      const titles = Array.from(root().querySelectorAll('form section.form-section h2')).map((h) => h.textContent?.trim());
+
+      expect(titles).toEqual(['Ruta', 'Lugares', 'Flota', 'Qué evalúa la planificación', 'Estancia en cada parada']);
+      expect(root().querySelectorAll('form section.form-section h2 mat-icon[aria-hidden="true"]').length).toBe(5);
+    });
+
+    it('lo que evalúa la planificación son tres interruptores con los mismos controles y nombres de antes', () => {
+      const toggles = Array.from(root().querySelectorAll('.toggles mat-slide-toggle'));
+
+      expect(toggles.map((t) => [t.getAttribute('formcontrolname'), t.textContent?.trim()])).toEqual([
+        ['evaluateWeight', 'Evaluar peso'],
+        ['evaluateVolume', 'Evaluar volumen'],
+        ['evaluateItineraryZone', 'Evaluar zona del itinerario'],
+      ]);
+      expect(root().querySelector('.toggles')?.getAttribute('aria-label')).toBe('Qué evalúa la planificación');
+      expect(root().querySelectorAll('.toggles button[role="switch"]').length).toBe(3);
+      expect(root().querySelector('mat-checkbox')).toBeNull();
+    });
+
+    it('pulsar un interruptor cambia su control y marca el formulario como modificado', () => {
+      const weight = root().querySelector('mat-slide-toggle[formcontrolname="evaluateWeight"] button') as HTMLButtonElement;
+      expect(form().controls['evaluateWeight'].value).toBeFalse();
+
+      weight.click();
+      fixture.detectChanges();
+
+      expect(form().controls['evaluateWeight'].value).toBeTrue();
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBeTrue();
+    });
+
+    describe('resumen «Así quedará»', () => {
+      const sentence = () => root().querySelector('aside.summary .sentence')?.textContent?.trim();
+
+      it('existe con su título, y sin datos dice solo lo que hay', () => {
+        expect(root().querySelector('aside.summary h2')?.textContent).toBe('Así quedará');
+        expect(root().querySelector('aside.summary')?.getAttribute('aria-labelledby')).toBe('summary-title');
+        expect(sentence()).toBe('Planificará rutas.');
+      });
+
+      it('se actualiza al editar y solo da formato a los valores del formulario', () => {
+        fillFixed();
+        set({ evaluateWeight: true });
+        const routes = body.fixedRoutes;
+
+        expect(sentence()).toContain(`Planificará ${routes} ${routes === 1 ? 'ruta' : 'rutas'}`);
+        expect(sentence()).toContain('desde Postman depot');
+        expect(sentence()).toContain(`con ${body.resourceIds.length} ${body.resourceIds.length === 1 ? 'vehículo' : 'vehículos'}`);
+        expect(sentence()).toMatch(/, evaluando peso\.$/);
+
+        set({ restrictionType: 'resource_vs_time', shiftDurationMin: 90 });
+        expect(sentence()).toContain('rutas con turnos de 1 h 30 min');
+      });
+
+      it('no cambia lo que se envía: el resumen es solo texto', () => {
+        fillFixed();
+        submit();
+
+        const req = http.expectOne((r) => r.method === 'POST' && r.url === '/gateway/settings');
+        expect(Object.keys(req.request.body as object)).not.toContain('summary');
+        respondWith(req, fx(create));
+      });
+    });
+
+    it('las acciones siguen siendo Cancelar y Guardar, con el aviso de cambios sin guardar', () => {
+      const actions = root().querySelector('app-form-actions')!;
+      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/configuraciones');
+      expect(actions.querySelector('button')?.getAttribute('type')).toBe('submit');
+
+      type('description', 'Reparto');
+
+      expect(actions.querySelector('[role="status"]')?.textContent).toContain('Cambios sin guardar');
+    });
+
     it('ofrece topologías y restricciones en español, y lugares y vehículos por su nombre', () => {
       const optionTexts = (selector: string) => {
         (root().querySelector(selector) as HTMLElement).click();

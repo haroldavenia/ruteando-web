@@ -49,4 +49,16 @@ describe('BrandComponent', () => {
     expect(root().querySelector('.name')?.textContent).toBe('Ruteando');
     root().remove();
   });
+
+  it('la variante «mark» muestra solo el emblema, pero el nombre sigue en el DOM para los lectores de pantalla', () => {
+    document.body.appendChild(root());
+    fixture.componentRef.setInput('size', 'mark');
+    fixture.detectChanges();
+    const name = root().querySelector('.name') as HTMLElement;
+    expect(root().classList.contains('mark')).toBeTrue();
+    expect(name.textContent).toBe('Ruteando');
+    expect(name.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+    expect(root().querySelector('svg')!.getBoundingClientRect().width).toBeGreaterThan(24);
+    root().remove();
+  });
 });

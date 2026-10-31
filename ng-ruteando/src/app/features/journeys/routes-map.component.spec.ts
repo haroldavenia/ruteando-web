@@ -10,8 +10,10 @@ import type Style from 'ol/style/Style';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { toPlannedJourney } from '../../core/api/journey-mapper';
 import { DomainRoute, DomainWaypoint, Journey } from '../../core/api/models';
+import { ThemeService, THEME_STORAGE_KEY } from '../../core/theme/theme.service';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-import { routeColor } from '../../shared/map/route-colors';
+import { toHex } from '../../shared/map/map-palette';
+import { ROUTE_COLORS_DARK, routeColor } from '../../shared/map/route-colors';
 
 import { RoutesMapComponent } from './routes-map.component';
 
@@ -66,7 +68,78 @@ describe('RoutesMapComponent', () => {
     map().renderSync();
   }
 
-  afterEach(() => fixture?.destroy());
+  // Sin elección propia el tema sería el del sistema operativo de quien ejecuta las pruebas: estas dan por hecho el claro
+  beforeEach(() => localStorage.setItem(THEME_STORAGE_KEY, 'light'));
+
+  afterEach(() => {
+    fixture?.destroy();
+    localStorage.removeItem(THEME_STORAGE_KEY);
+    document.documentElement.removeAttribute('data-theme');
+  });
+
+  describe('tema oscuro', () => {
+    const dark = () => localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+    const token = (name: string) => {
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = `var(${name})`;
+      document.body.appendChild(probe);
+      const color = toHex(getComputedStyle(probe).backgroundColor)!;
+      probe.remove();
+      return color;
+    };
+    const imageOf = (f: Feature) => styleOf(layer(2), f).at(-1)!.getImage() as unknown as { getFill(): { getColor(): string }; getStroke(): { getColor(): string } };
+
+    afterEach(() => {
+      localStorage.removeItem(THEME_STORAGE_KEY);
+      document.documentElement.removeAttribute('data-theme');
+    });
+
+    it('las líneas usan la paleta luminosa y su borde es la superficie oscura, no blanco', async () => {
+      dark();
+      await create([shifted(0, 'Norte', 0), shifted(1, 'Sur', -0.05)]);
+
+      for (const line of lines()) {
+        const [casing, main] = lineStyle(line);
+        expect(main.getStroke()!.getColor()).toBe(ROUTE_COLORS_DARK[line.get('routeIndex')]);
+        expect(casing.getStroke()!.getColor()).toBe(token('--mat-sys-surface'));
+      }
+    });
+
+    it('las paradas llevan el color luminoso de su ruta, con el halo oscuro y el número en el tono que más contraste da', async () => {
+      dark();
+      await create([base]);
+      const service = stops().find((s) => s.get('stopType') === 'service')!;
+      const depot = stops().find((s) => s.get('stopType') === 'depot')!;
+
+      expect(imageOf(service as Feature).getFill().getColor()).toBe(ROUTE_COLORS_DARK[0]);
+      expect(imageOf(service as Feature).getStroke().getColor()).toBe(token('--mat-sys-surface'));
+      expect(imageOf(depot as Feature).getFill().getColor()).toBe(token('--mat-sys-surface'));
+      const number = styleOf(layer(2), service as Feature).at(-1)!.getText()!.getFill()!.getColor();
+      expect(number).toBe('#000000');
+    });
+
+    it('la leyenda enseña el mismo color luminoso que el mapa', async () => {
+      dark();
+      await create([shifted(0, 'Norte', 0), shifted(1, 'Sur', -0.05)]);
+
+      const swatch = legendButtons()[1].querySelector('.swatch') as HTMLElement;
+      expect(toHex(getComputedStyle(swatch).borderTopColor)).toBe(ROUTE_COLORS_DARK[1].toLowerCase());
+    });
+
+    it('al cambiar de tema con el mapa abierto, las líneas se vuelven a pintar con la paleta del tema nuevo', async () => {
+      localStorage.setItem(THEME_STORAGE_KEY, 'light');
+      await create([shifted(0, 'Norte', 0)]);
+      expect(lineStyle(lines()[0])[1].getStroke()!.getColor()).toBe(routeColor(0));
+
+      TestBed.inject(ThemeService).set('dark');
+      fixture.detectChanges();
+      expect(lineStyle(lines()[0])[1].getStroke()!.getColor()).toBe(ROUTE_COLORS_DARK[0]);
+
+      TestBed.inject(ThemeService).set('light');
+      fixture.detectChanges();
+      expect(lineStyle(lines()[0])[1].getStroke()!.getColor()).toBe(routeColor(0));
+    });
+  });
 
   describe('dibujo', () => {
     it('dibuja una línea por ruta con el color de su ruta y un borde blanco debajo', async () => {

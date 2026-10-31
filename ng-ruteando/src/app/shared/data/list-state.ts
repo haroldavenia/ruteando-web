@@ -3,6 +3,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
+import { formatCount } from '../format';
 
 export type ListStatus = 'loading' | 'ready' | 'empty' | 'error';
 
@@ -14,7 +15,10 @@ export const DEFAULT_PAGE_SIZE = 20;
  */
 export class ListState<T> {
   private readonly destroyRef = inject(DestroyRef);
-  private current: Subscription | null = null;
+  protected current: Subscription | null = null;
+
+  /** Verdadero si la lista tiene todos los registros en el cliente (`FullListState`): la tabla filtra, cuenta y pagina ella misma. */
+  readonly clientSide: boolean = false;
 
   readonly status = signal<ListStatus>('loading');
   readonly rows = signal<readonly T[]>([]);
@@ -23,7 +27,7 @@ export class ListState<T> {
   readonly total = signal(0);
   readonly error = signal<string | null>(null);
 
-  constructor(private readonly fetch: (params: PageParams) => Observable<Page<T>>) {
+  constructor(protected readonly fetch: (params: PageParams) => Observable<Page<T>>) {
     this.destroyRef.onDestroy(() => this.current?.unsubscribe());
   }
 
@@ -49,6 +53,15 @@ export class ListState<T> {
         this.status.set('error');
       },
     });
+  }
+
+  /** «137 paquetes» o «1 paquete»: el total que informa el gateway; `null` mientras carga, si no hay registros o si falló. */
+  countText(singular: string, plural: string): string | null {
+    if (this.status() !== 'ready') {
+      return null;
+    }
+    const total = this.total();
+    return `${formatCount(total)} ${total === 1 ? singular : plural}`;
   }
 
   /** Vuelve a pedir la página actual (reintento tras un error o recarga tras borrar). */

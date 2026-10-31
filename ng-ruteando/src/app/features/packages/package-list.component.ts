@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,19 +10,22 @@ import { Subscription } from 'rxjs';
 import { MasterDomainsService } from '../../core/api/data/master-domains.service';
 import { PackagesApi } from '../../core/api/data/packages.api';
 import { Package } from '../../core/api/models';
+import { formatRelativeTime } from '../../shared/format';
 import { messageFor } from '../../shared/data/api-messages';
 import { downloadCsv } from '../../shared/data/csv';
-import { DataColumn, DataTableComponent } from '../../shared/data/data-table.component';
+import { DataColumn, DataFacet, DataTableComponent } from '../../shared/data/data-table.component';
 import { DeleteFlow } from '../../shared/data/delete-flow';
-import { ListState } from '../../shared/data/list-state';
+import { FullListState } from '../../shared/data/full-list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { statusTone } from '../../shared/ui/status-tone';
+import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 
+import { changeStatusOfMany } from './package-bulk-status';
 import { EXPORT_FILE_NAME, ExportProgress, fetchAllPackages, packagesToCsv } from './package-export';
 import {
   DEFAULT_PACKAGE_STATUSES,
-  formatPackageLocation,
+  PACKAGE_STATUS_LABELS,
   packageStatusLabel,
   serviceTypeLabel,
 } from './package-labels';
@@ -31,7 +35,7 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
 
 @Component({
   selector: 'app-package-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, MatMenuModule, RouterLink],
+  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, MatMenuModule, RouterLink, ActionTitleDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .empty-actions {
@@ -42,18 +46,26 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
     }
   `,
   template: `
-    <app-page-header title="Paquetes">
+    <app-page-header title="Paquetes" [subtitle]="state.countText('paquete', 'paquetes')">
       <a mat-stroked-button routerLink="/paquetes/importar"><mat-icon aria-hidden="true">upload_file</mat-icon>Importar CSV</a>
       <button mat-stroked-button type="button" (click)="exportCsv()" [disabled]="exporting() || state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>Exportar CSV
       </button>
-      <a mat-flat-button routerLink="/paquetes/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo paquete</a>
+      <a mat-flat-button class="primary-action" routerLink="/paquetes/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo paquete</a>
     </app-page-header>
     @if (exporting()) {
       <p role="status">Exportando… {{ progress().loaded }} de {{ progress().total }}</p>
     }
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
-    <app-data-table [state]="state" [columns]="columns" entityPlural="paquetes" emptyMessage="Todavía no hay paquetes">
+    <app-data-table
+      [state]="state"
+      [columns]="columns"
+      [facet]="facet()"
+      [selectable]="true"
+      entityPlural="paquetes"
+      emptyMessage="Todavía no hay paquetes"
+      searchPlaceholder="Buscar por guía, nombre o dirección"
+    >
       <ng-template #rowActions let-row>
         <a mat-icon-button [routerLink]="['/paquetes', row.id]" [attr.aria-label]="'Editar paquete ' + label(row)">
           <mat-icon aria-hidden="true">edit</mat-icon>
@@ -71,6 +83,12 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
+      <ng-template #selectionActions let-rows let-clear="clear">
+        <button mat-button type="button" [matMenuTriggerFor]="bulkMenu" [matMenuTriggerData]="{ rows: rows, clear: clear }">
+          <mat-icon aria-hidden="true">published_with_changes</mat-icon>Cambiar estado
+        </button>
+        <button mat-button type="button" (click)="exportSelected(rows)"><mat-icon aria-hidden="true">download</mat-icon>Exportar</button>
+      </ng-template>
       <span empty-action class="empty-actions">
         <a mat-stroked-button routerLink="/paquetes/nuevo">Crear el primer paquete</a>
         <a mat-stroked-button routerLink="/paquetes/importar">Importar un CSV</a>
@@ -84,6 +102,14 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
         }
       </ng-template>
     </mat-menu>
+
+    <mat-menu #bulkMenu="matMenu">
+      <ng-template matMenuContent let-rows="rows" let-clear="clear">
+        @for (status of statuses(); track status) {
+          <button mat-menu-item type="button" (click)="changeMany(rows, status, clear)">{{ statusLabel(status) }}</button>
+        }
+      </ng-template>
+    </mat-menu>
   `,
 })
 export class PackageListComponent {
@@ -91,35 +117,44 @@ export class PackageListComponent {
   private readonly dialog = inject(MatDialog);
   private readonly masters = inject(MasterDomainsService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly destroyRef = inject(DestroyRef);
   private exportSubscription: Subscription | null = null;
 
   protected readonly exporting = signal(false);
   protected readonly progress = signal<ExportProgress>({ loaded: 0, total: 0 });
 
   protected readonly deleter = new DeleteFlow();
-  protected readonly state = new ListState<Package>((params) => this.api.list(params));
+  /** Todos los paquetes en el cliente (hasta 1000): el gateway no filtra por estado, así que los chips y la búsqueda necesitan tenerlos todos. */
+  protected readonly state = new FullListState<Package>((params) => this.api.list(params));
   protected readonly statusLabel = packageStatusLabel;
 
   /** Estados activos del dominio `PackageStatus` del gateway (el gateway rechaza los inactivos) o, si aún no hay, los habituales. */
-  private readonly statuses = computed(() => {
+  protected readonly statuses = computed(() => {
     const values = this.masters.activeValues('PackageStatus');
     return values.length ? values.map((v) => v.key) : DEFAULT_PACKAGE_STATUSES;
   });
 
+  /** Chips de estado: los que conoce la aplicación, en su orden, y al final cualquier estado desconocido que traigan los paquetes. */
+  protected readonly facet = computed<DataFacet<Package>>(() => {
+    const known = Object.keys(PACKAGE_STATUS_LABELS);
+    const unknown = [...new Set(this.state.rows().map((p) => p.status))].filter((key) => !known.includes(key));
+    return { label: 'Estado', of: (p) => p.status, options: [...known, ...unknown].map((key) => ({ key, label: packageStatusLabel(key) })) };
+  });
+
   protected readonly columns: DataColumn<Package>[] = [
-    { id: 'guideNumber', header: 'Guía', cell: (p) => p.guideNumber ?? '' },
-    { id: 'name', header: 'Nombre', cell: (p) => p.name },
+    { id: 'guideNumber', header: 'Guía', cell: (p) => p.guideNumber ?? '', kind: 'id' },
+    { id: 'name', header: 'Nombre', cell: (p) => p.name, primary: true, kind: 'strong' },
+    { id: 'address', header: 'Dirección', cell: (p) => p.address, kind: 'muted' },
     { id: 'serviceType', header: 'Servicio', cell: (p) => serviceTypeLabel(p.serviceType) },
-    { id: 'address', header: 'Dirección', cell: (p) => p.address },
     { id: 'status', header: 'Estado', cell: (p) => packageStatusLabel(p.status), tone: (p) => statusTone('package', p.status) },
-    { id: 'location', header: 'Latitud / longitud', cell: (p) => formatPackageLocation(p) },
+    { id: 'updatedAt', header: 'Actualizado', cell: (p) => formatRelativeTime(p.updatedAt), kind: 'muted' },
   ];
 
   constructor() {
     this.masters.load().subscribe({ error: () => undefined });
-    this.state.load(0);
+    this.state.load();
     // Si se sale de la pantalla a mitad de una exportación, se cortan las peticiones
-    inject(DestroyRef).onDestroy(() => this.exportSubscription?.unsubscribe());
+    this.destroyRef.onDestroy(() => this.exportSubscription?.unsubscribe());
   }
 
   /** Cómo se nombra el paquete en etiquetas y avisos: su guía o, si no tiene, su nombre. */
@@ -151,6 +186,38 @@ export class PackageListComponent {
       },
       error: (err: unknown) => this.deleter.error.set(messageFor(err)),
     });
+  }
+
+  /** Cambia el estado de los paquetes elegidos, uno por petición: los que el gateway rechace se cuentan y se nombran. */
+  protected changeMany(rows: readonly Package[], status: string, clear: () => void): void {
+    this.deleter.success.set(null);
+    this.deleter.error.set(null);
+    changeStatusOfMany(this.api, this.dialog, rows.map((row) => ({ id: row.id, label: this.label(row) })), status)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ changed, failed }) => {
+          if (changed > 0) {
+            this.deleter.success.set(
+              `${changed === 1 ? 'El estado de 1 paquete' : `El estado de ${changed} paquetes`} ahora es «${packageStatusLabel(status)}»`,
+            );
+          }
+          if (failed.length > 0) {
+            this.deleter.error.set(
+              `No se pudo cambiar el estado de ${failed.length === 1 ? '1 paquete' : `${failed.length} paquetes`}: ${failed.map((f) => `«${f.label}» (${f.message})`).join('; ')}`,
+            );
+          }
+          clear();
+          this.state.reload();
+        },
+        error: (err: unknown) => this.deleter.error.set(messageFor(err)),
+      });
+  }
+
+  /** Descarga en un CSV solo los paquetes elegidos (ya están cargados: no hace falta pedirlos otra vez). */
+  protected exportSelected(rows: readonly Package[]): void {
+    this.deleter.error.set(null);
+    downloadCsv(EXPORT_FILE_NAME, packagesToCsv(rows), this.platformId);
+    this.deleter.success.set(`Se exportaron ${rows.length === 1 ? '1 paquete elegido' : `${rows.length} paquetes elegidos`} a ${EXPORT_FILE_NAME}`);
   }
 
   /** Descarga todos los paquetes en un CSV; ante un fallo no se descarga nada y se puede reintentar. */

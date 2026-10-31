@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -28,23 +28,17 @@ import type VectorLayer from 'ol/layer/Vector';
 import type VectorSource from 'ol/source/Vector';
 
 import { LatLng } from '../../core/geo/lat-lng';
+import { ThemeService } from '../../core/theme/theme.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 import { MAP_CONFIG } from './map-config';
+import { MapPalette, readMapPalette, toRgba } from './map-palette';
 import { OPENLAYERS_LOADER, OpenLayers } from './openlayers';
 import { areaKm2, polygonIssueMessage, validatePolygon, verticesFromRing } from './polygon-geometry';
 import { VertexTableComponent } from './vertex-table.component';
 
-const DEFAULT_COLOR = '#6750a4';
-const INVALID_COLOR = '#b3261e';
 const FIT_PADDING = [48, 48, 48, 48];
 const AREA = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
-
-/** `#RRGGBB` + opacidad 0..1 → `rgba(...)`. */
-function withAlpha(hex: string, alpha: number): string {
-  const n = parseInt(hex.slice(1), 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
-}
 
 /**
  * Editor de un polígono: dibujarlo en el mapa, arrastrar sus vértices y, en paralelo, una tabla de
@@ -72,11 +66,15 @@ export class PolygonEditorComponent {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly load = inject(OPENLAYERS_LOADER);
   private readonly dialog = inject(MatDialog);
+  private readonly theme = inject(ThemeService);
+  private readonly document = inject(DOCUMENT);
   private readonly host = viewChild.required<ElementRef<HTMLElement>>('host');
 
   private ol: OpenLayers | null = null;
   private source: VectorSource | null = null;
   private layer: VectorLayer<VectorSource> | null = null;
+  /** Colores de las marcas con el tema que se ve; se renuevan al cambiar el tema. */
+  private palette: MapPalette | null = null;
   private draw: Draw | null = null;
   private modify: Modify | null = null;
   private destroyed = false;
@@ -119,7 +117,11 @@ export class PolygonEditorComponent {
     effect(() => {
       this.color();
       this.valid();
-      untracked(() => this.layer?.changed());
+      const scheme = this.theme.scheme();
+      untracked(() => {
+        this.palette = readMapPalette(scheme, this.document);
+        this.layer?.changed();
+      });
     });
   }
 
@@ -206,7 +208,9 @@ export class PolygonEditorComponent {
     }
     this.ol = ol;
     const { tilesUrl, attribution, center, zoom } = this.config;
-    const tiles = new ol.TileLayer({ source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
+    this.palette = readMapPalette(this.theme.scheme(), this.document);
+    // `app-tiles`: en el tema oscuro las teselas se oscurecen con un filtro de la hoja global (el polígono no se toca)
+    const tiles = new ol.TileLayer({ className: 'app-tiles', source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
     tiles.getSource()?.on('tileloaderror', () => this.failed.set(true));
     tiles.getSource()?.on('tileloadend', () => this.failed.set(false));
 
@@ -217,7 +221,7 @@ export class PolygonEditorComponent {
       target: this.host().nativeElement,
       layers: [tiles, this.layer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false } }),
+      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: 'Acercar el mapa', zoomOutTipLabel: 'Alejar el mapa' } }),
     });
     this.modify = new ol.Modify({ source: this.source });
     this.modify.on('modifyend', () => this.readFromMap());
@@ -269,16 +273,17 @@ export class PolygonEditorComponent {
 
   private style(type: string | undefined): InstanceType<OpenLayers['Style']>[] {
     const ol = this.ol!;
-    const base = this.color() ?? DEFAULT_COLOR;
+    const palette = this.palette!;
+    const base = this.color() ?? palette.accent;
     const problem = !this.valid() && this.vertices().length >= 3;
-    const stroke = problem ? INVALID_COLOR : base;
+    const stroke = problem ? palette.danger : base;
     if (type === 'Point') {
-      return [new ol.Style({ image: new ol.CircleStyle({ radius: 7, fill: new ol.Fill({ color: stroke }), stroke: new ol.Stroke({ color: '#ffffff', width: 2 }) }) })];
+      return [new ol.Style({ image: new ol.CircleStyle({ radius: 7, fill: new ol.Fill({ color: stroke }), stroke: new ol.Stroke({ color: palette.halo, width: 2 }) }) })];
     }
     return [
-      new ol.Style({ stroke: new ol.Stroke({ color: '#ffffff', width: 7 }) }),
+      new ol.Style({ stroke: new ol.Stroke({ color: palette.halo, width: 7 }) }),
       new ol.Style({
-        fill: new ol.Fill({ color: withAlpha(stroke, 0.2) }),
+        fill: new ol.Fill({ color: toRgba(stroke, 0.2) }),
         stroke: new ol.Stroke({ color: stroke, width: 4, lineDash: problem ? [10, 8] : undefined }),
       }),
     ];

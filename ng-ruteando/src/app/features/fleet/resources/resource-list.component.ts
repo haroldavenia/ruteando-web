@@ -11,23 +11,87 @@ import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-d
 import { messageFor } from '../../../shared/data/api-messages';
 import { DataColumn, DataTableComponent } from '../../../shared/data/data-table.component';
 import { DeleteFlow } from '../../../shared/data/delete-flow';
-import { ListState } from '../../../shared/data/list-state';
+import { FullListState } from '../../../shared/data/full-list-state';
 import { PageHeaderComponent } from '../../../shared/data/page-header.component';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
+import { ActionTitleDirective } from '../../../shared/ui/action-title.directive';
+import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component';
+import { FleetTabsComponent } from '../fleet-tabs.component';
 import { driverName, vehicleLabel } from '../fleet-labels';
 
 import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
 
 @Component({
   selector: 'app-resource-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink],
+  imports: [
+    DataTableComponent,
+    FleetTabsComponent,
+    PageHeaderComponent,
+    FormResultComponent,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    ActionTitleDirective,
+    StatusBadgeComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './resource-list.component.scss',
   template: `
-    <app-page-header title="Vehículos">
-      <a mat-flat-button routerLink="/flota/vehiculos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo vehículo</a>
+    <app-page-header title="Vehículos" [subtitle]="state.countText('vehículo', 'vehículos')">
+      <a mat-flat-button class="primary-action" routerLink="/flota/vehiculos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo vehículo</a>
     </app-page-header>
+    <app-fleet-tabs />
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
-    <app-data-table [state]="state" [columns]="columns" entityPlural="vehículos" emptyMessage="Todavía no hay vehículos">
+    <app-data-table
+      [state]="state"
+      [columns]="columns"
+      entityPlural="vehículos"
+      emptyMessage="Todavía no hay vehículos"
+      searchPlaceholder="Buscar por nombre, matrícula o conductor"
+    >
+      <ng-template #card let-row>
+        <article class="vehicle">
+          <header>
+            <span class="vehicle-icon"><mat-icon aria-hidden="true">local_shipping</mat-icon></span>
+            <div class="vehicle-name">
+              <h3>{{ row.name }}</h3>
+              <span>{{ row.resourceType?.name ?? '' }}</span>
+            </div>
+            @if (row.licensePlate) {
+              <span class="plate">{{ row.licensePlate }}</span>
+            }
+          </header>
+          <div class="driver">
+            @if (row.assignedUser) {
+              <span class="avatar" aria-hidden="true">{{ initials(row) }}</span>
+              <span class="driver-name">{{ driverLabel(row) }}<small>{{ row.assignedUser.email }}</small></span>
+              @if (!row.active) {
+                <app-status-badge label="Inactivo" tone="neutral" />
+              }
+            } @else {
+              <span class="avatar none" aria-hidden="true"><mat-icon>person</mat-icon></span>
+              <span class="driver-name none">Sin conductor</span>
+              <button mat-stroked-button type="button" (click)="assign(row)" [attr.aria-label]="'Asignar conductor al vehículo ' + label(row)">Asignar</button>
+            }
+          </div>
+          <footer>
+            <a mat-icon-button [routerLink]="['/flota/vehiculos', row.id]" [attr.aria-label]="'Editar vehículo ' + label(row)">
+              <mat-icon aria-hidden="true">edit</mat-icon>
+            </a>
+            @if (row.assignedUser) {
+              <button mat-icon-button type="button" (click)="unassign(row)" [attr.aria-label]="'Retirar conductor del vehículo ' + label(row)">
+                <mat-icon aria-hidden="true">person_remove</mat-icon>
+              </button>
+              <button mat-icon-button type="button" (click)="assign(row)" [attr.aria-label]="'Cambiar conductor del vehículo ' + label(row)">
+                <mat-icon aria-hidden="true">person_add</mat-icon>
+              </button>
+            }
+            <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="'Eliminar vehículo ' + label(row)">
+              <mat-icon aria-hidden="true">delete</mat-icon>
+            </button>
+          </footer>
+        </article>
+      </ng-template>
       <ng-template #rowActions let-row>
         <a mat-icon-button [routerLink]="['/flota/vehiculos', row.id]" [attr.aria-label]="'Editar vehículo ' + label(row)">
           <mat-icon aria-hidden="true">edit</mat-icon>
@@ -53,20 +117,35 @@ export class ResourceListComponent {
   private readonly dialog = inject(MatDialog);
 
   protected readonly deleter = new DeleteFlow();
-  protected readonly state = new ListState<Resource>((params) => this.api.list(params));
+  /** Todos los vehículos en el cliente (hasta 1000): la búsqueda y las tarjetas necesitan tenerlos todos. */
+  protected readonly state = new FullListState<Resource>((params) => this.api.list(params));
   protected readonly columns: DataColumn<Resource>[] = [
-    { id: 'name', header: 'Nombre', cell: (r) => r.name },
-    { id: 'licensePlate', header: 'Matrícula', cell: (r) => r.licensePlate ?? '' },
-    { id: 'type', header: 'Tipo', cell: (r) => r.resourceType?.name ?? '' },
+    { id: 'name', header: 'Nombre', cell: (r) => r.name, kind: 'strong' },
+    { id: 'licensePlate', header: 'Matrícula', cell: (r) => r.licensePlate ?? '', kind: 'id' },
+    { id: 'type', header: 'Tipo', cell: (r) => r.resourceType?.name ?? '', kind: 'muted' },
     { id: 'driver', header: 'Conductor', cell: (r) => (r.assignedUser ? `${driverName(r.assignedUser)} (${r.assignedUser.email})` : 'Sin conductor') },
   ];
 
   constructor() {
-    this.state.load(0);
+    this.state.load();
   }
 
   protected label(row: Resource): string {
     return vehicleLabel(row);
+  }
+
+  protected driverLabel(row: Resource): string {
+    return row.assignedUser ? driverName(row.assignedUser) : '';
+  }
+
+  /** Las iniciales del conductor (hasta dos) para el círculo de la tarjeta. */
+  protected initials(row: Resource): string {
+    return this.driverLabel(row)
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((word) => word[0].toUpperCase())
+      .join('');
   }
 
   protected remove(row: Resource): void {

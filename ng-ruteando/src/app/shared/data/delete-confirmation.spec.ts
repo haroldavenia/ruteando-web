@@ -38,6 +38,17 @@ describe('DeleteConfirmation', () => {
     expect(button('Eliminar')).toBeDefined();
   });
 
+  it('es una acción destructiva: «Eliminar» se muestra con el color de error', async () => {
+    await ask();
+    const probe = document.createElement('div');
+    probe.style.background = 'var(--mat-sys-error)';
+    document.body.appendChild(probe);
+    const error = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+
+    expect(getComputedStyle(button('Eliminar')).backgroundColor).toBe(error);
+  });
+
   it('confirmar emite true', async () => {
     const results = await ask();
     button('Eliminar').click();

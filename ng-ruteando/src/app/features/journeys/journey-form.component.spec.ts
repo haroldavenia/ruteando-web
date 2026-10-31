@@ -65,6 +65,86 @@ describe('JourneyFormComponent', () => {
 
   afterEach(() => http.verify());
 
+  describe('presentación', () => {
+    const review = () => Array.from(root().querySelectorAll('aside.summary .review > div')).map((row) => [row.querySelector('dt')?.textContent?.trim(), row.querySelector('dd')?.textContent?.trim()]);
+
+    it('la cabecera ofrece volver a las jornadas sobre el título', () => {
+      setup();
+
+      expect(root().querySelector('app-form-head h1')?.textContent).toBe('Planificar jornada');
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/jornadas');
+    });
+
+    it('son dos secciones numeradas, Configuración y Paquetes, en una sola página con un único formulario', () => {
+      setup();
+      const sections = Array.from(root().querySelectorAll('form section.form-section'));
+
+      expect(sections.map((s) => s.querySelector('h2')?.textContent?.trim())).toEqual(['1Configuración', '2Paquetes']);
+      expect(sections.every((s) => s.querySelector('h2 .step-num')?.getAttribute('aria-hidden') === 'true')).toBeTrue();
+      expect(root().querySelectorAll('form').length).toBe(1);
+      expect(sections[1].querySelector('app-package-picker')).not.toBeNull();
+    });
+
+    it('el resumen «Revisa» es el tercer paso y, sin datos, dice lo que falta', () => {
+      setup();
+
+      expect(root().querySelector('aside.summary h2')?.textContent?.trim()).toBe('3Revisa');
+      expect(root().querySelector('aside.summary')?.getAttribute('aria-labelledby')).toBe('review-title');
+      expect(review()).toEqual([
+        ['Nombre', 'Sin escribir'],
+        ['Configuración', 'Sin elegir'],
+        ['Paquetes', 'Ninguno elegido'],
+      ]);
+      expect(root().querySelectorAll('aside.summary dd.empty').length).toBe(3);
+    });
+
+    it('el resumen se actualiza al escribir el nombre, elegir la configuración y los paquetes', () => {
+      setup();
+      fill();
+
+      expect(review()).toEqual([
+        ['Nombre', planBody.name],
+        ['Configuración', 'Capture settings'],
+        ['Paquetes', '2 paquetes'],
+      ]);
+      expect(root().querySelectorAll('aside.summary dd.empty').length).toBe(0);
+    });
+
+    it('con un solo paquete lo dice en singular', () => {
+      setup();
+      checkbox('Seleccionar paquete G-1').click();
+      fixture.detectChanges();
+
+      expect(review()[2]).toEqual(['Paquetes', '1 paquete']);
+    });
+
+    it('el resumen es solo texto: planificar sigue enviando un único POST con el mismo cuerpo de siempre', () => {
+      setup();
+      fill();
+      submit();
+
+      const req = planRequest();
+      expect(Object.keys(req.request.body as object).sort()).toEqual(['name', 'packageIds', 'settingsId']);
+      expect(http.match((r) => r.method === 'POST').length).toBe(0);
+      respondWith(req, fx(plan));
+    });
+
+    it('las acciones son Cancelar y Planificar, con el aviso de cambios sin guardar', () => {
+      setup();
+      const actions = root().querySelector('app-form-actions')!;
+
+      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/jornadas');
+      expect(actions.querySelector('button')?.textContent?.trim()).toBe('Planificar');
+      expect(actions.querySelector('[role="status"]')?.textContent?.trim()).toBe('');
+
+      form().controls['name'].setValue('Reparto');
+      form().markAsDirty();
+      fixture.detectChanges();
+
+      expect(actions.querySelector('[role="status"]')?.textContent).toContain('Cambios sin guardar');
+    });
+  });
+
   it('sin nombre, configuración ni paquetes no envía nada y muestra los errores', () => {
     setup();
     submit();

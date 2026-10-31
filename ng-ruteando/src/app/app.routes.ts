@@ -17,6 +17,8 @@ export const routes: Routes = [
       },
       {
         path: 'registro',
+        // En el diseño ancho, la presentación son los pasos hasta la primera jornada
+        data: { pitch: 'steps' },
         canActivate: [guestGuard],
         loadComponent: () => import('./features/access/register/register.component').then((m) => m.RegisterComponent),
       },

@@ -72,6 +72,15 @@ describe('RouteDetailComponent', () => {
     expect(back.textContent).toContain(journey.name);
   });
 
+  it('la cabecera ofrece volver a la jornada, con su nombre, sobre el título de la ruta', () => {
+    setup('0');
+    const back = root().querySelector('app-form-head a.back') as HTMLAnchorElement;
+
+    expect(back.getAttribute('href')).toBe(`/jornadas/${journey.id}`);
+    expect(back.textContent?.trim()).toBe(`Jornada ${journey.name}`);
+    expect(root().querySelector('app-form-head h1')?.textContent).toBe('Capture vehicle');
+  });
+
   it('muestra solo esa ruta en el mapa', () => {
     const second = { ...journey.routes[0], routeIndex: 1, name: 'Otra ruta' };
     setup('1', { ...journey, routes: [journey.routes[0], second] });

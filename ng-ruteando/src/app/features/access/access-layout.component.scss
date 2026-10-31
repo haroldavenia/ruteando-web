@@ -1,0 +1,122 @@
+// Base (pantallas estrechas): una tarjeta centrada sobre la ilustración de rutas, que ocupa toda la ventana.
+.access {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding: 24px 16px;
+  background: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-on-surface);
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  // Sin esto la rejilla no deja encoger la tarjeta por debajo del ancho mínimo de los campos de Material (318px) y se desborda en 320px
+  min-width: 0;
+  max-width: 440px;
+  box-sizing: border-box;
+  padding: 32px 28px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 28px;
+  background: var(--mat-sys-surface);
+  box-shadow:
+    0 8px 32px rgb(0 0 0 / 0.14),
+    0 2px 6px rgb(0 0 0 / 0.08);
+}
+
+// Selector de tema: arriba a la derecha del formulario; su botón se alinea con el borde de los campos
+.tools {
+  display: flex;
+  justify-content: flex-end;
+  margin: -4px 0 12px;
+}
+
+.tagline {
+  margin: 8px 0 24px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+@media (max-width: 400px) {
+  .panel {
+    padding: 24px 20px;
+  }
+}
+
+// La tarjeta es de cristal solo si el navegador lo soporta y no se pide más contraste
+@supports (backdrop-filter: blur(1px)) {
+  @media (forced-colors: none) and (prefers-contrast: no-preference) {
+    .panel {
+      background: color-mix(in srgb, var(--mat-sys-surface) 78%, transparent);
+      backdrop-filter: blur(14px) saturate(1.2);
+    }
+  }
+}
+
+// Diseño ancho: la ilustración con su presentación a la izquierda, fija; el formulario a la derecha, en una columna a pantalla completa.
+@media (min-width: 1024px) {
+  .access {
+    grid-template-columns: minmax(0, 1fr) minmax(440px, 34rem);
+    grid-template-areas: 'art panel';
+    place-items: stretch;
+    padding: 0;
+    background: var(--mat-sys-surface);
+  }
+
+  .art {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    grid-area: art;
+    align-self: start;
+    display: flex;
+    align-items: flex-end;
+    box-sizing: border-box;
+    height: 100vh;
+    height: 100dvh;
+    padding: clamp(24px, 4vw, 56px);
+    overflow: hidden;
+  }
+
+  .panel {
+    grid-area: panel;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 32px clamp(32px, 4vw, 64px);
+    border: 0;
+    border-inline-start: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 0;
+    background: var(--mat-sys-surface);
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .panel-body {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  // El eslogan ya está en la presentación: la marca separa del título con su propio margen
+  .tagline {
+    display: none;
+  }
+
+  app-brand {
+    display: flex;
+    margin-bottom: 32px;
+  }
+}

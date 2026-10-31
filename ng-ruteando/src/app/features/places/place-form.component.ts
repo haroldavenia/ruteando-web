@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,6 +16,8 @@ import { RecordLoader } from '../../shared/data/record-loader';
 import { SubmitState } from '../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../shared/data/unsaved-changes.guard';
 import { FocusFirstInvalidDirective } from '../../shared/form/focus-first-invalid.directive';
+import { FormActionsComponent } from '../../shared/form/form-actions.component';
+import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
 import { LocationFieldsComponent, createLocationGroup } from '../../shared/map/location-fields.component';
@@ -42,10 +45,13 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
     FocusFirstInvalidDirective,
     FormResultComponent,
     LocationFieldsComponent,
+    FormActionsComponent,
+    FormHeadComponent,
+    MatIconModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>{{ isNew ? 'Nuevo lugar' : 'Editar lugar' }}</h1>
+    <app-form-head [title]="isNew ? 'Nuevo lugar' : 'Editar lugar'" backLabel="Lugares" backLink="/lugares" />
     @switch (loader.status()) {
       @case ('loading') {
         <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
@@ -60,40 +66,46 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
       }
       @default {
         <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
-          <mat-form-field>
-            <mat-label>Nombre</mat-label>
-            <input matInput formControlName="name" autocomplete="off" />
-            <mat-error>{{ error('name') }}</mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Tipo</mat-label>
-            <mat-select formControlName="type">
-              @for (type of types(); track type.key) {
-                <mat-option [value]="type.key">{{ type.label }}</mat-option>
-              }
-            </mat-select>
-            <mat-error>{{ error('type') }}</mat-error>
-          </mat-form-field>
-          <mat-form-field subscriptSizing="dynamic">
-            <mat-label>Dirección (opcional)</mat-label>
-            <input matInput formControlName="address" autocomplete="off" />
-            <mat-hint>Se guarda como texto: no se calcula la ubicación a partir de ella</mat-hint>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Teléfono (opcional)</mat-label>
-            <input matInput type="tel" formControlName="phoneNumber" autocomplete="off" />
-            <mat-error>{{ error('phoneNumber') }}</mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Persona de contacto (opcional)</mat-label>
-            <input matInput formControlName="contactName" autocomplete="off" />
-          </mat-form-field>
-          <app-location-fields [location]="form.controls.location" />
+          <section class="form-section">
+            <h2><mat-icon aria-hidden="true" fontIcon="place" />Datos del lugar</h2>
+            <mat-form-field>
+              <mat-label>Nombre</mat-label>
+              <input matInput formControlName="name" autocomplete="off" />
+              <mat-error>{{ error('name') }}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Tipo</mat-label>
+              <mat-select formControlName="type">
+                @for (type of types(); track type.key) {
+                  <mat-option [value]="type.key">{{ type.label }}</mat-option>
+                }
+              </mat-select>
+              <mat-error>{{ error('type') }}</mat-error>
+            </mat-form-field>
+            <mat-form-field subscriptSizing="dynamic">
+              <mat-label>Dirección (opcional)</mat-label>
+              <input matInput formControlName="address" autocomplete="off" />
+              <mat-hint>Se guarda como texto: no se calcula la ubicación a partir de ella</mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Teléfono (opcional)</mat-label>
+              <input matInput type="tel" formControlName="phoneNumber" autocomplete="off" />
+              <mat-error>{{ error('phoneNumber') }}</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Persona de contacto (opcional)</mat-label>
+              <input matInput formControlName="contactName" autocomplete="off" />
+            </mat-form-field>
+          </section>
+          <section class="form-section">
+            <h2><mat-icon aria-hidden="true" fontIcon="pin_drop" />Ubicación</h2>
+            <app-location-fields [location]="form.controls.location" />
+          </section>
           <app-form-result [error]="submit.error()" />
-          <div class="form-actions">
+          <app-form-actions [dirty]="hasUnsavedChanges()">
             <a mat-button routerLink="/lugares">Cancelar</a>
-            <button mat-flat-button type="submit" [disabled]="submit.submitting()">Guardar</button>
-          </div>
+            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+          </app-form-actions>
         </form>
       }
     }

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterLink } from '@angular/router';
+import { map, startWith } from 'rxjs';
 
 import { JourneysApi } from '../../core/api/data/journeys.api';
 import { SettingsApi } from '../../core/api/data/settings.api';
@@ -13,6 +15,8 @@ import { Settings } from '../../core/api/models';
 import { SubmitState } from '../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../shared/data/unsaved-changes.guard';
 import { FocusFirstInvalidDirective } from '../../shared/form/focus-first-invalid.directive';
+import { FormActionsComponent } from '../../shared/form/form-actions.component';
+import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 
 import { PackagePickerComponent } from './package-picker.component';
@@ -32,6 +36,8 @@ export const SELECT_LIMIT = 200;
     MatSelectModule,
     MatProgressBarModule,
     FocusFirstInvalidDirective,
+    FormActionsComponent,
+    FormHeadComponent,
     FormResultComponent,
     PackagePickerComponent,
   ],
@@ -57,6 +63,21 @@ export class JourneyFormComponent implements HasUnsavedChanges {
   protected readonly form = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     settingsId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+  });
+
+  private readonly value = toSignal(this.form.valueChanges.pipe(map(() => this.form.getRawValue()), startWith(this.form.getRawValue())), {
+    initialValue: this.form.getRawValue(),
+  });
+
+  /** Lo que se va a planificar, para el resumen «Revisa»: solo da formato a lo que hay en el formulario. */
+  protected readonly review = computed(() => {
+    const { name, settingsId } = this.value();
+    const count = this.selectedIds().length;
+    return {
+      name: name.trim() || null,
+      settings: this.settings().find((item) => item.id === settingsId)?.description ?? null,
+      packages: count === 0 ? null : count === 1 ? '1 paquete' : `${count} paquetes`,
+    };
   });
 
   constructor() {

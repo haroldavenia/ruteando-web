@@ -28,6 +28,9 @@ describe('JourneyDetailComponent', () => {
   const summary = (): Record<string, string> =>
     Object.fromEntries(Array.from(root().querySelectorAll('dl.summary > div')).map((d) => [d.querySelector('dt')!.textContent!.trim(), d.querySelector('dd')!.textContent!.trim()]));
   const cells = (row: Element) => Array.from(row.querySelectorAll('td, th')).map((c) => c.textContent!.trim());
+  /** Pares nombre → valor de las cifras de una tarjeta de ruta. */
+  const figures = (route: Element): Record<string, string> =>
+    Object.fromEntries(Array.from(route.querySelectorAll('dl.figures > div')).map((d) => [d.querySelector('dt')!.textContent!.trim(), d.querySelector('dd')!.textContent!.trim()]));
 
   function setup(id: string, body?: unknown, error?: { status: number }): void {
     TestBed.configureTestingModule({
@@ -77,22 +80,27 @@ describe('JourneyDetailComponent', () => {
     expect(summary()).toEqual(jasmine.objectContaining({ Estado: 'Planificada', Servicios: '—', 'Tiempo medio': '—' }));
   });
 
-  it('la tabla de rutas muestra nombre, vehículo, paradas, distancia, duración y usos', () => {
+  it('cada ruta es una tarjeta con su nombre, su vehículo y sus paradas, distancia, duración y usos', () => {
     setup(listed.id, fx(get).response.body);
-    // [botón, ruta, vehículo, paradas, distancia, duración, peso, volumen, inicio, fin]
-    expect(cells(root().querySelector('tr.route')!).slice(1)).toEqual(['Postman route', 'Postman resource', '0', '1,0 km', '10 min', '—', '—', '—', '—', 'Ver en el mapa', 'Ver ruta']);
+    const route = root().querySelector('li.route')!;
+
+    expect(route.querySelector('h3')?.textContent?.trim()).toBe('Postman route');
+    expect(route.querySelector('.vehicle')?.textContent?.trim()).toBe('Postman resource');
+    expect(figures(route)).toEqual({ Paradas: '0', Distancia: '1,0 km', 'Duración': '10 min', Peso: '—', Volumen: '—', Inicio: '—', Fin: '—' });
+    expect(Array.from(route.querySelectorAll('.actions > *')).map((a) => a.textContent?.trim())).toEqual(['Ver en el mapa', 'Ver ruta']);
   });
 
   it('las paradas se abren y se cierran, en orden y con el tipo en español', () => {
     setup(planned.id, fx(plan).response.body);
-    const toggle = root().querySelector('tr.route button') as HTMLButtonElement;
+    const toggle = root().querySelector('li.route button[aria-expanded]') as HTMLButtonElement;
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
-    expect(root().querySelector('tr.stops')).toBeNull();
+    expect(root().querySelector('li.route .stops')).toBeNull();
 
     toggle.click();
     fixture.detectChanges();
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
-    const stops = Array.from(root().querySelectorAll('tr.stops tbody tr')).map(cells);
+    expect(root().querySelector('li.route .stops')?.id).toBe(toggle.getAttribute('aria-controls')!);
+    const stops = Array.from(root().querySelectorAll('li.route .stops tbody tr')).map(cells);
     expect(stops.every((s) => s[5] === 'Ver en el mapa')).toBeTrue();
     expect(stops.length).toBe(planned.routes[0].waypoints.length);
     const orders = stops.map((s) => Number(s[0]));
@@ -102,19 +110,35 @@ describe('JourneyDetailComponent', () => {
 
     toggle.click();
     fixture.detectChanges();
-    expect(root().querySelector('tr.stops')).toBeNull();
+    expect(root().querySelector('li.route .stops')).toBeNull();
+  });
+
+  it('las paradas se apilan en una caja estrecha: cada celda lleva su etiqueta y la tabla no se desplaza', () => {
+    setup(planned.id, fx(plan).response.body);
+    (root().querySelector('li.route button[aria-expanded]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    const row = root().querySelector('li.route .stops tbody tr') as HTMLElement;
+
+    expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual([null, 'Tipo', 'Latitud / longitud', 'Llegada', 'Salida', null]);
+    expect(row.querySelector('td')?.classList).toContain('primary-cell');
+
+    root().style.display = 'block';
+    root().style.width = '360px';
+    const box = root().querySelector('li.route .stops .stack-scope') as HTMLElement;
+    expect(getComputedStyle(row).display).toBe('grid');
+    expect(box.scrollWidth).toBeLessThanOrEqual(box.clientWidth);
   });
 
   it('una ruta sin paradas lo dice al abrirla', () => {
     setup(listed.id, fx(get).response.body);
-    (root().querySelector('tr.route button') as HTMLButtonElement).click();
+    (root().querySelector('li.route button[aria-expanded]') as HTMLButtonElement).click();
     fixture.detectChanges();
-    expect(root().querySelector('tr.stops')?.textContent).toContain('Esta ruta no tiene paradas');
+    expect(root().querySelector('li.route .stops')?.textContent).toContain('Esta ruta no tiene paradas');
   });
 
   it('cada ruta enlaza a su detalle con un nombre accesible', () => {
     setup(listed.id, fx(get).response.body);
-    const link = root().querySelector('tr.route a') as HTMLAnchorElement;
+    const link = root().querySelector('li.route a') as HTMLAnchorElement;
     expect(link.getAttribute('href')).toBe(`/jornadas/${listed.id}/rutas/0`);
     expect(link.getAttribute('aria-label')).toBe('Ver la ruta Postman route');
     expect(link.textContent).toContain('Ver ruta');
@@ -122,7 +146,7 @@ describe('JourneyDetailComponent', () => {
 
   it('el botón de paradas nombra la ruta', () => {
     setup(listed.id, fx(get).response.body);
-    expect(root().querySelector('tr.route button')?.getAttribute('aria-label')).toBe('Ver las paradas de Postman route');
+    expect(root().querySelector('li.route button[aria-expanded]')?.getAttribute('aria-label')).toBe('Ver las paradas de Postman route');
   });
 
   it('una jornada sin rutas lo explica', () => {
@@ -163,7 +187,7 @@ describe('JourneyDetailComponent', () => {
       fixture.detectChanges();
     };
 
-    it('con rutas aparece entre el resumen y la tabla de rutas', async () => {
+    it('con rutas aparece entre el resumen y la lista de rutas', async () => {
       setup(planned.id, fx(plan).response.body);
       await waitForMap();
       const order = Array.from(root().querySelectorAll('h2')).map((h) => h.textContent!.trim());
@@ -177,25 +201,25 @@ describe('JourneyDetailComponent', () => {
       expect(mapComponent()).toBeNull();
     });
 
-    it('«Ver en el mapa» en una ruta la resalta en el mapa, en la leyenda y en la tabla', async () => {
+    it('«Ver en el mapa» en una ruta la resalta en el mapa, en la leyenda y en su tarjeta', async () => {
       setup(planned.id, fx(plan).response.body);
       await waitForMap();
-      const button = root().querySelector('tr.route button[aria-label^="Ver la ruta"]') as HTMLButtonElement;
+      const button = root().querySelector('li.route .actions button[aria-label^="Ver la ruta"]') as HTMLButtonElement;
       expect(button.getAttribute('aria-label')).toBe('Ver la ruta Capture vehicle en el mapa');
       button.click();
       fixture.detectChanges();
 
       expect(root().querySelector('.legend .item')?.getAttribute('aria-pressed')).toBe('true');
-      expect(root().querySelector('tr.route')?.classList.contains('focused')).toBeTrue();
+      expect(root().querySelector('li.route')?.classList.contains('focused')).toBeTrue();
       expect(root().textContent).toContain('Ruta enfocada: Capture vehicle');
     });
 
     it('«Ver en el mapa» en una parada abre su ficha y marca la ruta', async () => {
       setup(planned.id, fx(plan).response.body);
       await waitForMap();
-      (root().querySelector('tr.route button[aria-expanded]') as HTMLButtonElement).click();
+      (root().querySelector('li.route button[aria-expanded]') as HTMLButtonElement).click();
       fixture.detectChanges();
-      const stopButton = root().querySelector('tr.stops button[aria-label^="Ver la parada 1"]') as HTMLButtonElement;
+      const stopButton = root().querySelector('li.route .stops button[aria-label^="Ver la parada 1"]') as HTMLButtonElement;
       expect(stopButton.getAttribute('aria-label')).toBe('Ver la parada 1 de Capture vehicle en el mapa');
       stopButton.focus();
       stopButton.click();
@@ -211,14 +235,81 @@ describe('JourneyDetailComponent', () => {
       expect(document.activeElement).toBe(stopButton);
     });
 
-    it('«Ver todas» en el mapa quita el enfoque de la tabla', async () => {
+    it('«Ver todas» en el mapa quita el enfoque de la tarjeta', async () => {
       setup(planned.id, fx(plan).response.body);
       await waitForMap();
-      (root().querySelector('tr.route button[aria-label^="Ver la ruta"]') as HTMLButtonElement).click();
+      (root().querySelector('li.route .actions button[aria-label^="Ver la ruta"]') as HTMLButtonElement).click();
       fixture.detectChanges();
       (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Ver todas'))!.click();
       fixture.detectChanges();
-      expect(root().querySelector('tr.route')?.classList.contains('focused')).toBeFalse();
+      expect(root().querySelector('li.route')?.classList.contains('focused')).toBeFalse();
+    });
+  });
+
+  describe('tarjetas de ruta y vista dividida', () => {
+    const colorOf = (route: Element) => (route as HTMLElement).style.getPropertyValue('--route-color');
+
+    it('cada tarjeta lleva la franja del color que su ruta tiene en el mapa, y el nombre sigue siendo lo que la identifica', () => {
+      setup(planned.id, fx(plan).response.body);
+      const route = root().querySelector('li.route')!;
+
+      expect(colorOf(route)).toMatch(/^#[0-9a-f]{6}$/i);
+      expect(getComputedStyle(route).borderInlineStartWidth).toBe('6px');
+      expect(route.querySelector('h3')?.textContent?.trim().length).toBeGreaterThan(0);
+    });
+
+    it('el uso de peso y de volumen se ve también como una barra decorativa, además del porcentaje', () => {
+      const body = fx(plan).response.body as { routes: object[] };
+      setup(planned.id, { ...body, routes: [{ ...body.routes[0], weightUsagePercent: 68, volumeUsagePercent: 140 }] });
+      const bars = Array.from(root().querySelectorAll('li.route .bar')) as HTMLElement[];
+      const fill = (bar: HTMLElement) => (bar.querySelector('i') as HTMLElement).style.width;
+
+      expect(bars.length).toBe(2);
+      expect(bars.every((b) => b.getAttribute('aria-hidden') === 'true')).toBeTrue();
+      expect(figures(root().querySelector('li.route')!)['Peso']).toBe('68 %');
+      expect(fill(bars[0])).toBe('68%');
+      // Un uso por encima del 100 % no desborda la barra
+      expect(fill(bars[1])).toBe('100%');
+    });
+
+    it('sin dato de uso la barra queda vacía', () => {
+      setup(listed.id, fx(get).response.body);
+
+      expect(Array.from(root().querySelectorAll('li.route .bar i')).map((i) => (i as HTMLElement).style.width)).toEqual(['0%', '0%']);
+    });
+
+    it('con rutas el mapa y la lista van en una vista dividida, con el mapa fijo; sin rutas no hay vista dividida', () => {
+      setup(planned.id, fx(plan).response.body);
+      const split = root().querySelector('.split-view') as HTMLElement;
+
+      expect(split.querySelector(':scope > section.sticky')?.getAttribute('aria-labelledby')).toBe('map-title');
+      expect(split.querySelector(':scope > section:not(.sticky)')?.getAttribute('aria-labelledby')).toBe('routes-title');
+      fixture.destroy();
+      TestBed.resetTestingModule();
+
+      setup(listed.id, { ...(fx(get).response.body as object), routes: [] });
+      expect(root().querySelector('.split-view')).toBeNull();
+    });
+
+    it('por debajo de 1100px el mapa va sobre la lista; desde 1100px, a su izquierda y fijo', () => {
+      setup(planned.id, fx(plan).response.body);
+      const map = (root().querySelector('.split-view > .sticky') as HTMLElement).getBoundingClientRect();
+      const list = (root().querySelector('.split-view > section:not(.sticky)') as HTMLElement).getBoundingClientRect();
+
+      if (window.matchMedia('(min-width: 1100px)').matches) {
+        expect(list.left).toBeGreaterThanOrEqual(map.right);
+        expect(getComputedStyle(root().querySelector('.split-view > .sticky')!).position).toBe('sticky');
+      } else {
+        expect(list.top).toBeGreaterThanOrEqual(map.bottom);
+        expect(getComputedStyle(root().querySelector('.split-view > .sticky')!).position).not.toBe('sticky');
+      }
+    });
+
+    it('el enlace de vuelta ofrece volver a las jornadas', () => {
+      setup(planned.id, fx(plan).response.body);
+
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/jornadas');
+      expect(root().querySelector('app-form-head a.back')?.textContent?.trim()).toBe('Jornadas');
     });
   });
 

@@ -6,6 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../../testing/api-testing';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
@@ -47,6 +48,23 @@ describe('DriverListComponent', () => {
   });
 
   afterEach(() => http.verify());
+
+  it('las acciones de fila, que son solo un icono, llevan título con lo que hacen', () => {
+    expect(root().querySelectorAll('.mat-mdc-icon-button').length).toBeGreaterThan(1);
+    expect(iconButtonsWithoutTitle(root())).toEqual([]);
+  });
+
+  it('bajo el título dice cuántos hay y crear es la acción principal de la pantalla', () => {
+    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(/^\d+ (conductor|conductores)$/);
+    expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
+  });
+
+  it('lleva las pestañas de la flota bajo la cabecera', () => {
+    const tabs = Array.from(root().querySelectorAll('app-fleet-tabs nav a')).map((a) => a.textContent?.trim());
+
+    expect(tabs).toEqual(['Vehículos', 'Tipos de vehículo', 'Conductores']);
+    expect(root().querySelector('app-page-header + app-fleet-tabs')).not.toBeNull();
+  });
 
   it('muestra nombre, correo, teléfono y estado de cada conductor', () => {
     const row = root().querySelector('tr.mat-mdc-row')!.textContent!;

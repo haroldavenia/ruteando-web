@@ -30,11 +30,11 @@ export function statusTone(domain: StatusDomain, key: string | null): StatusTone
   return tones[key] ?? 'neutral';
 }
 
-/** Icono de Material de cada tono: refuerza el significado para quien no distingue los colores. */
+/** Glifo de línea de cada tono (el del diseño: anillo, marca, círculo, exclamación y cruz): refuerza el significado para quien no distingue los colores. */
 export const TONE_ICONS: Readonly<Record<StatusTone, string>> = {
-  neutral: 'schedule',
-  success: 'check_circle',
-  info: 'info',
-  warning: 'warning',
-  danger: 'cancel',
+  neutral: 'radio_button_unchecked',
+  success: 'check',
+  info: 'circle',
+  warning: 'priority_high',
+  danger: 'close',
 };

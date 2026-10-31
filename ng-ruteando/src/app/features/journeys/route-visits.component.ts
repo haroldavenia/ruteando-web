@@ -6,11 +6,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { MasterDomainsService } from '../../core/api/data/master-domains.service';
+import { ThemeService } from '../../core/theme/theme.service';
+import { readableOn } from '../../shared/map/map-palette';
+import { routeColorFor } from '../../shared/map/route-colors';
 import { DomainRoute, DomainWaypoint } from '../../core/api/models';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
 import { StatusTone, statusTone } from '../../shared/ui/status-tone';
 import { formatDateTime, formatLatLng } from '../../shared/format';
+import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 import { DEFAULT_PACKAGE_STATUSES, packageStatusLabel } from '../packages/package-labels';
 
 import { stopTypeLabel } from './journey-labels';
@@ -30,7 +34,7 @@ interface StopRow {
  */
 @Component({
   selector: 'app-route-visits',
-  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, FormResultComponent, StatusBadgeComponent],
+  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, FormResultComponent, StatusBadgeComponent, ActionTitleDirective],
   providers: [RouteVisitsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-visits.component.html',
@@ -43,6 +47,12 @@ export class RouteVisitsComponent {
 
   protected readonly store = inject(RouteVisitsStore);
   private readonly masters = inject(MasterDomainsService);
+  private readonly theme = inject(ThemeService);
+
+  /** El color de la ruta en el mapa, para el número de cada parada. */
+  protected readonly color = computed(() => routeColorFor(this.route().routeIndex, this.theme.scheme()));
+  /** Negro o blanco, el que más contraste da sobre el color de la ruta. */
+  protected readonly seqText = computed(() => readableOn(this.color()));
 
   protected readonly unavailable = UNAVAILABLE;
   protected readonly statusLabel = packageStatusLabel;

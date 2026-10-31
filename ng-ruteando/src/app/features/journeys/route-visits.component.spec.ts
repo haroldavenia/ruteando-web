@@ -99,6 +99,21 @@ describe('RouteVisitsComponent', () => {
       expect(visit[5]).toBe('Pendiente');
     });
 
+    it('cada celda lleva su etiqueta y, en una caja estrecha, las paradas se apilan sin desplazar la tabla', () => {
+      loadAll();
+      const row = rows()[1] as HTMLElement;
+
+      expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual([null, 'Tipo', 'Paquete', 'Llegada', 'Salida', 'Estado', null]);
+      expect(row.querySelector('td')?.classList).toContain('primary-cell');
+      expect([root().querySelector('table')?.getAttribute('role'), row.getAttribute('role'), row.querySelector('td')?.getAttribute('role')]).toEqual(['table', 'row', 'cell']);
+
+      root().style.display = 'block';
+      root().style.width = '360px';
+      const box = root().querySelector('.stack-scope') as HTMLElement;
+      expect(getComputedStyle(row).display).toBe('grid');
+      expect(box.scrollWidth).toBeLessThanOrEqual(box.clientWidth);
+    });
+
     it('mientras lee los paquetes muestra «Cargando…» y cuántos faltan', () => {
       expect(cells(rows()[1])[5]).toBe('Cargando…');
       expect(root().querySelector('.count')?.textContent).toContain('Cargando 3 paquetes');
@@ -267,6 +282,37 @@ describe('RouteVisitsComponent', () => {
       http.expectNone((r) => r.method === 'PATCH');
       expect(cells(rows()[2])[5]).toBe('Pendiente');
       expect(changeButton('Tienda Sur').disabled).toBeFalse();
+    });
+  });
+
+  describe('presentación', () => {
+    it('la tabla toma el estilo común de las tablas y sigue siendo una tabla con su título y sus cabeceras', () => {
+      loadAll();
+      // Las líneas entre filas son de la tabla; en una caja de menos de 840px las filas se apilan y las separa su propio borde
+      root().style.display = 'block';
+      root().style.width = '900px';
+      const table = root().querySelector('table') as HTMLTableElement;
+
+      expect(table.classList).toContain('grid');
+      expect(table.querySelector('caption')?.textContent).toBe('Paradas y visitas de la ruta');
+      expect(Array.from(table.querySelectorAll('th[scope="col"]')).length).toBe(7);
+      expect(getComputedStyle(table.querySelector('td')!).borderBottomWidth).toBe('1px');
+    });
+
+    it('el número de cada parada va en una pastilla con el color de su ruta y el texto legible sobre él', () => {
+      loadAll();
+      const numbers = Array.from(root().querySelectorAll('td .seq')) as HTMLElement[];
+
+      expect(numbers.map((n) => n.textContent?.trim())).toEqual(['0', '1', '2', '3', '4']);
+      expect(numbers[0].style.getPropertyValue('--route-color')).toMatch(/^#[0-9a-f]{6}$/i);
+      expect(numbers[0].style.getPropertyValue('--seq-text')).toMatch(/^#(000000|ffffff)$/);
+      expect(getComputedStyle(numbers[0]).minWidth).toBe('28px');
+    });
+
+    it('la barra de avance lleva el hilo de la marca', () => {
+      loadAll('attended');
+
+      expect(getComputedStyle(root().querySelector('.bar span')!).backgroundImage).toContain('linear-gradient');
     });
   });
 

@@ -70,6 +70,29 @@ describe('sistema de interfaz común', () => {
     expect(el.textContent).toBe('Solo lectores');
   });
 
+  it('el título de la pantalla va en Manrope con peso 700, no en el peso fino por defecto', () => {
+    const h1 = getComputedStyle(mount('<div class="page"><h1>Título</h1></div>').querySelector('h1')!);
+    expect(h1.fontWeight).toBe('700');
+    expect(h1.fontFamily).toContain('Manrope');
+  });
+
+  it('los encabezados de sección (h2) van en peso 700, como los títulos de las tarjetas de Inicio', () => {
+    const h2 = getComputedStyle(mount('<div class="page"><h2>Sección</h2></div>').querySelector('h2')!);
+    expect(h2.fontWeight).toBe('700');
+  });
+
+  it('la acción principal (.primary-action) lleva el degradado de la marca y, desactivada, el color liso', () => {
+    const host = mount('<button mat-flat-button class="primary-action mat-mdc-unelevated-button mdc-button" type="button">Nuevo</button><button class="primary-action mat-mdc-unelevated-button mdc-button" type="button" disabled>Nuevo</button>');
+    const [active, disabled] = Array.from(host.querySelectorAll('button')).map((b) => getComputedStyle(b).backgroundImage);
+    expect(active).toContain('linear-gradient');
+    expect(disabled).toBe('none');
+  });
+
+  it('un botón de relleno sin .primary-action no lleva degradado: es secundario', () => {
+    const host = mount('<button class="mat-mdc-unelevated-button mdc-button" type="button">Guardar</button>');
+    expect(getComputedStyle(host.querySelector('button')!).backgroundImage).toBe('none');
+  });
+
   it('los selectores son de baja especificidad: un componente puede sobrescribirlos', () => {
     const el = mount('<div class="card" style="padding: 4px">x</div>').firstElementChild as HTMLElement;
     expect(getComputedStyle(el).paddingLeft).toBe('4px');

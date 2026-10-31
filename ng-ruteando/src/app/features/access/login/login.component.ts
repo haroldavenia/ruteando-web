@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChi
 import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -20,6 +21,7 @@ import { PasswordFieldComponent } from '../../../shared/form/password-field.comp
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatProgressBarModule,
     FocusFirstInvalidDirective,
@@ -28,29 +30,30 @@ import { PasswordFieldComponent } from '../../../shared/form/password-field.comp
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>Iniciar sesión</h1>
+    <h1>Bienvenido de nuevo</h1>
+    <p class="lead">Inicia sesión para seguir tus rutas.</p>
     <form [formGroup]="form" (ngSubmit)="submit()" appFocusFirstInvalid novalidate>
       <mat-form-field class="field">
         <mat-label>Correo electrónico</mat-label>
+        <mat-icon matPrefix aria-hidden="true">mail</mat-icon>
         <input matInput type="email" formControlName="email" autocomplete="username" />
         <mat-error>{{ emailError() }}</mat-error>
       </mat-form-field>
       <app-password-field
         [control]="form.controls.password"
         label="Contraseña"
+        leadingIcon="lock"
         autocomplete="current-password"
         [messages]="{ required: 'Introduce tu contraseña' }"
       />
+      <div class="forgot"><a routerLink="/acceso/recuperar">¿Olvidaste tu contraseña?</a></div>
       <app-form-result [error]="error()" />
       @if (loading()) {
         <mat-progress-bar mode="indeterminate" aria-label="Iniciando sesión" />
       }
       <button mat-flat-button type="submit" [disabled]="loading()">Iniciar sesión</button>
     </form>
-    <nav class="links" aria-label="Otras opciones de acceso">
-      <a routerLink="/acceso/recuperar">¿Olvidaste tu contraseña?</a>
-      <a routerLink="/acceso/registro">Crear cuenta</a>
-    </nav>
+    <p class="alt">¿No tienes cuenta? <a routerLink="/acceso/registro">Crear cuenta</a></p>
   `,
 })
 export class LoginComponent {

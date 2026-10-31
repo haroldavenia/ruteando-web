@@ -20,9 +20,9 @@ describe('ConfirmDialogComponent', () => {
   afterEach(() => dialog.closeAll());
 
   /** Abre el diálogo y deja que se renderice (el diálogo no pinta hasta un ciclo de detección de cambios). */
-  async function open() {
+  async function open(extra: { destructive?: boolean } = {}) {
     const ref = dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Borrar lugar', message: '¿Seguro que quieres borrarlo?', confirmLabel: 'Borrar' },
+      data: { title: 'Borrar lugar', message: '¿Seguro que quieres borrarlo?', confirmLabel: 'Borrar', ...extra },
     });
     TestBed.inject(ApplicationRef).tick();
     await new Promise((resolve) => setTimeout(resolve, 40));
@@ -66,6 +66,38 @@ describe('ConfirmDialogComponent', () => {
     container.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true }));
 
     expect(await result).not.toBeTrue();
+  });
+
+  describe('acción destructiva', () => {
+    const tokenColor = (token: string) => {
+      const probe = document.createElement('div');
+      probe.style.background = `var(${token})`;
+      document.body.appendChild(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    };
+
+    it('con destructive el botón de confirmar usa los colores de error y el de cancelar no cambia', async () => {
+      await open({ destructive: true });
+
+      expect(getComputedStyle(byText('Borrar')).backgroundColor).toBe(tokenColor('--mat-sys-error'));
+      expect(getComputedStyle(byText('Cancelar')).backgroundColor).not.toBe(tokenColor('--mat-sys-error'));
+    });
+
+    it('sin destructive el botón de confirmar conserva el color primario', async () => {
+      await open();
+
+      expect(getComputedStyle(byText('Borrar')).backgroundColor).toBe(tokenColor('--mat-sys-primary'));
+    });
+
+    it('con destructive el foco inicial sigue en «Cancelar» y confirmar sigue devolviendo true', async () => {
+      const result = firstValueFrom((await open({ destructive: true })).afterClosed());
+
+      expect(document.activeElement).toBe(byText('Cancelar'));
+      byText('Borrar').click();
+      expect(await result).toBeTrue();
+    });
   });
 
   it('el foco inicial está en "Cancelar", la opción segura', async () => {

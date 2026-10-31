@@ -1,43 +1,68 @@
-<h1>Planificar jornada</h1>
-<form class="card" [formGroup]="form" (ngSubmit)="plan()" appFocusFirstInvalid novalidate>
-  <mat-form-field>
-    <mat-label>Nombre de la jornada</mat-label>
-    <input matInput formControlName="name" autocomplete="off" />
-    <mat-error>{{ error('name') }}</mat-error>
-  </mat-form-field>
+<app-form-head title="Planificar jornada" backLabel="Jornadas" backLink="/jornadas" />
+<div class="with-summary">
+  <form class="card form-grid" [formGroup]="form" (ngSubmit)="plan()" appFocusFirstInvalid novalidate>
+    <section class="form-section">
+      <h2><span class="step-num" aria-hidden="true">1</span>Configuración</h2>
+      <mat-form-field>
+        <mat-label>Nombre de la jornada</mat-label>
+        <input matInput formControlName="name" autocomplete="off" />
+        <mat-error>{{ error('name') }}</mat-error>
+      </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Configuración</mat-label>
-    <mat-select formControlName="settingsId">
-      @for (item of settings(); track item.id) {
-        <mat-option [value]="item.id">{{ item.description }}</mat-option>
+      <mat-form-field>
+        <mat-label>Configuración</mat-label>
+        <mat-select formControlName="settingsId">
+          @for (item of settings(); track item.id) {
+            <mat-option [value]="item.id">{{ item.description }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>{{ error('settingsId') }}</mat-error>
+      </mat-form-field>
+      @if (settingsLoaded() && settings().length === 0) {
+        <p class="hint">Todavía no hay configuraciones. Primero <a routerLink="/configuraciones/nuevo">crea una configuración</a>.</p>
       }
-    </mat-select>
-    <mat-error>{{ error('settingsId') }}</mat-error>
-  </mat-form-field>
-  @if (settingsLoaded() && settings().length === 0) {
-    <p class="hint">Todavía no hay configuraciones. Primero <a routerLink="/configuraciones/nuevo">crea una configuración</a>.</p>
-  }
-  @if (settingsTruncated()) {
-    <p class="hint" role="status">Se muestran solo las primeras {{ selectLimit }} configuraciones.</p>
-  }
+      @if (settingsTruncated()) {
+        <p class="hint" role="status">Se muestran solo las primeras {{ selectLimit }} configuraciones.</p>
+      }
+    </section>
 
-  <h2>Paquetes</h2>
-  @if (picker.isEmpty()) {
-    <p class="hint">Todavía no hay paquetes. Primero <a routerLink="/paquetes/nuevo">crea un paquete</a>.</p>
-  }
-  <app-package-picker #picker [(selectedIds)]="selectedIds" />
-  @if (selectionError()) {
-    <p class="error" role="alert">{{ selectionError() }}</p>
-  }
+    <section class="form-section">
+      <h2><span class="step-num" aria-hidden="true">2</span>Paquetes</h2>
+      @if (picker.isEmpty()) {
+        <p class="hint">Todavía no hay paquetes. Primero <a routerLink="/paquetes/nuevo">crea un paquete</a>.</p>
+      }
+      <app-package-picker #picker [(selectedIds)]="selectedIds" />
+      @if (selectionError()) {
+        <p class="error" role="alert">{{ selectionError() }}</p>
+      }
+    </section>
 
-  @if (submit.submitting()) {
-    <mat-progress-bar mode="indeterminate" aria-label="Planificando la jornada" />
-    <p role="status">Planificando la jornada… puede tardar un poco.</p>
-  }
-  <app-form-result [error]="submit.error()" />
-  <div class="form-actions">
-    <a mat-button routerLink="/jornadas">Cancelar</a>
-    <button mat-flat-button type="submit" [disabled]="submit.submitting()">Planificar</button>
-  </div>
-</form>
+    @if (submit.submitting()) {
+      <mat-progress-bar mode="indeterminate" aria-label="Planificando la jornada" />
+      <p role="status">Planificando la jornada… puede tardar un poco.</p>
+    }
+    <app-form-result [error]="submit.error()" />
+    <app-form-actions [dirty]="hasUnsavedChanges()">
+      <a mat-button routerLink="/jornadas">Cancelar</a>
+      <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Planificar</button>
+    </app-form-actions>
+  </form>
+
+  <aside class="card summary" aria-labelledby="review-title">
+    <h2 id="review-title" class="step-title"><span class="step-num" aria-hidden="true">3</span>Revisa</h2>
+    <dl class="review">
+      <div>
+        <dt>Nombre</dt>
+        <dd [class.empty]="!review().name">{{ review().name ?? 'Sin escribir' }}</dd>
+      </div>
+      <div>
+        <dt>Configuración</dt>
+        <dd [class.empty]="!review().settings">{{ review().settings ?? 'Sin elegir' }}</dd>
+      </div>
+      <div>
+        <dt>Paquetes</dt>
+        <dd [class.empty]="!review().packages">{{ review().packages ?? 'Ninguno elegido' }}</dd>
+      </div>
+    </dl>
+  </aside>
+</div>

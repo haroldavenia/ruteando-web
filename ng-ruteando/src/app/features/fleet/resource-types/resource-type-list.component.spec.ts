@@ -6,6 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
 import { Fixture, respondWith } from '../../../../testing/api-testing';
@@ -43,6 +44,26 @@ describe('ResourceTypeListComponent', () => {
     respondWith(http.expectOne((r) => r.url === '/gateway/resource-types'), list as unknown as Fixture);
     fixture.detectChanges();
   }
+
+  it('las acciones de fila, que son solo un icono, llevan título con lo que hacen', () => {
+    loadList();
+    expect(root().querySelectorAll('.mat-mdc-icon-button').length).toBeGreaterThan(1);
+    expect(iconButtonsWithoutTitle(root())).toEqual([]);
+  });
+
+  it('bajo el título dice cuántos hay y crear es la acción principal de la pantalla', () => {
+    loadList();
+    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(/^\d+ (tipo|tipos)$/);
+    expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
+  });
+
+  it('lleva las pestañas de la flota bajo la cabecera', () => {
+    loadList();
+    const tabs = Array.from(root().querySelectorAll('app-fleet-tabs nav a')).map((a) => a.textContent?.trim());
+
+    expect(tabs).toEqual(['Vehículos', 'Tipos de vehículo', 'Conductores']);
+    expect(root().querySelector('app-page-header + app-fleet-tabs')).not.toBeNull();
+  });
 
   it('muestra nombre, categoría y el perfil con su etiqueta en español', () => {
     loadList();

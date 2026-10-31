@@ -51,7 +51,10 @@ export interface AssignDriverData {
   styles: `
     .field {
       width: 100%;
-      min-width: 280px;
+      /* En pantallas estrechas el diálogo mide el ancho de la ventana menos sus márgenes (32px) y su relleno (48px) */
+      min-width: min(280px, calc(100vw - 80px));
+      /* La etiqueta flotante del campo de contorno sube sobre él y el contenido del diálogo, que recorta, no tiene relleno superior */
+      margin-top: 12px;
     }
   `,
 })

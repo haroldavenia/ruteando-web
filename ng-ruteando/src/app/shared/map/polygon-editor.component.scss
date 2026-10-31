@@ -1,5 +1,9 @@
+// Herramientas, mapa y, debajo, el resumen con la tabla de vértices; desde 1100px la tabla queda a la derecha del mapa
 :host {
-  display: block;
+  display: grid;
+  // Una sola columna que nunca crece más que el espacio disponible: sin ella, la tabla de vértices ensanchaba el mapa
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px 20px;
 }
 
 .toolbar {
@@ -7,7 +11,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
 }
 
 .hint {
@@ -31,10 +34,40 @@
 }
 
 .summary {
-  margin: 8px 0;
+  margin: 0 0 8px;
   font: var(--mat-sys-title-small);
 }
 
 .summary.problem {
   color: var(--mat-sys-error);
+}
+
+@media (min-width: 1100px) {
+  :host {
+    grid-template-columns: minmax(0, 2fr) minmax(20rem, 1fr);
+    grid-template-areas:
+      'bar bar'
+      'map side'
+      'note side';
+    align-items: start;
+  }
+
+  .toolbar {
+    grid-area: bar;
+  }
+
+  .map {
+    grid-area: map;
+  }
+
+  .notice {
+    grid-area: note;
+  }
+
+  // La tabla puede ser larga: se desplaza dentro de su columna y no alarga el formulario más que el mapa
+  .side {
+    grid-area: side;
+    max-height: var(--app-map-height, 360px);
+    overflow-y: auto;
+  }
 }

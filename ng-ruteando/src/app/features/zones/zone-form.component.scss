@@ -1,7 +1,10 @@
-.row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 0 16px;
+// El editor lleva el mapa y la tabla de vértices lado a lado desde 1100px: necesita más ancho que un formulario de campos
+:host {
+  --app-map-height: 440px;
+}
+
+form.card {
+  max-width: none;
 }
 
 .colors {
@@ -9,9 +12,9 @@
   flex-wrap: wrap;
   gap: 8px;
   margin: 0 0 8px;
-  padding: 8px 12px;
+  padding: 8px 12px 12px;
   border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 legend {
@@ -19,13 +22,26 @@ legend {
   font: var(--mat-sys-label-large);
 }
 
+// Cada color es una pastilla de 44px de alto en la que se puede pulsar en cualquier punto: el radio nativo la cubre entera, invisible
 .color {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
   border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.color input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
   cursor: pointer;
 }
 
@@ -41,10 +57,10 @@ legend {
 
 .swatch {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border: 1px solid var(--mat-sys-outline);
-  border-radius: 3px;
+  border-radius: 5px;
 }
 
 .swatch.none {
@@ -55,4 +71,3 @@ legend {
   margin: 8px 0 0;
   color: var(--mat-sys-error);
 }
-

@@ -6,6 +6,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { JourneysApi } from '../../core/api/data/journeys.api';
 import { PlannedJourney } from '../../core/api/models';
 import { RecordLoader } from '../../shared/data/record-loader';
+import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { formatCount, formatDateTime, formatDuration } from '../../shared/format';
 
@@ -18,7 +19,7 @@ import { journeyStatusLabel } from './journey-labels';
 
 @Component({
   selector: 'app-journey-detail',
-  imports: [RouterLink, MatButtonModule, MatProgressBarModule, FormResultComponent, JourneyRoutesComponent, RoutesMapComponent, StatusBadgeComponent],
+  imports: [RouterLink, MatButtonModule, MatProgressBarModule, FormHeadComponent, FormResultComponent, JourneyRoutesComponent, RoutesMapComponent, StatusBadgeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './journey-detail.component.html',
 })

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-import { routeColor } from '../../shared/map/route-colors';
+import { routeColorThemed } from '../map/route-colors';
 
 interface BackdropRoute {
   color: string;
@@ -14,24 +14,24 @@ const DEPOT = [240, 430] as const;
 
 const ROUTES: readonly BackdropRoute[] = [
   {
-    color: routeColor(0),
+    color: routeColorThemed(0),
     points: '240,430 330,290 480,220 620,280 590,410 400,470 240,430',
     stops: [[330, 290], [480, 220], [620, 280], [590, 410], [400, 470]],
   },
   {
-    color: routeColor(1),
+    color: routeColorThemed(1),
     points: '240,430 300,560 450,640 640,620 700,520 540,480 240,430',
     stops: [[300, 560], [450, 640], [640, 620], [700, 520], [540, 480]],
   },
   {
-    color: routeColor(2),
+    color: routeColorThemed(2),
     points: '240,430 360,380 560,340 760,260 960,240 1020,360 880,400 700,430 240,430',
     stops: [[560, 340], [760, 260], [960, 240], [1020, 360], [880, 400]],
   },
 ];
 
 /**
- * Fondo decorativo de las pantallas de acceso: un depósito («D»), tres rutas con sus paradas numeradas como en el mapa
+ * Ilustración decorativa de las pantallas de acceso y de la cabecera de Inicio: un depósito («D»), tres rutas con sus paradas numeradas como en el mapa
  * de rutas (`ruta·orden`) y una zona. Es solo ilustración: está oculto a lectores de pantalla, no recibe foco ni clics y
  * toma sus colores del tema. Las rutas se dibujan una vez al entrar, salvo que se pida movimiento reducido.
  */
@@ -40,7 +40,7 @@ const ROUTES: readonly BackdropRoute[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'aria-hidden': 'true' },
   template: `
-    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" focusable="false">
+    <svg viewBox="0 0 1200 800" [attr.preserveAspectRatio]="align() === 'start' ? 'xMinYMid slice' : 'xMidYMid slice'" focusable="false">
       <polygon class="zone" points="780,130 1080,190 1130,430 940,560 740,420" />
       @for (route of routes; track route.color; let r = $index) {
         <g [style.--c]="route.color">
@@ -73,7 +73,7 @@ const ROUTES: readonly BackdropRoute[] = [
     svg {
       width: 100%;
       height: 100%;
-      opacity: 0.55;
+      opacity: 0.8;
     }
     .zone {
       fill: color-mix(in srgb, var(--mat-sys-primary) 9%, transparent);
@@ -103,7 +103,8 @@ const ROUTES: readonly BackdropRoute[] = [
       font: 700 11px Roboto, sans-serif;
       text-anchor: middle;
       dominant-baseline: central;
-      fill: #fff;
+      /* Sobre el color de la ruta: blanco en claro y casi negro en oscuro, donde los tonos son más luminosos */
+      fill: light-dark(#fff, #1d1b1e);
     }
     .depot text {
       font-size: 24px;
@@ -134,6 +135,8 @@ const ROUTES: readonly BackdropRoute[] = [
   `,
 })
 export class RouteBackdropComponent {
+  /** `start` ancla el dibujo a la izquierda, con el depósito siempre a la vista; `center` lo centra. Al recortar, se recorta el lado contrario. */
+  readonly align = input<'start' | 'center'>('center');
   protected readonly routes = ROUTES;
   protected readonly depot = DEPOT;
 }

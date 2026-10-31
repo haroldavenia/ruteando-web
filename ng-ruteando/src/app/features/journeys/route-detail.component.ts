@@ -6,6 +6,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { JourneysApi } from '../../core/api/data/journeys.api';
 import { DomainRoute, PlannedJourney } from '../../core/api/models';
 import { RECORD_GONE, RecordLoader } from '../../shared/data/record-loader';
+import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { formatCount, formatDateTime, formatDistance, formatDuration, formatPercent } from '../../shared/format';
 
@@ -18,7 +19,7 @@ import { RoutesMapComponent, StopRef } from './routes-map.component';
  */
 @Component({
   selector: 'app-route-detail',
-  imports: [RouterLink, MatButtonModule, MatProgressBarModule, FormResultComponent, RoutesMapComponent, RouteVisitsComponent],
+  imports: [RouterLink, MatButtonModule, MatProgressBarModule, FormHeadComponent, FormResultComponent, RoutesMapComponent, RouteVisitsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-detail.component.html',
 })

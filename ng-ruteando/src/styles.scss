@@ -1,6 +1,8 @@
 @use '@angular/material' as mat;
 @use './app/features/access/access-theme';
 @use './app/shared/ui/ui-system';
+@use './app/shared/data/data-list';
+@use './app/shared/map/map-theme';
 
 // Tema Material 3: único punto de definición del tema de la aplicación. Claro u oscuro según la preferencia del sistema
 // (`light-dark()` con `color-scheme`).
@@ -13,7 +15,10 @@ html {
       tertiary: mat.$rose-palette,
       theme-type: color-scheme,
     ),
-    typography: Roboto,
+    typography: (
+      plain-family: Roboto,
+      brand-family: Manrope,
+    ),
     density: 0,
   ));
 
@@ -21,6 +26,75 @@ html {
   @include mat.dialog-overrides((
     container-shape: 24px,
   ));
+
+  // Botones de 44px y esquinas de 12px, las de los campos y las de acceso e Inicio (que suben a 48px en su propia hoja). Material
+  // añade a cada botón una zona táctil invisible de 48px, así que la altura visible es cuestión de coherencia. El botón de icono
+  // sigue siendo redondo, con la capa de 44px.
+  @include mat.button-overrides((
+    filled-container-shape: 12px,
+    outlined-container-shape: 12px,
+    text-container-shape: 12px,
+    tonal-container-shape: 12px,
+    protected-container-shape: 12px,
+    filled-container-height: 44px,
+    outlined-container-height: 44px,
+    text-container-height: 44px,
+    tonal-container-height: 44px,
+    protected-container-height: 44px,
+  ));
+  @include mat.icon-button-overrides((state-layer-size: 44px));
+
+  // Un botón de texto deshabilitado («Quitar la selección») se sigue leyendo: Material lo deja al 38% de la tinta, a 2,3 a 1 de
+  // contraste en claro; con el 62% llega a más de 4,5 a 1 en los dos temas y sigue distinguiéndose del activo, que va en color de marca
+  @include mat.button-overrides((text-disabled-label-text-color: color-mix(in srgb, var(--mat-sys-on-surface) 62%, transparent)));
+
+  // Campos con contorno (`OUTLINED_FIELDS_PROVIDER`) y esquinas de 12px
+  @include mat.form-field-overrides((outlined-container-shape: 12px));
+
+  // Avisos breves con las mismas esquinas de 12px
+  @include mat.snack-bar-overrides((container-shape: 12px));
+
+  // Estados con significado propio: Material no trae verde, azul ni ámbar (el peligro usa `error-container`). Cada par
+  // texto/fondo supera 4,5:1 en claro y en oscuro (lo comprueba `contrast.spec.ts`) y el color nunca es la única señal:
+  // cada estado lleva su icono y su nombre.
+  --app-success-container: light-dark(#ddf3e7, #0f3a28);
+  --app-on-success-container: light-dark(#0b6b42, #6fdda8);
+  --app-info-container: light-dark(#dcebfa, #0c3157);
+  --app-on-info-container: light-dark(#0a5496, #8ac8ff);
+  --app-warning-container: light-dark(#ffebc2, #402d00);
+  --app-on-warning-container: light-dark(#7a4b00, #f6c964);
+
+  // Hilo de la marca: del violeta al rosa del tema. Solo para botones principales, barras de progreso y una palabra
+  // destacada; con el texto de `on-primary` encima cumple 4,5:1 en los dos extremos y en los dos temas.
+  --app-brand-gradient: linear-gradient(100deg, var(--mat-sys-primary), var(--mat-sys-tertiary));
+}
+
+// Iconos de línea: el diseño dibuja contornos, no iconos rellenos. Material pinta cada icono con la clase `material-icons`; aquí esa
+// clase usa Material Symbols en su versión de contorno, a un trazo fijo (peso 350, sin relleno), con los mismos nombres de icono.
+.material-icons {
+  display: inline-block;
+  font-family: 'Material Symbols Outlined';
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 350;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+// Elección manual del tema (selector de tema): fuerza el esquema; sin ella `light dark` sigue al sistema. Todos los tokens
+// usan `light-dark()`, así que basta con cambiar `color-scheme`; nada redefine el tema.
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 html,

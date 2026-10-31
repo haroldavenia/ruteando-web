@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DestroyRef } from '@angular/core';
 
 import { LatLng } from '../../core/geo/lat-lng';
+import { ActionTitleDirective } from '../ui/action-title.directive';
 
 type VertexGroup = FormGroup<{ lat: FormControl<number | null>; lng: FormControl<number | null> }>;
 
@@ -24,7 +25,7 @@ const same = (a: readonly LatLng[], b: readonly LatLng[]): boolean => a.length =
  */
 @Component({
   selector: 'app-vertex-table',
-  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule],
+  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, ActionTitleDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './vertex-table.component.html',
   styleUrl: './vertex-table.component.scss',

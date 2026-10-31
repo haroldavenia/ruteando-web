@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, Injector, PLATFORM_ID, afterNextRen
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -28,6 +29,7 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
     RouterLink,
     MatButtonModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatProgressBarModule,
     FocusFirstInvalidDirective,
@@ -35,22 +37,30 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>Verificar correo</h1>
     @if (state() === 'loading') {
-      <p role="status">Verificando tu correo…</p>
-      <mat-progress-bar mode="indeterminate" aria-label="Verificando el correo" />
+      <div class="state">
+        <span class="state-icon spin"><mat-icon aria-hidden="true">route</mat-icon></span>
+        <h1>Verificar correo</h1>
+        <p role="status">Verificando tu correo…</p>
+        <mat-progress-bar mode="indeterminate" aria-label="Verificando el correo" />
+      </div>
     } @else {
-      <app-form-result [error]="message()" [success]="resendDone() ? resendMessage : null" />
-      <p>Puedes pedir que te enviemos un enlace nuevo.</p>
-      <form [formGroup]="form" (ngSubmit)="resend()" appFocusFirstInvalid novalidate>
-        <mat-form-field class="field">
-          <mat-label>Correo electrónico</mat-label>
-          <input matInput type="email" formControlName="email" autocomplete="username" />
-          <mat-error>{{ emailError() }}</mat-error>
-        </mat-form-field>
-        <button mat-flat-button type="submit" [disabled]="resending()">Reenviar verificación</button>
-      </form>
-      <p class="alt"><a routerLink="/acceso">Ir a iniciar sesión</a></p>
+      <div class="state">
+        <span class="state-icon bad"><mat-icon aria-hidden="true">link_off</mat-icon></span>
+        <h1>Verificar correo</h1>
+        <app-form-result [error]="message()" [success]="resendDone() ? resendMessage : null" />
+        <p class="lead">Puedes pedir que te enviemos un enlace nuevo.</p>
+        <form [formGroup]="form" (ngSubmit)="resend()" appFocusFirstInvalid novalidate>
+          <mat-form-field class="field">
+            <mat-label>Correo electrónico</mat-label>
+            <mat-icon matPrefix aria-hidden="true">mail</mat-icon>
+            <input matInput type="email" formControlName="email" autocomplete="username" />
+            <mat-error>{{ emailError() }}</mat-error>
+          </mat-form-field>
+          <button mat-flat-button type="submit" [disabled]="resending()">Reenviar verificación</button>
+        </form>
+        <p class="alt"><a routerLink="/acceso">Ir a iniciar sesión</a></p>
+      </div>
     }
   `,
 })

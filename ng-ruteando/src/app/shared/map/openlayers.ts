@@ -54,6 +54,7 @@ async function importOpenLayers() {
     Polygon: polygon.default,
     extend: extent.extend,
     createEmptyExtent: extent.createEmpty,
+    isEmpty: extent.isEmpty,
     transformExtent: proj.transformExtent,
   };
 }

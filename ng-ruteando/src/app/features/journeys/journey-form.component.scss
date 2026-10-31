@@ -1,5 +1,5 @@
 .hint {
-  margin: -8px 0 8px;
+  margin: -20px 0 0;
   color: var(--mat-sys-on-surface-variant);
   font: var(--mat-sys-body-small);
 }
@@ -7,5 +7,29 @@
 .error {
   margin: 0;
   color: var(--mat-sys-error);
+}
+
+// El resumen: cada dato con su nombre; lo que aún falta se ve apagado y en cursiva
+.review {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.review dt {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-medium);
+}
+
+.review dd {
+  margin: 2px 0 0;
+  font: var(--mat-sys-title-medium);
+  overflow-wrap: anywhere;
+}
+
+.review dd.empty {
+  color: var(--mat-sys-on-surface-variant);
+  font-style: italic;
+  font-weight: 400;
 }
 

@@ -10,6 +10,7 @@ import { DeleteFlow } from '../../shared/data/delete-flow';
 import { ListState } from '../../shared/data/list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
+import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 
 import { restrictionTypeLabel, routeTopologyLabel } from './settings-labels';
 
@@ -17,11 +18,11 @@ const IN_USE = 'No se puede eliminar: la configuración se usa en una jornada';
 
 @Component({
   selector: 'app-settings-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink],
+  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header title="Configuraciones">
-      <a mat-flat-button routerLink="/configuraciones/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nueva configuración</a>
+    <app-page-header title="Configuraciones" [subtitle]="state.countText('configuración', 'configuraciones')">
+      <a mat-flat-button class="primary-action" routerLink="/configuraciones/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nueva configuración</a>
     </app-page-header>
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
     <app-data-table [state]="state" [columns]="columns" entityPlural="configuraciones" emptyMessage="Todavía no hay configuraciones">
@@ -43,7 +44,7 @@ export class SettingsListComponent {
   protected readonly deleter = new DeleteFlow();
   protected readonly state = new ListState<Settings>((params) => this.api.list(params));
   protected readonly columns: DataColumn<Settings>[] = [
-    { id: 'description', header: 'Descripción', cell: (s) => s.description },
+    { id: 'description', header: 'Descripción', cell: (s) => s.description, kind: 'strong' },
     { id: 'routeTopology', header: 'Topología', cell: (s) => routeTopologyLabel(s.routeTopology) },
     { id: 'restrictionType', header: 'Restricción', cell: (s) => restrictionTypeLabel(s.restrictionType) },
     { id: 'placeStart', header: 'Salida', cell: (s) => s.placeStart?.name ?? '' },

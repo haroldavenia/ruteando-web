@@ -15,10 +15,7 @@
   }
   @default {
     @if (route(); as route) {
-      <div class="page-head">
-        <a mat-button [routerLink]="['/jornadas', journeyId]">← Volver a la jornada {{ loader.record()?.name }}</a>
-        <h1>{{ route.name }}</h1>
-      </div>
+      <app-form-head [title]="route.name" [backLabel]="'Jornada ' + loader.record()?.name" [backLink]="'/jornadas/' + journeyId" />
 
       <section class="card" aria-labelledby="summary-title">
         <h2 id="summary-title">Resumen</h2>

@@ -6,6 +6,7 @@ import { Observable, Subject, of, throwError } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
+import { OUTLINED_FIELDS_PROVIDER } from '../form/outlined-fields';
 
 import { DataColumn, DataTableComponent } from './data-table.component';
 import { ListState } from './list-state';
@@ -63,7 +64,7 @@ describe('DataTableComponent', () => {
     fixture.detectChanges();
   }
 
-  beforeEach(() => TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations(), provideRouter([])] }));
+  beforeEach(() => TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations(), provideRouter([]), OUTLINED_FIELDS_PROVIDER] }));
 
   it('muestra el indicador de carga mientras espera', async () => {
     await render(() => new Subject<Page<Row>>(), true);
@@ -138,7 +139,7 @@ describe('DataTableComponent', () => {
     await render(() => of(page([{ name: 'A', plate: 'P1' }, { name: 'B', plate: 'P2' }], 0, 45)));
     const focusables = Array.from(root().querySelectorAll<HTMLElement>('input, button:not([disabled]), a[href]'));
     const labels = focusables.map((el) => el.getAttribute('aria-label') ?? el.tagName.toLowerCase());
-    expect(labels.indexOf('input')).toBe(0);
+    expect(focusables[0].matches('input[type="search"]')).toBeTrue();
     expect(labels.indexOf('Eliminar vehículo P1')).toBeLessThan(labels.indexOf('Eliminar vehículo P2'));
     expect(labels.indexOf('Eliminar vehículo P2')).toBeLessThan(labels.indexOf('Página siguiente'));
   });
@@ -192,6 +193,100 @@ describe('DataTableComponent', () => {
     expect(rows[0].querySelector('td')!.textContent!.trim()).toBe('Con color');
   });
 
+  describe('alcance del filtro, esqueleto y columna fija', () => {
+    const scope = () => root().querySelector('.scope');
+    const filterBy = (value: string) => {
+      const input = root().querySelector('input[type="search"]') as HTMLInputElement;
+      input.value = value;
+      input.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+    };
+    const two = [{ name: 'Camión grande', plate: 'AAA111' }, { name: 'Furgón', plate: 'BBB222' }];
+
+    it('sin filtro dice cuántas filas se ven del total que informa el gateway', async () => {
+      await render(() => of(page(two, 0, 45)));
+
+      expect(scope()?.textContent?.trim()).toBe('Mostrando 2 de 45');
+    });
+
+    it('con un filtro dice sobre cuántas filas de la página actúa, no sobre todo el listado', async () => {
+      await render(() => of(page(two, 0, 45)));
+      filterBy('camion');
+
+      expect(scope()?.textContent?.trim()).toBe('1 de 2 filas de esta página');
+    });
+
+    it('lo anuncia a los lectores de pantalla sin interrumpir', async () => {
+      await render(() => of(page(two)));
+
+      expect(scope()?.getAttribute('aria-live')).toBe('polite');
+    });
+
+    it('mientras carga, con error o sin registros no dice nada', async () => {
+      await render(() => new Subject<Page<Row>>());
+      expect(scope()).toBeNull();
+
+      fixture.destroy();
+      await render(() => throwError(() => new ApiError({ status: 500, message: 'x' })));
+      expect(scope()).toBeNull();
+
+      fixture.destroy();
+      await render(() => of(page([])));
+      expect(scope()).toBeNull();
+    });
+
+    it('mientras carga enseña filas de esqueleto ocultas a los lectores, y conserva la barra y el mensaje', async () => {
+      await render(() => new Subject<Page<Row>>());
+      const skeleton = root().querySelector('.skeleton-rows');
+
+      expect(skeleton?.getAttribute('aria-hidden')).toBe('true');
+      expect(skeleton?.querySelectorAll('.skeleton-row').length).toBe(5);
+      expect(root().querySelector('mat-progress-bar')).not.toBeNull();
+      expect(text()).toContain('Cargando vehículos');
+    });
+
+    it('al cargar quita el esqueleto', async () => {
+      await render(() => of(page(two)));
+
+      expect(root().querySelector('.skeleton-rows')).toBeNull();
+    });
+
+    it('la primera columna se queda fija al desplazar la tabla, con su propio fondo', async () => {
+      await render(() => of(page(two)));
+      // En una caja estrecha las filas se apilan y no hay columna fija: la tabla entera solo se ve a partir de 840px
+      root().style.display = 'block';
+      root().style.width = '900px';
+      const sticky = Array.from(root().querySelectorAll('th.mat-mdc-table-sticky, td.mat-mdc-table-sticky'));
+
+      expect(sticky.length).toBe(3);
+      expect(sticky.map((c) => c.textContent?.trim())).toEqual(['Nombre', 'Camión grande', 'Furgón']);
+      expect(getComputedStyle(sticky[1]).backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    });
+
+    it('una columna marcada como primary sustituye a la primera como columna fija', async () => {
+      await render(() => of(page(two)), true, [
+        { id: 'name', header: 'Nombre', cell: (r) => r.name },
+        { id: 'plate', header: 'Matrícula', cell: (r) => r.plate, primary: true },
+      ]);
+
+      expect(Array.from(root().querySelectorAll('th.mat-mdc-table-sticky')).map((c) => c.textContent?.trim())).toEqual(['Matrícula']);
+    });
+
+    it('el enlace de una celda es un objetivo de al menos 44px y se distingue del texto con el color de la marca', async () => {
+      await render(() => of(page(two)), true, [{ id: 'name', header: 'Nombre', cell: (r) => r.name, link: () => ['/x'] }]);
+      const link = root().querySelector('td a') as HTMLElement;
+
+      expect(link.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+      expect(getComputedStyle(link).color).not.toBe(getComputedStyle(root().querySelector('th')!).color);
+    });
+
+    it('el campo del filtro mide 44px de alto', async () => {
+      await render(() => of(page(two)));
+
+      expect((root().querySelector('.filter .mat-mdc-text-field-wrapper') as HTMLElement).getBoundingClientRect().height).toBe(44);
+    });
+  });
+
   describe('presentación', () => {
     const icon = (selector: string) => root().querySelector(`${selector} .state-icon`)?.textContent?.trim();
 
@@ -206,6 +301,9 @@ describe('DataTableComponent', () => {
 
     it('la cabecera de columnas y las filas tienen su propio estilo dentro de la tarjeta', async () => {
       await render(() => of(page([{ name: 'Furgoneta', plate: 'ABC-123' }])));
+      // La cabecera solo se ve cuando la tabla es tabla (a partir de 840px de caja)
+      root().style.display = 'block';
+      root().style.width = '900px';
       const header = getComputedStyle(root().querySelector('th.mat-mdc-header-cell')!);
       const table = root().querySelector('table')!;
       expect(header.backgroundColor).not.toBe(getComputedStyle(table).backgroundColor);
@@ -246,6 +344,48 @@ describe('DataTableComponent', () => {
       expect(badges.map((b) => b.querySelector('span')?.textContent)).toEqual(['Atendido', 'Cancelado']);
       expect(badges.map((b) => b.getAttribute('data-tone'))).toEqual(['success', 'danger']);
       expect(badges[0].querySelector('mat-icon')?.getAttribute('aria-hidden')).toBe('true');
+    });
+  });
+
+  describe('en una caja estrecha', () => {
+    const rows: Row[] = [{ name: 'Furgón', plate: 'ABC123' }, { name: '', plate: 'XYZ789' }];
+
+    /** Pone el ancho de la caja que contiene la tabla: la tabla decide según ella y no según la ventana. */
+    function widthOf(px: number): void {
+      root().style.display = 'block';
+      root().style.width = px + 'px';
+    }
+    const firstRow = () => root().querySelector('tbody tr.mat-mdc-row') as HTMLElement;
+
+    it('cada celda repite su encabezado, la primera es el título y un dato vacío se marca', async () => {
+      await render(() => of(page(rows)));
+      const [first, second] = Array.from(root().querySelectorAll('tbody tr.mat-mdc-row')) as HTMLElement[];
+
+      expect(Array.from(first.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual(['Nombre', 'Matrícula', null]);
+      expect(first.querySelector('td')?.classList).toContain('primary-cell');
+      expect(first.querySelectorAll('.empty-cell').length).toBe(0);
+      expect(second.querySelector('td.empty-cell')).not.toBeNull();
+    });
+
+    it('con menos de 840px las filas se apilan: no se desplaza ni la tabla ni la página y el encabezado sigue para los lectores', async () => {
+      await render(() => of(page(rows)));
+      widthOf(360);
+      const scroll = root().querySelector('.stack-scope') as HTMLElement;
+      const head = root().querySelector('thead') as HTMLElement;
+
+      expect(getComputedStyle(firstRow()).display).toBe('grid');
+      expect(head.getBoundingClientRect().height).toBeLessThanOrEqual(1);
+      expect(head.querySelectorAll('th').length).toBe(3);
+      expect(scroll.scrollWidth).toBeLessThanOrEqual(scroll.clientWidth);
+      expect(getComputedStyle(root().querySelector('td.mat-mdc-table-sticky') as HTMLElement).position).toBe('static');
+    });
+
+    it('con 900px o más sigue siendo una tabla, con su primera columna fija', async () => {
+      await render(() => of(page(rows)));
+      widthOf(900);
+
+      expect(getComputedStyle(firstRow()).display).toBe('table-row');
+      expect(getComputedStyle(root().querySelector('td.mat-mdc-table-sticky') as HTMLElement).position).toBe('sticky');
     });
   });
 });

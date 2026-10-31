@@ -42,7 +42,9 @@ const PENDING = 'pending';
           [checked]="isSelected(row.id)"
           (change)="toggle(row.id, $event.checked)"
           [aria-label]="'Seleccionar paquete ' + label(row)"
-        />
+        >
+          <span class="stack-only">Seleccionar</span>
+        </mat-checkbox>
       </ng-template>
     </app-data-table>
   `,
@@ -84,7 +86,7 @@ export class PackagePickerComponent {
 
   protected readonly columns: DataColumn<Package>[] = [
     { id: 'guideNumber', header: 'Guía', cell: (p) => p.guideNumber ?? '' },
-    { id: 'name', header: 'Nombre', cell: (p) => p.name },
+    { id: 'name', header: 'Nombre', primary: true, cell: (p) => p.name },
     { id: 'serviceType', header: 'Servicio', cell: (p) => serviceTypeLabel(p.serviceType) },
     { id: 'address', header: 'Dirección', cell: (p) => p.address },
     { id: 'status', header: 'Estado', cell: (p) => packageStatusLabel(p.status) },

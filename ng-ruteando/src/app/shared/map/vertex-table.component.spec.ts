@@ -48,6 +48,19 @@ describe('VertexTableComponent', () => {
     expect(Array.from(root().querySelectorAll('thead th')).map((th) => th.getAttribute('scope'))).toEqual(['col', 'col', 'col', 'col']);
   });
 
+  it('en una caja estrecha cada vértice es una tarjeta: sus campos caben y la tabla no se desplaza', () => {
+    const row = root().querySelector('tbody tr') as HTMLElement;
+    expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual(['Latitud', 'Longitud', null]);
+
+    root().style.display = 'block';
+    root().style.width = '320px';
+    const box = root().querySelector('.stack-scope') as HTMLElement;
+    expect(getComputedStyle(row).display).toBe('grid');
+    expect(getComputedStyle(box.querySelector('caption')!).display).toBe('block');
+    expect(box.scrollWidth).toBeLessThanOrEqual(box.clientWidth);
+    expect(input('Latitud del vértice 1').getBoundingClientRect().right).toBeLessThanOrEqual(box.getBoundingClientRect().right);
+  });
+
   it('editar una coordenada válida actualiza los vértices', () => {
     type('Latitud del vértice 2', '4.55');
     expect(host().vertices()[1]).toEqual({ lat: 4.55, lng: -74 });

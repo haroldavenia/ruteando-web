@@ -80,7 +80,31 @@ describe('formularios en tarjeta', () => {
         expect(ownStyles(component)).not.toMatch(/(^|\s)h1\s*\{/);
       });
 
+      it('el botón de enviar es la acción principal de la pantalla y es el único con el degradado de la marca', () => {
+        const root = mount(component);
+        const flat = Array.from(root.querySelectorAll('form button.mdc-button--unelevated, form a.mdc-button--unelevated'));
+        const primary = Array.from(root.querySelectorAll('form .primary-action'));
+
+        expect(primary.length).toBe(1);
+        expect(primary[0].getAttribute('type')).toBe('submit');
+        expect(flat.filter((b) => b.classList.contains('primary-action')).length).toBe(1);
+        expect(getComputedStyle(primary[0]).backgroundImage).toContain('linear-gradient');
+      });
+
       if (grid) {
+        it('lleva la cabecera con la vuelta al listado, los campos en secciones con icono y la barra de acciones', () => {
+          const root = mount(component);
+
+          expect(root.querySelector('app-form-head a.back')).not.toBeNull();
+          expect(root.querySelector('app-form-head h1')?.textContent?.trim().length).toBeGreaterThan(0);
+          const sections = Array.from(root.querySelectorAll('form section.form-section'));
+          expect(sections.length).toBeGreaterThan(0);
+          for (const section of sections) {
+            expect(section.querySelector(':scope > h2 mat-icon')).not.toBeNull();
+          }
+          expect(root.querySelector('form app-form-actions.form-actions')).not.toBeNull();
+        });
+
         it('los campos se agrupan en una columna en pantalla estrecha y en dos desde 720px', () => {
           const form = mount(component).querySelector('form') as HTMLElement;
           expect(form.classList.contains('form-grid')).toBeTrue();
@@ -90,6 +114,31 @@ describe('formularios en tarjeta', () => {
       }
     });
   }
+
+  describe('pistas bajo un campo', () => {
+    it('van en el color del texto secundario, no en el del texto principal', () => {
+      const root = mount(ResourceFormComponent);
+      const hint = root.querySelector('mat-hint') as HTMLElement;
+      const secondary = document.createElement('span');
+      secondary.style.color = 'var(--mat-sys-on-surface-variant)';
+      root.appendChild(secondary);
+
+      expect(getComputedStyle(hint).color).toBe(getComputedStyle(secondary).color);
+    });
+
+    it('dejan sitio a la etiqueta flotante del campo de abajo, que asoma sobre su borde', () => {
+      const root = mount(ResourceFormComponent);
+      const hintField = (root.querySelector('mat-hint') as HTMLElement).closest('mat-form-field') as HTMLElement;
+      const hintBox = hintField.getBoundingClientRect();
+      const below = Array.from(root.querySelectorAll('form mat-form-field'))
+        .map((f) => f.getBoundingClientRect())
+        .filter((r) => r.top >= hintBox.bottom - 1 && r.left < hintBox.right && r.right > hintBox.left)
+        .sort((a, b) => a.top - b.top)[0];
+
+      expect(below).toBeDefined();
+      expect(below.top - hintBox.bottom).toBeGreaterThanOrEqual(8);
+    });
+  });
 
   it('el importador de CSV presenta cada paso en una tarjeta', () => {
     const root = mount(PackageImportComponent);

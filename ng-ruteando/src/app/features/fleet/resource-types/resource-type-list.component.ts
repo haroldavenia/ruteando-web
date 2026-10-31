@@ -10,16 +10,19 @@ import { DeleteFlow } from '../../../shared/data/delete-flow';
 import { ListState } from '../../../shared/data/list-state';
 import { PageHeaderComponent } from '../../../shared/data/page-header.component';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
+import { ActionTitleDirective } from '../../../shared/ui/action-title.directive';
+import { FleetTabsComponent } from '../fleet-tabs.component';
 import { profileLabel } from '../fleet-labels';
 
 @Component({
   selector: 'app-resource-type-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink],
+  imports: [DataTableComponent, FleetTabsComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header title="Tipos de vehículo">
-      <a mat-flat-button routerLink="/flota/tipos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo tipo</a>
+    <app-page-header title="Tipos de vehículo" [subtitle]="state.countText('tipo', 'tipos')">
+      <a mat-flat-button class="primary-action" routerLink="/flota/tipos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo tipo</a>
     </app-page-header>
+    <app-fleet-tabs />
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
     <app-data-table [state]="state" [columns]="columns" entityPlural="tipos de vehículo" emptyMessage="Todavía no hay tipos de vehículo">
       <ng-template #rowActions let-row>
@@ -40,7 +43,7 @@ export class ResourceTypeListComponent {
   protected readonly deleter = new DeleteFlow();
   protected readonly state = new ListState<ResourceType>((params) => this.api.list(params));
   protected readonly columns: DataColumn<ResourceType>[] = [
-    { id: 'name', header: 'Nombre', cell: (r) => r.name },
+    { id: 'name', header: 'Nombre', cell: (r) => r.name, kind: 'strong' },
     { id: 'category', header: 'Categoría', cell: (r) => r.category },
     { id: 'osrmProfile', header: 'Perfil de ruteo', cell: (r) => profileLabel(r.osrmProfile) },
   ];
