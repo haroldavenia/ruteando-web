@@ -1,6 +1,8 @@
 import { MessageResponse, RegisterResponse, SessionResponse, TenantSummary, UserProfile } from '../../auth/session.model';
 import {
   AssignedService,
+  AuditLog,
+  AuditLogPage,
   Journey,
   JourneyMetrics,
   JourneyNavigation,
@@ -28,6 +30,8 @@ import plan from '../../../../testing/fixtures/gateway/post__journeys__plan.json
 import metrics from '../../../../testing/fixtures/gateway/get__journeys__journeyId__metrics.json';
 import navigations from '../../../../testing/fixtures/gateway/get__journeys__journeyId__navigations.json';
 import assigned from '../../../../testing/fixtures/gateway/get__assigned-services.json';
+import audit from '../../../../testing/fixtures/gateway/get__audit-logs.json';
+import auditMine from '../../../../testing/fixtures/gateway/get__audit-logs__me.json';
 import users from '../../../../testing/fixtures/gateway/get__users.json';
 import login from '../../../../testing/fixtures/gateway/post__auth__login.json';
 import register from '../../../../testing/fixtures/gateway/post__auth__register.json';
@@ -76,6 +80,14 @@ describe('los modelos coinciden con los ejemplos reales del gateway', () => {
   it('Package', () => {
     const model: Record<keyof Package, true> = { id: true, tenantId: true, guideNumber: true, name: true, serviceType: true, address: true, standardizedAddress: true, location: true, geocodingScore: true, geocodingStatus: true, city: true, country: true, postalCode: true, zoneId: true, weight: true, volume: true, pieceNumber: true, measure: true, durationStay: true, timeWindow: true, category: true, goodsTags: true, customerId: true, receiver: true, sender: true, observation: true, status: true, createdAt: true, updatedAt: true };
     expect(actual(firstOf(packages))).toEqual(keys<Package>(model));
+  });
+
+  it('AuditLog y AuditLogPage (la página de auditoría se llama number, y /me no trae la IP)', () => {
+    const model: Record<keyof AuditLog, true> = { id: true, action: true, entityType: true, entityId: true, description: true, actorEmail: true, actorRole: true, changes: true, createdAt: true, ipAddress: true };
+    expect(actual(firstOf(audit))).toEqual(keys<AuditLog>(model));
+    expect(actual(firstOf(auditMine))).toEqual(keys<AuditLog>(model).filter((key) => key !== 'ipAddress'));
+    const page: Record<keyof AuditLogPage, true> = { content: true, size: true, number: true, totalElements: true, totalPages: true };
+    expect(Object.keys(audit.response.body).sort()).toEqual(keys<AuditLogPage>(page));
   });
 
   it('MasterDomain y MasterDomainValue', () => {

@@ -34,6 +34,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: 'Paquetes', icon: 'deployed_code', link: '/paquetes', roles: OPERATIONS_ROLES },
   { label: 'Jornadas', icon: 'route', link: '/jornadas', roles: OPERATIONS_ROLES },
   { label: 'Configuraciones', short: 'Config.', icon: 'tune', link: '/configuraciones', roles: ADMIN_ROLES },
+  { label: 'Auditoría', icon: 'history', link: '/auditoria', roles: OPERATIONS_ROLES },
 ];
 
 /** Acción rápida de la búsqueda: lleva a una pantalla en la que se empieza algo. */

@@ -1,0 +1,49 @@
+<dl class="audit-facts">
+  <div class="audit-fact">
+    <dt>Quién</dt>
+    <dd>
+      <span class="audit-avatar" aria-hidden="true">
+        @if (initials()) {
+          {{ initials() }}
+        } @else {
+          <mat-icon>person</mat-icon>
+        }
+      </span>
+      <span class="audit-fact-text">
+        <b>{{ actor().person }}</b>
+        @if (actor().role; as role) {
+          <small>{{ role }}</small>
+        }
+      </span>
+    </dd>
+  </div>
+  <div class="audit-fact">
+    <dt>Cuándo</dt>
+    <dd>
+      <span class="audit-fact-icon" aria-hidden="true"><mat-icon>event</mat-icon></span>
+      <span class="audit-fact-text">
+        <b>{{ relative() }}</b>
+        <small><time [attr.datetime]="log().createdAt">{{ when() }}</time></small>
+      </span>
+    </dd>
+  </div>
+  <div class="audit-fact">
+    <dt>Sobre</dt>
+    <dd>
+      <span class="audit-fact-icon" aria-hidden="true"><mat-icon>category</mat-icon></span>
+      <span class="audit-fact-text">
+        <b>{{ entity() }}</b>
+        <small><code>{{ entityTail() }}</code></small>
+      </span>
+    </dd>
+  </div>
+  @if (log().ipAddress; as ip) {
+    <div class="audit-fact">
+      <dt>Desde la IP</dt>
+      <dd>
+        <span class="audit-fact-icon" aria-hidden="true"><mat-icon>lan</mat-icon></span>
+        <span class="audit-fact-text"><b><code>{{ ip }}</code></b></span>
+      </dd>
+    </div>
+  }
+</dl>

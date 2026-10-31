@@ -1,0 +1,53 @@
+<app-audit-detail-head
+  [icon]="loader.status() === 'ready' ? kindIcon() : 'history'"
+  [kicker]="loader.status() === 'ready' ? kindLabel() : 'Auditoría'"
+  [title]="heading()"
+  [when]="loader.status() === 'ready' ? relative() : null"
+  (closed)="close()"
+/>
+
+<mat-dialog-content class="audit-dialog-body">
+  @switch (loader.status()) {
+    @case ('loading') {
+      <div aria-busy="true">
+        <p role="status">Cargando el evento…</p>
+        <div class="skeleton-rows" aria-hidden="true">
+          <div class="skeleton-row"><span></span><span></span><span></span><span></span></div>
+          <div class="skeleton-row"><span></span><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    }
+    @case ('ready') {
+      @if (log(); as event) {
+        @if (showSummary()) {
+          <blockquote class="audit-quote" [attr.data-tone]="kindTone()">{{ summary() }}</blockquote>
+        }
+        <app-audit-facts [log]="event" />
+        <app-audit-changes [rows]="rows()" />
+        @if (related().length > 0) {
+          <app-audit-related [events]="related()" (picked)="openRelated($event)" />
+        }
+        <app-audit-tech [log]="event" [open]="technicalOpen" />
+      }
+    }
+    @default {
+      <div class="audit-problem" role="alert">
+        <mat-icon aria-hidden="true">error</mat-icon>
+        <p>{{ problem() }}</p>
+      </div>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions class="audit-dialog-actions">
+  @if (loader.status() === 'ready') {
+    @if (target(); as entityLink) {
+      <a mat-flat-button class="primary-action" [routerLink]="entityLink.commands" (click)="close()"><mat-icon aria-hidden="true">open_in_new</mat-icon>{{ entityLink.label }}</a>
+    } @else if (deleted()) {
+      <p class="audit-note"><mat-icon aria-hidden="true">delete</mat-icon>Esta entidad fue eliminada</p>
+    }
+    <button mat-stroked-button type="button" (click)="showEntityEvents()"><mat-icon aria-hidden="true">manage_search</mat-icon>Ver eventos de esta entidad</button>
+    <button mat-stroked-button type="button" (click)="copy(link(), 'Enlace')"><mat-icon aria-hidden="true">link</mat-icon>Copiar enlace</button>
+  }
+  <button mat-button type="button" (click)="close()">Cerrar</button>
+</mat-dialog-actions>

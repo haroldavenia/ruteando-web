@@ -1,0 +1,71 @@
+// Estilos del bloque «Datos técnicos» del detalle. Van en la hoja del componente (sin encapsulación) y solo se cargan con Auditoría.
+// Solo tokens del tema (claro y oscuro).
+
+app-audit-tech {
+  --app-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Roboto Mono', monospace;
+
+  code {
+    font: 500 0.86em var(--app-font-mono);
+    overflow-wrap: anywhere;
+  }
+}
+
+.audit-tech {
+  padding: 0 16px 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+
+  summary {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 44px;
+    font: var(--mat-sys-title-small);
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
+.audit-tech-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: 8px 16px;
+  margin: 12px 0 0;
+
+  dt {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-large);
+  }
+
+  dd {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .audit-tech-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+
+    dd {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.audit-json {
+  max-width: 100%;
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+  font: 400 13px var(--app-font-mono);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}

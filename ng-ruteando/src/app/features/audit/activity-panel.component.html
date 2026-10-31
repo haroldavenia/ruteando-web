@@ -1,0 +1,40 @@
+<section class="card audit-panel" aria-labelledby="audit-panel-title">
+  <div class="audit-panel-head">
+    <h2 id="audit-panel-title">Resumen de la actividad</h2>
+    <button mat-button type="button" class="audit-panel-toggle" [attr.aria-expanded]="open()" aria-controls="audit-panel-body" (click)="toggle()">
+      <mat-icon aria-hidden="true">{{ open() ? 'expand_less' : 'expand_more' }}</mat-icon>{{ open() ? 'Ocultar resumen' : 'Mostrar resumen' }}
+    </button>
+  </div>
+
+  <div id="audit-panel-body" [hidden]="!open()">
+    <ul class="kpis audit-kpis">
+      <li class="kpi">
+        <span class="ico"><mat-icon aria-hidden="true">history</mat-icon></span>
+        <span class="kpi-text"><span class="num">{{ summary().total }}</span><span class="lbl">{{ summary().total === 1 ? 'Evento' : 'Eventos' }}</span></span>
+      </li>
+      @if (showPeople()) {
+        <li class="kpi">
+          <span class="ico"><mat-icon aria-hidden="true">group</mat-icon></span>
+          <span class="kpi-text"><span class="num">{{ summary().people }}</span><span class="lbl">{{ summary().people === 1 ? 'Persona activa' : 'Personas activas' }}</span></span>
+        </li>
+      }
+      <li class="kpi">
+        <span class="ico"><mat-icon aria-hidden="true">category</mat-icon></span>
+        <span class="kpi-text"><span class="num audit-num-text">{{ topEntity() }}</span><span class="lbl">Lo más modificado</span></span>
+      </li>
+      <li class="kpi">
+        <span class="ico"><mat-icon aria-hidden="true">schedule</mat-icon></span>
+        <span class="kpi-text"><span class="num audit-num-text">{{ lastEvent() }}</span><span class="lbl">Último evento</span></span>
+      </li>
+    </ul>
+
+    @if (rows().length === 0) {
+      <p class="audit-muted" role="status">No hay eventos para resumir con estos filtros.</p>
+    } @else {
+      <div class="audit-charts">
+        <app-activity-bars [rows]="rows()" [filters]="filters()" (dayPicked)="dayPicked.emit($event)" />
+        <app-activity-shares [rows]="rows()" [kind]="filters().kind" (kindPicked)="kindPicked.emit($event)" />
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,116 @@
+// Estilos del «Qué cambió» del detalle. Van en la hoja del componente (sin encapsulación) y solo se cargan con Auditoría.
+// Solo tokens del tema (claro y oscuro).
+
+app-audit-changes {
+  --app-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Roboto Mono', monospace;
+
+  display: block;
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0 0 10px;
+    font: var(--mat-sys-title-medium);
+    font-weight: 700;
+  }
+
+  code {
+    font: 500 0.86em var(--app-font-mono);
+    overflow-wrap: anywhere;
+  }
+
+  .audit-muted {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-medium);
+  }
+}
+
+.audit-changes {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 14px;
+    background: var(--mat-sys-surface-container-low);
+
+    &.changed {
+      border-color: color-mix(in srgb, var(--app-on-info-container) 40%, transparent);
+      background: color-mix(in srgb, var(--app-info-container) 45%, var(--mat-sys-surface));
+    }
+  }
+}
+
+.audit-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.audit-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.audit-val {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--mat-sys-surface-container-highest);
+  overflow-wrap: anywhere;
+
+  small {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-small);
+  }
+
+  &.is-empty > span {
+    color: var(--mat-sys-on-surface-variant);
+    font-style: italic;
+  }
+}
+
+.changed {
+  .audit-before {
+    background: color-mix(in srgb, var(--mat-sys-error) 14%, transparent);
+  }
+
+  .audit-after {
+    background: color-mix(in srgb, var(--app-on-success-container) 18%, transparent);
+  }
+}
+
+.audit-arrow {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.audit-old {
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: line-through;
+}
+
+.audit-new {
+  font-weight: 700;
+}
+
+@media (max-width: 559.98px) {
+  .audit-flow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .audit-arrow {
+    justify-self: center;
+    transform: rotate(90deg);
+  }
+}

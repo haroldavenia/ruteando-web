@@ -80,15 +80,15 @@ describe('ShellComponent', () => {
     });
 
     for (const role of ['tenant_admin', 'super_admin'] as const) {
-      it(`${role} ve Inicio, Flota, Lugares, Zonas, Paquetes, Jornadas y Config.`, () => {
+      it(`${role} ve Inicio, Flota, Lugares, Zonas, Paquetes, Jornadas, Config. y Auditoría`, () => {
         withRole(role);
-        expect(railLabels()).toEqual(['Inicio', 'Flota', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Config.']);
+        expect(railLabels()).toEqual(['Inicio', 'Flota', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Config.', 'Auditoría']);
       });
     }
 
-    it('un agente ve Inicio, Paquetes y Jornadas, sin Flota ni Lugares', () => {
+    it('un agente ve Inicio, Paquetes, Jornadas y Auditoría, sin Flota ni Lugares', () => {
       withRole('agent');
-      expect(railLabels()).toEqual(['Inicio', 'Paquetes', 'Jornadas']);
+      expect(railLabels()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
     });
 
     it('un conductor solo ve Inicio', () => {
@@ -105,7 +105,7 @@ describe('ShellComponent', () => {
     it('«Config.» conserva el nombre accesible largo y las demás entradas se nombran por su texto', () => {
       withRole('tenant_admin');
       const items = Array.from(root().querySelectorAll('nav.rail .rail-item')) as HTMLElement[];
-      expect(items.map((item) => item.getAttribute('aria-label'))).toEqual([null, null, null, null, null, null, 'Configuraciones']);
+      expect(items.map((item) => item.getAttribute('aria-label'))).toEqual([null, null, null, null, null, null, 'Configuraciones', null]);
     });
 
     it('cada entrada lleva su icono decorativo sobre su nombre, como botón o enlace con tamaño táctil', () => {
@@ -273,13 +273,13 @@ describe('ShellComponent', () => {
       withRole('tenant_admin');
       goNarrow();
       expect(root().querySelector('mat-sidenav h3')?.textContent).toContain('Flota');
-      expect(titles()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Configuraciones']);
+      expect(titles()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Configuraciones', 'Auditoría']);
     });
 
-    it('un agente ve Inicio, Paquetes y Jornadas, sin sección Flota', () => {
+    it('un agente ve Inicio, Paquetes, Jornadas y Auditoría, sin sección Flota', () => {
       withRole('agent');
       goNarrow();
-      expect(titles()).toEqual(['Inicio', 'Paquetes', 'Jornadas']);
+      expect(titles()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
       expect(root().querySelector('mat-sidenav h3')).toBeNull();
     });
 

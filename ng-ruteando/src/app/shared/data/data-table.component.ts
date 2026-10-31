@@ -10,6 +10,7 @@ import {
   contentChild,
   inject,
   input,
+  model,
   signal,
   viewChild,
 } from '@angular/core';
@@ -145,14 +146,18 @@ export class DataTableComponent<T> {
   protected readonly card = contentChild<TemplateRef<{ $implicit: T }>>('card');
   private readonly searchField = viewChild<ElementRef<HTMLInputElement>>('search');
 
-  protected readonly filter = signal('');
+  /**
+   * Texto de la búsqueda. Es enlazable (`[(filter)]`) para quien quiera guardarlo, por ejemplo en la dirección de la página; sin
+   * enlazar se comporta como un estado interno.
+   */
+  readonly filter = model('');
   protected readonly density = signal<Density>(readPref(DENSITY_KEY, ['comfortable', 'compact'], 'comfortable', this.browser));
   private readonly preferredView = signal<View>(readPref(VIEW_KEY, ['table', 'cards'], 'cards', this.browser));
   /** Vista efectiva: sin plantilla de tarjetas solo hay tabla. */
   protected readonly view = computed<View>(() => (this.card() ? this.preferredView() : 'table'));
 
-  /** Estado elegido en los chips; `null` es «Todos». */
-  protected readonly facetKey = signal<string | null>(null);
+  /** Estado elegido en los chips; `null` es «Todos». Enlazable como `filter`. */
+  readonly facetKey = model<string | null>(null);
   private readonly clientPage = signal(0);
   private readonly clientSize = signal(DEFAULT_PAGE_SIZE);
   private readonly selected = signal<ReadonlySet<string>>(new Set());

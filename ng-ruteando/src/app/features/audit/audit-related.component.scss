@@ -1,0 +1,111 @@
+// Estilos de la línea de tiempo «Más de esta entidad» del detalle. Van en la hoja del componente (sin encapsulación) y solo se
+// cargan con Auditoría. Solo tokens del tema (claro y oscuro).
+
+app-audit-related {
+  display: block;
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0 0 6px;
+    font: var(--mat-sys-title-medium);
+    font-weight: 700;
+  }
+}
+
+.audit-timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    position: relative;
+
+    // El hilo que une un punto con el siguiente
+    &:not(:last-child)::before {
+      position: absolute;
+      top: 40px;
+      bottom: -4px;
+      left: 27px;
+      width: 2px;
+      background: var(--mat-sys-outline-variant);
+      content: '';
+    }
+  }
+}
+
+.audit-timeline-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
+
+.audit-dot {
+  --tone: var(--mat-sys-outline);
+
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tone) 18%, var(--mat-sys-surface));
+  color: var(--tone);
+
+  mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+
+  &[data-tone='success'] {
+    --tone: var(--app-on-success-container);
+  }
+
+  &[data-tone='info'] {
+    --tone: var(--app-on-info-container);
+  }
+
+  &[data-tone='warning'] {
+    --tone: var(--app-on-warning-container);
+  }
+
+  &[data-tone='danger'] {
+    --tone: var(--mat-sys-error);
+  }
+}
+
+.audit-timeline-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  small {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-small);
+  }
+}
+
+.audit-go {
+  color: var(--mat-sys-on-surface-variant);
+}

@@ -1,0 +1,11 @@
+<header class="audit-modal-head">
+  <span class="audit-modal-icon" aria-hidden="true"><mat-icon>{{ icon() }}</mat-icon></span>
+  <div class="audit-modal-titles">
+    <span class="audit-modal-kind">{{ kicker() }}</span>
+    <h2 mat-dialog-title>{{ title() }}</h2>
+    @if (when(); as text) {
+      <span class="audit-modal-when">{{ text }}</span>
+    }
+  </div>
+  <button mat-icon-button type="button" aria-label="Cerrar el detalle" (click)="closed.emit()"><mat-icon aria-hidden="true">close</mat-icon></button>
+</header>
