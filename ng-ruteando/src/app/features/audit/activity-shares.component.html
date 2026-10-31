@@ -1,0 +1,20 @@
+<div class="audit-shares">
+  <b id="audit-shares-title">Por tipo de acción</b>
+  <div class="audit-stack" role="img" [attr.aria-label]="'Por tipo de acción. ' + summary()">
+    @for (share of shares(); track share.kind) {
+      <span class="audit-seg" [attr.data-tone]="tone(share.kind)" [style.flex-grow]="share.count"></span>
+    }
+  </div>
+  <ul class="audit-legend" aria-labelledby="audit-shares-title">
+    @for (share of shares(); track share.kind) {
+      <li>
+        <button type="button" class="audit-legend-item" [attr.data-tone]="tone(share.kind)" [attr.aria-pressed]="isPicked(share)" (click)="kindPicked.emit(share.kind)">
+          <span class="audit-dot"><mat-icon aria-hidden="true">{{ icon(share.kind) }}</mat-icon></span>
+          <span class="audit-legend-name">{{ label(share.kind) }}</span>
+          <b>{{ share.count }}</b>
+          <span class="audit-muted">{{ percent(share.percent) }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+</div>

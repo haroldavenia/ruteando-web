@@ -1,0 +1,79 @@
+<section class="card audit-filters" aria-labelledby="audit-filters-title">
+  <h2 id="audit-filters-title" class="visually-hidden">Filtros</h2>
+
+  <div class="audit-row">
+    <div class="audit-group">
+      <span class="audit-label" id="audit-range-label">¿Cuándo?</span>
+      <div class="audit-chips" role="group" aria-labelledby="audit-range-label">
+        @for (range of ranges; track range.value) {
+          <button type="button" class="audit-chip" [class.on]="rangeChoice() === range.value" [attr.aria-pressed]="rangeChoice() === range.value" (click)="pickRange(range.value)">
+            {{ range.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <mat-form-field class="audit-field" subscriptSizing="dynamic">
+      <mat-label>Tipo de acción</mat-label>
+      <mat-select [value]="filters().kind ?? all" (selectionChange)="pickKind($event.value)">
+        <mat-option [value]="all">Todos los tipos</mat-option>
+        @for (kind of kinds; track kind) {
+          <mat-option [value]="kind">{{ kindLabel(kind) }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (showPeople()) {
+      <mat-form-field class="audit-field" subscriptSizing="dynamic">
+        <mat-label>Persona</mat-label>
+        <mat-select [value]="filters().person ?? all" (selectionChange)="pickPerson($event.value)">
+          <mat-option [value]="all">Todas las personas</mat-option>
+          @if (hasUnidentified()) {
+            <mat-option [value]="noPerson">Sin identificar</mat-option>
+          }
+          @for (person of people(); track person) {
+            <mat-option [value]="person">{{ person }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+  </div>
+
+  @if (showCustom()) {
+    <div class="audit-row audit-dates">
+      <mat-form-field class="audit-field" subscriptSizing="dynamic">
+        <mat-label>Desde</mat-label>
+        <input matInput type="date" autocomplete="off" [value]="filters().from ?? ''" (change)="setDay('from', $event)" />
+      </mat-form-field>
+      <mat-form-field class="audit-field" subscriptSizing="dynamic">
+        <mat-label>Hasta</mat-label>
+        <input matInput type="date" autocomplete="off" [value]="filters().to ?? ''" (change)="setDay('to', $event)" />
+      </mat-form-field>
+      @if (rangeError(); as error) {
+        <p class="audit-error" role="alert"><mat-icon aria-hidden="true">error</mat-icon>{{ error }}</p>
+      }
+    </div>
+  }
+
+  <div class="audit-row audit-switches">
+    <mat-slide-toggle [checked]="filters().onlyChanges" (change)="filtersChange.emit({ onlyChanges: $event.checked })">
+      Solo con cambios de valores
+    </mat-slide-toggle>
+    <mat-slide-toggle [checked]="technical()" (change)="technicalChange.emit($event.checked)">
+      Mostrar datos técnicos
+    </mat-slide-toggle>
+
+    @if (filters().entityId) {
+      <button type="button" class="audit-chip on" (click)="filtersChange.emit({ entityId: null })" aria-label="Quitar el filtro de entidad" title="Quitar el filtro de entidad">
+        <span>{{ entityLabel() ? entityLabel() + ' ' : 'Entidad ' }}<code>{{ entityShort() }}</code></span>
+        <mat-icon aria-hidden="true">close</mat-icon>
+      </button>
+    }
+
+    @if (active()) {
+      <button mat-button type="button" class="audit-clear" (click)="cleared.emit()">
+        <mat-icon aria-hidden="true">filter_alt_off</mat-icon>Limpiar filtros
+      </button>
+    }
+  </div>
+</section>

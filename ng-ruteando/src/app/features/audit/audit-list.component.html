@@ -1,0 +1,87 @@
+<app-page-header [title]="title()" [subtitle]="subtitle()">
+  <button mat-stroked-button type="button" (click)="store.refresh()" [disabled]="state.status() === 'loading'">
+    <mat-icon aria-hidden="true">refresh</mat-icon>Actualizar
+  </button>
+  <button mat-stroked-button type="button" (click)="exportCsv()" [disabled]="visibleRows().length === 0">
+    <mat-icon aria-hidden="true">download</mat-icon>Exportar CSV
+  </button>
+</app-page-header>
+
+<p class="audit-intro">{{ intro() }}</p>
+<p class="visually-hidden" role="status" aria-live="polite">{{ liveCount() }}</p>
+
+@if (scopes().length > 1) {
+  <div class="audit-scope">
+    <mat-button-toggle-group class="audit-scope-group" aria-label="Qué eventos ver" hideSingleSelectionIndicator [value]="scope()" (change)="chooseScope($event)">
+      @for (item of scopes(); track item.id) {
+        <mat-button-toggle [value]="item.id">{{ item.label }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+    @if (isAllTenants()) {
+      <form class="audit-tenant" (submit)="submitTenant($event)">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Empresa (opcional)</mat-label>
+          <input matInput type="text" autocomplete="off" spellcheck="false" [value]="tenantDraft()" (input)="setTenantDraft($event)" />
+          <mat-hint>Identificador de la empresa; vacío = todas</mat-hint>
+        </mat-form-field>
+        <button mat-stroked-button type="submit"><mat-icon aria-hidden="true">filter_alt</mat-icon>Aplicar</button>
+      </form>
+    }
+  </div>
+}
+
+@if (truncatedNotice(); as notice) {
+  <p class="audit-notice" role="status"><mat-icon aria-hidden="true">info</mat-icon>{{ notice }}</p>
+}
+@if (forbidden()) {
+  <div class="audit-notice warn" role="alert">
+    <mat-icon aria-hidden="true">lock</mat-icon>
+    <span>Tu rol no puede consultar estos eventos. Tu propia actividad sí está disponible.</span>
+    <button mat-stroked-button type="button" (click)="showMine()">Ver mi actividad</button>
+  </div>
+}
+
+<app-audit-filters
+  [filters]="filters()"
+  [people]="people()"
+  [hasUnidentified]="hasUnidentified()"
+  [technical]="technical()"
+  [showPeople]="showPeople()"
+  [entityLabel]="entityFilterLabel()"
+  (filtersChange)="changeFilters($event)"
+  (technicalChange)="setTechnical($event)"
+  (cleared)="clearAll()"
+/>
+
+@if (state.status() === 'ready') {
+  <app-activity-panel [rows]="visibleRows()" [filters]="filters()" [showPeople]="showPeople()" (dayPicked)="pickDay($event)" (kindPicked)="pickKind($event)" />
+}
+
+<app-data-table
+  [state]="state"
+  [columns]="columns()"
+  [facet]="facet()"
+  [selectable]="true"
+  [filter]="searchText()"
+  (filterChange)="setText($event)"
+  [facetKey]="query().entity"
+  (facetKeyChange)="setEntity($event)"
+  entityPlural="eventos"
+  emptyMessage="Todavía no hay eventos de auditoría"
+  searchPlaceholder="Buscar por acción o persona"
+  [pageSizeOptions]="[10, 20, 50, 100]"
+>
+  <ng-template #rowActions let-row>
+    <button mat-icon-button type="button" class="audit-eye" (click)="open(row)" [attr.aria-label]="eyeLabel(row)">
+      <mat-icon aria-hidden="true">visibility</mat-icon>
+    </button>
+  </ng-template>
+
+  <ng-template #selectionActions let-rows>
+    <button mat-button type="button" (click)="exportCsv(rows)"><mat-icon aria-hidden="true">download</mat-icon>Exportar selección</button>
+  </ng-template>
+
+  <ng-template #card let-row>
+    <app-audit-event-card [log]="row" [technical]="technical()" (opened)="open($event)" />
+  </ng-template>
+</app-data-table>

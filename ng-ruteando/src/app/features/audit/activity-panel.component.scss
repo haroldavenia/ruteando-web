@@ -1,0 +1,45 @@
+// Estilos de el resumen de actividad: cabecera, cifras y rejilla de gráficos. Van en la hoja del componente (sin encapsulación: las clases `audit-*` son suyas) y no en la global, para
+// que solo se carguen al abrir Auditoría. Solo tokens del tema (claro y oscuro).
+
+.audit-muted {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+// ---------- Resumen de la actividad ----------
+
+.audit-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.audit-kpis {
+  grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
+  margin-top: 8px;
+
+  .kpi .num.audit-num-text {
+    font: var(--mat-sys-title-large);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+}
+
+.audit-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 24px 32px;
+  margin-top: 20px;
+}
+
+@media (max-width: 899.98px) {
+  .audit-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

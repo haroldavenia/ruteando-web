@@ -1,0 +1,36 @@
+<section class="audit-changes-box" aria-labelledby="audit-diff-title">
+  <h3 id="audit-diff-title">Qué cambió</h3>
+  @if (rows().length === 0) {
+    <p class="audit-muted">Este evento no registra valores.</p>
+  } @else {
+    @if (!hasChanges()) {
+      <p class="audit-muted">El evento no registra cambios de valores. Estos son los valores que guardó:</p>
+    }
+    <ul class="audit-changes">
+      @for (row of rows(); track row.field) {
+        <li [class.changed]="row.changed">
+          <span class="audit-field">
+            <b>{{ row.label }}</b>
+            @if (row.changed) {
+              <app-status-badge label="Cambió" tone="info" />
+            }
+            @if (row.label !== row.field) {
+              <code class="audit-muted">{{ row.field }}</code>
+            }
+          </span>
+          <span class="audit-flow">
+            <span class="audit-val audit-before" [class.is-empty]="row.beforeEmpty">
+              <small>Antes</small>
+              <span [class.audit-old]="row.changed && !row.beforeEmpty">{{ row.before }}</span>
+            </span>
+            <mat-icon class="audit-arrow" aria-hidden="true">{{ row.changed ? 'arrow_forward' : 'drag_handle' }}</mat-icon>
+            <span class="audit-val audit-after" [class.is-empty]="row.afterEmpty">
+              <small>Después</small>
+              <span [class.audit-new]="row.changed && !row.afterEmpty">{{ row.after }}</span>
+            </span>
+          </span>
+        </li>
+      }
+    </ul>
+  }
+</section>

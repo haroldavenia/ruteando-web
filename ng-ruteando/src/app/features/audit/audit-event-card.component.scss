@@ -1,0 +1,81 @@
+// Estilos de la tarjeta de un evento (vista de tarjetas del listado). Van en la hoja del componente (sin encapsulación: las clases `audit-*` son suyas) y no en la global, para
+// que solo se carguen al abrir Auditoría. Solo tokens del tema (claro y oscuro).
+
+app-audit-event-card {
+  display: block;
+  grid-column: 1 / -1;
+}
+
+// ---------- Tarjeta de evento (vista de tarjetas del listado) ----------
+
+.audit-event {
+  display: flex;
+  flex-direction: column;
+  grid-column: 1 / -1;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  width: 100%;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--mat-sys-outline);
+    background: var(--mat-sys-surface-container-low);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
+
+.audit-event-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+
+  time {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-medium);
+  }
+}
+
+.audit-event-text {
+  font: var(--mat-sys-body-large);
+  overflow-wrap: anywhere;
+}
+
+.audit-event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+
+  > span {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  mat-icon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+}
+
+.audit-eye-hint {
+  margin-inline-start: auto;
+  color: var(--mat-sys-primary);
+}

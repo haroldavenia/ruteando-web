@@ -1,0 +1,110 @@
+// Estilos de el reparto por tipo de acción. Van en la hoja del componente (sin encapsulación: las clases `audit-*` son suyas) y no en la global, para
+// que solo se carguen al abrir Auditoría. Solo tokens del tema (claro y oscuro).
+
+app-activity-shares {
+  display: block;
+  min-width: 0;
+}
+
+.audit-muted {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+.audit-shares {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.audit-stack {
+  display: flex;
+  gap: 2px;
+  height: 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-highest);
+}
+
+.audit-seg {
+  flex-basis: 0;
+  min-width: 6px;
+  background: var(--tone);
+}
+
+.audit-legend {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.audit-legend-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  text-align: start;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+  }
+
+  &[aria-pressed='true'] {
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
+
+.audit-dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tone) 18%, transparent);
+  color: var(--tone);
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+}
+
+.audit-seg,
+.audit-legend-item {
+  --tone: var(--mat-sys-outline);
+
+  &[data-tone='success'] {
+    --tone: var(--app-on-success-container);
+  }
+
+  &[data-tone='info'] {
+    --tone: var(--app-on-info-container);
+  }
+
+  &[data-tone='warning'] {
+    --tone: var(--app-on-warning-container);
+  }
+
+  &[data-tone='danger'] {
+    --tone: var(--mat-sys-error);
+  }
+}

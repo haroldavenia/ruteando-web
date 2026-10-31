@@ -1,4 +1,5 @@
 export * from './assigned-service';
+export * from './audit-log';
 export * from './journey';
 export * from './master-domain';
 export * from './package';

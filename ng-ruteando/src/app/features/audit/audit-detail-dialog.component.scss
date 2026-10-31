@@ -1,0 +1,93 @@
+// Estilos de la modal de detalle: el tono del tipo de acción, la frase del evento y las acciones. Van en la hoja del
+// componente (sin encapsulación) y solo se cargan con Auditoría. Solo tokens del tema (claro y oscuro).
+
+app-audit-detail-dialog {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: inherit;
+}
+
+// Cada tipo de acción tiene su tono (los mismos de las etiquetas de estado); la cabecera y la frase lo heredan
+app-audit-detail-dialog {
+  --tone-bg: var(--mat-sys-surface-container-highest);
+  --tone-fg: var(--mat-sys-on-surface);
+
+  &[data-tone='success'] {
+    --tone-bg: var(--app-success-container);
+    --tone-fg: var(--app-on-success-container);
+  }
+
+  &[data-tone='info'] {
+    --tone-bg: var(--app-info-container);
+    --tone-fg: var(--app-on-info-container);
+  }
+
+  &[data-tone='warning'] {
+    --tone-bg: var(--app-warning-container);
+    --tone-fg: var(--app-on-warning-container);
+  }
+
+  &[data-tone='danger'] {
+    --tone-bg: var(--mat-sys-error-container);
+    --tone-fg: var(--mat-sys-on-error-container);
+  }
+}
+
+.audit-dialog-body.mat-mdc-dialog-content {
+  max-height: none;
+  padding-top: 20px;
+}
+
+.audit-quote {
+  margin: 0 0 16px;
+  padding: 14px 18px;
+  border-inline-start: 4px solid var(--tone-fg);
+  border-radius: 6px 14px 14px 6px;
+  background: color-mix(in srgb, var(--tone-bg) 55%, var(--mat-sys-surface));
+  font: var(--mat-sys-title-medium);
+  overflow-wrap: anywhere;
+}
+
+.audit-dialog-actions {
+  gap: 8px;
+
+  > button:last-child {
+    margin-inline-start: auto;
+  }
+}
+
+// En pantallas estrechas cada acción ocupa su fila, en lugar de envolverse desparejas
+@media (max-width: 559.98px) {
+  .audit-dialog-actions > * {
+    flex: 1 1 100%;
+  }
+
+  .audit-dialog-actions > button:last-child {
+    margin-inline-start: 0;
+  }
+}
+
+.audit-note {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+.audit-problem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  mat-icon {
+    flex: none;
+    color: var(--mat-sys-error);
+  }
+
+  p {
+    margin: 0;
+  }
+}

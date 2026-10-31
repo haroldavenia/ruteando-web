@@ -8,12 +8,12 @@ describe('nav-items', () => {
   describe('navItemsFor', () => {
     it('administración ve todas las áreas', () => {
       for (const role of ['tenant_admin', 'super_admin'] as UserRole[]) {
-        expect(labels(navItemsFor(role))).toEqual(['Inicio', 'Flota', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Configuraciones']);
+        expect(labels(navItemsFor(role))).toEqual(['Inicio', 'Flota', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Configuraciones', 'Auditoría']);
       }
     });
 
-    it('el agente ve Inicio, Paquetes y Jornadas', () => {
-      expect(labels(navItemsFor('agent'))).toEqual(['Inicio', 'Paquetes', 'Jornadas']);
+    it('el agente ve Inicio, Paquetes, Jornadas y Auditoría', () => {
+      expect(labels(navItemsFor('agent'))).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
     });
 
     it('el conductor y quien no tiene rol solo ven Inicio', () => {
@@ -33,6 +33,7 @@ describe('nav-items', () => {
         'Paquetes',
         'Jornadas',
         'Configuraciones',
+        'Auditoría',
       ]);
     });
 
@@ -41,7 +42,7 @@ describe('nav-items', () => {
     });
 
     it('el agente solo accede a Paquetes y Jornadas y el conductor a nada', () => {
-      expect(labels(areaLinksFor('agent'))).toEqual(['Paquetes', 'Jornadas']);
+      expect(labels(areaLinksFor('agent'))).toEqual(['Paquetes', 'Jornadas', 'Auditoría']);
       expect(areaLinksFor('driver')).toEqual([]);
       expect(areaLinksFor(null)).toEqual([]);
     });

@@ -95,6 +95,13 @@ export const routes: Routes = [
         loadChildren: () => import('./features/packages/packages.routes').then((m) => m.PACKAGES_ROUTES),
       },
       {
+        // Auditoría: qué se hizo, quién y cuándo. Administradores y agentes; cada rol ve los eventos que el gateway le permite
+        path: 'auditoria',
+        canActivate: [roleGuard(OPERATIONS_ROLES)],
+        canActivateChild: [roleGuard(OPERATIONS_ROLES)],
+        loadChildren: () => import('./features/audit/audit.routes').then((m) => m.AUDIT_ROUTES),
+      },
+      {
         path: 'sin-permiso',
         loadComponent: () => import('./features/access/forbidden.component').then((m) => m.ForbiddenComponent),
       },

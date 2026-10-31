@@ -38,15 +38,15 @@ describe('NavRailComponent', () => {
   });
 
   it('muestra una entrada por área con el nombre corto donde hace falta', () => {
-    expect(labels()).toEqual(['Inicio', 'Flota', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Config.']);
+    expect(labels()).toEqual(['Inicio', 'Flota', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Config.', 'Auditoría']);
     open('agent');
-    expect(labels()).toEqual(['Inicio', 'Paquetes', 'Jornadas']);
+    expect(labels()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
   });
 
   it('«Flota» es un botón con menú y el resto son enlaces a su ruta', () => {
     const items = Array.from(root().querySelectorAll('.rail-item')) as HTMLElement[];
-    expect(items.map((item) => item.tagName)).toEqual(['A', 'BUTTON', 'A', 'A', 'A', 'A', 'A']);
-    expect(items.filter((item) => item.tagName === 'A').map((item) => item.getAttribute('href'))).toEqual(['/', '/lugares', '/zonas', '/paquetes', '/jornadas', '/configuraciones']);
+    expect(items.map((item) => item.tagName)).toEqual(['A', 'BUTTON', 'A', 'A', 'A', 'A', 'A', 'A']);
+    expect(items.filter((item) => item.tagName === 'A').map((item) => item.getAttribute('href'))).toEqual(['/', '/lugares', '/zonas', '/paquetes', '/jornadas', '/configuraciones', '/auditoria']);
     expect(items[1].getAttribute('aria-haspopup')).toBe('menu');
   });
 
