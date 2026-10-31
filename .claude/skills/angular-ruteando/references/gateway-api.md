@@ -238,11 +238,20 @@ Comprobación por el proxy local con una cuenta de prueba creada en el tenant de
 - **Sin verificar contra el gateway real** (tarea 5.4): qué valida de un polígono (cruces, orientación, solapes), el formato aceptado de `color`, el 409 por código y qué pasa con los `zoneId` de lugares, paquetes y configuraciones al borrar una zona en uso.
 - **Preguntas para el equipo del gateway:** validación de geometría en servidor, formato de `color`, comportamiento del borrado de una zona en uso.
 
+## Auditoría (`features/audit/`, `core/api/data/audit-logs.api.ts`)
+
+Cuatro `GET` de solo lectura (colección Postman, capturados el 2026-10-11): `/audit-logs` (empresa; `TENANT_ADMIN`), `/audit-logs/me` (cualquier sesión; **sin `ipAddress`**), `/audit-logs/admin?tenantId=` (todas las empresas; `SUPER_ADMIN`) y `/audit-logs/{id}` (`TENANT_ADMIN`). No hay más parámetros documentados: ni filtro, ni orden, ni rango de fechas, así que todo se hace en el cliente sobre las páginas de 100 (`FullListState`, tope 1000).
+
+- **La página se llama `number`** (no `page` como en el resto): `{ size, number, totalElements, totalPages, content }`. `AuditLogsApi` la entrega como `Page<AuditLog>`.
+- **Evento**: `id, action, entityType, entityId, description, actorEmail, actorRole, changes, createdAt, ipAddress`. `action` es una clave `entidad.verbo[.detalle]` (`package.status.change`, `resource.assign.driver`...), `changes` es `{ before, after }` o `null`.
+- **Datos sucios que la interfaz absorbe**: `actorRole` llega como `TENANT_ADMIN`, `tenant_admin` y `anonymous` (se normaliza a minúsculas); `actorEmail` es `null` en la mayoría de los eventos de acciones autenticadas; `description` mezcla español, inglés y, a veces, solo la clave de la acción (`invitation.created`); `changes.before` y `changes.after` son idénticos en `settings.update`, `resource.update` y `place.update`; `""` y `null` valen «sin valor» (`driverId`); `resource` es un vehículo.
+- **Sin verificar contra el gateway real** (estaba caído): si `/admin` exige `tenantId`, si `super_admin` puede llamar `/audit-logs`, si acepta `size` mayor que 100 o filtros por parámetro, si el orden es siempre descendente por `createdAt`, el nombre real del tipo de entidad de los tipos de vehículo (`resource_type`/`resource-type`) y qué responde `/{id}` a un agente (se supone 403).
+
 ## Lo que NO existe todavía
 
 - Subida de CSV (`POST /packages/upload`): devuelve 400 sin contrato documentado. `PackagesApi` no la ofrece; el plan B (parsear el CSV en el navegador y crear paquetes con `create()`) ya está hecho: ver «Importar paquetes desde CSV».
 - Geocodificación (`/geocoding`, `/reverse-geocoding`): sin cuerpo capturado. `routing/nearest` y `routing/messenger` devuelven 500 (defecto del backend); `routing/optimizations/collection` devuelve 200 con estado de negocio 207.
-- Facturación (Stripe), notificaciones/OTP, invitaciones, tenants, auditoría y tiempo real (STOMP): fuera de alcance.
+- Facturación (Stripe), notificaciones/OTP, invitaciones, tenants y tiempo real (STOMP): fuera de alcance. La auditoría (solo lectura) tiene su módulo: ver «Auditoría» más arriba.
 
 ## Mapeo legacy -> gateway (histórico)
 
