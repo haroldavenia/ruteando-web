@@ -74,10 +74,10 @@ describe('ResourceTypeListComponent', () => {
     expect(root().textContent).toContain('1 – 1 de 1');
   });
 
-  it('pide la página 0 con el tamaño por defecto', () => {
+  it('trae todos los tipos de 100 en 100, empezando por la página 0', () => {
     const req = http.expectOne((r) => r.url === '/gateway/resource-types');
     expect(req.request.params.get('page')).toBe('0');
-    expect(req.request.params.get('size')).toBe('20');
+    expect(req.request.params.get('size')).toBe('100');
     respondWith(req, list as unknown as Fixture);
   });
 

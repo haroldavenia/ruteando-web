@@ -28,12 +28,14 @@ describe('DriverFormComponent', () => {
         { provide: API_BASE_URL, useValue: '/gateway' },
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id ? { id } : {}) } } },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id ? { id } : {}), queryParamMap: convertToParamMap({}) } } },
       ],
     });
     http = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(DriverFormComponent);
     fixture.detectChanges();
+    // El catálogo de dominios maestros (tipos de documento) se pide al abrir; sin respuesta se usan los valores por defecto
+    http.match((r) => r.url === '/gateway/master-domains').forEach((r) => r.flush([]));
   }
 
   function type(selector: string, value: string): void {
@@ -55,12 +57,80 @@ describe('DriverFormComponent', () => {
 
     beforeEach(() => setup(null));
 
+    /** La contraseña inicial es el primer campo `new-password` y su repetición, el segundo. */
+    function typePassword(index: number, value: string): void {
+      const el = root().querySelectorAll<HTMLInputElement>('input[autocomplete="new-password"]')[index];
+      el.value = value;
+      el.dispatchEvent(new Event('input'));
+    }
+
     function fillValid(): void {
       type('[formcontrolname="firstName"]', body.firstName);
       type('[formcontrolname="lastName"]', body.lastName);
       type('[formcontrolname="email"]', body.email);
-      type('input[autocomplete="new-password"]', body.password);
+      typePassword(0, body.password);
+      typePassword(1, body.password);
     }
+
+    it('las contraseñas distintas no se envían y se señalan en la repetición', () => {
+      fillValid();
+      typePassword(1, body.password + 'x');
+      submit();
+      http.expectNone((r) => r.method === 'POST');
+      expect(root().textContent).toContain('Las contraseñas no coinciden');
+    });
+
+    it('sin repetir la contraseña no se envía', () => {
+      fillValid();
+      typePassword(1, '');
+      submit();
+      http.expectNone((r) => r.method === 'POST');
+      expect(root().textContent).toContain('Repite la contraseña inicial');
+    });
+
+    it('con tipo y número de documento los envía junto con el resto', () => {
+      fillValid();
+      fixture.componentInstance['form'].controls.identifierType.setValue('citizen_id');
+      type('[formcontrolname="identifierValue"]', ' 1020304050 ');
+      spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
+      submit();
+      const req = http.expectOne((r) => r.method === 'POST');
+      expect(req.request.body.identifierType).toBe('citizen_id');
+      expect(req.request.body.identifierValue).toBe('1020304050');
+      req.flush(fx.response.body as object);
+    });
+
+    it('sin documento no envía las claves del documento', () => {
+      fillValid();
+      spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
+      submit();
+      const req = http.expectOne((r) => r.method === 'POST');
+      expect('identifierType' in req.request.body || 'identifierValue' in req.request.body).toBeFalse();
+      req.flush(fx.response.body as object);
+    });
+
+    it('un número sin tipo, o un tipo sin número, no se envía y se señala qué falta', () => {
+      fillValid();
+      type('[formcontrolname="identifierValue"]', '1020');
+      submit();
+      http.expectNone((r) => r.method === 'POST');
+      expect(root().textContent).toContain('Elige el tipo de documento');
+
+      fixture.componentInstance['form'].controls.identifierType.setValue('itin');
+      type('[formcontrolname="identifierValue"]', '');
+      submit();
+      http.expectNone((r) => r.method === 'POST');
+      expect(root().textContent).toContain('Escribe el número del documento');
+    });
+
+    it('ofrece los tipos de documento conocidos con su etiqueta en español', () => {
+      expect(fixture.componentInstance['documentTypes']()).toEqual([
+        { key: 'citizen_id', label: 'Documento de identidad' },
+        { key: 'itin', label: 'Identificación fiscal' },
+        { key: 'plate', label: 'Placa' },
+        { key: 'code', label: 'Código interno' },
+      ]);
+    });
 
     it('con datos válidos envía role "driver" y el cuerpo del ejemplo real', () => {
       fillValid();
@@ -115,6 +185,46 @@ describe('DriverFormComponent', () => {
       const req = http.expectOne((r) => r.method === 'PUT');
       expect(req.request.body.firstName).toBe('Renombrado');
       expect('password' in req.request.body).toBeFalse();
+      req.flush(user);
+    });
+
+    it('muestra el documento guardado y, sin tocarlo, lo reenvía al guardar', () => {
+      setup(user.id);
+      http.expectOne(`/gateway/users/${user.id}`).flush({ ...user, identifierType: 'citizen_id', identifierValue: '1020304050' });
+      fixture.detectChanges();
+
+      expect(field('[formcontrolname="identifierValue"]')!.value).toBe('1020304050');
+      type('[formcontrolname="firstName"]', 'Renombrado');
+      submit();
+      const req = http.expectOne((r) => r.method === 'PUT');
+      expect(req.request.body.identifierType).toBe('citizen_id');
+      expect(req.request.body.identifierValue).toBe('1020304050');
+      req.flush(user);
+    });
+
+    it('un tipo de documento que el dominio maestro no tiene se conserva y se ofrece', () => {
+      setup(user.id);
+      http.expectOne(`/gateway/users/${user.id}`).flush({ ...user, identifierType: 'passport', identifierValue: 'P123' });
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance['documentTypes']().map((t: { key: string }) => t.key)).toContain('passport');
+      submit();
+      const req = http.expectOne((r) => r.method === 'PUT');
+      expect(req.request.body.identifierType).toBe('passport');
+      req.flush(user);
+    });
+
+    it('vaciar el documento lo borra (null) en lugar de dejarlo', () => {
+      setup(user.id);
+      http.expectOne(`/gateway/users/${user.id}`).flush({ ...user, identifierType: 'citizen_id', identifierValue: '1020' });
+      fixture.detectChanges();
+
+      fixture.componentInstance['form'].controls.identifierType.setValue('');
+      type('[formcontrolname="identifierValue"]', '');
+      submit();
+      const req = http.expectOne((r) => r.method === 'PUT');
+      expect(req.request.body.identifierType).toBeNull();
+      expect(req.request.body.identifierValue).toBeNull();
       req.flush(user);
     });
 

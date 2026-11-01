@@ -1,0 +1,143 @@
+<app-form-head
+  [title]="isNew ? 'Nuevo tipo de vehículo' : 'Editar tipo de vehículo'"
+  [backLabel]="returnTo ? 'Volver' : 'Tipos de vehículo'"
+  [backLink]="returnTo ?? '/flota/tipos'"
+  [backState]="returnState"
+/>
+@switch (loader.status()) {
+  @case ('loading') {
+    <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
+  }
+  @case ('missing') {
+    <app-form-result [error]="loader.error()" />
+    <a mat-stroked-button routerLink="/flota/tipos">Volver al listado</a>
+  }
+  @case ('error') {
+    <app-form-result [error]="loader.error()" />
+    <a mat-stroked-button routerLink="/flota/tipos">Volver al listado</a>
+  }
+  @default {
+    <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="local_shipping" />Datos del tipo</h2>
+        <mat-form-field>
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" autocomplete="off" />
+          <mat-error>{{ error('name') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Categoría</mat-label>
+          <input matInput formControlName="category" autocomplete="off" list="resource-categories" />
+          <datalist id="resource-categories">
+            @for (category of categories; track category) {
+              <option [value]="category"></option>
+            }
+          </datalist>
+          <mat-error>{{ error('category') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Perfil de ruteo</mat-label>
+          <mat-select formControlName="osrmProfile">
+            @for (profile of profiles(); track profile.key) {
+              <mat-option [value]="profile.key">{{ profile.label }}</mat-option>
+            }
+          </mat-select>
+          <mat-error>{{ error('osrmProfile') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Consumo (opcional)</mat-label>
+          <input matInput type="number" min="0" step="any" formControlName="gasMileage" autocomplete="off" />
+          <mat-error>{{ error('gasMileage') }}</mat-error>
+        </mat-form-field>
+      </section>
+
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="inventory_2" />Capacidad</h2>
+        <p class="hint">Opcional. La planificación la usa cuando su configuración evalúa el peso y el volumen.</p>
+        <mat-form-field>
+          <mat-label>Peso que carga</mat-label>
+          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="weight" autocomplete="off" />
+          <span matTextSuffix>kg</span>
+          <mat-error>{{ capacityError('weight') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Capacidad en</mat-label>
+          <mat-select formControlName="mode">
+            <mat-option value="volume">En volumen</mat-option>
+            <mat-option value="measure">En medidas</mat-option>
+          </mat-select>
+        </mat-form-field>
+        @if (measured()) {
+          <mat-form-field>
+            <mat-label>Ancho</mat-label>
+            <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="width" autocomplete="off" />
+            <span matTextSuffix>cm</span>
+            <mat-error>{{ capacityError('width') }}</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Alto</mat-label>
+            <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="height" autocomplete="off" />
+            <span matTextSuffix>cm</span>
+            <mat-error>{{ capacityError('height') }}</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Profundidad</mat-label>
+            <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="depth" autocomplete="off" />
+            <span matTextSuffix>cm</span>
+            <mat-error>{{ capacityError('depth') }}</mat-error>
+          </mat-form-field>
+          <p class="computed" role="status">
+            Volumen calculado:
+            @if (volumeText(); as text) {
+              <strong>{{ text }}</strong>
+            } @else {
+              <span>completa las tres medidas</span>
+            }
+          </p>
+        } @else {
+          <mat-form-field>
+            <mat-label>Volumen</mat-label>
+            <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="volume" autocomplete="off" />
+            <span matTextSuffix>cm³</span>
+            <mat-error>{{ capacityError('volume') }}</mat-error>
+          </mat-form-field>
+        }
+      </section>
+
+      <section class="form-section">
+        <h2><mat-icon aria-hidden="true" fontIcon="rule" />Restricciones de carga</h2>
+        <p class="hint">Opcional. Límites de carga que respeta el vehículo; no pueden superar su capacidad.</p>
+        <mat-form-field>
+          <mat-label>Peso mínimo</mat-label>
+          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="minWeight" autocomplete="off" />
+          <span matTextSuffix>kg</span>
+          <mat-error>{{ capacityError('minWeight') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Peso máximo</mat-label>
+          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="maxWeight" autocomplete="off" />
+          <span matTextSuffix>kg</span>
+          <mat-error>{{ capacityError('maxWeight') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Volumen mínimo</mat-label>
+          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="minVolume" autocomplete="off" />
+          <span matTextSuffix>cm³</span>
+          <mat-error>{{ capacityError('minVolume') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Volumen máximo</mat-label>
+          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="maxVolume" autocomplete="off" />
+          <span matTextSuffix>cm³</span>
+          <mat-error>{{ capacityError('maxVolume') }}</mat-error>
+        </mat-form-field>
+      </section>
+
+      <app-form-result [error]="submit.error()" />
+      <app-form-actions [dirty]="hasUnsavedChanges()">
+        <a mat-button [routerLink]="returnTo ?? '/flota/tipos'" [state]="returnState">Cancelar</a>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+      </app-form-actions>
+    </form>
+  }
+}

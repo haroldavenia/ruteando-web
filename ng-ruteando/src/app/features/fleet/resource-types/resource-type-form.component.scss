@@ -1,0 +1,16 @@
+// Pista bajo el título de cada sección y volumen calculado de las medidas
+.hint,
+.computed {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.computed {
+  font: var(--mat-sys-body-medium);
+
+  strong {
+    color: var(--mat-sys-on-surface);
+    font-weight: 500;
+  }
+}

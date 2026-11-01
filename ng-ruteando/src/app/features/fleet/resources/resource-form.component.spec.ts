@@ -2,11 +2,13 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, Navigation, Router, convertToParamMap, provideRouter } from '@angular/router';
 
 import { Fixture, respondWith } from '../../../../testing/api-testing';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
+
+import { toHandoffState } from '../type-handoff';
 
 import { ResourceFormComponent, SELECT_LIMIT } from './resource-form.component';
 import { fromUtcIso } from '../../../shared/time/shift-time';
@@ -24,7 +26,7 @@ describe('ResourceFormComponent', () => {
   const root = () => fixture.nativeElement as HTMLElement;
   const control = (name: string) => (fixture.componentInstance as unknown as { form: { controls: Record<string, { setValue(v: unknown): void; value: unknown }> } }).form.controls[name];
 
-  function setup(id: string | null, load: { types?: unknown; places?: unknown } = {}): void {
+  function setup(id: string | null, load: { types?: unknown; places?: unknown; state?: unknown } = {}): void {
     TestBed.configureTestingModule({
       imports: [ResourceFormComponent],
       providers: [
@@ -37,6 +39,9 @@ describe('ResourceFormComponent', () => {
       ],
     });
     http = TestBed.inject(HttpTestingController);
+    if (load.state) {
+      spyOn(TestBed.inject(Router), 'currentNavigation').and.returnValue({ extras: { state: load.state } } as unknown as Navigation);
+    }
     fixture = TestBed.createComponent(ResourceFormComponent);
     fixture.detectChanges();
     const typesReq = http.expectOne((r) => r.url === '/gateway/resource-types');
@@ -181,6 +186,95 @@ describe('ResourceFormComponent', () => {
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
       expect(root().querySelector('a[href="/flota/vehiculos"]')).not.toBeNull();
+    });
+    it('al guardar reenvía los tipos de paquete y las zonas permitidas que el formulario no toca', () => {
+      const record = { ...(fx(get).response.body as { id: string }), allowedPackageTypes: ['delivery'], allowedZoneIds: ['zona-1', 'zona-2'] };
+      setup(record.id);
+      http.expectOne(`/gateway/resources/${record.id}`).flush(record);
+      fixture.detectChanges();
+
+      submit();
+      const req = http.expectOne((r) => r.method === 'PUT');
+      expect(req.request.body.allowedPackageTypes).toEqual(['delivery']);
+      expect(req.request.body.allowedZoneIds).toEqual(['zona-1', 'zona-2']);
+      req.flush(record);
+    });
+
+    it('si el vehículo no tiene restricciones envía null, no las omite', () => {
+      const record = fx(get).response.body as { id: string };
+      setup(record.id);
+      http.expectOne(`/gateway/resources/${record.id}`).flush({ ...record, allowedPackageTypes: null, allowedZoneIds: null });
+      fixture.detectChanges();
+
+      submit();
+      const req = http.expectOne((r) => r.method === 'PUT');
+      expect(req.request.body.allowedPackageTypes).toBeNull();
+      expect(req.request.body.allowedZoneIds).toBeNull();
+      req.flush(record);
+    });
+  });
+
+  describe('crear un tipo desde el formulario', () => {
+    const draft = {
+      name: 'Furgón de prueba',
+      licensePlate: 'XYZ-987',
+      resourceTypeId: '',
+      depotId: 'deposito-1',
+      shiftStart: '07:30',
+      shiftDurationMin: 420,
+      breakDurationMin: 45,
+      quantity: 2,
+      anchorDate: '2026-10-31',
+    };
+
+    it('el botón lleva al alta de tipo con lo escrito y sin preguntar por cambios sin guardar', () => {
+      setup(null);
+      const navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+      control('name').setValue('Furgón de prueba');
+      (fixture.componentInstance as unknown as { form: { markAsDirty(): void } }).form.markAsDirty();
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBeTrue();
+
+      (root().querySelector('.type-actions button') as HTMLButtonElement).click();
+
+      const [commands, extras] = navigate.calls.mostRecent().args;
+      expect(commands).toEqual(['/flota/tipos/nuevo']);
+      expect(extras?.queryParams).toEqual({ volver: '/' });
+      const handoff = (extras?.state as Record<string, { draft: { name: string; anchorDate: string } }>)['fleetTypeHandoff'];
+      expect(handoff.draft.name).toBe('Furgón de prueba');
+      expect(handoff.draft.anchorDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBeFalse();
+    });
+
+    it('al volver recupera lo escrito y deja elegido el tipo recién creado', () => {
+      setup(null, { state: toHandoffState({ draft, createdTypeId: 'tipo-nuevo' }) });
+      expect(control('name').value).toBe('Furgón de prueba');
+      expect(control('licensePlate').value).toBe('XYZ-987');
+      expect(control('depotId').value).toBe('deposito-1');
+      expect(control('shiftStart').value).toBe('07:30');
+      expect(control('quantity').value).toBe(2);
+      expect(control('resourceTypeId').value).toBe('tipo-nuevo');
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBeTrue();
+    });
+
+    it('al cancelar la creación del tipo recupera lo escrito sin elegir ningún tipo', () => {
+      setup(null, { state: toHandoffState({ draft: { ...draft, resourceTypeId: 'otro-tipo' } }) });
+      expect(control('name').value).toBe('Furgón de prueba');
+      expect(control('resourceTypeId').value).toBe('otro-tipo');
+    });
+
+    it('un borrador que no tiene la forma esperada se ignora', () => {
+      setup(null, { state: toHandoffState({ draft: { name: 5, evil: '<img src=x>' } }) });
+      expect(control('name').value).toBe('');
+      expect(fixture.componentInstance.hasUnsavedChanges()).toBeFalse();
+    });
+
+    it('al editar, lo recuperado manda sobre el vehículo cargado', () => {
+      const record = fx(get).response.body as { id: string };
+      setup(record.id, { state: toHandoffState({ draft }) });
+      http.expectOne(`/gateway/resources/${record.id}`).flush(record);
+      fixture.detectChanges();
+      expect(control('name').value).toBe('Furgón de prueba');
+      expect(control('quantity').value).toBe(2);
     });
   });
 });

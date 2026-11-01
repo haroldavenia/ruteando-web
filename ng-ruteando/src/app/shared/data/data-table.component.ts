@@ -65,6 +65,14 @@ export interface SelectionContext<T> {
   clear: () => void;
 }
 
+/** Lo que recibe la plantilla `#card`: la fila y, si la tabla es `selectable`, cómo saber si está elegida y cómo elegirla. */
+export interface CardContext<T> {
+  $implicit: T;
+  selectable: boolean;
+  selected: boolean;
+  toggle: (row: T) => void;
+}
+
 type Density = 'comfortable' | 'compact';
 type View = 'table' | 'cards';
 const DENSITY_KEY = 'ruteando-density';
@@ -98,8 +106,9 @@ class SpanishPaginatorIntl extends MatPaginatorIntl {
  * pide, casillas de selección con una barra de acciones y una vista de tarjetas.
  *
  * Las acciones de cada fila las aporta quien la usa con `<ng-template #rowActions let-row>`, las de la selección con
- * `<ng-template #selectionActions let-rows let-clear="clear">` y las tarjetas con `<ng-template #card let-row>`; el contenido con
- * el atributo `empty-action` se muestra solo cuando la lista está vacía.
+ * `<ng-template #selectionActions let-rows let-clear="clear">` y las tarjetas con `<ng-template #card let-row>`; con la tabla `selectable`,
+ * la tarjeta recibe además `let-selectable="selectable" let-selected="selected" let-toggle="toggle"` (`CardContext`) para llevar su casilla. El
+ * contenido con el atributo `empty-action` se muestra solo cuando la lista está vacía.
  */
 @Component({
   selector: 'app-data-table',
@@ -143,7 +152,7 @@ export class DataTableComponent<T> {
 
   protected readonly rowActions = contentChild<TemplateRef<{ $implicit: T }>>('rowActions');
   protected readonly selectionActions = contentChild<TemplateRef<SelectionContext<T>>>('selectionActions');
-  protected readonly card = contentChild<TemplateRef<{ $implicit: T }>>('card');
+  protected readonly card = contentChild<TemplateRef<CardContext<T>>>('card');
   private readonly searchField = viewChild<ElementRef<HTMLInputElement>>('search');
 
   /**
@@ -322,6 +331,7 @@ export class DataTableComponent<T> {
   }
 
   protected readonly clearSelection = (): void => this.selected.set(new Set());
+  protected readonly toggleCard = (row: T): void => this.toggleRow(row);
 
   /** El nombre de una fila para los lectores de pantalla: el texto de su columna principal. */
   protected rowLabel(row: T): string {

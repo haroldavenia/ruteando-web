@@ -11,6 +11,12 @@
   background: var(--mat-sys-surface);
 }
 
+// Tarjeta elegida (la casilla del pie la marca): borde y fondo en el color principal
+.vehicle.selected {
+  border-color: var(--mat-sys-primary);
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, var(--mat-sys-surface));
+}
+
 header {
   display: flex;
   gap: 12px;
@@ -98,7 +104,14 @@ small {
 
 footer {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 4px;
   justify-content: flex-end;
   margin-top: auto;
+}
+
+// La casilla de elegir va al principio del pie y las acciones quedan a la derecha
+.pick {
+  margin-right: auto;
 }

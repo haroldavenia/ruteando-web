@@ -123,6 +123,7 @@ describe('ResourceListComponent', () => {
     const labels = Array.from(root().querySelectorAll('.card-grid article.vehicle footer [aria-label]')).map((e) => e.getAttribute('aria-label'));
 
     expect(labels).toEqual([
+      'Elegir vehículo Postman resource',
       'Editar vehículo Postman resource',
       'Retirar conductor del vehículo Postman resource',
       'Cambiar conductor del vehículo Postman resource',
