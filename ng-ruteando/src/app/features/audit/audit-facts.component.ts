@@ -5,7 +5,7 @@ import { AuditLog } from '../../core/api/models';
 import { formatRelativeTime } from '../../shared/format';
 
 import { formatLongDateTime } from './audit-format';
-import { actorInitials, auditActor, auditEntityLabel, shortId } from './audit-labels';
+import { actorInitials, auditActor, auditEntityLabel, breakableParts, shortId } from './audit-labels';
 
 /**
  * Las cuatro cosas que dice un evento, cada una en su tarjeta: quién (con avatar de iniciales y su rol), cuándo (hace cuánto y la
@@ -23,6 +23,8 @@ export class AuditFactsComponent {
   readonly log = input.required<AuditLog>();
 
   protected readonly actor = computed(() => auditActor(this.log()));
+  /** El nombre o correo en trozos entre los que puede bajar de línea (ver `breakableParts`). */
+  protected readonly personParts = computed(() => breakableParts(this.actor().person));
   /** Sin correo no hay iniciales que mostrar: el avatar lleva un icono. */
   protected readonly initials = computed(() => (this.actor().identified ? actorInitials(this.actor().person) : ''));
   protected readonly entity = computed(() => auditEntityLabel(this.log().entityType));

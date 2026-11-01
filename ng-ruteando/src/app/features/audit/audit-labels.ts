@@ -184,6 +184,15 @@ export function actorInitials(person: string): string {
   return letters.toUpperCase();
 }
 
+/**
+ * Trozos de un texto largo sin espacios (un correo) donde es natural partirlo si no cabe: tras `@`, `.`, `_` y `-`. Quien lo pinta pone un
+ * `<wbr>` entre trozo y trozo, de modo que en una pantalla estrecha el correo baja de línea por esos sitios y no a mitad de palabra; el
+ * texto (al copiarlo o leerlo) no cambia. Unidos, los trozos dan el texto original.
+ */
+export function breakableParts(text: string): string[] {
+  return text.match(/[^@._-]+[@._-]*|[@._-]+/g) ?? [];
+}
+
 /** Cola de un identificador largo, para la tabla (el completo va en el detalle y en el `title`). */
 export function shortId(id: string, length = 8): string {
   return id.length > length ? id.slice(-length) : id;
