@@ -1,150 +1,87 @@
 ## Context
 
-Lo que hay hoy, observado en el código, en los fixtures reales (`ng-ruteando/src/testing/fixtures/gateway/`), en la colección Postman del gateway (capturas reales del 2026-10-11) y en la app AngularJS anterior (`ruteando-web-old`, tag `v1.0.0`, leída en sus fuentes `master/js/custom/{vehicle_types,vehicles,drivers}` y `master/jade/views/pages/**`).
+Lo que hay hoy, observado en el código, en los fixtures reales (`ng-ruteando/src/testing/fixtures/gateway/`), en la colección Postman del gateway (capturas del 2026-10-11) y en las fuentes de la app AngularJS (`ruteando-web-old`, tag `v1.0.0`: `master/js/custom/{vehicle_types,vehicles,drivers}` y `master/jade/views/pages/**`). La tabla de endpoints y el análisis de huecos están en `enhance-fleet-experience/design.md`.
 
-### La flota actual (change archivado `add-fleet-management` + rediseño)
-- Rutas `/flota/{tipos,vehiculos,conductores}` (+ `nuevo`, `:id`), `roleGuard(ADMIN_ROLES)` (`tenant_admin`, `super_admin`); `/flota` redirige a `vehiculos`. Menú: sección «Flota» con tres enlaces. Pestañas `FleetTabsComponent`.
-- **Vehículos**: `FullListState` (todo en el cliente, hasta 1000), tabla + tarjetas, asignar y retirar conductor con diálogo. Formulario: nombre, matrícula, tipo, depósito, inicio y duración de turno, descanso, cantidad.
-- **Tipos**: `ListState` (solo la página). Formulario: nombre, categoría, perfil de ruteo, consumo. `capacity`, `measure` y `restriction` se reenvían tal cual al editar.
-- **Conductores**: `ListState` sobre `ClientPaging` (`GET /users/drivers` no pagina). Formulario: nombre, apellidos, correo, teléfono, contraseña inicial solo al crear.
-- Los modelos `Resource`, `ResourceType` y `User` ya traen `active`, `default`, `allowedPackageTypes`, `allowedZoneIds`, `identifierType`, `identifierValue`, `lastLoginAt`; la pantalla no usa casi ninguno.
-- No existe cliente para `positions`, `driver/*` ni `invitations`. Existe `AssignedServicesApi` sin pantalla.
+### La app anterior (lo que se replica)
+- **Tipos**: nombre; peso en **kg** (se guardaba ×1000, en gramos); selector «En volumen» / «En medidas»; volumen en **cm³** (en modo medidas = ancho × alto × profundidad, en **cm**); restricciones de peso (kg, ×1000) y de volumen (cm³), mínimo y máximo, con validaciones cruzadas: mín ≤ máx, máx peso ≤ peso, máx volumen ≤ volumen. El listado mostraba peso en kg y volumen en m³ (cm³ ÷ 1 000 000). Peso y volumen eran obligatorios.
+- **Vehículos**: matrícula (obligatoria, ≥ 6), nombre (obligatorio, ≥ 2) y tipo (selector con botón «+» que llevaba a crear un tipo y volvía). Listado con matrícula y nombre.
+- **Conductores**: licencia, nombre, apellidos, identificación, teléfono, correo (no editable al editar), contraseña y repetirla (solo al crear) y «activo». Listado con nombre, apellidos, correo, licencia, identificación y teléfono.
+- **Listados**: búsqueda, selección con «seleccionar todo», borrado de varios con una confirmación, exportación a PDF, paginación del lado del cliente sobre todos los registros y estados de carga y vacío.
 
-### Lo que dice la API (colección Postman, mismo origen que los fixtures)
-| Endpoint | Acceso | Papel en la flota | Estado |
-|---|---|---|---|
-| `GET/POST /resource-types`, `GET/PUT/DELETE /resource-types/{id}` | autenticado | Tipos | Hecho; `capacity`, `measure`, `restriction` siempre `null` en las capturas |
-| `GET/POST /resources`, `GET/PUT/DELETE /resources/{id}` | autenticado | Vehículos | Hecho; faltan `active`, `default`, `allowed*` |
-| `PUT /resources/{id}/driver/{driverId}`, `DELETE /resources/{id}/driver` | autenticado | Asignación | Hecho |
-| `GET /users/drivers`, `GET/POST /users`, `PUT/DELETE /users/{id}`, `POST /users/{id}/reset-password` | `TENANT_ADMIN` o `SUPER_ADMIN` | Conductores | Hecho; faltan `identifier*`; `PUT` documentado solo con email, nombre, apellidos y rol |
-| `GET /master-domains` → `OsrmProfile`, `IdentifierType` (`citizen_id`, `itin`, `plate`, `code`), `Role`, `ServiceType`... | autenticado | Selectores | `OsrmProfile` usado; **`IdentifierType` sin usar** |
-| `GET /positions`, `GET /positions/{driverId}` | autenticado | Seguimiento | Sin cliente; el listado de las capturas es `[]` y devuelve **202** |
-| `POST /driver/positions`, `GET /driver/{positions,routes,assignments}`, `PUT /driver/packages/report` | `DRIVER` | Aplicación del conductor | Fuera de alcance |
-| `GET/POST/PUT/DELETE /assigned-services` (+ `/summary`, `?ids=`) | autenticado | — | Cliente sin pantalla; objetos anidados opacos |
-| `/invitations` (+ `accept`, `resend`) | `TENANT_ADMIN` | Alta por correo | Fuera de alcance |
-| `GET /zones?tenantId=` | autenticado | Zonas permitidas de un vehículo | Cliente existente |
-| `GET /audit-logs*` | según ámbito | Historial | Módulo existente |
-
-Hallazgos que condicionan el plan:
-1. **La planificación consume lo que los tipos no pueden definir**: las rutas traen `weightUsed`, `volumeUsed`, `weightUsagePercent`, `volumeUsagePercent` y `fuelCost`. Con tipos sin capacidad ni consumo, esas cifras salen `null`.
-2. **`IdentifierType` ya está documentado** como dominio maestro, aunque `gateway-api.md` dice «valores válidos sin documentar».
-3. **Las acciones de auditoría incluyen `user.activate` y `user.deactivate`** (dominio `audit_actions`), pero ningún endpoint de la colección activa o desactiva a un usuario: **no se sabe cómo escribir `active`**. Lo mismo con `active` y `default` de vehículos y tipos.
-4. **`POST /users` aceptó la contraseña `Admin123456`** (11 caracteres, sin símbolo) en la captura: no aplica la política de 16 caracteres del registro. Por eso el formulario de conductores conserva su mínimo de 8.
-5. **Posiciones**: una sola captura con datos (`/positions/{driverId}`): `{ id, userId, driver: { id, userId, name }, address: { location: { x: lon, y: lat } }, date: "2026-10-11 14:14", assignedService }`. `date` no lleva zona horaria y `driver.id` no es el `userId`.
-6. **Auditoría de la flota**: hay eventos `resource` (crear, actualizar, asignar y retirar conductor) y `user`; no hay ninguno para tipos de vehículo en las capturas, así que no se sabe con qué `entityType` se auditan (si se auditan).
-
-### Paridad con la app AngularJS
-| App anterior | App nueva hoy | Plan |
-|---|---|---|
-| Tipo: peso, volumen, modo «volumen» o «medidas» (alto × ancho × profundo; volumen = producto) | Falta | Lote B, fase 2 |
-| Tipo: restricciones mínimas y máximas de peso y volumen, con validaciones cruzadas (mín ≤ máx ≤ capacidad) | Falta | Lote B, fase 2 |
-| Tipo: la lista muestra peso en kg y volumen en m³ | Falta | Columna «Capacidad» |
-| Vehículo: nombre, matrícula, tipo | Hecho, con más (depósito, turno, cantidad) | — |
-| Vehículo: «crear tipo» desde el formulario y volver | Enlace a `/flota/tipos` | Se descarta: el enlace basta y el aviso de cambios sin guardar protege lo escrito |
-| Conductor: número de licencia | **La API no tiene ese campo** | No se hace (se documenta) |
-| Conductor: número de identificación | Falta | Lote A (`identifierType` + `identifierValue`) |
-| Conductor: teléfono, activo | Teléfono hecho; estado visible | Estado en chips y ficha |
-| Listados: seleccionar y eliminar varios | Falta | Lote A |
-| Listados: exportar a PDF | Falta | CSV (no hay librería de PDF desde que se retiró `jspdf`) |
-| Servicios asignados y su mapa | Nunca terminó en la app anterior (editar vacío, eliminar con `alert`) | Se descarta |
-
-**Sobre levantar la app anterior**: no hace falta. Su backend (HanoitApi + MongoDB) no está en el repositorio ni resuelve (`hanoit:9000`), así que sin datos no se vería nada más que formularios vacíos, y su comportamiento está completo en las fuentes leídas. Si más adelante interesa ver sus pantallas, se levanta con `http-server` (`ruteando-web-old`, puerto 3001) y un gateway simulado propio.
+### La flota nueva (change archivado `add-fleet-management` + rediseño)
+- Rutas `/flota/{tipos,vehiculos,conductores}` (+ `nuevo`, `:id`), `roleGuard(ADMIN_ROLES)`, `FleetTabsComponent`. Vehículos ya usa `FullListState`; tipos y conductores usan `ListState` (solo la página). Conductores se pagina con `ClientPaging` porque `GET /users/drivers` devuelve un arreglo.
+- Formulario de tipo: nombre, categoría, perfil de ruteo, consumo; reenvía `capacity`, `measure` y `restriction` tal cual al editar. Formulario de conductor: nombre, apellidos, correo, teléfono, contraseña inicial. Formulario de vehículo: nombre, matrícula (opcional), tipo, depósito, turno, descanso, cantidad.
+- `DataTableComponent` ya soporta `selectable` y `#selectionActions` (Paquetes lo usa para cambiar el estado de varios); `shared/data/csv.ts` ya tiene `toCsv` y `downloadCsv`.
 
 ### Restricciones del proyecto
-Sin librerías nuevas; OnPush y signals; SSR seguro; CSP `script-src 'self'`; el bundle inicial no importa `core/api/data/*`; todo botón de solo icono lleva `title`; las tablas se apilan en pantallas estrechas; colores solo por tokens; hoja de estilos de cada componente por debajo de 2 kB y nunca en `styles.scss`; todo texto del gateway se pinta como texto; fixtures reales intactos.
+Sin librerías nuevas; OnPush y signals; SSR seguro; CSP `script-src 'self'`; el bundle inicial no importa `core/api/data/*`; todo botón de solo icono lleva `title`; las tablas se apilan; colores solo por tokens; hoja de estilos de cada componente por debajo de 2 kB y nunca en `styles.scss`; todo texto del gateway se pinta como texto; fixtures reales intactos.
 
 ## Goals / Non-Goals
 
 **Goals:**
-- Que quien administra la flota pueda definir todo lo que la planificación usa (capacidad, medidas, restricciones, consumo, zonas) y ver de un vistazo si la flota está lista.
-- Que guardar desde la pantalla nunca borre datos que la pantalla no muestra.
-- Paridad con lo que hacía la app anterior (salvo lo que la API no tiene) y uso de lo que la API ofrece y hoy se ignora.
-- Que la lógica nueva (capacidad, validaciones, relaciones, comprobaciones de preparación, CSV, lote) sea **pura y se pruebe sin `TestBed`**.
-- Separar con claridad lo construible hoy de lo que exige comprobar el gateway real.
+- Que la flota haga lo que hacía la app anterior (capacidad y restricciones de tipos, documento del conductor, selección y borrado en lote, exportación, crear tipo desde el vehículo) con el diseño y el Angular actuales.
+- Que guardar nunca borre datos que la pantalla no muestra.
+- Que la lógica nueva (codec de capacidad, reglas, etiquetas, CSV, lote) sea **pura y se pruebe sin `TestBed`**.
 
 **Non-Goals:**
-- No se inventan contratos: lo no verificado se aísla en un único módulo (`capacity-codec.ts`) y se declara pendiente.
-- No hay pantalla de `assigned-services` ni aplicación del conductor (`/driver/*`) ni alta por invitación.
-- No se cambia el rol que ve la flota (administradores) ni se añaden permisos nuevos.
-- No hay PDF, ni WebSocket, ni librería de gráficos o de mapas nueva.
-- No se toca el módulo de Auditoría ni `package-bulk-status.ts` (ver D6 y D8).
+- Resumen, fichas, chips, columnas de relación, zonas permitidas y seguimiento (`enhance-fleet-experience`).
+- Licencia de conducir, activar o desactivar, servicios asignados y PDF (ver D8).
+- Verificar el contrato real de capacidad: el gateway está caído (ver Riesgos).
 
 ## Decisions
 
-### D1. Dos lotes por riesgo de contrato
-**Decisión**: **Lote A** (conservar datos, conductores, listados completos, lote, CSV, asignación, resumen, fichas) usa solo contratos ya conocidos y se entrega primero. **Lote B** (tipos completos, zonas permitidas, seguimiento) se construye detrás de la **fase 0**, que comprueba el gateway real; no se habilita ninguna escritura nueva hacia el gateway hasta cerrar su punto de la fase 0.
-**Por qué**: el gateway real está caído y los objetos `capacity`/`measure`/`restriction` jamás aparecieron con datos; escribir a ciegas puede guardar basura que la planificación luego interprete mal. El lote A ya da valor (y arregla la pérdida de datos) sin esa información.
-**Entrega recomendada**: dos PR (A, luego B), según la preferencia de pocos PR.
+### D1. Paridad primero, el resto después
+**Decisión**: este change replica la app anterior; todo lo demás del plan pasó a `enhance-fleet-experience`, que se resincroniza con lo que deje este.
+**Por qué**: la persona pidió «tal cual como en la app vieja, renovada». Separar evita archivar requisitos no implementados.
 
 ### D2. Los objetos opacos se fusionan, no se reemplazan
-**Decisión**: `capacity`, `measure` y `restriction` se editan con `mergeOpaque(current, edited)`: se parte del objeto que trajo el gateway, se sobrescriben solo las claves que la pantalla conoce y se conservan las demás; si la persona vacía un campo se elimina solo esa clave. Un objeto que queda sin claves se envía como `null`.
-**Por qué**: el gateway puede añadir claves (o la app anterior las usaba: `capability`); reemplazar el objeto las perdería. Es el mismo criterio que `zoneId` en lugares.
-**Alternativa**: construir el objeto entero desde el formulario (más simple, pierde claves desconocidas).
+**Decisión**: `capacity`, `measure` y `restriction` se editan con `mergeOpaque(current, edited)`: se parte del objeto que trajo el gateway, se sobrescriben solo las claves que la pantalla conoce y se conservan las demás; vaciar un campo quita solo esa clave; un objeto que queda sin claves se envía como `null`.
+**Por qué**: el gateway puede añadir claves (la app anterior usaba otras, como `capability`); reemplazar el objeto las perdería. Mismo criterio que `zoneId` en lugares.
 
-### D3. Una sola hipótesis, en un solo archivo
-**Decisión**: `features/fleet/resource-types/capacity-codec.ts` concentra las claves y las unidades: `decode(type) → CapacityValues` y `encode(values, current) → { capacity, measure, restriction }`. Hipótesis de partida, tomada de la app AngularJS y de los fixtures de paquetes (`weight: 1`, `volume: 0.1`): `capacity = { weight, volume }` en kg y m³; `measure = { height, width, depth }`; `restriction = { minWeight, minVolume, maxWeight, maxVolume }`. La app anterior guardaba gramos y cm³, pero un volumen de paquete de 0,1 cm³ no tiene sentido, por lo que el gateway parece usar kg y m³ (hipótesis a comprobar).
-**Por qué**: si la fase 0 contradice la hipótesis, el arreglo es un archivo y sus pruebas, no la pantalla. Las pruebas fijan la hipótesis con un comentario que dice que es una hipótesis.
-**Qué se muestra**: kg y m³ siempre; la conversión (identidad o ×1000) vive en el codec.
+### D3. Una sola hipótesis de almacenamiento, en un solo archivo
+**Decisión**: `features/fleet/resource-types/capacity-codec.ts` concentra claves y unidades: `decode(type) → CapacityValues` y `encode(values, current) → { capacity, measure, restriction }`. Hipótesis de partida: `capacity = { weight, volume }` con el peso en **kg** y el volumen en **cm³**; `measure = { height, width, depth }` en **cm**; `restriction = { minWeight, minVolume, maxWeight, maxVolume }` en kg y cm³. Las claves vienen de la app anterior; **las unidades, de la configuración del tenant de la colección Postman** (`config { defaultWeightUnit: "kg", defaultVolumeUnit: "cm3" }`), no de la app anterior, que guardaba el peso en gramos (×1000). La pantalla muestra kg, cm³ y cm (como la app anterior) y el listado, m³.
+**Por qué**: es lo que el gateway probablemente heredó, pero **no está verificado** (todas las capturas traen `null`). Si la fase 0 lo contradice (por ejemplo, kg y m³ como sugieren los paquetes de ejemplo, `weight: 1`, `volume: 0.1`), el arreglo es un archivo y sus pruebas, no la pantalla. Las constantes de conversión son nombradas y las pruebas las fijan con un comentario que dice que es una hipótesis.
 
-### D4. Reenviar lo que la pantalla no edita
-**Decisión**: al editar, el formulario de vehículo añade a la petición `allowedPackageTypes` y `allowedZoneIds` del registro cargado; el de conductor añade `identifierType` e `identifierValue`; el de tipo añade las tres estructuras (ya lo hace). Al crear no se envían.
-**Por qué**: `PUT` sin esos campos puede borrarlos si el gateway sustituye. Reenviarlos es inocuo si fusiona. Es un arreglo del lote A, con pruebas de cuerpo de petición (`HttpTestingController`), independiente de la fase 0.
+### D4. El modo de capacidad se deduce, no se guarda
+**Decisión**: «En medidas» si `measure` trae alto, ancho y profundidad mayores que 0; «En volumen» en cualquier otro caso. No se escribe un campo `capability`.
+**Por qué**: la app anterior guardaba `capability` aparte, pero el modelo del gateway no tiene un sitio conocido para él; deducirlo evita inventar una clave.
 
-### D5. Un almacén de flota por ruta, no por pantalla
-**Decisión**: `FleetStore` (no `providedIn: 'root'`) se provee en la ruta padre de `/flota` y carga de forma perezosa tipos, vehículos, conductores y lugares con `FullListState` (el de conductores sobre un adaptador de arreglo a página). Expone mapas por id y vistas derivadas (`driverOf(vehicle)`, `vehicleOf(driver)`, `vehiclesOfType(type)`, `placeName(id)`, `needsAttention`) con `computed`. Las altas, ediciones y borrados llaman a `invalidate()` para recargar lo que cambió.
-**Por qué**: las relaciones (conductor ↔ vehículo ↔ tipo ↔ depósito) cruzan colecciones; sin almacén común, cada pestaña repite cuatro cargas y los recuentos del resumen y de los listados pueden discrepar. Vive solo mientras se está en `/flota`.
-**Consecuencia**: `FLEET_ROUTES` gana una ruta padre sin componente con `providers: [FleetStore]`; se actualizan las pruebas de rutas.
+### D5. Reenviar lo que la pantalla no edita
+**Decisión**: al editar, el formulario de vehículo añade `allowedPackageTypes` y `allowedZoneIds` del registro cargado; el de conductor, `identifierType` e `identifierValue` (los suyos si no se tocaron); el de tipo, las tres estructuras completas. Al crear no se envían.
+**Por qué**: un `PUT` sin esos campos puede borrarlos si el gateway sustituye; reenviarlos es inocuo si fusiona. Se prueba con el cuerpo de la petición (`HttpTestingController`).
 
-### D6. Lote de borrado: una petición por registro, genérica
-**Decisión**: `shared/data/bulk-run.ts` ejecuta una operación sobre N registros con concurrencia 4, no se detiene ante un fallo y devuelve `{ done, failed: { label, message }[] }`. La confirmación es una sola. Se usa en los tres listados; `package-bulk-status.ts` no se toca (migrarlo es una limpieza posterior).
-**Por qué**: el gateway no tiene borrado en lote para estos recursos (solo `DELETE /assigned-services?ids=`). Mismo patrón y mismas garantías que ya funcionan en paquetes.
+### D6. Borrado en lote: una petición por registro, genérico
+**Decisión**: `shared/data/bulk-run.ts` ejecuta una operación sobre N registros con concurrencia 4, sin detenerse ante un fallo, y devuelve `{ done, failed: { label, message }[] }`; la confirmación es una sola. Los tres listados usan `DataTableComponent` con `selectable` y `#selectionActions` (barra pegada al pie, como Paquetes). `package-bulk-status.ts` no se toca.
+**Por qué**: el gateway no tiene borrado en lote para estos recursos. Mismo patrón y garantías que ya funcionan en paquetes.
 
-### D7. «Resumen» es una pestaña; `/flota` sigue yendo a vehículos
-**Decisión**: nueva pestaña `/flota/resumen` (primera) y entrada de búsqueda «Resumen de flota»; `/flota` mantiene su redirección a `vehiculos` para no cambiar el comportamiento de quien trabaja a diario con vehículos. Pregunta abierta: ¿debería abrir en el resumen?
-**Por qué**: es el cambio más pequeño; la redirección del spec actual se conserva.
-**Pestañas**: pasan de 3 a 5 con el mapa; a 320 px se mide y, si desbordan, se vuelven desplazables sin barra visible.
+### D7. Volver tras crear un tipo desde el vehículo
+**Decisión**: el botón «Crear tipo» navega a `/flota/tipos/nuevo?volver=<ruta del formulario de vehículo>`; el formulario de tipo lee `volver`, lo valida (solo rutas internas que empiecen por `/flota/`, reutilizando `safeReturnUrl` y añadiendo la comprobación del prefijo) y, al guardar o cancelar, navega allí; si no es válido, al listado de tipos. El borrador del formulario de vehículo viaja en el **estado de la navegación** (`type-handoff.ts`, sin almacenamiento), como hacía la app anterior con `returnTo.data`: al guardar o cancelar, el formulario de tipo vuelve con el borrador y, si se creó, con el id del tipo, que el vehículo deja elegido. Mientras se va a crear el tipo no se pregunta por cambios sin guardar; al volver, el formulario queda marcado como modificado y el aviso de siempre protege lo restaurado. El destino y el borrador se validan por su forma y se ignoran si no son los esperados.
+**Por qué**: es el comportamiento de la app anterior sin guardar borradores en almacenamiento.
+**Alternativa**: diálogo con un formulario de tipo reducido (más trabajo y duplica validaciones).
 
-### D8. Fichas: modal ligada a la dirección, como Auditoría
-**Decisión**: tres diálogos diferidos (`VehicleDetailDialog`, `DriverDetailDialog`, `TypeDetailDialog`) que siguen a `?vehiculo=`, `?conductor=` y `?tipo=`. La lógica de sincronización con la dirección (abrir al cargar, cerrar quita el parámetro, `closeOnNavigation: false`, `Location.back()` si se empujó) se extrae a `shared/ui/query-dialog.ts` **para la flota**; Auditoría no se migra en este change. Una pieza `FleetFactsComponent` (rejilla etiqueta–valor) la comparten las tres fichas.
-**Por qué**: es el patrón que la persona pidió y validó en Auditoría (tabla esencial, ojo, modal con detalle, enlazable, «Atrás» la cierra). Son tres consumidores nuevos, así que merece un helper; no se toca auditoría para no arriesgar sus 1948 pruebas en este change.
-**Reglas aprendidas**: hojas por debajo de 2 kB, cabecera en su propio componente, tono por `data-tone`, y mat-dialog con `(click)="close()"` si el resultado importa.
+### D8. Desviaciones deliberadas respecto a la app anterior
+- **Matrícula opcional** (la app anterior la exigía): la API la permite nula y hay vehículos sin matrícula (bicicletas).
+- **Capacidad opcional**: la app anterior exigía peso y volumen; la API permite `null` y hay tipos existentes sin capacidad. Si se indica una parte, deben indicarse peso y volumen.
+- **Identificación del conductor opcional**, con tipo y valor (la app anterior solo tenía el número).
+- **Sin licencia de conducir**: la API no tiene el campo.
+- **Sin «activo» editable**: no se conoce cómo escribir `active`; el estado se muestra (listado) pero no se promete cambiarlo.
+- **CSV en lugar de PDF**: `jspdf` se retiró por sus vulnerabilidades.
+- **Sin servicios asignados**: la app anterior nunca los terminó y el gateway no tiene contrato para sus objetos anidados.
 
-### D9. Seguimiento por sondeo, condicionado
-**Decisión**: `PositionsApi` (`list()`, `last(driverId)`) y `DriversMapComponent` sobre `shared/map/` con marcadores por conductor (tokens y `map-palette`). Sondeo cada 30 s mientras la pestaña esté visible (`PageVisibility`, seguro en SSR), sin WebSocket (no documentado). Posición obsoleta a los 15 min (atenuada, con «Última señal hace N min»). La unión posición ↔ vehículo es `position.userId === resource.driverId`. `x` = longitud, `y` = latitud.
-**Por qué**: es la única capacidad de la API de flota sin cliente. Pero **hoy nadie publica posiciones**: `POST /driver/positions` es del rol conductor y esa aplicación no existe. Sin la aplicación del conductor el mapa estará siempre vacío; por eso es lote B y se decide con la persona si se construye ahora o cuando exista esa aplicación.
-**Pendiente de la fase 0**: significado del 202, zona horaria de `date`, si `userId` coincide con el conductor.
-
-### D10. Etiquetas y selectores por dominio maestro
-**Decisión**: `IdentifierType` se lee de `MasterDomainsService` y se etiqueta en `fleet-labels.ts` (`citizen_id` → «Documento de identidad», `itin` → «Identificación fiscal», `plate` → «Placa», `code` → «Código interno»); una clave desconocida se muestra tal cual.
-**Por qué**: es el mismo mecanismo que `OsrmProfile`; el gateway puede añadir valores.
-
-### D11. Datos cruzados y de prueba
-**Decisión**: los helpers de prueba con datos que el gateway nunca devolvió (capacidad, posiciones con datos, zonas permitidas) viven en `src/testing/fleet.ts`, con un comentario «hipótesis, no capturado del gateway»; los fixtures de `fixtures/gateway/` no se tocan. El gateway simulado (`qa-visual/mock-gateway.mjs`, fuera del repo) se amplía con tipos con capacidad, vehículos con zonas y sin conductor, conductores inactivos, borrados en uso (409), y posiciones.
-**Por qué**: mezclar datos inventados con fixtures reales haría pasar por «contrato» lo que es una suposición.
-
-### D12. Lo que se deja fuera, y por qué
-- **`assigned-services`**: cada servicio asignado es vehículo + ruta + conductor, y eso ya lo expresan las jornadas (la ruta lleva el recurso) y el vehículo (lleva el conductor). La app anterior nunca lo terminó y los objetos anidados no tienen contrato.
-- **`/driver/*`**: es la aplicación del conductor (sus rutas, reportar entregas, publicar posición). Es otro módulo, con su propio rol y diseño; se recomienda como siguiente módulo.
-- **Invitaciones**: invitar al conductor por correo es mejor que fijarle una contraseña inicial, pero exige una pantalla de aceptación (`/acceso/invitacion`) que no existe y que el rol permitido en la invitación (el ejemplo es `agent`) incluya `driver`.
-- **Número de licencia**: la API no tiene el campo.
+### D9. Gateway simulado con estado
+**Decisión**: `qa-visual/mock-gateway.mjs` (fuera del repo) gana un CRUD en memoria de tipos, vehículos y conductores, con la forma de los fixtures reales, 409 al borrar un tipo con vehículos o un conductor asignado, 409 en correo duplicado, conductores con y sin documento, tipos con capacidad en modo volumen y en modo medidas (según D3) y registro del cuerpo completo de las peticiones de flota (`GET /__requests`) para comprobar lo que se envía.
+**Por qué**: el simulado actual repite un fixture y no guarda nada, así que no permite ver crear, editar ni borrar en lote.
 
 ## Risks / Trade-offs
 
-- **Contrato no verificado de capacidad** → la hipótesis de D3 puede estar equivocada. Mitigación: fase 0 antes de escribir; codec aislado; fusión de objetos; vista previa que enseña lo que se enviará.
-- **Unidades**: si el gateway guarda gramos y la planificación compara con paquetes en kg, el porcentaje de uso sería absurdo. Mitigación: la fase 0 incluye un experimento de contraste (un tipo de capacidad 100, un paquete de peso 10 y leer `weightUsagePercent`: debe dar 10 %).
-- **Sustitución en `PUT`**: D4 es defensiva; falta saber si el gateway sustituye (fase 0).
-- **Escritura de `active`/`default`** sin endpoint conocido: no se promete activar ni desactivar; se muestra el estado. Si la fase 0 encuentra cómo, se añade como ampliación pequeña.
-- **Carga de cuatro colecciones al abrir la flota** (hasta 1000 cada una): coste moderado y diferido; se carga lo que cada pestaña necesita y se invalida por mutación.
-- **Desbordamiento de pestañas** a 320 px: se mide con el banco visual antes de dar por cerrado.
-- **Asignar un conductor que ya conduce otro vehículo**: se desconoce si el gateway lo mueve o lo rechaza; la pantalla avisa y muestra el motivo del rechazo, sin suponer.
-- **Mapa vacío para siempre** si nadie publica posiciones (D9): por eso es condicionado.
-- **Sin gateway real**: el lote A queda probado con fixtures y el gateway simulado, y los puntos de la fase 0 quedan como pendientes declarados.
+- **Contrato de capacidad sin verificar** → si el gateway usa otras claves o unidades, la planificación calcularía mal el uso (por ejemplo, un factor de 1000). Mitigación: fase 0 (tareas abiertas, con el experimento «capacidad 100, paquete 10 → 10 %»), codec aislado, fusión de objetos y pruebas que fijan la hipótesis. **Hasta ejecutarla, no usar la capacidad con datos reales.**
+- **Sustitución en `PUT`**: D5 es defensiva; falta saber si el gateway sustituye o fusiona.
+- **Borrados en uso**: los estados 400 y 409 siguen sin comprobar contra el gateway real; el lote muestra el motivo que devuelva.
+- **Borrador en el estado de la navegación**: se pierde si la persona abre el formulario de tipo en otra pestaña o escribe la dirección a mano; en ese caso el vehículo vuelve vacío (D7).
+- **Sin gateway real**: todo se prueba con fixtures y el simulado; lo no verificado queda declarado como pendiente.
 
 ## Open Questions
 
-1. ¿`/flota` debe abrir en el **resumen** en lugar de en vehículos? (D7; por defecto no cambia.)
-2. ¿Los **agentes** deberían ver vehículos y conductores en solo lectura (la planificación depende de ellos)? Hoy no ven «Flota»; `GET /resources` es «autenticado» pero `GET /users/drivers` exige administrador.
-3. ¿Se construyen las **fichas** para las tres entidades o solo para vehículos y conductores? (Por defecto las tres.)
-4. ¿Se construye el **seguimiento** ahora (mapa vacío hasta que exista la aplicación del conductor) o se espera? (D9; por defecto, lote B, después.)
-5. ¿Se quiere dar de alta conductores **por invitación** en el futuro? Exigiría la pantalla de aceptación y confirmar que el gateway admite `role: driver` en invitaciones.
-6. Fase 0: ¿quién la ejecuta y cuándo? Necesita el gateway activo y una sesión de administrador iniciada por la persona.
+1. ¿Se quiere que la capacidad sea obligatoria al crear un tipo, como en la app anterior? (Por defecto es opcional, ver D8.)
+2. ¿Quién ejecuta la fase 0 y cuándo? Necesita el gateway activo y una sesión de administrador iniciada por la persona.
+3. ¿El conductor debe poder activarse o desactivarse desde la pantalla? Falta el endpoint.
