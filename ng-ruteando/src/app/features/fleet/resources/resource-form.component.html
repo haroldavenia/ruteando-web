@@ -34,6 +34,9 @@
           </mat-select>
           <mat-error>{{ error('resourceTypeId') }}</mat-error>
         </mat-form-field>
+        <div class="type-actions">
+          <button mat-stroked-button type="button" (click)="createType()"><mat-icon aria-hidden="true">add</mat-icon>Crear tipo</button>
+        </div>
         @if (typesLoaded() && types().length === 0) {
           <p class="hint">Todavía no hay tipos de vehículo. Primero <a routerLink="/flota/tipos">crea un tipo</a>.</p>
         }

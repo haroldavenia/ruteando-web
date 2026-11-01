@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -17,9 +18,12 @@ import { FormResultComponent } from '../../../shared/form/form-result.component'
 import { ActionTitleDirective } from '../../../shared/ui/action-title.directive';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component';
 import { FleetTabsComponent } from '../fleet-tabs.component';
+import { vehiclesToCsv } from '../fleet-export';
 import { driverName, vehicleLabel } from '../fleet-labels';
+import { FleetListActions } from '../fleet-list-actions';
 
 import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
+
 
 @Component({
   selector: 'app-resource-list',
@@ -29,6 +33,7 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
     PageHeaderComponent,
     FormResultComponent,
     MatButtonModule,
+    MatCheckboxModule,
     MatIconModule,
     RouterLink,
     ActionTitleDirective,
@@ -38,6 +43,9 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
   styleUrl: './resource-list.component.scss',
   template: `
     <app-page-header title="Vehículos" [subtitle]="state.countText('vehículo', 'vehículos')">
+      <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
+        <mat-icon aria-hidden="true">download</mat-icon>Exportar CSV
+      </button>
       <a mat-flat-button class="primary-action" routerLink="/flota/vehiculos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo vehículo</a>
     </app-page-header>
     <app-fleet-tabs />
@@ -45,12 +53,13 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
     <app-data-table
       [state]="state"
       [columns]="columns"
+      [selectable]="true"
       entityPlural="vehículos"
       emptyMessage="Todavía no hay vehículos"
       searchPlaceholder="Buscar por nombre, matrícula o conductor"
     >
-      <ng-template #card let-row>
-        <article class="vehicle">
+      <ng-template #card let-row let-selectable="selectable" let-selected="selected" let-toggle="toggle">
+        <article class="vehicle" [class.selected]="selected">
           <header>
             <span class="vehicle-icon"><mat-icon aria-hidden="true">local_shipping</mat-icon></span>
             <div class="vehicle-name">
@@ -75,6 +84,9 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
             }
           </div>
           <footer>
+            @if (selectable) {
+              <mat-checkbox class="pick" [checked]="selected" (change)="toggle(row)" [aria-label]="'Elegir vehículo ' + label(row)" title="Elegir" />
+            }
             <a mat-icon-button [routerLink]="['/flota/vehiculos', row.id]" [attr.aria-label]="'Editar vehículo ' + label(row)">
               <mat-icon aria-hidden="true">edit</mat-icon>
             </a>
@@ -108,6 +120,10 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
+      <ng-template #selectionActions let-rows let-clear="clear">
+        <button mat-button type="button" (click)="actions.removeMany(rows, clear)"><mat-icon aria-hidden="true">delete</mat-icon>Eliminar</button>
+        <button mat-button type="button" (click)="actions.exportRows(rows)"><mat-icon aria-hidden="true">download</mat-icon>Exportar</button>
+      </ng-template>
       <a empty-action mat-stroked-button routerLink="/flota/vehiculos/nuevo">Crear el primer vehículo</a>
     </app-data-table>
   `,
@@ -119,6 +135,16 @@ export class ResourceListComponent {
   protected readonly deleter = new DeleteFlow();
   /** Todos los vehículos en el cliente (hasta 1000): la búsqueda y las tarjetas necesitan tenerlos todos. */
   protected readonly state = new FullListState<Resource>((params) => this.api.list(params));
+  protected readonly actions = new FleetListActions<Resource>(this.deleter, {
+    singular: 'vehículo',
+    plural: 'vehículos',
+    fileBase: 'vehiculos',
+    label: vehicleLabel,
+    remove: (id) => this.api.remove(id),
+    reload: () => this.state.reload(),
+    csv: vehiclesToCsv,
+  });
+  private readonly table = viewChild<DataTableComponent<Resource>>(DataTableComponent);
   protected readonly columns: DataColumn<Resource>[] = [
     { id: 'name', header: 'Nombre', cell: (r) => r.name, kind: 'strong' },
     { id: 'licensePlate', header: 'Matrícula', cell: (r) => r.licensePlate ?? '', kind: 'id' },
@@ -132,6 +158,11 @@ export class ResourceListComponent {
 
   protected label(row: Resource): string {
     return vehicleLabel(row);
+  }
+
+  /** Exporta lo que dejan la búsqueda y los filtros de la tabla. */
+  protected exportFiltered(): void {
+    this.actions.exportRows(this.table()?.filtered() ?? this.state.rows());
   }
 
   protected driverLabel(row: Resource): string {

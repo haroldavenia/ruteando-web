@@ -12,6 +12,7 @@ import {
   auditKindLabel,
   auditKindTone,
   auditSummary,
+  breakableParts,
   humanizeIds,
   isDeletion,
   normalizeRole,
@@ -187,5 +188,25 @@ describe('audit-labels', () => {
   it('shortId deja la cola de un identificador largo y respeta uno corto', () => {
     expect(shortId('6acb99b6a2fa810fb39fb5c5')).toBe('b39fb5c5');
     expect(shortId('abc')).toBe('abc');
+  });
+  describe('breakableParts', () => {
+    it('parte un correo tras la arroba y los puntos, sin cortar palabras', () => {
+      expect(breakableParts('ana.martinez@ruteando.demo')).toEqual(['ana.', 'martinez@', 'ruteando.', 'demo']);
+    });
+
+    it('unidos dan siempre el texto original', () => {
+      for (const text of ['ana.martinez@ruteando.demo', 'a_b-c@x.co', 'Sin identificar', 'Anónimo', '@@..', '', 'solo']) {
+        expect(breakableParts(text).join('')).withContext(text).toBe(text);
+      }
+    });
+
+    it('un texto sin separadores o con espacios es un solo trozo', () => {
+      expect(breakableParts('Sin identificar')).toEqual(['Sin identificar']);
+      expect(breakableParts('Anónimo')).toEqual(['Anónimo']);
+    });
+
+    it('sin texto no hay trozos', () => {
+      expect(breakableParts('')).toEqual([]);
+    });
   });
 });

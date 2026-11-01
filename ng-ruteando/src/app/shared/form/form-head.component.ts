@@ -14,7 +14,7 @@ import { RouterLink } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="page-head">
-      <a mat-stroked-button class="back" [routerLink]="backLink()"><mat-icon aria-hidden="true" fontIcon="arrow_back" />{{ backLabel() }}</a>
+      <a mat-stroked-button class="back" [routerLink]="backLink()" [state]="backState()"><mat-icon aria-hidden="true" fontIcon="arrow_back" />{{ backLabel() }}</a>
       <h1>{{ title() }}</h1>
     </div>
   `,
@@ -24,4 +24,6 @@ export class FormHeadComponent {
   /** Nombre del listado al que se vuelve («Lugares»). */
   readonly backLabel = input.required<string>();
   readonly backLink = input.required<string>();
+  /** Estado de la navegación de vuelta (por ejemplo, el borrador de otro formulario); sin él, no lleva ninguno. */
+  readonly backState = input<Record<string, unknown> | undefined>(undefined);
 }

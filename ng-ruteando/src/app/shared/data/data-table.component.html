@@ -84,7 +84,7 @@
   @if (view() === 'cards' && card(); as cardTemplate) {
     <div class="card-grid">
       @for (row of visibleRows(); track $index) {
-        <ng-container [ngTemplateOutlet]="cardTemplate" [ngTemplateOutletContext]="{ $implicit: row }" />
+        <ng-container [ngTemplateOutlet]="cardTemplate" [ngTemplateOutletContext]="{ $implicit: row, selectable: selectable(), selected: isSelected(row), toggle: toggleCard }" />
       }
     </div>
   } @else {
