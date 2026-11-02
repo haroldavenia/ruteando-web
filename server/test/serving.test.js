@@ -21,6 +21,9 @@ before(async () => {
   fs.mkdirSync(empty);
   fs.writeFileSync(path.join(full, 'index.csr.html'), `<!doctype html><html><body>${MARKER}</body></html>`);
   fs.writeFileSync(path.join(full, 'app.js'), 'console.log("ok");');
+  fs.writeFileSync(path.join(full, 'ngsw-worker.js'), '// worker');
+  fs.writeFileSync(path.join(full, 'ngsw.json'), '{}');
+  fs.writeFileSync(path.join(full, 'manifest.webmanifest'), '{}');
   // El prerender de Angular deja una carpeta por ruta (acceso/index.html): no debe provocar redirecciones
   fs.mkdirSync(path.join(full, 'acceso'));
   fs.writeFileSync(path.join(full, 'acceso', 'index.html'), '<!doctype html><body>prerender</body>');
@@ -46,6 +49,16 @@ test('un fichero compilado existente se sirve con su tipo', async () => {
   const res = await fetch(withBuild.base + '/app.js');
   assert.equal(res.status, 200);
   assert.match(res.headers.get('content-type'), /javascript/);
+});
+
+test('el service worker, su lista de versiones y el manifiesto no se cachean; el resto de ficheros no se toca', async () => {
+  for (const name of ['ngsw-worker.js', 'ngsw.json', 'manifest.webmanifest']) {
+    const res = await fetch(withBuild.base + '/' + name);
+    assert.equal(res.status, 200, name);
+    assert.equal(res.headers.get('cache-control'), 'no-cache', name);
+  }
+  const app = await fetch(withBuild.base + '/app.js');
+  assert.notEqual(app.headers.get('cache-control'), 'no-cache');
 });
 
 test('una ruta profunda del cliente devuelve la aplicación', async () => {

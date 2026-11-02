@@ -43,7 +43,16 @@ function webEntryFile() {
 }
 
 // redirect: false -> el prerender deja carpetas como acceso/ y `GET /acceso` no debe redirigir a `/acceso/`
-app.use(express.static(WEB_DIST, { index: false, redirect: false }));
+// El service worker, su lista de versiones y el manifiesto no se cachean: si el navegador guardara el worker, nunca vería una versión nueva.
+var NO_CACHE_FILES = ['ngsw-worker.js', 'ngsw.json', 'safety-worker.js', 'worker-basic.min.js', 'manifest.webmanifest'];
+function noCacheServiceWorkerFiles(res, file) {
+  if (NO_CACHE_FILES.indexOf(path.basename(file)) !== -1) {
+    res.setHeader('Cache-Control', 'no-cache');
+  }
+}
+
+// redirect: false -> el prerender deja carpetas como acceso/ y `GET /acceso` no debe redirigir a `/acceso/`
+app.use(express.static(WEB_DIST, { index: false, redirect: false, setHeaders: noCacheServiceWorkerFiles }));
 
 app.get('*', function(req, res) {
   // Ficheros inexistentes (con extensión) y peticiones que no piden HTML no son rutas del cliente
