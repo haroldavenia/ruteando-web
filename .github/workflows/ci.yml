@@ -46,6 +46,9 @@ jobs:
       # Cada texto de la interfaz tiene traducción al inglés y al portugués, y no quedan textos en español sin traducir
       - name: Traducciones
         run: node scripts/i18n-check.mjs && node scripts/i18n-check.mjs --spanish
+      # Los iconos que el código declara están en la lista de `index.html` (si falta uno, se vería como texto)
+      - name: Iconos
+        run: node scripts/icon-names.mjs
       - name: Pruebas (Chrome sin interfaz)
         run: npm run test:ci
         working-directory: ng-ruteando

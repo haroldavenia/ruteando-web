@@ -1,6 +1,6 @@
 import { EN } from './dictionaries/en';
 import { PT } from './dictionaries/pt';
-import { DEFAULT_LANGUAGE, LANGUAGES, LANGUAGE_STORAGE_KEY, language, loadDictionary, locale, setDictionary, t, useLanguage } from './i18n';
+import { DEFAULT_LANGUAGE, LANGUAGES, LANGUAGE_STORAGE_KEY, language, locale, setDictionary, t, useLanguage } from './i18n';
 
 const markers = (text: string): string => [...text.matchAll(/\{\d+\}/g)].map((m) => m[0]).sort().join('');
 
@@ -67,24 +67,21 @@ describe('i18n', () => {
     });
   });
 
-  describe('loadDictionary', () => {
-    it('en inglés carga el diccionario inglés y fija <html lang>', async () => {
+  describe('diccionario por idioma', () => {
+    it('en inglés usa el diccionario inglés y fija <html lang>', () => {
       useLanguage('en', false);
-      await loadDictionary();
       expect(t('Guardar')).toBe('Save');
       expect(document.documentElement.lang).toBe('en');
     });
 
-    it('en portugués carga el diccionario portugués', async () => {
+    it('en portugués usa el diccionario portugués', () => {
       useLanguage('pt', false);
-      await loadDictionary();
       expect(t('Guardar')).toBe('Salvar');
       expect(document.documentElement.lang).toBe('pt');
     });
 
-    it('en español no hay diccionario: los textos salen como están escritos', async () => {
+    it('en español no hay diccionario: los textos salen como están escritos', () => {
       useLanguage('es', false);
-      await loadDictionary();
       expect(t('Guardar')).toBe('Guardar');
       expect(document.documentElement.lang).toBe('es');
     });
