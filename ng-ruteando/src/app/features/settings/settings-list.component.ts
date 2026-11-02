@@ -23,7 +23,7 @@ const IN_USE = t('No se puede eliminar: la configuración se usa en una jornada'
   imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header [title]="'Configuraciones' | t" [subtitle]="state.countText(('configuración' | t), 'configuraciones')">
+    <app-page-header [title]="'Configuraciones' | t" [subtitle]="state.countText('configuración', 'configuraciones')">
       <a mat-flat-button class="primary-action" routerLink="/configuraciones/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva configuración' | t }}</a>
     </app-page-header>
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />

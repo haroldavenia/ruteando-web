@@ -29,7 +29,7 @@
           <dt>{{ 'Volumen' | t }}</dt>
           <dd>{{ percent(route.volumeUsagePercent) }}<span class="bar" aria-hidden="true"><i [style.width.%]="level(route.volumeUsagePercent)"></i></span></dd>
         </div>
-        <div><dt>{{ 'Inicio' | t }}</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
+        <div><dt>{{ 'Inicio||hora' | t }}</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
         <div><dt>{{ 'Fin' | t }}</dt><dd>{{ dateTime(route.finishRouteUtc) }}</dd></div>
       </dl>
 

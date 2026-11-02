@@ -62,7 +62,7 @@ export class ListState<T> {
       return null;
     }
     const total = this.total();
-    return `${formatCount(total)} ${total === 1 ? singular : plural}`;
+    return `${formatCount(total)} ${t(total === 1 ? singular : plural)}`;
   }
 
   /** Vuelve a pedir la página actual (reintento tras un error o recarga tras borrar). */

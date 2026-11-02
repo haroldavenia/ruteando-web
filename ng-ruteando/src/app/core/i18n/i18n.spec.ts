@@ -52,6 +52,14 @@ describe('i18n', () => {
       expect(t('{0} de {1}', [3, 10])).toBe('3 of 10');
     });
 
+    it('un texto con contexto («Inicio||hora») se traduce aparte de su homónimo y en español se ve sin el contexto', () => {
+      expect(t('Inicio||hora')).toBe('Inicio');
+      setDictionary({ Inicio: 'Home', 'Inicio||hora': 'Start' });
+      expect(t('Inicio')).toBe('Home');
+      expect(t('Inicio||hora')).toBe('Start');
+      expect(t('Fin||hora')).toBe('Fin'); // sin traducción: el propio texto, sin el contexto
+    });
+
     it('un marcador sin valor se deja tal cual y el orden puede cambiar entre idiomas', () => {
       setDictionary({ 'Ver {0} de {1}': 'In {1}, view {0}' });
       expect(t('Ver {0} de {1}', ['a', 'b'])).toBe('In b, view a');

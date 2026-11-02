@@ -36,9 +36,12 @@ export function locale(): Language {
   return current;
 }
 
-/** Traduce un texto fuente (en español). Sin traducción devuelve el propio texto: nunca falla ni deja huecos. */
+/** Separa un texto de su contexto: `'Inicio||hora'` es «Inicio» en español, pero se traduce aparte de `'Inicio'` (menú) porque en otros idiomas son palabras distintas. */
+const CONTEXT = '||';
+
+/** Traduce un texto fuente (en español). Sin traducción devuelve el propio texto (sin contexto): nunca falla ni deja huecos. */
 export function t(text: string, params?: TranslationParams): string {
-  const translated = dictionary[text] ?? text;
+  const translated = dictionary[text] ?? (text.includes(CONTEXT) ? text.slice(0, text.indexOf(CONTEXT)) : text);
   return params ? translated.replace(/\{(\d+)\}/g, (marker, index: string) => String(params[Number(index)] ?? marker)) : translated;
 }
 

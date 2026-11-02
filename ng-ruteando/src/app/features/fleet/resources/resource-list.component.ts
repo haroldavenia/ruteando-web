@@ -45,7 +45,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './resource-list.component.scss',
   template: `
-    <app-page-header [title]="'Vehículos' | t" [subtitle]="state.countText(('vehículo' | t), ('vehículos' | t))">
+    <app-page-header [title]="'Vehículos' | t" [subtitle]="state.countText('vehículo', 'vehículos')">
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>

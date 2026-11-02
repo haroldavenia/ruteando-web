@@ -26,7 +26,7 @@
           <div><dt>{{ 'Duración' | t }}</dt><dd>{{ duration(route.duration) }}</dd></div>
           <div><dt>{{ 'Uso de peso' | t }}</dt><dd>{{ percent(route.weightUsagePercent) }}</dd></div>
           <div><dt>{{ 'Uso de volumen' | t }}</dt><dd>{{ percent(route.volumeUsagePercent) }}</dd></div>
-          <div><dt>{{ 'Inicio' | t }}</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
+          <div><dt>{{ 'Inicio||hora' | t }}</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
           <div><dt>{{ 'Fin' | t }}</dt><dd>{{ dateTime(route.finishRouteUtc) }}</dd></div>
         </dl>
       </section>

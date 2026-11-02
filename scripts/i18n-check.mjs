@@ -72,7 +72,8 @@ function checkTemplate(file, tpl, firstLine, found, report) {
   for (const m of stripped.matchAll(/\s([a-zA-Z-]+)="([^"{]*)"/g)) if (!/^(class|routerLink|href|src|id|name|type|role|autocomplete|placeholder-unused)$/.test(m[1]) && SPANISH.test(m[2]) && !/\|\s*t\b/.test(m[2])) report(lineAt(m.index), `${m[1]}="${m[2]}"`);
   for (const m of stripped.matchAll(/'([^']*)'/g)) {
     const after = stripped.slice(m.index + m[0].length, m.index + m[0].length + 90);
-    const wrapped = /^(\)?\s*\|\s*t\b|[^"]*?\)\s*\|\s*t\b)/.test(after);
+    // `state.countText('vehículo', 'vehículos')` traduce las palabras dentro del método, con `t(variable)`
+    const wrapped = /^(\)?\s*\|\s*t\b|[^"]*?\)\s*\|\s*t\b)/.test(after) || /countText\([^)]*$/.test(stripped.slice(Math.max(0, m.index - 80), m.index));
     if (SPANISH.test(m[1]) && !wrapped && m.index > 0 && /\[[^\]]*\]="[^"]*$/.test(stripped.slice(Math.max(0, m.index - 120), m.index))) report(lineAt(m.index), m[1]);
   }
 }

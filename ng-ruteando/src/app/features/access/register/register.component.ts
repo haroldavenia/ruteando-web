@@ -107,7 +107,7 @@ export class RegisterComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected readonly textFields: readonly TextField[] = [
-    { name: 'firstName', label: t('Nombre'), type: 'text', autocomplete: 'given-name', required: t('Introduce tu nombre') },
+    { name: 'firstName', label: t('Nombre||pila'), type: 'text', autocomplete: 'given-name', required: t('Introduce tu nombre') },
     { name: 'lastName', label: t('Apellidos'), type: 'text', autocomplete: 'family-name', required: t('Introduce tus apellidos') },
     { name: 'tenantName', label: t('Nombre de la empresa'), type: 'text', autocomplete: 'organization', required: t('Introduce el nombre de tu empresa') },
     { name: 'email', label: t('Correo electrónico'), type: 'email', autocomplete: 'username', required: t('Introduce tu correo'), icon: 'mail' },

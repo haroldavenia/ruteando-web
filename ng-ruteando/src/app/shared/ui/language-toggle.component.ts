@@ -24,7 +24,8 @@ const OPTIONS: readonly LanguageOption[] = [
  * Selector de idioma, en dos formas con el mismo lenguaje visual:
  * - `segmented` (por defecto, pantallas de acceso): globo y tres opciones (EN, ES, PT) con un indicador de degradado que se
  *   desliza hasta la elegida. Es un grupo de opciones excluyentes (`radiogroup`) y se maneja con las flechas.
- * - `menu` (barra de la aplicación): una píldora con el globo y el idioma actual que abre la lista con el nombre de cada idioma.
+ * - `menu` (barra de la aplicación): una píldora con el globo y el idioma actual que abre la lista; cada fila lleva el código del
+ *   idioma en una etiqueta de color, su nombre y una marca en el elegido.
  * Elegir otro lo guarda y recarga la página tras una breve animación (`LanguageService`).
  */
 @Component({
@@ -41,11 +42,11 @@ const OPTIONS: readonly LanguageOption[] = [
       <mat-menu #menu="matMenu">
         @for (option of options; track option.value) {
           <button mat-menu-item type="button" role="menuitemradio" [attr.aria-checked]="option.value === language.current" (click)="choose(option.value)">
-            <span class="name">{{ option.name }}</span>
-            <span class="code">{{ option.code }}</span>
-            @if (option.value === language.current) {
-              <mat-icon aria-hidden="true">check</mat-icon>
-            }
+            <span class="row">
+              <span class="code">{{ option.code }}</span>
+              <span class="name">{{ option.name }}</span>
+              <mat-icon class="check" aria-hidden="true" [class.off]="option.value !== language.current">check</mat-icon>
+            </span>
           </button>
         }
       </mat-menu>
@@ -85,11 +86,13 @@ const OPTIONS: readonly LanguageOption[] = [
     .seg {
       padding: 4px;
     }
-    .globe {
+    mat-icon {
       width: 20px;
       height: 20px;
-      margin: 0 6px 0 10px;
       font-size: 20px;
+    }
+    .globe {
+      margin: 0 6px 0 10px;
       color: var(--mat-sys-on-surface-variant);
     }
     .opts {
@@ -108,57 +111,73 @@ const OPTIONS: readonly LanguageOption[] = [
       transform: translateX(calc(var(--i, 0) * 48px));
       transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+    .opts button,
+    .pill,
+    .code {
+      font: 600 13px/1 var(--mat-sys-label-large-font, inherit);
+      letter-spacing: 0.06em;
+    }
+    .opts button,
+    .pill {
+      border: 0;
+      cursor: pointer;
+    }
     .opts button {
       position: relative;
       height: 40px;
-      border: 0;
       border-radius: 999px;
       background: none;
-      font: 600 13px/1 var(--mat-sys-label-large-font, inherit);
-      letter-spacing: 0.06em;
       color: var(--mat-sys-on-surface-variant);
-      cursor: pointer;
       transition: color 0.2s;
     }
     .opts button[aria-checked='true'] {
       color: var(--mat-sys-on-primary);
     }
-    .opts button:not([aria-checked='true']):hover {
+    .opts button[aria-checked='false']:hover {
       color: var(--mat-sys-on-surface);
     }
     .pill {
       gap: 6px;
       height: 44px;
       padding: 0 8px 0 12px;
-      border: 0;
-      font: 600 13px/1 var(--mat-sys-label-large-font, inherit);
-      letter-spacing: 0.06em;
-      color: var(--mat-sys-on-surface);
-      cursor: pointer;
+      color: var(--mat-sys-primary);
     }
-    .pill mat-icon {
-      width: 20px;
-      height: 20px;
-      font-size: 20px;
-    }
-    .pill .caret {
+    .caret {
       color: var(--mat-sys-on-surface-variant);
-    }
-    .pill:hover {
-      background: var(--mat-sys-surface-container-high);
     }
     button:focus-visible {
       outline: 2px solid var(--mat-sys-primary);
       outline-offset: 2px;
     }
-    .name {
-      min-width: 88px;
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 188px;
     }
     .code {
-      margin-right: 12px;
+      min-width: 32px;
+      padding: 4px 0;
+      border-radius: 8px;
+      background: var(--mat-sys-primary-container);
       font-size: 12px;
-      letter-spacing: 0.06em;
-      color: var(--mat-sys-on-surface-variant);
+      text-align: center;
+      color: var(--mat-sys-on-primary-container);
+    }
+    [aria-checked='true'] .code {
+      background: var(--app-brand-gradient);
+      color: var(--mat-sys-on-primary);
+    }
+    .name {
+      flex: 1;
+      color: var(--mat-sys-on-surface);
+    }
+    .check {
+      margin: 0;
+      color: var(--mat-sys-primary);
+    }
+    .off {
+      visibility: hidden;
     }
     @media (prefers-reduced-motion: reduce) {
       .thumb,
