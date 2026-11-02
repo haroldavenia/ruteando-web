@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "colors": "^1.1.0",
+    "compression": "^1.8.2",
     "express": "^4.18.1",
     "http-proxy-middleware": "4.2.1",
     "morgan": "^1.10.0"

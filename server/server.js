@@ -6,6 +6,7 @@ var fs = require('fs');
 var path = require('path');
 
 var colors = require('colors');
+var compression = require('compression');
 var express = require('express');
 var logger = require('morgan');
 
@@ -23,6 +24,9 @@ app.disable('x-powered-by');
 app.use(logger('dev'));
 // Cabeceras de seguridad en todas las respuestas, también las del proxy y el estático
 app.use(securityHeaders(process.env));
+// Compresión (brotli o gzip según el navegador) de lo que sea texto: HTML, JS, CSS, JSON, SVG. Va antes del proxy y del estático para
+// que cubra también las respuestas del gateway; ignora lo que ya viene comprimido (imágenes, fuentes) y lo que trae Content-Encoding.
+app.use(compression());
 // Proxy del gateway: antes del estático y del comodín del cliente
 app.use('/gateway', gatewayProxy.createGatewayProxy());
 
