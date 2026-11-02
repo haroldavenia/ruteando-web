@@ -45,6 +45,8 @@ import { AuditScopeId, resolveScope, scopesFor } from './audit-scopes';
 import { AuditViewState } from './audit-view-state';
 import { AuditStore } from './audit.store';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const TECH_KEY = 'ruteando-audit-tech';
 const SEARCH_DELAY_MS = 250;
 
@@ -67,6 +69,7 @@ const SEARCH_DELAY_MS = 250;
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    TranslatePipe,
   ],
   providers: [AuditStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -112,13 +115,13 @@ export class AuditListComponent {
 
   protected readonly scopes = computed(() => scopesFor(this.role()));
   protected readonly scope = computed(() => this.query().scope ?? this.scopes()[0].id);
-  protected readonly title = computed(() => (this.role() === 'agent' ? 'Mi actividad' : 'Auditoría'));
+  protected readonly title = computed(() => (this.role() === 'agent' ? t('Mi actividad') : t('Auditoría')));
   protected readonly isAllTenants = computed(() => this.scope() === 'todas');
   protected readonly showPeople = computed(() => this.scope() !== 'mia');
   protected readonly intro = computed(() =>
     this.scope() === 'mia'
-      ? 'Aquí ves lo que has hecho en la aplicación y cuándo. Pulsa el ojo de un evento para ver todo su detalle.'
-      : 'Aquí se registra lo que ocurre en la cuenta: qué se hizo, quién lo hizo y cuándo. Usa los filtros para encontrar algo y pulsa el ojo de un evento para ver todo su detalle.',
+      ? t('Aquí ves lo que has hecho en la aplicación y cuándo. Pulsa el ojo de un evento para ver todo su detalle.')
+      : t('Aquí se registra lo que ocurre en la cuenta: qué se hizo, quién lo hizo y cuándo. Usa los filtros para encontrar algo y pulsa el ojo de un evento para ver todo su detalle.'),
   );
 
   /** Lo que se escribe en el campo de búsqueda de la tabla, que se pasa a la dirección con un pequeño retraso. */
@@ -151,9 +154,9 @@ export class AuditListComponent {
     }
     const all = this.store.events().length;
     const shown = this.visibleRows().length;
-    const count = shown === all ? plural(all) : `${formatNumber(shown)} de ${plural(all)}`;
+    const count = shown === all ? plural(all) : t('{0} de {1}', [formatNumber(shown), plural(all)]);
     const updated = this.store.updatedAt();
-    return updated ? `${count} · actualizado a las ${formatClock(updated)}` : count;
+    return updated ? t('{0} · actualizado a las {1}', [count, formatClock(updated)]) : count;
   });
 
   /** Lo que anuncia un lector de pantalla cuando cambian los filtros: cuántos eventos quedan. */
@@ -163,36 +166,36 @@ export class AuditListComponent {
     }
     const all = this.store.events().length;
     const shown = this.visibleRows().length;
-    return shown === all ? plural(all) : `${formatNumber(shown)} de ${plural(all)}`;
+    return shown === all ? plural(all) : t('{0} de {1}', [formatNumber(shown), plural(all)]);
   });
 
   protected readonly truncatedNotice = computed(() => {
     if (!this.store.source.truncated()) {
       return null;
     }
-    return `Se muestran los ${formatNumber(this.store.source.rows().length)} eventos más recientes de ${formatNumber(this.store.source.total())}`;
+    return t('Se muestran los {0} eventos más recientes de {1}', [formatNumber(this.store.source.rows().length), formatNumber(this.store.source.total())]);
   });
 
   protected readonly forbidden = computed(() => this.state.status() === 'error' && this.store.errorStatus() === 403 && this.scope() !== 'mia');
 
   protected readonly facet = computed<DataFacet<AuditLog>>(() => {
     const types = [...new Set(this.store.events().map((log) => log.entityType))].sort((a, b) => auditEntityLabel(a).localeCompare(auditEntityLabel(b)));
-    return { label: 'Tipo de entidad', of: (log) => log.entityType, options: types.map((key) => ({ key, label: auditEntityLabel(key) })) };
+    return { label: t('Tipo de entidad'), of: (log) => log.entityType, options: types.map((key) => ({ key, label: auditEntityLabel(key) })) };
   });
 
   protected readonly columns = computed<DataColumn<AuditLog>[]>(() => {
     // Solo lo esencial: qué se hizo, quién y cuándo. Todo lo demás (a qué afectó, qué cambió, claves e identificadores) está en la modal
     return [
-      { id: 'action', header: 'Acción', cell: (log) => auditActionLabel(log.action), tone: (log) => auditKindTone(auditKind(log.action)), primary: true },
-      { id: 'actor', header: 'Quién', cell: (log) => this.actorText(log) },
-      { id: 'when', header: 'Cuándo', cell: (log) => formatDateTime(log.createdAt), kind: 'muted' },
-      ...(this.technical() ? [{ id: 'key', header: 'Clave', cell: (log: AuditLog) => log.action, kind: 'id' as const }] : []),
+      { id: 'action', header: t('Acción'), cell: (log) => auditActionLabel(log.action), tone: (log) => auditKindTone(auditKind(log.action)), primary: true },
+      { id: 'actor', header: t('Quién'), cell: (log) => this.actorText(log) },
+      { id: 'when', header: t('Cuándo'), cell: (log) => formatDateTime(log.createdAt), kind: 'muted' },
+      ...(this.technical() ? [{ id: 'key', header: t('Clave'), cell: (log: AuditLog) => log.action, kind: 'id' as const }] : []),
     ];
   });
 
   /** El nombre accesible del ojo de una fila: qué evento abre. */
   protected eyeLabel(log: AuditLog): string {
-    return `Ver el detalle de «${auditActionLabel(log.action)}» de ${auditActor(log).person}`;
+    return t('Ver el detalle de «{0}» de {1}', [auditActionLabel(log.action), auditActor(log).person]);
   }
 
   constructor() {
@@ -376,9 +379,9 @@ export class AuditListComponent {
       return;
     }
     if (downloadCsv(auditCsvFileName(), auditToCsv(rows), this.platformId)) {
-      void notify(this.injector, `Se exportaron ${rows.length === 1 ? '1 evento' : `${formatNumber(rows.length)} eventos`}`);
+      void notify(this.injector, t('Se exportaron {0}', [plural(rows.length)]));
     }
   }
 }
 
-const plural = (count: number): string => `${formatNumber(count)} ${count === 1 ? 'evento' : 'eventos'}`;
+const plural = (count: number): string => (count === 1 ? t('1 evento') : t('{0} eventos', [formatNumber(count)]));

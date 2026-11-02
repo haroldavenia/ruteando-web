@@ -36,6 +36,8 @@ import {
   routeTopologyLabel,
 } from './settings-labels';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /** Cuántos lugares y vehículos se cargan en los selectores; si hay más, el formulario avisa. */
 export const SELECT_LIMIT = 200;
 
@@ -47,13 +49,13 @@ const NO_STAY = '';
 const READ_ONLY_FIELDS: readonly (keyof Settings)[] = ['id', 'tenantId', 'createdAt', 'updatedAt', 'createdBy', 'placeStart', 'placeEnd', 'resources'];
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
-  required: 'Este campo es obligatorio',
-  min: 'Escribe un valor válido',
-  whole: 'Escribe un número entero de 1 o más',
-  shiftNotPositive: 'La duración debe ser mayor que 0',
-  shiftTooLong: 'El turno no puede durar más de 24 horas (1440 minutos)',
-  breakNegative: 'El descanso no puede ser negativo',
-  positive: 'Escribe un valor mayor que 0',
+  required: t('Este campo es obligatorio'),
+  min: t('Escribe un valor válido'),
+  whole: t('Escribe un número entero de 1 o más'),
+  shiftNotPositive: t('La duración debe ser mayor que 0'),
+  shiftTooLong: t('El turno no puede durar más de 24 horas (1440 minutos)'),
+  breakNegative: t('El descanso no puede ser negativo'),
+  positive: t('Escribe un valor mayor que 0'),
 };
 
 type FieldName =
@@ -105,6 +107,7 @@ export function buildSettingsUpdateBody(record: Settings, edited: Partial<Settin
     FormActionsComponent,
     FormHeadComponent,
     FormResultComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings-form.component.html',
@@ -321,7 +324,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
 
     this.submit.submit(request$, () => {
       this.saved.set(true);
-      void notify(this.injector, this.id === null ? 'Configuración creada' : 'Configuración guardada');
+      void notify(this.injector, this.id === null ? t('Configuración creada') : t('Configuración guardada'));
       void this.router.navigateByUrl('/configuraciones');
     });
   }

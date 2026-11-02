@@ -15,7 +15,9 @@ import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-inv
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { notify } from '../../../shared/form/notify';
 
-const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verificación';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verificación');
 
 /**
  * Verifica el correo con el `token` del enlace. El token es de un solo uso: se lee al crear la pantalla,
@@ -34,32 +36,33 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
     MatProgressBarModule,
     FocusFirstInvalidDirective,
     FormResultComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (state() === 'loading') {
       <div class="state">
         <span class="state-icon spin"><mat-icon aria-hidden="true">route</mat-icon></span>
-        <h1>Verificar correo</h1>
-        <p role="status">Verificando tu correo…</p>
-        <mat-progress-bar mode="indeterminate" aria-label="Verificando el correo" />
+        <h1>{{ 'Verificar correo' | t }}</h1>
+        <p role="status">{{ 'Verificando tu correo…' | t }}</p>
+        <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Verificando el correo' | t" />
       </div>
     } @else {
       <div class="state">
         <span class="state-icon bad"><mat-icon aria-hidden="true">link_off</mat-icon></span>
-        <h1>Verificar correo</h1>
+        <h1>{{ 'Verificar correo' | t }}</h1>
         <app-form-result [error]="message()" [success]="resendDone() ? resendMessage : null" />
-        <p class="lead">Puedes pedir que te enviemos un enlace nuevo.</p>
+        <p class="lead">{{ 'Puedes pedir que te enviemos un enlace nuevo.' | t }}</p>
         <form [formGroup]="form" (ngSubmit)="resend()" appFocusFirstInvalid novalidate>
           <mat-form-field class="field">
-            <mat-label>Correo electrónico</mat-label>
+            <mat-label>{{ 'Correo electrónico' | t }}</mat-label>
             <mat-icon matPrefix aria-hidden="true">mail</mat-icon>
             <input matInput type="email" formControlName="email" autocomplete="username" />
             <mat-error>{{ emailError() }}</mat-error>
           </mat-form-field>
-          <button mat-flat-button type="submit" [disabled]="resending()">Reenviar verificación</button>
+          <button mat-flat-button type="submit" [disabled]="resending()">{{ 'Reenviar verificación' | t }}</button>
         </form>
-        <p class="alt"><a routerLink="/acceso">Ir a iniciar sesión</a></p>
+        <p class="alt"><a routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a></p>
       </div>
     }
   `,
@@ -90,9 +93,9 @@ export class VerifyEmailComponent {
   protected emailError(): string {
     const errors = this.form.controls.email.errors;
     if (errors?.['required']) {
-      return 'Introduce tu correo';
+      return t('Introduce tu correo');
     }
-    return errors?.['email'] ? 'Introduce un correo válido' : '';
+    return errors?.['email'] ? t('Introduce un correo válido') : '';
   }
 
   private start(): void {
@@ -110,7 +113,7 @@ export class VerifyEmailComponent {
     }
     this.auth.verifyEmail(this.token).subscribe({
       next: () => {
-        void this.router.navigateByUrl('/').then(() => notify(this.injector, 'Correo verificado'));
+        void this.router.navigateByUrl('/').then(() => notify(this.injector, t('Correo verificado')));
       },
       error: (error: ApiError) => this.fail(error.message),
     });

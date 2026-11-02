@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { routeColorThemed } from '../map/route-colors';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 interface BackdropRoute {
   color: string;
   /** Puntos del recorrido, de depósito a depósito. */
@@ -36,6 +37,7 @@ const ROUTES: readonly BackdropRoute[] = [
  * toma sus colores del tema. Las rutas se dibujan una vez al entrar, salvo que se pida movimiento reducido.
  */
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-route-backdrop',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'aria-hidden': 'true' },

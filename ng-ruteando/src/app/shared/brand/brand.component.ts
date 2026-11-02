@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Marca de Ruteando: emblema (un cronómetro con tres flechas de ruta, recreado en SVG a partir del logo original)
  * y el nombre como texto real. Los colores salen del tema, así que cambia con el tema claro y oscuro.
  * El emblema es decorativo: los lectores de pantalla solo anuncian el nombre.
  */
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-brand',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class.compact]': "size() === 'compact'", '[class.mark]': "size() === 'mark'" },
@@ -23,7 +25,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         <use href="#arrow" transform="rotate(240 24 24)" />
       </g>
     </svg>
-    <span class="name">Ruteando</span>
+    <span class="name">{{ 'Ruteando' | t }}</span>
   `,
   styles: `
     :host {

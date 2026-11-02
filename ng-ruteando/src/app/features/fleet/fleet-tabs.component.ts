@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Navegación entre los tres listados de la flota (vehículos, tipos de vehículo y conductores). Son enlaces a rutas, no
  * pestañas de un mismo panel: la actual lleva `aria-current="page"`. Las rutas y los permisos no cambian.
  */
 @Component({
   selector: 'app-fleet-tabs',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     /* La línea es del componente y la barra la tapa 1px con la de la pestaña actual: así los enlaces no desbordan y no sale un desplazamiento vertical */
@@ -57,10 +58,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     }
   `,
   template: `
-    <nav aria-label="Secciones de la flota">
-      <a routerLink="/flota/vehiculos" routerLinkActive="active" ariaCurrentWhenActive="page">Vehículos</a>
-      <a routerLink="/flota/tipos" routerLinkActive="active" ariaCurrentWhenActive="page">Tipos de vehículo</a>
-      <a routerLink="/flota/conductores" routerLinkActive="active" ariaCurrentWhenActive="page">Conductores</a>
+    <nav [attr.aria-label]="'Secciones de la flota' | t">
+      <a routerLink="/flota/vehiculos" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'Vehículos' | t }}</a>
+      <a routerLink="/flota/tipos" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'Tipos de vehículo' | t }}</a>
+      <a routerLink="/flota/conductores" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'Conductores' | t }}</a>
     </nav>
   `,
 })

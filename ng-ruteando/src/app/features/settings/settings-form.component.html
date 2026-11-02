@@ -1,28 +1,28 @@
-<app-form-head [title]="isNew ? 'Nueva configuración' : 'Editar configuración'" backLabel="Configuraciones" backLink="/configuraciones" />
+<app-form-head [title]="isNew ? ('Nueva configuración' | t) : ('Editar configuración' | t)" [backLabel]="'Configuraciones' | t" backLink="/configuraciones" />
 @switch (loader.status()) {
   @case ('loading') {
-    <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
+    <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/configuraciones">Volver al listado</a>
+    <a mat-stroked-button routerLink="/configuraciones">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/configuraciones">Volver al listado</a>
+    <a mat-stroked-button routerLink="/configuraciones">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     <div class="with-summary">
       <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
         <section class="form-section">
-          <h2><mat-icon aria-hidden="true" fontIcon="route" />Ruta</h2>
+          <h2><mat-icon aria-hidden="true" fontIcon="route" />{{ 'Ruta' | t }}</h2>
           <mat-form-field>
-            <mat-label>Descripción</mat-label>
+            <mat-label>{{ 'Descripción' | t }}</mat-label>
             <input matInput formControlName="description" autocomplete="off" />
             <mat-error>{{ error('description') }}</mat-error>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Topología de la ruta</mat-label>
+            <mat-label>{{ 'Topología de la ruta' | t }}</mat-label>
             <mat-select formControlName="routeTopology">
               @for (option of topologies(); track option.key) {
                 <mat-option [value]="option.key">{{ option.label }}</mat-option>
@@ -31,7 +31,7 @@
             <mat-error>{{ error('routeTopology') }}</mat-error>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Tipo de restricción</mat-label>
+            <mat-label>{{ 'Tipo de restricción' | t }}</mat-label>
             <mat-select formControlName="restrictionType">
               @for (option of restrictions(); track option.key) {
                 <mat-option [value]="option.key">{{ option.label }}</mat-option>
@@ -42,7 +42,7 @@
 
           @if (showFixedRoutes()) {
             <mat-form-field>
-              <mat-label>Número de rutas</mat-label>
+              <mat-label>{{ 'Número de rutas' | t }}</mat-label>
               <input matInput type="number" step="1" min="1" formControlName="fixedRoutes" autocomplete="off" />
               <mat-error>{{ error('fixedRoutes') }}</mat-error>
             </mat-form-field>
@@ -50,18 +50,18 @@
           @if (showShift()) {
             <div class="row">
               <mat-form-field>
-                <mat-label>Inicio del turno</mat-label>
+                <mat-label>{{ 'Inicio del turno' | t }}</mat-label>
                 <input matInput type="time" formControlName="shiftStart" />
-                <mat-hint>Hora local de tu navegador</mat-hint>
+                <mat-hint>{{ 'Hora local de tu navegador' | t }}</mat-hint>
                 <mat-error>{{ error('shiftStart') }}</mat-error>
               </mat-form-field>
               <mat-form-field>
-                <mat-label>Duración del turno (minutos)</mat-label>
+                <mat-label>{{ 'Duración del turno (minutos)' | t }}</mat-label>
                 <input matInput type="number" step="1" formControlName="shiftDurationMin" autocomplete="off" />
                 <mat-error>{{ error('shiftDurationMin') }}</mat-error>
               </mat-form-field>
               <mat-form-field>
-                <mat-label>Descanso (minutos)</mat-label>
+                <mat-label>{{ 'Descanso (minutos)' | t }}</mat-label>
                 <input matInput type="number" step="1" formControlName="breakDurationMin" autocomplete="off" />
                 <mat-error>{{ error('breakDurationMin') }}</mat-error>
               </mat-form-field>
@@ -70,9 +70,9 @@
         </section>
 
         <section class="form-section">
-          <h2><mat-icon aria-hidden="true" fontIcon="place" />Lugares</h2>
+          <h2><mat-icon aria-hidden="true" fontIcon="place" />{{ 'Lugares' | t }}</h2>
           <mat-form-field>
-            <mat-label>Lugar de salida</mat-label>
+            <mat-label>{{ 'Lugar de salida' | t }}</mat-label>
             <mat-select formControlName="placeStartId">
               @for (place of places(); track place.id) {
                 <mat-option [value]="place.id">{{ place.name }}</mat-option>
@@ -81,26 +81,26 @@
             <mat-error>{{ error('placeStartId') }}</mat-error>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Lugar de llegada (opcional)</mat-label>
+            <mat-label>{{ 'Lugar de llegada (opcional)' | t }}</mat-label>
             <mat-select formControlName="placeEndId">
-              <mat-option value="">Igual que la salida</mat-option>
+              <mat-option value="">{{ 'Igual que la salida' | t }}</mat-option>
               @for (place of places(); track place.id) {
                 <mat-option [value]="place.id">{{ place.name }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
           @if (placesLoaded() && places().length === 0) {
-            <p class="hint">Todavía no hay lugares. Primero <a routerLink="/lugares/nuevo">crea un lugar</a>.</p>
+            <p class="hint">{{ 'Todavía no hay lugares. Primero' | t }} <a routerLink="/lugares/nuevo">{{ 'crea un lugar' | t }}</a>.</p>
           }
           @if (placesTruncated()) {
-            <p class="hint" role="status">Se muestran solo los primeros {{ selectLimit }} lugares.</p>
+            <p class="hint" role="status">{{ 'Se muestran solo los primeros {0} lugares.' | t: [selectLimit] }}</p>
           }
         </section>
 
         <section class="form-section">
-          <h2><mat-icon aria-hidden="true" fontIcon="local_shipping" />Flota</h2>
+          <h2><mat-icon aria-hidden="true" fontIcon="local_shipping" />{{ 'Flota' | t }}</h2>
           <mat-form-field>
-            <mat-label>Vehículos</mat-label>
+            <mat-label>{{ 'Vehículos' | t }}</mat-label>
             <mat-select formControlName="resourceIds" multiple>
               @for (vehicle of vehicles(); track vehicle.id) {
                 <mat-option [value]="vehicle.id">{{ vehicleLabel(vehicle) }}</mat-option>
@@ -109,28 +109,28 @@
             <mat-error>{{ error('resourceIds') }}</mat-error>
           </mat-form-field>
           @if (vehiclesLoaded() && vehicles().length === 0) {
-            <p class="hint">Todavía no hay vehículos. Primero <a routerLink="/flota/vehiculos/nuevo">crea un vehículo</a>.</p>
+            <p class="hint">{{ 'Todavía no hay vehículos. Primero' | t }} <a routerLink="/flota/vehiculos/nuevo">{{ 'crea un vehículo' | t }}</a>.</p>
           }
           @if (vehiclesTruncated()) {
-            <p class="hint" role="status">Se muestran solo los primeros {{ selectLimit }} vehículos.</p>
+            <p class="hint" role="status">{{ 'Se muestran solo los primeros {0} vehículos.' | t: [selectLimit] }}</p>
           }
         </section>
 
         <section class="form-section">
-          <h2><mat-icon aria-hidden="true" fontIcon="tune" />Qué evalúa la planificación</h2>
-          <div class="toggles" role="group" aria-label="Qué evalúa la planificación">
-            <mat-slide-toggle formControlName="evaluateWeight">Evaluar peso</mat-slide-toggle>
-            <mat-slide-toggle formControlName="evaluateVolume">Evaluar volumen</mat-slide-toggle>
-            <mat-slide-toggle formControlName="evaluateItineraryZone">Evaluar zona del itinerario</mat-slide-toggle>
+          <h2><mat-icon aria-hidden="true" fontIcon="tune" />{{ 'Qué evalúa la planificación' | t }}</h2>
+          <div class="toggles" role="group" [attr.aria-label]="'Qué evalúa la planificación' | t">
+            <mat-slide-toggle formControlName="evaluateWeight">{{ 'Evaluar peso' | t }}</mat-slide-toggle>
+            <mat-slide-toggle formControlName="evaluateVolume">{{ 'Evaluar volumen' | t }}</mat-slide-toggle>
+            <mat-slide-toggle formControlName="evaluateItineraryZone">{{ 'Evaluar zona del itinerario' | t }}</mat-slide-toggle>
           </div>
         </section>
 
         <section class="form-section">
-          <h2><mat-icon aria-hidden="true" fontIcon="timer" />Estancia en cada parada</h2>
+          <h2><mat-icon aria-hidden="true" fontIcon="timer" />{{ 'Estancia en cada parada' | t }}</h2>
           <mat-form-field>
-            <mat-label>Estancia en cada parada (opcional)</mat-label>
+            <mat-label>{{ 'Estancia en cada parada (opcional)' | t }}</mat-label>
             <mat-select formControlName="typeLengthOfStay">
-              <mat-option value="">Sin definir</mat-option>
+              <mat-option value="">{{ 'Sin definir' | t }}</mat-option>
               @for (option of stayTypes(); track option.key) {
                 <mat-option [value]="option.key">{{ option.label }}</mat-option>
               }
@@ -138,7 +138,7 @@
           </mat-form-field>
           @if (showStayValue()) {
             <mat-form-field>
-              <mat-label>Estancia</mat-label>
+              <mat-label>{{ 'Estancia' | t }}</mat-label>
               <input matInput type="number" step="any" min="0" formControlName="lengthOfStay" autocomplete="off" />
               <mat-error>{{ error('lengthOfStay') }}</mat-error>
             </mat-form-field>
@@ -147,13 +147,13 @@
 
         <app-form-result [error]="submit.error()" />
         <app-form-actions [dirty]="hasUnsavedChanges()">
-          <a mat-button routerLink="/configuraciones">Cancelar</a>
-          <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+          <a mat-button routerLink="/configuraciones">{{ 'Cancelar' | t }}</a>
+          <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
         </app-form-actions>
       </form>
 
       <aside class="card summary" aria-labelledby="summary-title">
-        <h2 id="summary-title">Así quedará</h2>
+        <h2 id="summary-title">{{ 'Así quedará' | t }}</h2>
         <p class="sentence">{{ summary() }}</p>
       </aside>
     </div>

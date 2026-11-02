@@ -8,51 +8,51 @@
       <span class="page-title">{{ pageTitle() }}</span>
       <app-global-search [items]="items()" />
     } @else {
-      <button mat-icon-button type="button" aria-label="Abrir menú de navegación" (click)="drawer()?.toggle()">
+      <button mat-icon-button type="button" [attr.aria-label]="'Abrir menú de navegación' | t" (click)="drawer()?.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
       <app-brand size="compact" />
     }
     <span class="spacer"></span>
-    <app-language-toggle />
+    <app-language-toggle variant="menu" />
     <app-theme-toggle />
     <button
       #userMenuTrigger="matMenuTrigger"
       class="avatar-button"
       mat-icon-button
       type="button"
-      aria-label="Menú de usuario"
+      [attr.aria-label]="'Menú de usuario' | t"
       [matMenuTriggerFor]="userMenu"
     >
       <span class="avatar" aria-hidden="true">{{ initials() }}</span>
     </button>
     <mat-menu #userMenu="matMenu">
-      <div class="user-info" role="group" aria-label="Sesión iniciada">
+      <div class="user-info" role="group" [attr.aria-label]="'Sesión iniciada' | t">
         <span class="user-name">{{ displayName() }}</span>
         <span class="user-email">{{ email() }}</span>
       </div>
       @if (install.canInstall()) {
         <button mat-menu-item type="button" (click)="install.install()">
           <mat-icon aria-hidden="true">install_desktop</mat-icon>
-          <span>Instalar aplicación</span>
+          <span>{{ 'Instalar aplicación' | t }}</span>
         </button>
       } @else if (install.showIosHint()) {
         <button mat-menu-item type="button" (click)="showIosHint()">
           <mat-icon aria-hidden="true">install_mobile</mat-icon>
-          <span>Instalar aplicación</span>
+          <span>{{ 'Instalar aplicación' | t }}</span>
         </button>
       }
       <button mat-menu-item type="button" (click)="confirmLogout()">
         <mat-icon aria-hidden="true">logout</mat-icon>
-        <span>Cerrar sesión</span>
+        <span>{{ 'Cerrar sesión' | t }}</span>
       </button>
     </mat-menu>
   </mat-toolbar>
 
   <mat-sidenav-container class="container">
     @if (!isWide()) {
-      <mat-sidenav mode="over" role="navigation" aria-label="Navegación principal">
-        <p class="nav-title">Menú principal</p>
+      <mat-sidenav mode="over" role="navigation" [attr.aria-label]="'Navegación principal' | t">
+        <p class="nav-title">{{ 'Menú principal' | t }}</p>
         <mat-nav-list>
           @for (item of items(); track item.label) {
             @if (item.children; as children) {

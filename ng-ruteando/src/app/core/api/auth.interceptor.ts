@@ -5,6 +5,7 @@ import { TokenStorageService } from '../auth/token-storage.service';
 import { API_BASE_URL } from './api-config';
 import { apiPath, isApiUrl, isPublicApiPath } from './api-paths';
 
+import { t } from '../i18n/i18n';
 /** Añade `Authorization: Bearer` a las peticiones al gateway, salvo las rutas públicas y las de otros orígenes. */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const baseUrl = inject(API_BASE_URL);

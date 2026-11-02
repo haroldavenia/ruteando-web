@@ -9,6 +9,7 @@ import { changePackageStatus } from '../packages/package-status-change';
 import { packageStatusLabel } from '../packages/package-labels';
 
 import { NO_FILTERS, RouteVisit, VisitFilters, filterVisits, hasFilters, visitProgress, visitsOf } from './route-visit-filters';
+import { t } from '../../core/i18n/i18n';
 
 /** Paquetes que se piden a la vez: el gateway no tiene un endpoint por lotes. */
 export const VISITS_CONCURRENCY = 6;
@@ -102,7 +103,7 @@ export class RouteVisitsStore {
       .subscribe({
         next: (updated: Package) => {
           this.patch(visit.packageId, { pkg: { ...visit.pkg, ...updated, status: updated.status ?? status } });
-          this.success.set(`La visita «${this.label(visit)}» ahora está ${packageStatusLabel(status).toLowerCase()}`);
+          this.success.set(t('La visita «{0}» ahora está {1}', [this.label(visit), packageStatusLabel(status).toLowerCase()]));
         },
         error: (err: unknown) => this.error.set(messageFor(err)),
       });

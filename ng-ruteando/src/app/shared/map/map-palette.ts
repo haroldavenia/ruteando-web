@@ -1,5 +1,6 @@
 import { ColorScheme } from '../../core/theme/theme.service';
 
+import { t } from '../../core/i18n/i18n';
 /**
  * Colores de las marcas de un mapa (marcador, halos, polígono) resueltos para el tema que se ve. OpenLayers dibuja en un canvas y
  * no entiende `var()` ni `light-dark()`: hay que darle colores concretos y volver a dárselos cuando el tema cambia.

@@ -7,13 +7,15 @@ import { formatDayKey, formatLongDayKey, formatNumber } from './audit-format';
 import { AuditFilters } from './audit-filters';
 import { ActivityBucket, activityByDay } from './audit-stats';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /** Los días elegidos: el de una barra, o la semana que agrupa. */
 export interface PickedDays {
   from: string;
   to: string;
 }
 
-const plural = (count: number, one: string, many: string): string => `${formatNumber(count)} ${count === 1 ? one : many}`;
+const eventCount = (count: number): string => (count === 1 ? t('1 evento') : t('{0} eventos', [formatNumber(count)]));
 
 /**
  * Eventos por día (o por semana si el rango es largo) como barras. Cada barra es un botón que filtra el listado a ese día; el
@@ -21,7 +23,7 @@ const plural = (count: number, one: string, many: string): string => `${formatNu
  */
 @Component({
   selector: 'app-activity-bars',
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './activity-bars.component.html',
@@ -44,13 +46,16 @@ export class ActivityBarsComponent {
     const buckets = this.buckets();
     const total = this.rows().length;
     if (buckets.length === 0 || total === 0) {
-      return 'No hay eventos en este rango.';
+      return t('No hay eventos en este rango.');
     }
     const weekly = this.weekly();
     const top = buckets.reduce((best, bucket) => (bucket.count > best.count ? bucket : best), buckets[0]);
-    const unit = weekly ? plural(buckets.length, 'semana', 'semanas') : plural(buckets.length, 'día', 'días');
-    const where = weekly ? `la semana del ${formatLongDayKey(top.from)}` : `el ${formatLongDayKey(top.from)}`;
-    return `${plural(total, 'evento', 'eventos')} en ${unit}; ${weekly ? 'la semana' : 'el día'} con más actividad fue ${where}, con ${formatNumber(top.count)}.`;
+    const events = eventCount(total);
+    const day = formatLongDayKey(top.from);
+    const peak = formatNumber(top.count);
+    return weekly
+      ? t('{0} en {1}; la semana con más actividad fue la semana del {2}, con {3}.', [events, buckets.length === 1 ? t('1 semana') : t('{0} semanas', [buckets.length]), day, peak])
+      : t('{0} en {1}; el día con más actividad fue el {2}, con {3}.', [events, buckets.length === 1 ? t('1 día') : t('{0} días', [buckets.length]), day, peak]);
   });
 
   protected height(bucket: ActivityBucket): number {
@@ -58,12 +63,12 @@ export class ActivityBarsComponent {
   }
 
   protected label(bucket: ActivityBucket): string {
-    return bucket.weekly ? `Semana del ${formatDayKey(bucket.from)} al ${formatDayKey(bucket.to)}` : formatLongDayKey(bucket.from);
+    return bucket.weekly ? t('Semana del {0} al {1}', [formatDayKey(bucket.from), formatDayKey(bucket.to)]) : formatLongDayKey(bucket.from);
   }
 
   protected title(bucket: ActivityBucket): string {
-    const partial = bucket.partial ? ' (hoy, el día no ha terminado)' : '';
-    return `${this.label(bucket)}: ${plural(bucket.count, 'evento', 'eventos')}${partial}`;
+    const partial = bucket.partial ? t(' (hoy, el día no ha terminado)') : '';
+    return `${this.label(bucket)}: ${eventCount(bucket.count)}${partial}`;
   }
 
   protected tick(bucket: ActivityBucket): string {

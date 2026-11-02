@@ -1,9 +1,9 @@
 <app-page-header [title]="title()" [subtitle]="subtitle()">
   <button mat-stroked-button type="button" (click)="store.refresh()" [disabled]="state.status() === 'loading'">
-    <mat-icon aria-hidden="true">refresh</mat-icon>Actualizar
+    <mat-icon aria-hidden="true">refresh</mat-icon>{{ 'Actualizar' | t }}
   </button>
   <button mat-stroked-button type="button" (click)="exportCsv()" [disabled]="visibleRows().length === 0">
-    <mat-icon aria-hidden="true">download</mat-icon>Exportar CSV
+    <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
   </button>
 </app-page-header>
 
@@ -12,7 +12,7 @@
 
 @if (scopes().length > 1) {
   <div class="audit-scope">
-    <mat-button-toggle-group class="audit-scope-group" aria-label="Qué eventos ver" hideSingleSelectionIndicator [value]="scope()" (change)="chooseScope($event)">
+    <mat-button-toggle-group class="audit-scope-group" [attr.aria-label]="'Qué eventos ver' | t" hideSingleSelectionIndicator [value]="scope()" (change)="chooseScope($event)">
       @for (item of scopes(); track item.id) {
         <mat-button-toggle [value]="item.id">{{ item.label }}</mat-button-toggle>
       }
@@ -20,11 +20,11 @@
     @if (isAllTenants()) {
       <form class="audit-tenant" (submit)="submitTenant($event)">
         <mat-form-field subscriptSizing="dynamic">
-          <mat-label>Empresa (opcional)</mat-label>
+          <mat-label>{{ 'Empresa (opcional)' | t }}</mat-label>
           <input matInput type="text" autocomplete="off" spellcheck="false" [value]="tenantDraft()" (input)="setTenantDraft($event)" />
-          <mat-hint>Identificador de la empresa; vacío = todas</mat-hint>
+          <mat-hint>{{ 'Identificador de la empresa; vacío = todas' | t }}</mat-hint>
         </mat-form-field>
-        <button mat-stroked-button type="submit"><mat-icon aria-hidden="true">filter_alt</mat-icon>Aplicar</button>
+        <button mat-stroked-button type="submit"><mat-icon aria-hidden="true">filter_alt</mat-icon>{{ 'Aplicar' | t }}</button>
       </form>
     }
   </div>
@@ -36,8 +36,8 @@
 @if (forbidden()) {
   <div class="audit-notice warn" role="alert">
     <mat-icon aria-hidden="true">lock</mat-icon>
-    <span>Tu rol no puede consultar estos eventos. Tu propia actividad sí está disponible.</span>
-    <button mat-stroked-button type="button" (click)="showMine()">Ver mi actividad</button>
+    <span>{{ 'Tu rol no puede consultar estos eventos. Tu propia actividad sí está disponible.' | t }}</span>
+    <button mat-stroked-button type="button" (click)="showMine()">{{ 'Ver mi actividad' | t }}</button>
   </div>
 }
 
@@ -66,9 +66,9 @@
   (filterChange)="setText($event)"
   [facetKey]="query().entity"
   (facetKeyChange)="setEntity($event)"
-  entityPlural="eventos"
-  emptyMessage="Todavía no hay eventos de auditoría"
-  searchPlaceholder="Buscar por acción o persona"
+  [entityPlural]="'eventos' | t"
+  [emptyMessage]="'Todavía no hay eventos de auditoría' | t"
+  [searchPlaceholder]="'Buscar por acción o persona' | t"
   [pageSizeOptions]="[10, 20, 50, 100]"
 >
   <ng-template #rowActions let-row>
@@ -78,7 +78,7 @@
   </ng-template>
 
   <ng-template #selectionActions let-rows>
-    <button mat-button type="button" (click)="exportCsv(rows)"><mat-icon aria-hidden="true">download</mat-icon>Exportar selección</button>
+    <button mat-button type="button" (click)="exportCsv(rows)"><mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar selección' | t }}</button>
   </ng-template>
 
   <ng-template #card let-row>

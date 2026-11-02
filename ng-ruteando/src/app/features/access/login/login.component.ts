@@ -14,6 +14,8 @@ import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-inv
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-login',
   imports: [
@@ -27,33 +29,34 @@ import { PasswordFieldComponent } from '../../../shared/form/password-field.comp
     FocusFirstInvalidDirective,
     FormResultComponent,
     PasswordFieldComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>Bienvenido de nuevo</h1>
-    <p class="lead">Inicia sesión para seguir tus rutas.</p>
+    <h1>{{ 'Bienvenido de nuevo' | t }}</h1>
+    <p class="lead">{{ 'Inicia sesión para seguir tus rutas.' | t }}</p>
     <form [formGroup]="form" (ngSubmit)="submit()" appFocusFirstInvalid novalidate>
       <mat-form-field class="field">
-        <mat-label>Correo electrónico</mat-label>
+        <mat-label>{{ 'Correo electrónico' | t }}</mat-label>
         <mat-icon matPrefix aria-hidden="true">mail</mat-icon>
         <input matInput type="email" formControlName="email" autocomplete="username" />
         <mat-error>{{ emailError() }}</mat-error>
       </mat-form-field>
       <app-password-field
         [control]="form.controls.password"
-        label="Contraseña"
+        [label]="'Contraseña' | t"
         leadingIcon="lock"
         autocomplete="current-password"
-        [messages]="{ required: 'Introduce tu contraseña' }"
+        [messages]="{ required: ('Introduce tu contraseña' | t) }"
       />
-      <div class="forgot"><a routerLink="/acceso/recuperar">¿Olvidaste tu contraseña?</a></div>
+      <div class="forgot"><a routerLink="/acceso/recuperar">{{ '¿Olvidaste tu contraseña?' | t }}</a></div>
       <app-form-result [error]="error()" />
       @if (loading()) {
-        <mat-progress-bar mode="indeterminate" aria-label="Iniciando sesión" />
+        <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Iniciando sesión' | t" />
       }
-      <button mat-flat-button type="submit" [disabled]="loading()">Iniciar sesión</button>
+      <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Iniciar sesión' | t }}</button>
     </form>
-    <p class="alt">¿No tienes cuenta? <a routerLink="/acceso/registro">Crear cuenta</a></p>
+    <p class="alt">{{ '¿No tienes cuenta?' | t }} <a routerLink="/acceso/registro">{{ 'Crear cuenta' | t }}</a></p>
   `,
 })
 export class LoginComponent {
@@ -73,9 +76,9 @@ export class LoginComponent {
   protected emailError(): string {
     const errors = this.form.controls.email.errors;
     if (errors?.['required']) {
-      return 'Introduce tu correo';
+      return t('Introduce tu correo');
     }
-    return errors?.['email'] ? 'Introduce un correo válido' : '';
+    return errors?.['email'] ? t('Introduce un correo válido') : '';
   }
 
   protected submit(): void {

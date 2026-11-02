@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { routeColorThemed } from '../map/route-colors';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 interface MapRoute {
   color: string;
   /** Puntos del recorrido, de depósito a depósito. */
@@ -37,6 +38,7 @@ const ROUTES: readonly MapRoute[] = [
  * entrar, salvo que se pida movimiento reducido.
  */
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-city-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'aria-hidden': 'true' },

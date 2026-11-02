@@ -37,8 +37,10 @@ import { OPENLAYERS_LOADER, OpenLayers } from './openlayers';
 import { areaKm2, polygonIssueMessage, validatePolygon, verticesFromRing } from './polygon-geometry';
 import { VertexTableComponent } from './vertex-table.component';
 
+import { locale, t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const FIT_PADDING = [48, 48, 48, 48];
-const AREA = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
+const AREA = new Intl.NumberFormat(locale(), { maximumFractionDigits: 1 });
 
 /**
  * Editor de un polígono: dibujarlo en el mapa, arrastrar sus vértices y, en paralelo, una tabla de
@@ -47,7 +49,7 @@ const AREA = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
  */
 @Component({
   selector: 'app-polygon-editor',
-  imports: [MatButtonModule, MatIconModule, VertexTableComponent],
+  imports: [MatButtonModule, MatIconModule, VertexTableComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './polygon-editor.component.html',
   styleUrl: './polygon-editor.component.scss',
@@ -88,13 +90,13 @@ export class PolygonEditorComponent {
     const vertices = this.vertices();
     const blocking = this.issues().filter((i) => i.kind !== 'unchecked');
     if (vertices.length === 0) {
-      return 'Todavía no hay polígono.';
+      return t('Todavía no hay polígono.');
     }
     if (blocking.length > 0) {
-      return `${vertices.length} vértices. ${blocking.map(polygonIssueMessage).join('. ')}.`;
+      return t('{0} vértices. {1}.', [vertices.length, blocking.map(polygonIssueMessage).join('. ')]);
     }
     const warning = this.issues().some((i) => i.kind === 'unchecked') ? ` ${polygonIssueMessage({ kind: 'unchecked' })}.` : '';
-    return `Polígono válido: ${vertices.length} vértices, unos ${AREA.format(areaKm2(vertices))} km² (aproximado).${warning}`;
+    return t('Polígono válido: {0} vértices, unos {1} km² (aproximado).{2}', [vertices.length, AREA.format(areaKm2(vertices)), warning]);
   });
 
   constructor() {
@@ -175,7 +177,7 @@ export class PolygonEditorComponent {
     }
     this.dialog
       .open(ConfirmDialogComponent, {
-        data: { title: 'Borrar el polígono', message: `¿Quitar los ${this.vertices().length} vértices del polígono?`, confirmLabel: 'Borrar', cancelLabel: 'Conservar' },
+        data: { title: t('Borrar el polígono'), message: t('¿Quitar los {0} vértices del polígono?', [this.vertices().length]), confirmLabel: t('Borrar'), cancelLabel: t('Conservar') },
       })
       .afterClosed()
       .subscribe((confirmed) => {
@@ -221,7 +223,7 @@ export class PolygonEditorComponent {
       target: this.host().nativeElement,
       layers: [tiles, this.layer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: 'Acercar el mapa', zoomOutTipLabel: 'Alejar el mapa' } }),
+      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') } }),
     });
     this.modify = new ol.Modify({ source: this.source });
     this.modify.on('modifyend', () => this.readFromMap());

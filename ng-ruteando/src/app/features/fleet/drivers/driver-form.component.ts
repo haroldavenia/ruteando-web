@@ -24,11 +24,13 @@ import { notify } from '../../../shared/form/notify';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 import { IDENTIFIER_KEYS, identifierLabel } from '../fleet-labels';
 
-const DUPLICATE_EMAIL = 'Ya existe una cuenta con ese correo';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+const DUPLICATE_EMAIL = t('Ya existe una cuenta con ese correo');
 const MESSAGES: FieldMessages = {
-  required: 'Este campo es obligatorio',
-  documentType: 'Elige el tipo de documento',
-  documentValue: 'Escribe el número del documento',
+  required: t('Este campo es obligatorio'),
+  documentType: t('Elige el tipo de documento'),
+  documentValue: t('Escribe el número del documento'),
 };
 
 /** Tipo y número de documento van juntos: si se escribe uno hace falta el otro. */
@@ -46,49 +48,49 @@ function documentValidator(missing: 'type' | 'value'): ValidatorFn {
 
 @Component({
   selector: 'app-driver-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, PasswordFieldComponent, FormActionsComponent, FormHeadComponent, MatIconModule],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, PasswordFieldComponent, FormActionsComponent, FormHeadComponent, MatIconModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-form-head [title]="isNew ? 'Nuevo conductor' : 'Editar conductor'" backLabel="Conductores" backLink="/flota/conductores" />
+    <app-form-head [title]="isNew ? ('Nuevo conductor' | t) : ('Editar conductor' | t)" [backLabel]="'Conductores' | t" backLink="/flota/conductores" />
     @switch (loader.status()) {
       @case ('loading') {
-        <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
+        <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
       }
       @case ('missing') {
         <app-form-result [error]="loader.error()" />
-        <a mat-stroked-button routerLink="/flota/conductores">Volver al listado</a>
+        <a mat-stroked-button routerLink="/flota/conductores">{{ 'Volver al listado' | t }}</a>
       }
       @case ('error') {
         <app-form-result [error]="loader.error()" />
-        <a mat-stroked-button routerLink="/flota/conductores">Volver al listado</a>
+        <a mat-stroked-button routerLink="/flota/conductores">{{ 'Volver al listado' | t }}</a>
       }
       @default {
         <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
           <section class="form-section">
-            <h2><mat-icon aria-hidden="true" fontIcon="person" />Datos del conductor</h2>
+            <h2><mat-icon aria-hidden="true" fontIcon="person" />{{ 'Datos del conductor' | t }}</h2>
             <mat-form-field>
-              <mat-label>Nombre</mat-label>
+              <mat-label>{{ 'Nombre' | t }}</mat-label>
               <input matInput formControlName="firstName" autocomplete="off" />
               <mat-error>{{ error('firstName') }}</mat-error>
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Apellidos</mat-label>
+              <mat-label>{{ 'Apellidos' | t }}</mat-label>
               <input matInput formControlName="lastName" autocomplete="off" />
               <mat-error>{{ error('lastName') }}</mat-error>
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Correo electrónico</mat-label>
+              <mat-label>{{ 'Correo electrónico' | t }}</mat-label>
               <input matInput type="email" formControlName="email" autocomplete="off" />
               <mat-error>{{ error('email') }}</mat-error>
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Teléfono (opcional)</mat-label>
+              <mat-label>{{ 'Teléfono (opcional)' | t }}</mat-label>
               <input matInput type="tel" formControlName="phone" autocomplete="off" />
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Tipo de documento</mat-label>
+              <mat-label>{{ 'Tipo de documento' | t }}</mat-label>
               <mat-select formControlName="identifierType">
-                <mat-option value="">Sin documento</mat-option>
+                <mat-option value="">{{ 'Sin documento' | t }}</mat-option>
                 @for (type of documentTypes(); track type.key) {
                   <mat-option [value]="type.key">{{ type.label }}</mat-option>
                 }
@@ -96,22 +98,22 @@ function documentValidator(missing: 'type' | 'value'): ValidatorFn {
               <mat-error>{{ error('identifierType') }}</mat-error>
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Número de documento</mat-label>
+              <mat-label>{{ 'Número de documento' | t }}</mat-label>
               <input matInput formControlName="identifierValue" autocomplete="off" />
               <mat-error>{{ error('identifierValue') }}</mat-error>
             </mat-form-field>
           </section>
           @if (isNew) {
             <section class="form-section">
-              <h2><mat-icon aria-hidden="true" fontIcon="lock" />Acceso</h2>
-              <app-password-field [control]="form.controls.password" label="Contraseña inicial" autocomplete="new-password" [messages]="{ required: 'Introduce una contraseña inicial' }" />
-              <app-password-field [control]="form.controls.repeatPassword" label="Repetir contraseña" autocomplete="new-password" [messages]="{ required: 'Repite la contraseña inicial' }" />
+              <h2><mat-icon aria-hidden="true" fontIcon="lock" />{{ 'Acceso' | t }}</h2>
+              <app-password-field [control]="form.controls.password" [label]="'Contraseña inicial' | t" autocomplete="new-password" [messages]="{ required: ('Introduce una contraseña inicial' | t) }" />
+              <app-password-field [control]="form.controls.repeatPassword" [label]="'Repetir contraseña' | t" autocomplete="new-password" [messages]="{ required: ('Repite la contraseña inicial' | t) }" />
             </section>
           }
           <app-form-result [error]="submit.error()" />
           <app-form-actions [dirty]="hasUnsavedChanges()">
-            <a mat-button routerLink="/flota/conductores">Cancelar</a>
-            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+            <a mat-button routerLink="/flota/conductores">{{ 'Cancelar' | t }}</a>
+            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
           </app-form-actions>
         </form>
       }
@@ -203,7 +205,7 @@ export class DriverFormComponent implements HasUnsavedChanges {
       request$,
       () => {
         this.saved.set(true);
-        void notify(this.injector, this.id === null ? 'Conductor creado' : 'Conductor guardado');
+        void notify(this.injector, this.id === null ? t('Conductor creado') : t('Conductor guardado'));
         void this.router.navigateByUrl('/flota/conductores');
       },
       { 409: DUPLICATE_EMAIL },

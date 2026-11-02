@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs';
 
+import { t } from '../i18n/i18n';
 /**
  * Avisa de que hay una versión nueva (el service worker ya la descargó) y la activa al pulsar «Recargar». Sin service worker
  * (desarrollo, servidor, navegador sin soporte) `SwUpdate` no emite y no hace nada. Se instancia al inyectarlo.
@@ -28,7 +29,7 @@ export class UpdateNotifier {
     const { MatSnackBar } = await import('@angular/material/snack-bar');
     this.injector
       .get(MatSnackBar)
-      .open('Hay una versión nueva de Ruteando', 'Recargar')
+      .open(t('Hay una versión nueva de Ruteando'), t('Recargar'))
       .onAction()
       .subscribe(() => void this.swUpdate.activateUpdate().then(() => this.document.location.reload()));
   }

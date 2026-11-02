@@ -5,6 +5,7 @@ import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
 import { formatCount } from '../format';
 
+import { t } from '../../core/i18n/i18n';
 export type ListStatus = 'loading' | 'ready' | 'empty' | 'error';
 
 export const DEFAULT_PAGE_SIZE = 20;
@@ -49,7 +50,7 @@ export class ListState<T> {
         this.status.set(result.totalElements === 0 && result.content.length === 0 ? 'empty' : 'ready');
       },
       error: (err: unknown) => {
-        this.error.set(err instanceof ApiError ? err.message : 'No se pudo completar la solicitud');
+        this.error.set(err instanceof ApiError ? err.message : t('No se pudo completar la solicitud'));
         this.status.set('error');
       },
     });

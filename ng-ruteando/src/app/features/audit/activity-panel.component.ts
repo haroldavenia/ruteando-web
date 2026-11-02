@@ -14,6 +14,7 @@ import { AuditFilters } from './audit-filters';
 import { AuditKind, auditEntityLabel } from './audit-labels';
 import { summarize } from './audit-stats';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export type { PickedDays };
 
 const PANEL_KEY = 'ruteando-audit-panel';
@@ -25,7 +26,7 @@ const PANEL_KEY = 'ruteando-audit-panel';
  */
 @Component({
   selector: 'app-activity-panel',
-  imports: [MatButtonModule, MatIconModule, ActivityBarsComponent, ActivitySharesComponent],
+  imports: [MatButtonModule, MatIconModule, ActivityBarsComponent, ActivitySharesComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './activity-panel.component.html',

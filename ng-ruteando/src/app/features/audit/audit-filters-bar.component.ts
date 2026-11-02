@@ -10,12 +10,14 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AuditFilters, AuditRange, NO_PERSON, addDays, dayKey, hasActiveFilters, startOfDay } from './audit-filters';
 import { AUDIT_KINDS, AuditKind, auditKindLabel, shortId } from './audit-labels';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const RANGES: readonly { value: AuditRange; label: string }[] = [
-  { value: '24h', label: '24 horas' },
-  { value: '7d', label: '7 días' },
-  { value: '30d', label: '30 días' },
-  { value: 'todo', label: 'Todo' },
-  { value: 'personalizado', label: 'Personalizado' },
+  { value: '24h', label: t('24 horas') },
+  { value: '7d', label: t('7 días') },
+  { value: '30d', label: t('30 días') },
+  { value: 'todo', label: t('Todo') },
+  { value: 'personalizado', label: t('Personalizado') },
 ];
 
 /** Valores de las listas desplegables que significan «sin filtro». */
@@ -28,7 +30,7 @@ const ALL = 'todos';
  */
 @Component({
   selector: 'app-audit-filters',
-  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSlideToggleModule],
+  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSlideToggleModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './audit-filters-bar.component.html',
@@ -87,7 +89,7 @@ export class AuditFiltersBarComponent {
     const from = edge === 'from' ? value || null : filters.from;
     const to = edge === 'to' ? value || null : filters.to;
     if (from && to && from > to) {
-      this.rangeError.set(edge === 'from' ? 'El inicio no puede ser posterior al fin' : 'El fin no puede ser anterior al inicio');
+      this.rangeError.set(edge === 'from' ? t('El inicio no puede ser posterior al fin') : t('El fin no puede ser anterior al inicio'));
       return;
     }
     this.rangeError.set(null);

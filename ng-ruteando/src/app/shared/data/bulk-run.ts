@@ -6,6 +6,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 
 import { messageFor } from './api-messages';
 
+import { t } from '../../core/i18n/i18n';
 /** Peticiones a la vez: el gateway no tiene lote para estos recursos, así que cada registro es una petición. */
 export const BULK_CONCURRENCY = 4;
 
@@ -69,9 +70,9 @@ export function deleteMany(dialog: Pick<MatDialog, 'open'>, options: BulkDeleteO
   return dialog
     .open(ConfirmDialogComponent, {
       data: {
-        title: one ? `Eliminar ${singular}` : `Eliminar ${plural}`,
-        message: one ? `¿Eliminar ${singular} «${targets[0].label}»? Esta acción no se puede deshacer.` : `¿Eliminar los ${targets.length} ${plural} elegidos? Esta acción no se puede deshacer.`,
-        confirmLabel: 'Eliminar',
+        title: one ? t('Eliminar {0}', [singular]) : t('Eliminar {0}', [plural]),
+        message: one ? t('¿Eliminar {0} «{1}»? Esta acción no se puede deshacer.', [singular, targets[0].label]) : t('¿Eliminar los {0} {1} elegidos? Esta acción no se puede deshacer.', [targets.length, plural]),
+        confirmLabel: t('Eliminar'),
         destructive: true,
       },
     })
@@ -91,12 +92,12 @@ export function bulkDeleteMessages(result: BulkResult, singular: string, plural:
       ? null
       : result.failed.length === 0
         ? result.done === 1
-          ? `Se eliminó 1 ${singular}`
-          : `Se eliminaron ${result.done} ${plural}`
-        : `Se eliminaron ${result.done} de ${total} ${plural}`;
+          ? t('Se eliminó 1 {0}', [singular])
+          : t('Se eliminaron {0} {1}', [result.done, plural])
+        : t('Se eliminaron {0} de {1} {2}', [result.done, total, plural]);
   const error =
     result.failed.length === 0
       ? null
-      : `No se pudo eliminar ${result.failed.length === 1 ? `1 ${singular}` : `${result.failed.length} ${plural}`}: ${result.failed.map((f) => `«${f.label}» (${f.message})`).join('; ')}`;
+      : t('No se pudo eliminar {0}: {1}', [result.failed.length === 1 ? `1 ${singular}` : `${result.failed.length} ${plural}`, result.failed.map((f) => `«${f.label}» (${f.message})`).join('; ')]);
   return { success, error };
 }

@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
+import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { Language } from '../../core/i18n/i18n';
 import { LanguageService } from '../../core/i18n/language.service';
@@ -20,46 +21,150 @@ const OPTIONS: readonly LanguageOption[] = [
 ];
 
 /**
- * Selector de idioma: tres botones (EN, ES y PT) donde se ve cuál está activo. Elegir otro lo guarda y recarga la página
- * (`LanguageService`). Es un grupo de opciones excluyentes: cada botón anuncia el nombre del idioma en su propio idioma.
+ * Selector de idioma, en dos formas con el mismo lenguaje visual:
+ * - `segmented` (por defecto, pantallas de acceso): globo y tres opciones (EN, ES, PT) con un indicador de degradado que se
+ *   desliza hasta la elegida. Es un grupo de opciones excluyentes (`radiogroup`) y se maneja con las flechas.
+ * - `menu` (barra de la aplicación): una píldora con el globo y el idioma actual que abre la lista con el nombre de cada idioma.
+ * Elegir otro lo guarda y recarga la página tras una breve animación (`LanguageService`).
  */
 @Component({
   selector: 'app-language-toggle',
-  imports: [MatButtonToggleModule, TranslatePipe],
+  imports: [MatIconModule, MatMenuModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mat-button-toggle-group
-      [attr.aria-label]="'Idioma' | t"
-      hideSingleSelectionIndicator
-      [value]="language.current"
-      (change)="choose($event)"
-    >
-      @for (option of options; track option.value) {
-        <mat-button-toggle [value]="option.value" [aria-label]="option.name" [attr.title]="option.name">{{ option.code }}</mat-button-toggle>
-      }
-    </mat-button-toggle-group>
+    @if (variant() === 'menu') {
+      <button class="pill" type="button" [matMenuTriggerFor]="menu" [attr.aria-label]="'Idioma' | t" [attr.title]="'Idioma' | t">
+        <mat-icon aria-hidden="true">language</mat-icon>
+        <span>{{ options[index()].code }}</span>
+        <mat-icon class="caret" aria-hidden="true">expand_more</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        @for (option of options; track option.value) {
+          <button mat-menu-item type="button" role="menuitemradio" [attr.aria-checked]="option.value === language.current" (click)="choose(option.value)">
+            <span class="name">{{ option.name }}</span>
+            <span class="code">{{ option.code }}</span>
+            @if (option.value === language.current) {
+              <mat-icon aria-hidden="true">check</mat-icon>
+            }
+          </button>
+        }
+      </mat-menu>
+    } @else {
+      <div class="seg" role="radiogroup" [attr.aria-label]="'Idioma' | t" (keydown)="onKey($event)">
+        <mat-icon class="globe" aria-hidden="true">language</mat-icon>
+        <div class="opts" [style.--i]="index()">
+          <span class="thumb" aria-hidden="true"></span>
+          @for (option of options; track option.value; let i = $index) {
+            <button
+              type="button"
+              role="radio"
+              [attr.aria-checked]="i === index()"
+              [attr.tabindex]="i === index() ? 0 : -1"
+              [attr.aria-label]="option.name"
+              [attr.title]="option.name"
+              (click)="choose(option.value)"
+            >{{ option.code }}</button>
+          }
+        </div>
+      </div>
+    }
   `,
   styles: `
     :host {
       display: inline-flex;
     }
-    mat-button-toggle-group {
-      overflow: hidden;
+    .seg,
+    .pill {
+      display: inline-flex;
+      align-items: center;
       border-radius: 999px;
+      background: var(--mat-sys-surface-container);
       outline: 1px solid var(--mat-sys-outline-variant);
       outline-offset: -1px;
-      background: var(--mat-sys-surface-container);
     }
-    mat-button-toggle {
-      --mat-button-toggle-height: 44px;
-      --mat-button-toggle-shape: 999px;
-      --mat-button-toggle-text-color: var(--mat-sys-on-surface-variant);
-      --mat-button-toggle-background-color: transparent;
-      --mat-button-toggle-selected-state-background-color: var(--mat-sys-primary-container);
-      --mat-button-toggle-selected-state-text-color: var(--mat-sys-on-primary-container);
-      --mat-button-toggle-divider-color: transparent;
-      --mat-button-toggle-label-text-weight: 500;
+    .seg {
+      padding: 4px;
+    }
+    .globe {
+      width: 20px;
+      height: 20px;
+      margin: 0 6px 0 10px;
+      font-size: 20px;
+      color: var(--mat-sys-on-surface-variant);
+    }
+    .opts {
+      position: relative;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 48px;
+    }
+    .thumb {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 48px;
+      border-radius: 999px;
+      background: var(--app-brand-gradient);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--mat-sys-primary) 35%, transparent);
+      transform: translateX(calc(var(--i, 0) * 48px));
+      transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .opts button {
+      position: relative;
+      height: 40px;
       border: 0;
+      border-radius: 999px;
+      background: none;
+      font: 600 13px/1 var(--mat-sys-label-large-font, inherit);
+      letter-spacing: 0.06em;
+      color: var(--mat-sys-on-surface-variant);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .opts button[aria-checked='true'] {
+      color: var(--mat-sys-on-primary);
+    }
+    .opts button:not([aria-checked='true']):hover {
+      color: var(--mat-sys-on-surface);
+    }
+    .pill {
+      gap: 6px;
+      height: 44px;
+      padding: 0 8px 0 12px;
+      border: 0;
+      font: 600 13px/1 var(--mat-sys-label-large-font, inherit);
+      letter-spacing: 0.06em;
+      color: var(--mat-sys-on-surface);
+      cursor: pointer;
+    }
+    .pill mat-icon {
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+    }
+    .pill .caret {
+      color: var(--mat-sys-on-surface-variant);
+    }
+    .pill:hover {
+      background: var(--mat-sys-surface-container-high);
+    }
+    button:focus-visible {
+      outline: 2px solid var(--mat-sys-primary);
+      outline-offset: 2px;
+    }
+    .name {
+      min-width: 88px;
+    }
+    .code {
+      margin-right: 12px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--mat-sys-on-surface-variant);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .thumb,
+      .opts button {
+        transition: none;
+      }
     }
   `,
 })
@@ -67,7 +172,25 @@ export class LanguageToggleComponent {
   protected readonly language = inject(LanguageService);
   protected readonly options = OPTIONS;
 
-  protected choose(change: MatButtonToggleChange): void {
-    this.language.set(change.value as Language);
+  readonly variant = input<'segmented' | 'menu'>('segmented');
+
+  /** Posición del idioma elegido: se adelanta al cambio de página para que el indicador ya se deslice. */
+  protected readonly index = signal(OPTIONS.findIndex((option) => option.value === this.language.current));
+
+  protected choose(lang: Language): void {
+    this.index.set(OPTIONS.findIndex((option) => option.value === lang));
+    this.language.set(lang);
+  }
+
+  /** Flechas: pasan al idioma siguiente o anterior (patrón de los grupos de opciones). */
+  protected onKey(event: KeyboardEvent): void {
+    const step = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0;
+    if (step === 0) {
+      return;
+    }
+    event.preventDefault();
+    const next = OPTIONS[(this.index() + step + OPTIONS.length) % OPTIONS.length];
+    this.choose(next.value);
+    (event.currentTarget as HTMLElement).querySelectorAll<HTMLElement>('[role="radio"]')[this.index()]?.focus();
   }
 }

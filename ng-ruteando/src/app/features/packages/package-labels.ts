@@ -1,11 +1,12 @@
 import { Package } from '../../core/api/models';
 import { fromGeoJsonPoint } from '../../core/geo/lat-lng';
 
+import { locale, t } from '../../core/i18n/i18n';
 /** Etiquetas en español de `ServiceType`. */
 export const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {
-  delivery: 'Entrega',
-  pickup: 'Recogida',
-  mixed: 'Mixto',
+  delivery: t('Entrega'),
+  pickup: t('Recogida'),
+  mixed: t('Mixto'),
 };
 
 /**
@@ -13,20 +14,20 @@ export const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {
  * un paquete puede conservar uno y debe verse con su nombre.
  */
 export const PACKAGE_STATUS_LABELS: Readonly<Record<string, string>> = {
-  pending: 'Pendiente',
-  attended: 'Atendido',
-  unattended: 'No atendido',
-  cancelled: 'Cancelado',
-  returned: 'Devuelto',
+  pending: t('Pendiente'),
+  attended: t('Atendido'),
+  unattended: t('No atendido'),
+  cancelled: t('Cancelado'),
+  returned: t('Devuelto'),
 };
 
 /** Etiquetas en español de `GeocodingStatus` (las del legacy: ubicada, aproximada, manual, no ubicada). */
 export const GEOCODING_STATUS_LABELS: Readonly<Record<string, string>> = {
-  match: 'Ubicada',
-  mean: 'Aproximada',
-  manual: 'Manual',
-  unmatch: 'No ubicada',
-  unprocessed: 'Sin procesar',
+  match: t('Ubicada'),
+  mean: t('Aproximada'),
+  manual: t('Manual'),
+  unmatch: t('No ubicada'),
+  unprocessed: t('Sin procesar'),
 };
 
 /** Valores habituales para pintar los selectores antes de cargar los dominios del gateway. */
@@ -40,7 +41,7 @@ export const serviceTypeLabel = (key: string | null): string => label(SERVICE_TY
 export const packageStatusLabel = (key: string | null): string => label(PACKAGE_STATUS_LABELS, key);
 export const geocodingStatusLabel = (key: string | null): string => label(GEOCODING_STATUS_LABELS, key);
 
-const COORDINATE = new Intl.NumberFormat('es', { minimumFractionDigits: 5, maximumFractionDigits: 5, useGrouping: false });
+const COORDINATE = new Intl.NumberFormat(locale(), { minimumFractionDigits: 5, maximumFractionDigits: 5, useGrouping: false });
 
 /** `latitud / longitud` con cinco decimales, o vacío si la ubicación no es válida. */
 export function formatPackageLocation(item: Pick<Package, 'location'>): string {

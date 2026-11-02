@@ -1,10 +1,11 @@
 import { CM3_PER_M3, CapacitySource, decodeCapacity } from './resource-types/capacity-codec';
 
+import { locale, t } from '../../core/i18n/i18n';
 /** Etiquetas en español de los perfiles de ruteo (`OsrmProfile`); los valores del gateway vienen en inglés. */
 export const OSRM_PROFILE_LABELS: Readonly<Record<string, string>> = {
-  driving: 'Conducción',
-  cycling: 'Bicicleta',
-  walking: 'A pie',
+  driving: t('Conducción'),
+  cycling: t('Bicicleta'),
+  walking: t('A pie'),
 };
 
 export function profileLabel(key: string): string {
@@ -13,10 +14,10 @@ export function profileLabel(key: string): string {
 
 /** Etiquetas en español del dominio maestro `IdentifierType` (documento de una persona); una clave desconocida se muestra tal cual. */
 export const IDENTIFIER_LABELS: Readonly<Record<string, string>> = {
-  citizen_id: 'Documento de identidad',
-  itin: 'Identificación fiscal',
-  plate: 'Placa',
-  code: 'Código interno',
+  citizen_id: t('Documento de identidad'),
+  itin: t('Identificación fiscal'),
+  plate: t('Placa'),
+  code: t('Código interno'),
 };
 
 /** Valores de `IdentifierType` del gateway, por si todavía no se cargó el dominio maestro. */
@@ -36,20 +37,20 @@ export function identifierText(user: { identifierType: string | null; identifier
   return type ? `${identifierLabel(type)} ${value}` : value;
 }
 
-const QUANTITY = new Intl.NumberFormat('es', { maximumFractionDigits: 2, useGrouping: false });
+const QUANTITY = new Intl.NumberFormat(locale(), { maximumFractionDigits: 2, useGrouping: false });
 
 /** Capacidad en una frase: «500 kg · 12 m³», «Sin capacidad» o «Definida» si trae datos que la pantalla no sabe leer. */
 export function capacitySummary(type: CapacitySource): string {
   const { weight, volume } = decodeCapacity(type);
   const parts = [
-    weight !== null && weight > 0 ? `${QUANTITY.format(weight)} kg` : '',
-    volume !== null && volume > 0 ? `${QUANTITY.format(volume / CM3_PER_M3)} m³` : '',
+    weight !== null && weight > 0 ? t('{0} kg', [QUANTITY.format(weight)]) : '',
+    volume !== null && volume > 0 ? t('{0} m³', [QUANTITY.format(volume / CM3_PER_M3)]) : '',
   ].filter(Boolean);
   if (parts.length > 0) {
     return parts.join(' · ');
   }
   const unreadable = [type.capacity, type.measure, type.restriction].some((part) => part !== null && Object.keys(part).length > 0);
-  return unreadable ? 'Definida' : 'Sin capacidad';
+  return unreadable ? t('Definida') : t('Sin capacidad');
 }
 
 /** Categorías habituales de tipo de vehículo; el campo admite otras. */

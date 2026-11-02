@@ -4,6 +4,7 @@ import { Observable, map } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
+import { t } from '../../core/i18n/i18n';
 /**
  * Confirmación de borrado con la acción nombrada con el verbo y el registro. Emite `true` solo al
  * confirmar; cancelar o cerrar con Escape emiten `false`, y el foco vuelve al botón de origen.
@@ -17,9 +18,9 @@ export class DeleteConfirmation {
     return this.dialog
       .open(ConfirmDialogComponent, {
         data: {
-          title: `Eliminar ${entity}`,
-          message: `¿Eliminar ${entity} «${name}»? Esta acción no se puede deshacer.`,
-          confirmLabel: 'Eliminar',
+          title: t('Eliminar {0}', [entity]),
+          message: t('¿Eliminar {0} «{1}»? Esta acción no se puede deshacer.', [entity, name]),
+          confirmLabel: t('Eliminar'),
           destructive: true,
         },
       })

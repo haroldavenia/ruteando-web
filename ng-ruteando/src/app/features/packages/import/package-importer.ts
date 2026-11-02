@@ -2,6 +2,7 @@ import { PackageInput } from '../../../core/api/models';
 
 import { ImportRow } from './package-rows';
 
+import { t } from '../../../core/i18n/i18n';
 export type RowStatus = 'created' | 'existed' | 'failed' | 'skipped';
 
 export interface RowResult {
@@ -33,7 +34,7 @@ export const SATURATED = [429, 503];
 const statusOf = (error: unknown): number | null =>
   typeof error === 'object' && error !== null && 'status' in error && typeof error.status === 'number' ? error.status : null;
 
-const messageOf = (error: unknown): string => (error instanceof Error && error.message ? error.message : 'No se pudo completar la solicitud');
+const messageOf = (error: unknown): string => (error instanceof Error && error.message ? error.message : t('No se pudo completar la solicitud'));
 
 /**
  * Crea los paquetes de las filas con una concurrencia acotada. Una guía repetida (409) cuenta como
@@ -83,7 +84,7 @@ export function runImport(rows: readonly ImportRow[], create: (input: PackageInp
   return new Promise<RowResult[]>((resolve) => {
     const finish = (): void => {
       queue.splice(0).forEach(({ row, index }) => {
-        results[index] = { row, status: 'skipped', message: 'La importación se canceló antes de procesar esta fila' };
+        results[index] = { row, status: 'skipped', message: t('La importación se canceló antes de procesar esta fila') };
       });
       resolve(results as RowResult[]);
     };

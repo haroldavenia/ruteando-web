@@ -8,6 +8,8 @@ import { DestroyRef } from '@angular/core';
 import { LatLng } from '../../core/geo/lat-lng';
 import { ActionTitleDirective } from '../ui/action-title.directive';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 type VertexGroup = FormGroup<{ lat: FormControl<number | null>; lng: FormControl<number | null> }>;
 
 const group = (point?: LatLng): VertexGroup =>
@@ -25,7 +27,7 @@ const same = (a: readonly LatLng[], b: readonly LatLng[]): boolean => a.length =
  */
 @Component({
   selector: 'app-vertex-table',
-  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, ActionTitleDirective],
+  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './vertex-table.component.html',
   styleUrl: './vertex-table.component.scss',
@@ -81,6 +83,6 @@ export class VertexTableComponent {
     if (!errors) {
       return '';
     }
-    return errors['required'] ? 'Obligatorio' : field === 'lat' ? 'Entre -90 y 90' : 'Entre -180 y 180';
+    return errors['required'] ? t('Obligatorio') : field === 'lat' ? t('Entre -90 y 90') : t('Entre -180 y 180');
   }
 }

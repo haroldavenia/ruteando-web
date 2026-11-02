@@ -15,27 +15,29 @@ import { colorName } from '../../shared/map/route-colors';
 import { verticesFromRing } from '../../shared/map/polygon-geometry';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 
-export const ZONE_IN_USE = 'No se puede eliminar: la zona se usa en lugares, paquetes o configuraciones';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+export const ZONE_IN_USE = t('No se puede eliminar: la zona se usa en lugares, paquetes o configuraciones');
 
 @Component({
   selector: 'app-zone-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
+  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header title="Zonas" [subtitle]="state.countText('zona', 'zonas')">
-      <a mat-flat-button class="primary-action" routerLink="/zonas/nueva"><mat-icon aria-hidden="true">add</mat-icon>Nueva zona</a>
+    <app-page-header [title]="'Zonas' | t" [subtitle]="state.countText('zona', 'zonas')">
+      <a mat-flat-button class="primary-action" routerLink="/zonas/nueva"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva zona' | t }}</a>
     </app-page-header>
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
-    <app-data-table [state]="state" [columns]="columns" entityPlural="zonas" emptyMessage="Todavía no hay zonas">
+    <app-data-table [state]="state" [columns]="columns" [entityPlural]="'zonas' | t" [emptyMessage]="'Todavía no hay zonas' | t">
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/zonas', row.id]" [attr.aria-label]="'Editar zona ' + row.name">
+        <a mat-icon-button [routerLink]="['/zonas', row.id]" [attr.aria-label]="('Editar zona ' | t) + row.name">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="'Eliminar zona ' + row.name">
+        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar zona ' | t) + row.name">
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/zonas/nueva">Crear la primera zona</a>
+      <a empty-action mat-stroked-button routerLink="/zonas/nueva">{{ 'Crear la primera zona' | t }}</a>
     </app-data-table>
   `,
 })
@@ -46,11 +48,11 @@ export class ZoneListComponent {
   protected readonly deleter = new DeleteFlow();
   protected readonly state = new ListState<Zone>(this.paging.fetch);
   protected readonly columns: DataColumn<Zone>[] = [
-    { id: 'color', header: 'Color', cell: (z) => colorName(z.color), swatch: (z) => z.color },
-    { id: 'name', header: 'Nombre', cell: (z) => z.name, kind: 'strong' },
-    { id: 'code', header: 'Código', cell: (z) => z.code },
-    { id: 'vertices', header: 'Vértices', cell: (z) => String(verticesFromRing(z.boundary?.coordinates?.[0]).length) },
-    { id: 'active', header: 'Estado', cell: (z) => (z.active ? 'Activa' : 'Inactiva') },
+    { id: 'color', header: t('Color'), cell: (z) => colorName(z.color), swatch: (z) => z.color },
+    { id: 'name', header: t('Nombre'), cell: (z) => z.name, kind: 'strong' },
+    { id: 'code', header: t('Código'), cell: (z) => z.code },
+    { id: 'vertices', header: t('Vértices'), cell: (z) => String(verticesFromRing(z.boundary?.coordinates?.[0]).length) },
+    { id: 'active', header: t('Estado'), cell: (z) => (z.active ? t('Activa') : t('Inactiva')) },
   ];
 
   constructor() {
@@ -59,7 +61,7 @@ export class ZoneListComponent {
 
   protected remove(row: Zone): void {
     this.deleter.run({
-      entity: 'zona',
+      entity: t('zona'),
       name: row.name,
       request: () => this.api.remove(row.id),
       byStatus: { 400: ZONE_IN_USE, 409: ZONE_IN_USE },

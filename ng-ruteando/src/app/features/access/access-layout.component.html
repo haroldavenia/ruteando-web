@@ -3,7 +3,7 @@
     <div class="panel-body">
       <div class="tools"><app-language-toggle /><app-theme-toggle /></div>
       <app-brand />
-      <p class="tagline">Planifica y sigue tus rutas</p>
+      <p class="tagline">{{ 'Planifica y sigue tus rutas' | t }}</p>
       <router-outlet #outlet="outlet" (activate)="onActivate(outlet.activatedRouteData)" />
     </div>
   </section>

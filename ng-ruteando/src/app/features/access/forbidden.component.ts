@@ -6,10 +6,11 @@ import { RouterLink } from '@angular/router';
 import { CurrentUser } from '../../core/auth/current-user';
 import { roleLabel } from '../../shared/ui/role-label';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /** «Sin permiso»: a donde llevan las guardas de rol. Dice el motivo y el rol de la sesión, y ofrece volver al inicio. */
 @Component({
   selector: 'app-forbidden',
-  imports: [MatButtonModule, MatIconModule, RouterLink],
+  imports: [MatButtonModule, MatIconModule, RouterLink, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .panel {
@@ -43,12 +44,12 @@ import { roleLabel } from '../../shared/ui/role-label';
   template: `
     <section class="card panel">
       <span class="icon" aria-hidden="true"><mat-icon fontIcon="shield" /></span>
-      <h1>Sin permiso</h1>
-      <p>No tienes permiso para ver esta página.</p>
+      <h1>{{ 'Sin permiso' | t }}</h1>
+      <p>{{ 'No tienes permiso para ver esta página.' | t }}</p>
       @if (role(); as name) {
-        <p class="role">Tu rol es <strong>{{ name }}</strong>. Si necesitas esta área, pídela a quien administra tu empresa.</p>
+        <p class="role">{{ 'Tu rol es' | t }} <strong>{{ name }}</strong>{{ '. Si necesitas esta área, pídela a quien administra tu empresa.' | t }}</p>
       }
-      <a mat-flat-button class="primary-action" routerLink="/">Volver al inicio</a>
+      <a mat-flat-button class="primary-action" routerLink="/">{{ 'Volver al inicio' | t }}</a>
     </section>
   `,
 })

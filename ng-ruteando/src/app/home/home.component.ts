@@ -24,6 +24,8 @@ import { areaLinksFor } from '../layout/nav-items';
 
 import { FIGURES_SAMPLE_SIZE, PackageFigures, packageFigures } from './package-figures';
 
+import { locale, t } from '../core/i18n/i18n';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 /**
  * Inicio: cabecera con el saludo y las acciones principales (planificar una jornada e importar paquetes, solo para quienes
  * operan jornadas), accesos a las áreas que el rol puede abrir (los mismos del menú lateral) como mosaicos y las últimas
@@ -40,6 +42,7 @@ import { FIGURES_SAMPLE_SIZE, PackageFigures, packageFigures } from './package-f
     SkeletonComponent,
     CityMapComponent,
     StatusBadgeComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.component.html',
@@ -62,11 +65,11 @@ export class HomeComponent {
   /** Saludo según la hora: «Buenos días», «Buenas tardes» o «Buenas noches», con el nombre. */
   protected readonly greeting = computed(() => {
     const hour = new Date().getHours();
-    const salute = hour < 12 ? 'Buenos días' : hour < 20 ? 'Buenas tardes' : 'Buenas noches';
+    const salute = hour < 12 ? t('Buenos días') : hour < 20 ? t('Buenas tardes') : t('Buenas noches');
     return `${salute}, ${this.name()}`;
   });
   /** «viernes 30 de octubre» (se muestra en mayúsculas con estilos). */
-  protected readonly today = new Intl.DateTimeFormat('es', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()).replace(',', '');
+  protected readonly today = new Intl.DateTimeFormat(locale(), { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()).replace(',', '');
   /** Quien puede abrir `/jornadas` y `/paquetes` (administradores y agentes) ve las acciones principales. */
   protected readonly canOperate = computed(() => {
     const role = this.currentUser.role();
@@ -110,25 +113,29 @@ export class HomeComponent {
     if (this.status() === 'ready') {
       const running = this.journeys().filter((journey) => journey.status === 'in_progress').length;
       if (running > 0) {
-        parts.push(`${running} de las últimas jornadas ${running === 1 ? 'está' : 'están'} en curso`);
+        parts.push(running === 1 ? t('1 de las últimas jornadas está en curso') : t('{0} de las últimas jornadas están en curso', [running]));
       }
     }
     const figures = this.figures();
     if (this.figuresStatus() === 'ready' && figures && figures.pending > 0) {
-      const noun = figures.pending === 1 ? 'paquete esperando' : 'paquetes esperando';
-      parts.push(`hay ${figures.pending} ${noun} ruta${figures.exact ? '' : ' entre los más recientes'}`);
+      const one = figures.pending === 1;
+      parts.push(
+        figures.exact
+          ? one ? t('hay 1 paquete esperando ruta') : t('hay {0} paquetes esperando ruta', [figures.pending])
+          : one ? t('hay 1 paquete esperando ruta entre los más recientes') : t('hay {0} paquetes esperando ruta entre los más recientes', [figures.pending]),
+      );
     }
     if (parts.length === 0) {
-      return 'Planificación de rutas.';
+      return t('Planificación de rutas.');
     }
-    const text = parts.join(' y ');
+    const text = parts.join(t(' y '));
     return `${text[0].toUpperCase()}${text.slice(1)}.`;
   });
 
   /** «98 de 137 paquetes» si son todos; si no, dice que son los más recientes. */
   protected figuresSummary(figures: PackageFigures): string {
-    const of = `${figures.attended} de ${figures.sample} paquetes`;
-    return figures.exact ? of : `${of} (los más recientes de ${figures.total})`;
+    const of = t('{0} de {1} paquetes', [figures.attended, figures.sample]);
+    return figures.exact ? of : t('{0} (los más recientes de {1})', [of, figures.total]);
   }
 
   protected loadFigures(): void {
@@ -151,10 +158,10 @@ export class HomeComponent {
   protected details(journey: Journey): string {
     const parts: string[] = [];
     if (typeof journey.totalServices === 'number') {
-      parts.push(`${journey.totalServices} ${journey.totalServices === 1 ? 'servicio' : 'servicios'}`);
+      parts.push(journey.totalServices === 1 ? t('1 servicio') : t('{0} servicios', [journey.totalServices]));
     }
     if (typeof journey.totalResources === 'number') {
-      parts.push(`${journey.totalResources} ${journey.totalResources === 1 ? 'vehículo' : 'vehículos'}`);
+      parts.push(journey.totalResources === 1 ? t('1 vehículo') : t('{0} vehículos', [journey.totalResources]));
     }
     parts.push(formatDateTime(journey.createdAt));
     return parts.join(' · ');

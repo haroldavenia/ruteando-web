@@ -12,6 +12,7 @@ import { User } from '../../../core/api/models';
 import { messageFor } from '../../../shared/data/api-messages';
 import { driverName } from '../fleet-labels';
 
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 export interface AssignDriverData {
   vehicle: string;
   currentDriverId: string | null;
@@ -20,32 +21,32 @@ export interface AssignDriverData {
 /** Elige entre los conductores del tenant; se cierra con el id elegido o sin valor al cancelar. */
 @Component({
   selector: 'app-assign-driver-dialog',
-  imports: [ReactiveFormsModule, RouterLink, MatDialogModule, MatButtonModule, MatFormFieldModule, MatSelectModule, SkeletonComponent],
+  imports: [ReactiveFormsModule, RouterLink, MatDialogModule, MatButtonModule, MatFormFieldModule, MatSelectModule, SkeletonComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h2 mat-dialog-title>Asignar conductor a {{ data.vehicle }}</h2>
+    <h2 mat-dialog-title>{{ 'Asignar conductor a {0}' | t: [data.vehicle] }}</h2>
     <mat-dialog-content>
       @if (loading()) {
-        <app-skeleton variant="form" [count]="1" label="Cargando conductores…" />
+        <app-skeleton variant="form" [count]="1" [label]="'Cargando conductores…' | t" />
       } @else if (error()) {
         <p role="alert">{{ error() }}</p>
       } @else if (drivers().length === 0) {
-        <p>No hay conductores creados. <a routerLink="/flota/conductores" mat-dialog-close>Crear un conductor</a></p>
+        <p>{{ 'No hay conductores creados.' | t }} <a routerLink="/flota/conductores" mat-dialog-close>{{ 'Crear un conductor' | t }}</a></p>
       } @else {
         <mat-form-field class="field">
-          <mat-label>Conductor</mat-label>
+          <mat-label>{{ 'Conductor' | t }}</mat-label>
           <mat-select [formControl]="driver" cdkFocusInitial>
             @for (user of drivers(); track user.id) {
               <mat-option [value]="user.id">{{ name(user) }} ({{ user.email }})</mat-option>
             }
           </mat-select>
-          <mat-error>Elige un conductor</mat-error>
+          <mat-error>{{ 'Elige un conductor' | t }}</mat-error>
         </mat-form-field>
       }
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button type="button" mat-dialog-close>Cancelar</button>
-      <button mat-flat-button type="button" [disabled]="drivers().length === 0" (click)="confirm()">Asignar</button>
+      <button mat-button type="button" mat-dialog-close>{{ 'Cancelar' | t }}</button>
+      <button mat-flat-button type="button" [disabled]="drivers().length === 0" (click)="confirm()">{{ 'Asignar' | t }}</button>
     </mat-dialog-actions>
   `,
   styles: `

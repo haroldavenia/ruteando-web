@@ -1,5 +1,6 @@
 import { ApiError } from '../../core/api/api-error';
 
+import { t } from '../../core/i18n/i18n';
 /** Mensaje técnico que el gateway pone en el cuerpo del error (`{ error, message, ... }`), si lo hay. */
 export function gatewayMessage(error: ApiError): string | null {
   const details = error.details;
@@ -9,8 +10,8 @@ export function gatewayMessage(error: ApiError): string | null {
   return typeof details === 'string' && details ? details : null;
 }
 
-export const PLAN_TIMEOUT = 'La planificación tardó demasiado o el servicio no respondió; vuelve a intentarlo';
-export const PLAN_NOT_FOUND = 'La configuración o alguno de los paquetes ya no existe. Revisa la selección y vuelve a intentarlo.';
+export const PLAN_TIMEOUT = t('La planificación tardó demasiado o el servicio no respondió; vuelve a intentarlo');
+export const PLAN_NOT_FOUND = t('La configuración o alguno de los paquetes ya no existe. Revisa la selección y vuelve a intentarlo.');
 
 /**
  * Texto de un fallo de planificación. El mensaje del gateway se muestra tal cual: es lo único que
@@ -22,7 +23,7 @@ export function planErrorMessage(error: unknown): string | undefined {
   }
   if (error.status === 400 || error.status === 422) {
     const detail = gatewayMessage(error);
-    return detail ? `No se pudo planificar la jornada: ${detail}` : 'No se pudo planificar la jornada';
+    return detail ? t('No se pudo planificar la jornada: {0}', [detail]) : t('No se pudo planificar la jornada');
   }
   if (error.status === 404) {
     return PLAN_NOT_FOUND;

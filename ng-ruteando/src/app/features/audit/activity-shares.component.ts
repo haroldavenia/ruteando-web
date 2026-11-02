@@ -9,13 +9,15 @@ import { formatNumber } from './audit-format';
 import { AuditKind, auditKindIcon, auditKindLabel, auditKindTone } from './audit-labels';
 import { KindShare, kindShares } from './audit-stats';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { t } from '../../core/i18n/i18n';
 /**
  * Cómo se reparten los eventos entre los seis tipos de acción: una barra apilada y, debajo, cada tipo con su glifo, su nombre, su
  * recuento y su porcentaje (el color nunca es la única señal). Cada tipo es un botón que filtra el listado.
  */
 @Component({
   selector: 'app-activity-shares',
-  imports: [MatIconModule],
+  imports: [MatIconModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './activity-shares.component.html',
@@ -31,7 +33,7 @@ export class ActivitySharesComponent {
   protected readonly shares = computed(() => kindShares(this.rows()));
   protected readonly summary = computed(() =>
     this.shares()
-      .map((share) => `${auditKindLabel(share.kind)}: ${formatNumber(share.count)} ${share.count === 1 ? 'evento' : 'eventos'} (${formatPercent(share.percent)})`)
+      .map((share) => `${auditKindLabel(share.kind)}: ${share.count === 1 ? t('1 evento') : t('{0} eventos', [formatNumber(share.count)])} (${formatPercent(share.percent)})`)
       .join('; '),
   );
 

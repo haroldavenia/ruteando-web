@@ -1,13 +1,13 @@
-<div class="toolbar" role="group" aria-label="Herramientas del polígono">
+<div class="toolbar" role="group" [attr.aria-label]="'Herramientas del polígono' | t">
   @if (!drawing()) {
     <button mat-stroked-button type="button" (click)="startDrawing()" [disabled]="!olMap()">
-      <mat-icon aria-hidden="true">draw</mat-icon>Dibujar polígono
+      <mat-icon aria-hidden="true">draw</mat-icon>{{ 'Dibujar polígono' | t }}
     </button>
-    <button mat-button type="button" (click)="clear()" [disabled]="vertices().length === 0">Borrar polígono</button>
+    <button mat-button type="button" (click)="clear()" [disabled]="vertices().length === 0">{{ 'Borrar polígono' | t }}</button>
   } @else {
-    <button mat-flat-button type="button" (click)="finishDrawing()">Terminar polígono</button>
-    <button mat-button type="button" (click)="cancelDrawing()">Cancelar</button>
-    <span class="hint" role="status">Haz clic en el mapa para añadir vértices; doble clic o «Terminar polígono» para cerrarlo. Escape cancela.</span>
+    <button mat-flat-button type="button" (click)="finishDrawing()">{{ 'Terminar polígono' | t }}</button>
+    <button mat-button type="button" (click)="cancelDrawing()">{{ 'Cancelar' | t }}</button>
+    <span class="hint" role="status">{{ 'Haz clic en el mapa para añadir vértices; doble clic o «Terminar polígono» para cerrarlo. Escape cancela.' | t }}</span>
   }
 </div>
 
@@ -15,10 +15,10 @@
   #host
   class="map"
   role="region"
-  aria-label="Mapa para dibujar el polígono. También puedes escribir los vértices en la tabla de más abajo."
+  [attr.aria-label]="'Mapa para dibujar el polígono. También puedes escribir los vértices en la tabla de más abajo.' | t"
 ></div>
 @if (failed()) {
-  <p class="notice error" role="alert">No se pudo cargar el mapa. Puedes seguir escribiendo los vértices en la tabla.</p>
+  <p class="notice error" role="alert">{{ 'No se pudo cargar el mapa. Puedes seguir escribiendo los vértices en la tabla.' | t }}</p>
 }
 
 <div class="side">

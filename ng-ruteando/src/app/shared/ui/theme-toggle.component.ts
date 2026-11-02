@@ -4,6 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { ThemePreference, ThemeService } from '../../core/theme/theme.service';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 interface ThemeOption {
   readonly value: ThemePreference;
   readonly label: string;
@@ -11,9 +13,9 @@ interface ThemeOption {
 }
 
 const OPTIONS: readonly ThemeOption[] = [
-  { value: 'system', label: 'Tema del sistema', icon: 'brightness_auto' },
-  { value: 'light', label: 'Tema claro', icon: 'light_mode' },
-  { value: 'dark', label: 'Tema oscuro', icon: 'dark_mode' },
+  { value: 'system', label: t('Tema del sistema'), icon: 'brightness_auto' },
+  { value: 'light', label: t('Tema claro'), icon: 'light_mode' },
+  { value: 'dark', label: t('Tema oscuro'), icon: 'dark_mode' },
 ];
 
 /**
@@ -23,11 +25,11 @@ const OPTIONS: readonly ThemeOption[] = [
  */
 @Component({
   selector: 'app-theme-toggle',
-  imports: [MatButtonToggleModule, MatIconModule],
+  imports: [MatButtonToggleModule, MatIconModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-button-toggle-group
-      aria-label="Tema de color"
+      [attr.aria-label]="'Tema de color' | t"
       hideSingleSelectionIndicator
       [value]="theme.preference()"
       (change)="choose($event)"

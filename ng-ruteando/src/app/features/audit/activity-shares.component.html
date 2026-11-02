@@ -1,6 +1,6 @@
 <div class="audit-shares">
-  <b id="audit-shares-title">Por tipo de acción</b>
-  <div class="audit-stack" role="img" [attr.aria-label]="'Por tipo de acción. ' + summary()">
+  <b id="audit-shares-title">{{ 'Por tipo de acción' | t }}</b>
+  <div class="audit-stack" role="img" [attr.aria-label]="('Por tipo de acción. ' | t) + summary()">
     @for (share of shares(); track share.kind) {
       <span class="audit-seg" [attr.data-tone]="tone(share.kind)" [style.flex-grow]="share.count"></span>
     }

@@ -9,6 +9,7 @@ import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 import { copyToClipboard } from './audit-clipboard';
 import { formatUtc } from './audit-format';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Lo que necesita quien cruza un evento con otros sistemas: la clave de la acción y del tipo de entidad, los identificadores (con
  * botón para copiarlos), el instante en UTC, el rol tal como lo manda el gateway, la descripción original y los cambios en JSON.
@@ -16,7 +17,7 @@ import { formatUtc } from './audit-format';
  */
 @Component({
   selector: 'app-audit-tech',
-  imports: [MatButtonModule, MatIconModule, ActionTitleDirective],
+  imports: [MatButtonModule, MatIconModule, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './audit-tech.component.html',

@@ -1,5 +1,6 @@
 import { DomainWaypoint, Package } from '../../core/api/models';
 
+import { t } from '../../core/i18n/i18n';
 /** Una visita es una parada de la ruta con paquete; su estado es el del paquete. */
 export interface RouteVisit {
   stop: DomainWaypoint;
@@ -69,9 +70,9 @@ export function visitProgress(visits: readonly RouteVisit[]): VisitProgress {
 /** Texto accesible del avance: «4 de 10 visitas atendidas». */
 export function progressText({ attended, total }: VisitProgress): string {
   if (total === 0) {
-    return 'Esta ruta no tiene visitas';
+    return t('Esta ruta no tiene visitas');
   }
-  return `${attended} de ${total} ${total === 1 ? 'visita atendida' : 'visitas atendidas'}`;
+  return total === 1 ? t('{0} de 1 visita atendida', [attended]) : t('{0} de {1} visitas atendidas', [attended, total]);
 }
 
 /** Visitas de una ruta: las paradas con `packageId`, en orden y aún sin paquete leído. */

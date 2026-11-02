@@ -24,12 +24,14 @@ import { entityTarget, entityWasDeleted } from './audit-links';
 import { AuditRelatedComponent } from './audit-related.component';
 import { AuditTechComponent } from './audit-tech.component';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const TECH_KEY = 'ruteando-audit-tech';
 /** Cuántos eventos de la misma entidad se ofrecen en la línea de tiempo. */
 const RELATED_LIMIT = 5;
 
-export const DIRECT_FORBIDDEN = 'No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.';
-export const EVENT_GONE = 'Este evento ya no existe o no está disponible.';
+export const DIRECT_FORBIDDEN = t('No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.');
+export const EVENT_GONE = t('Este evento ya no existe o no está disponible.');
 
 /** Qué se abre: el evento (ya a mano si el listado lo tiene) o solo su identificador, que se pide al gateway. */
 export interface AuditDetailData {
@@ -66,6 +68,7 @@ export interface AuditDetailResult {
     AuditChangesComponent,
     AuditRelatedComponent,
     AuditTechComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
@@ -99,7 +102,7 @@ export class AuditDetailDialogComponent {
   protected readonly tone = computed(() => (this.loader.status() === 'ready' ? this.kindTone() : 'neutral'));
   protected readonly kindIcon = computed(() => auditKindIcon(this.kind()));
   protected readonly kindLabel = computed(() => auditKindLabel(this.kind()));
-  protected readonly title = computed(() => (this.log() ? auditActionLabel(this.log()!.action) : 'Evento de auditoría'));
+  protected readonly title = computed(() => (this.log() ? auditActionLabel(this.log()!.action) : t('Evento de auditoría')));
   protected readonly summary = computed(() => (this.log() ? humanizeIds(auditSummary(this.log()!)) : ''));
   /** La frase de la acción y la descripción dicen lo mismo: no se repite. */
   protected readonly showSummary = computed(() => this.summary() !== this.title());
@@ -117,9 +120,9 @@ export class AuditDetailDialogComponent {
       case 'ready':
         return this.title();
       case 'loading':
-        return 'Evento de auditoría';
+        return t('Evento de auditoría');
       default:
-        return 'No se pudo abrir el evento';
+        return t('No se pudo abrir el evento');
     }
   });
   protected readonly problem = computed(() => (this.loader.status() === 'missing' ? EVENT_GONE : this.loader.error()));

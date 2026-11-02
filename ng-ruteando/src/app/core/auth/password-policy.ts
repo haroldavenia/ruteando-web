@@ -1,11 +1,12 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
+import { t } from '../i18n/i18n';
 /** Política de contraseña del gateway para el registro y el restablecimiento; el gateway tiene la última palabra. */
 export const PASSWORD_POLICY_LENGTH = 16;
 export const PASSWORD_SYMBOLS = '@$!%*?&';
 
 /** La regla en una frase: es lo que se muestra cuando el gateway rechaza la contraseña. */
-export const PASSWORD_POLICY_TEXT = `Mínimo ${PASSWORD_POLICY_LENGTH} caracteres, con mayúscula, minúscula, número y un símbolo (${PASSWORD_SYMBOLS})`;
+export const PASSWORD_POLICY_TEXT = t('Mínimo {0} caracteres, con mayúscula, minúscula, número y un símbolo ({1})', [PASSWORD_POLICY_LENGTH, PASSWORD_SYMBOLS]);
 
 export type PasswordRule = 'length' | 'upper' | 'lower' | 'digit' | 'symbol';
 /** Reglas que incumple una contraseña (solo las que faltan). */
@@ -13,11 +14,11 @@ export type PasswordPolicyError = Partial<Record<PasswordRule, true>>;
 
 /** Los requisitos que se muestran como lista, en este orden. */
 export const PASSWORD_REQUIREMENTS: readonly { readonly rule: PasswordRule; readonly label: string }[] = [
-  { rule: 'length', label: `Al menos ${PASSWORD_POLICY_LENGTH} caracteres` },
-  { rule: 'upper', label: 'Una mayúscula' },
-  { rule: 'lower', label: 'Una minúscula' },
-  { rule: 'digit', label: 'Un número' },
-  { rule: 'symbol', label: `Un símbolo (${PASSWORD_SYMBOLS})` },
+  { rule: 'length', label: t('Al menos {0} caracteres', [PASSWORD_POLICY_LENGTH]) },
+  { rule: 'upper', label: t('Una mayúscula') },
+  { rule: 'lower', label: t('Una minúscula') },
+  { rule: 'digit', label: t('Un número') },
+  { rule: 'symbol', label: t('Un símbolo ({0})', [PASSWORD_SYMBOLS]) },
 ];
 
 // Como el gateway: letras ASCII (una `É` no cuenta como mayúscula) y solo estos símbolos

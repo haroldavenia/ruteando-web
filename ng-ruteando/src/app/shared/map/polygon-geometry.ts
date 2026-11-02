@@ -1,5 +1,6 @@
 import { LatLng, latLng } from '../../core/geo/lat-lng';
 
+import { t } from '../../core/i18n/i18n';
 /** Más vértices que esto y no se comprueban los cruces (la comprobación es O(n²)). */
 export const MAX_CHECKED_VERTICES = 2000;
 /** Kilómetros por grado de arco en la esfera terrestre media. */
@@ -113,12 +114,12 @@ export function isValidPolygon(vertices: readonly LatLng[]): boolean {
 export function polygonIssueMessage(issue: PolygonIssue): string {
   switch (issue.kind) {
     case 'too-few':
-      return 'Hacen falta al menos tres vértices distintos';
+      return t('Hacen falta al menos tres vértices distintos');
     case 'no-area':
-      return 'El polígono no encierra ninguna superficie: los vértices están alineados';
+      return t('El polígono no encierra ninguna superficie: los vértices están alineados');
     case 'self-intersection':
-      return `Los lados ${issue.a} y ${issue.b} se cruzan`;
+      return t('Los lados {0} y {1} se cruzan', [issue.a, issue.b]);
     case 'unchecked':
-      return `Hay más de ${MAX_CHECKED_VERTICES} vértices: no se comprueba si algún lado se cruza`;
+      return t('Hay más de {0} vértices: no se comprueba si algún lado se cruza', [MAX_CHECKED_VERTICES]);
   }
 }

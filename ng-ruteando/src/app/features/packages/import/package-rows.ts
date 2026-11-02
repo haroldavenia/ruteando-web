@@ -2,6 +2,7 @@ import { PackageInput } from '../../../core/api/models';
 import { toGeoJsonPoint } from '../../../core/geo/lat-lng';
 import { toCsv } from '../../../shared/data/csv';
 
+import { t } from '../../../core/i18n/i18n';
 export const MAX_TEXT_LENGTH = 500;
 export const PREVIEW_ROWS = 20;
 
@@ -35,19 +36,19 @@ export interface ImportColumn {
 
 /** Columnas del archivo. La cabecera exportada por la propia aplicación (`ID_GUIA`, `LONGITUD`...) se reconoce. */
 export const IMPORT_COLUMNS: readonly ImportColumn[] = [
-  { key: 'guideNumber', header: 'ID_GUIA', aliases: ['idguia', 'guia', 'numeroguia', 'numerodeguia', 'guidenumber', 'guide'], required: false, description: 'Número de guía; debe ser único en tu empresa', fallback: 'sin guía', example: 'G-1001' },
-  { key: 'name', header: 'NOMBRE', aliases: ['nombre', 'name'], required: false, description: 'Nombre o referencia del paquete', fallback: 'la guía o, si no hay, la dirección', example: 'Paquete de Ana' },
-  { key: 'serviceType', header: 'SERVICIO', aliases: ['servicio', 'tiposervicio', 'tipodeservicio', 'servicetype'], required: false, description: 'Entrega, Recogida o Mixto', fallback: 'Entrega', example: 'Entrega' },
-  { key: 'address', header: 'DIRECCION', aliases: ['direccion', 'address'], required: true, description: 'Dirección del servicio', fallback: '—', example: 'Carrera 7 # 71-21' },
-  { key: 'city', header: 'CIUDAD', aliases: ['ciudad', 'city'], required: false, description: 'Ciudad', fallback: 'vacío', example: 'Bogotá' },
-  { key: 'country', header: 'PAIS', aliases: ['pais', 'country'], required: false, description: 'País', fallback: 'vacío', example: 'Colombia' },
-  { key: 'postalCode', header: 'CODIGO_POSTAL', aliases: ['codigopostal', 'cp', 'postalcode', 'zipcode'], required: false, description: 'Código postal', fallback: 'vacío', example: '110231' },
+  { key: 'guideNumber', header: 'ID_GUIA', aliases: ['idguia', 'guia', 'numeroguia', 'numerodeguia', 'guidenumber', 'guide'], required: false, description: t('Número de guía; debe ser único en tu empresa'), fallback: t('sin guía'), example: 'G-1001' },
+  { key: 'name', header: 'NOMBRE', aliases: ['nombre', 'name'], required: false, description: t('Nombre o referencia del paquete'), fallback: t('la guía o, si no hay, la dirección'), example: t('Paquete de Ana') },
+  { key: 'serviceType', header: 'SERVICIO', aliases: ['servicio', 'tiposervicio', 'tipodeservicio', 'servicetype'], required: false, description: t('Entrega, Recogida o Mixto'), fallback: t('Entrega'), example: t('Entrega') },
+  { key: 'address', header: 'DIRECCION', aliases: ['direccion', 'address'], required: true, description: t('Dirección del servicio'), fallback: '—', example: t('Carrera 7 # 71-21') },
+  { key: 'city', header: 'CIUDAD', aliases: ['ciudad', 'city'], required: false, description: t('Ciudad'), fallback: t('vacío'), example: t('Bogotá') },
+  { key: 'country', header: 'PAIS', aliases: ['pais', 'country'], required: false, description: t('País'), fallback: t('vacío'), example: t('Colombia') },
+  { key: 'postalCode', header: 'CODIGO_POSTAL', aliases: ['codigopostal', 'cp', 'postalcode', 'zipcode'], required: false, description: t('Código postal'), fallback: t('vacío'), example: '110231' },
   { key: 'longitude', header: 'LONGITUD', aliases: ['longitud', 'lon', 'lng', 'longitude'], required: true, description: 'Longitud entre -180 y 180 (punto o coma decimal)', fallback: '—', example: '-74.07728' },
   { key: 'latitude', header: 'LATITUD', aliases: ['latitud', 'lat', 'latitude'], required: true, description: 'Latitud entre -90 y 90 (punto o coma decimal)', fallback: '—', example: '4.60872' },
-  { key: 'weight', header: 'PESO', aliases: ['peso', 'weight'], required: false, description: 'Peso, número mayor o igual que 0', fallback: '0', example: '2.5' },
-  { key: 'volume', header: 'VOLUMEN', aliases: ['volumen', 'volume'], required: false, description: 'Volumen, número mayor o igual que 0', fallback: '0', example: '0.3' },
-  { key: 'pieceNumber', header: 'PIEZAS', aliases: ['piezas', 'numeropiezas', 'numerodepiezas', 'piecenumber', 'pieces'], required: false, description: 'Número de piezas, entero de 1 o más', fallback: '1', example: '1' },
-  { key: 'observation', header: 'OBSERVACION', aliases: ['observacion', 'observaciones', 'observation', 'notas'], required: false, description: 'Observaciones', fallback: 'vacío', example: 'Llamar al llegar' },
+  { key: 'weight', header: 'PESO', aliases: ['peso', 'weight'], required: false, description: t('Peso, número mayor o igual que 0'), fallback: '0', example: '2.5' },
+  { key: 'volume', header: 'VOLUMEN', aliases: ['volumen', 'volume'], required: false, description: t('Volumen, número mayor o igual que 0'), fallback: '0', example: '0.3' },
+  { key: 'pieceNumber', header: 'PIEZAS', aliases: ['piezas', 'numeropiezas', 'numerodepiezas', 'piecenumber', 'pieces'], required: false, description: t('Número de piezas, entero de 1 o más'), fallback: '1', example: '1' },
+  { key: 'observation', header: 'OBSERVACION', aliases: ['observacion', 'observaciones', 'observation', 'notas'], required: false, description: t('Observaciones'), fallback: t('vacío'), example: t('Llamar al llegar') },
 ];
 
 export interface RowError {
@@ -83,6 +84,10 @@ const SERVICE_TYPES: Readonly<Record<string, string>> = {
   pickup: 'pickup',
   mixto: 'mixed',
   mixed: 'mixed',
+  // Portugués (la plantilla y los avisos hablan el idioma de la interfaz, y se aceptan las palabras de los tres)
+  coleta: 'pickup',
+  recolha: 'pickup',
+  misto: 'mixed',
 };
 
 /** Minúsculas, sin tildes y sin espacios, guiones ni signos: `ID_GUIA` → `idguia`. */
@@ -134,13 +139,13 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
 
     for (const column of IMPORT_COLUMNS) {
       if (cell(column.key).length > MAX_TEXT_LENGTH) {
-        fail(column.key, `Supera los ${MAX_TEXT_LENGTH} caracteres`);
+        fail(column.key, t('Supera los {0} caracteres', [MAX_TEXT_LENGTH]));
       }
     }
 
     const address = cell('address');
     if (!address) {
-      fail('address', 'La dirección es obligatoria');
+      fail('address', t('La dirección es obligatoria'));
     }
 
     const longitude = cell('longitude');
@@ -148,20 +153,20 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
     const lon = longitude === '' ? null : parseNumber(longitude);
     const lat = latitude === '' ? null : parseNumber(latitude);
     if (longitude === '') {
-      fail('longitude', 'La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)');
+      fail('longitude', t('La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)'));
     } else if (lon === null || Math.abs(lon) > 180) {
-      fail('longitude', 'La longitud debe ser un número entre -180 y 180');
+      fail('longitude', t('La longitud debe ser un número entre -180 y 180'));
     }
     if (latitude === '') {
-      fail('latitude', 'La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)');
+      fail('latitude', t('La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)'));
     } else if (lat === null || Math.abs(lat) > 90) {
-      fail('latitude', 'La latitud debe ser un número entre -90 y 90');
+      fail('latitude', t('La latitud debe ser un número entre -90 y 90'));
     }
 
     const service = cell('serviceType');
     const serviceType = service === '' ? 'delivery' : SERVICE_TYPES[normalizeHeader(service)];
     if (!serviceType) {
-      fail('serviceType', 'El tipo de servicio debe ser Entrega, Recogida o Mixto');
+      fail('serviceType', t('El tipo de servicio debe ser Entrega, Recogida o Mixto'));
     }
 
     const number = (key: ColumnKey, label: string): number => {
@@ -171,13 +176,13 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
       }
       const value = parseNumber(text);
       if (value === null || value < 0) {
-        fail(key, `${label} debe ser un número mayor o igual que 0`);
+        fail(key, t('{0} debe ser un número mayor o igual que 0', [label]));
         return 0;
       }
       return value;
     };
-    const weight = number('weight', 'El peso');
-    const volume = number('volume', 'El volumen');
+    const weight = number('weight', t('El peso'));
+    const volume = number('volume', t('El volumen'));
 
     const piecesText = cell('pieceNumber');
     let pieces: number | null = null;
@@ -185,7 +190,7 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
       if (/^\d+$/.test(piecesText) && Number(piecesText) >= 1) {
         pieces = Number(piecesText);
       } else {
-        fail('pieceNumber', 'Las piezas deben ser un número entero de 1 o más');
+        fail('pieceNumber', t('Las piezas deben ser un número entero de 1 o más'));
       }
     }
 
@@ -193,7 +198,7 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
     if (guide) {
       const first = guideLines.get(guide);
       if (first !== undefined) {
-        fail('guideNumber', `La guía «${guide}» ya aparece en la línea ${first}`);
+        fail('guideNumber', t('La guía «{0}» ya aparece en la línea {1}', [guide, first]));
       } else {
         guideLines.set(guide, line);
       }
@@ -205,7 +210,7 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
     }
     const location = toGeoJsonPoint({ lat, lng: lon });
     if (!location) {
-      result.errors.push({ line, field: headerOf('latitude'), message: 'La ubicación no es válida' });
+      result.errors.push({ line, field: headerOf('latitude'), message: t('La ubicación no es válida') });
       return;
     }
     const optional = {
@@ -251,7 +256,7 @@ export interface ReportEntry {
 /** Informe de errores: línea, campo, motivo y la fila original, con las celdas protegidas contra fórmulas. */
 export function importErrorsCsv(entries: readonly ReportEntry[]): string {
   return toCsv(
-    ['LINEA', 'CAMPO', 'MOTIVO', 'FILA ORIGINAL'],
+    ['LINEA', 'CAMPO', 'MOTIVO', t('FILA ORIGINAL')],
     entries.map((entry) => [entry.line, entry.field, entry.message, (entry.original ?? []).join(' | ')]),
   );
 }

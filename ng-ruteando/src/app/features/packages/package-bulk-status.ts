@@ -5,6 +5,7 @@ import { PackagesApi } from '../../core/api/data/packages.api';
 import { messageFor } from '../../shared/data/api-messages';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
+import { t } from '../../core/i18n/i18n';
 /** Peticiones de cambio de estado a la vez: el gateway no tiene lote, así que cada paquete es una petición. */
 export const BULK_STATUS_CONCURRENCY = 4;
 
@@ -29,10 +30,10 @@ export function changeStatusOfMany(
       ? dialog
           .open(ConfirmDialogComponent, {
             data: {
-              title: 'Cancelar paquetes',
-              message: targets.length === 1 ? `¿Cancelar el paquete «${targets[0].label}»?` : `¿Cancelar los ${targets.length} paquetes elegidos?`,
-              confirmLabel: targets.length === 1 ? 'Cancelar paquete' : 'Cancelar paquetes',
-              cancelLabel: 'Volver',
+              title: t('Cancelar paquetes'),
+              message: targets.length === 1 ? t('¿Cancelar el paquete «{0}»?', [targets[0].label]) : t('¿Cancelar los {0} paquetes elegidos?', [targets.length]),
+              confirmLabel: targets.length === 1 ? t('Cancelar paquete') : t('Cancelar paquetes'),
+              cancelLabel: t('Volver'),
             },
           })
           .afterClosed()

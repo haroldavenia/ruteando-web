@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Cabecera de la modal de detalle: un glifo grande, el tipo de acción en versalitas, el título de la modal (el que la nombra para los
  * lectores de pantalla), hace cuánto y el botón de cerrar. Su color (`--tone-bg` y `--tone-fg`) lo pone la modal según el tipo de
@@ -12,7 +13,7 @@ import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
  */
 @Component({
   selector: 'app-audit-detail-head',
-  imports: [MatButtonModule, MatDialogModule, MatIconModule, ActionTitleDirective],
+  imports: [MatButtonModule, MatDialogModule, MatIconModule, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './audit-detail-head.component.html',

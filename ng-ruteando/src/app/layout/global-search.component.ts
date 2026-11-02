@@ -9,6 +9,8 @@ import { CurrentUser } from '../core/auth/current-user';
 
 import { NavItem, quickActionsFor } from './nav-items';
 
+import { t } from '../core/i18n/i18n';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 /** Una pantalla o una acción que ofrece la búsqueda. */
 export interface SearchOption {
   readonly label: string;
@@ -28,7 +30,7 @@ function plain(text: string): string {
  */
 @Component({
   selector: 'app-global-search',
-  imports: [ReactiveFormsModule, MatAutocompleteModule, MatIconModule],
+  imports: [ReactiveFormsModule, MatAutocompleteModule, MatIconModule, TranslatePipe],
   host: { '(document:keydown)': 'onKeydown($event)' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -38,14 +40,14 @@ function plain(text: string): string {
         #searchInput
         type="search"
         autocomplete="off"
-        placeholder="Buscar o ir a…"
-        aria-label="Buscar o ir a una pantalla"
+        [placeholder]="'Buscar o ir a…' | t"
+        [attr.aria-label]="'Buscar o ir a una pantalla' | t"
         aria-keyshortcuts="Control+K"
         [formControl]="search"
         [matAutocomplete]="results"
         [matAutocompleteConnectedTo]="origin"
       />
-      <span class="hint" aria-hidden="true"><kbd>Ctrl</kbd><kbd>K</kbd></span>
+      <span class="hint" aria-hidden="true"><kbd>{{ 'Ctrl' | t }}</kbd><kbd>{{ 'K' | t }}</kbd></span>
     </div>
     <mat-autocomplete #results="matAutocomplete" autoActiveFirstOption [displayWith]="noDisplay" (optionSelected)="go($event.option.value)">
       @for (group of groups(); track group.label) {
@@ -58,7 +60,7 @@ function plain(text: string): string {
           }
         </mat-optgroup>
       } @empty {
-        <mat-option disabled>Sin resultados</mat-option>
+        <mat-option disabled>{{ 'Sin resultados' | t }}</mat-option>
       }
     </mat-autocomplete>
   `,
@@ -84,8 +86,8 @@ export class GlobalSearchComponent {
     const text = plain(typeof this.query() === 'string' ? this.query() : '');
     const matches = (options: SearchOption[]) => options.filter((option) => plain(option.label).includes(text));
     return [
-      { label: 'Ir a', options: matches(pages) },
-      { label: 'Acciones', options: matches(actions) },
+      { label: t('Ir a'), options: matches(pages) },
+      { label: t('Acciones'), options: matches(actions) },
     ].filter((group) => group.options.length > 0);
   });
 

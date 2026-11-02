@@ -31,6 +31,8 @@ import { StatusTone } from '../ui/status-tone';
 import { readPref, writePref } from './list-prefs';
 import { DEFAULT_PAGE_SIZE, ListState } from './list-state';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export interface DataColumn<T> {
   id: string;
   header: string;
@@ -84,18 +86,18 @@ export function normalizeText(value: string): string {
 }
 
 @Injectable()
-class SpanishPaginatorIntl extends MatPaginatorIntl {
-  override itemsPerPageLabel = 'Filas por página';
-  override nextPageLabel = 'Página siguiente';
-  override previousPageLabel = 'Página anterior';
-  override firstPageLabel = 'Primera página';
-  override lastPageLabel = 'Última página';
+class PaginatorIntl extends MatPaginatorIntl {
+  override itemsPerPageLabel = t('Filas por página');
+  override nextPageLabel = t('Página siguiente');
+  override previousPageLabel = t('Página anterior');
+  override firstPageLabel = t('Primera página');
+  override lastPageLabel = t('Última página');
   override getRangeLabel = (page: number, pageSize: number, length: number): string => {
     if (length === 0) {
-      return '0 de 0';
+      return t('0 de 0');
     }
     const start = page * pageSize + 1;
-    return `${start} – ${Math.min(start + pageSize - 1, length)} de ${length}`;
+    return t('{0} – {1} de {2}', [start, Math.min(start + pageSize - 1, length), length]);
   };
 }
 
@@ -125,8 +127,9 @@ class SpanishPaginatorIntl extends MatPaginatorIntl {
     MatIconModule,
     MatProgressBarModule,
     StatusBadgeComponent,
+    TranslatePipe,
   ],
-  providers: [{ provide: MatPaginatorIntl, useClass: SpanishPaginatorIntl }],
+  providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntl }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown)': 'focusSearchOnSlash($event)' },
   templateUrl: './data-table.component.html',
@@ -138,11 +141,11 @@ export class DataTableComponent<T> {
   readonly state = input.required<ListState<T>>();
   readonly columns = input.required<readonly DataColumn<T>[]>();
   /** Nombre del tipo de registro en plural, para los mensajes ("vehículos"). */
-  readonly entityPlural = input('registros');
-  readonly emptyMessage = input('Todavía no hay registros');
+  readonly entityPlural = input(t('registros'));
+  readonly emptyMessage = input(t('Todavía no hay registros'));
   readonly pageSizeOptions = input<readonly number[]>([10, 20, 50]);
   /** Pista del campo de búsqueda («Buscar por guía, nombre o dirección»). */
-  readonly searchPlaceholder = input('Buscar en esta página');
+  readonly searchPlaceholder = input(t('Buscar en esta página'));
   /** Chips de estado con recuento (solo con una lista entera en el cliente). */
   readonly facet = input<DataFacet<T> | null>(null);
   /** Casillas por fila y barra de acciones de la selección. */
@@ -233,7 +236,7 @@ export class DataTableComponent<T> {
     }
     const chosen = this.facetKey();
     return [
-      { key: null, label: 'Todos', count: rows.length, on: chosen === null },
+      { key: null, label: t('Todos'), count: rows.length, on: chosen === null },
       ...facet.options
         .filter((option) => (counts.get(option.key) ?? 0) > 0 || option.key === chosen)
         .map((option) => ({ key: option.key as string | null, label: option.label, count: counts.get(option.key) ?? 0, on: chosen === option.key })),
@@ -251,11 +254,11 @@ export class DataTableComponent<T> {
     }
     const loaded = state.rows().length;
     if (!this.clientSide()) {
-      return this.filter().trim() ? `${this.filtered().length} de ${loaded} filas de esta página` : `Mostrando ${loaded} de ${state.total()}`;
+      return this.filter().trim() ? t('{0} de {1} filas de esta página', [this.filtered().length, loaded]) : t('Mostrando {0} de {1}', [loaded, state.total()]);
     }
     const filtering = this.filter().trim() !== '' || this.facetKey() !== null;
-    const more = state.total() > loaded ? `Se muestran los primeros ${loaded} ${this.entityPlural()} de ${state.total()}` : '';
-    return [filtering ? `${this.filtered().length} de ${loaded}` : '', more].filter(Boolean).join(' · ');
+    const more = state.total() > loaded ? t('Se muestran los primeros {0} {1} de {2}', [loaded, this.entityPlural(), state.total()]) : '';
+    return [filtering ? t('{0} de {1}', [this.filtered().length, loaded]) : '', more].filter(Boolean).join(' · ');
   });
 
   protected readonly selectedRows = computed(() => {

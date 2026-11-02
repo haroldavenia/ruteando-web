@@ -1,24 +1,25 @@
 import { AuditChanges } from '../../core/api/models';
 import { packageStatusLabel } from '../packages/package-labels';
 
-export const EMPTY_VALUE = '(vacío)';
+import { t } from '../../core/i18n/i18n';
+export const EMPTY_VALUE = t('(vacío)');
 
 /** Nombres en español de los campos que más aparecen en `changes`; el resto se muestra con su clave. */
 const FIELD_LABELS: Readonly<Record<string, string>> = {
-  status: 'Estado',
-  driverId: 'Conductor',
-  name: 'Nombre',
-  licensePlate: 'Matrícula',
-  quantity: 'Cantidad',
-  type: 'Tipo',
-  address: 'Dirección',
-  routeTopology: 'Forma de la ruta',
-  restrictionType: 'Tipo de restricción',
-  fixedRoutes: 'Rutas fijas',
-  lengthOfStay: 'Duración de la parada',
-  email: 'Correo',
-  role: 'Rol',
-  active: 'Activo',
+  status: t('Estado'),
+  driverId: t('Conductor'),
+  name: t('Nombre'),
+  licensePlate: t('Matrícula'),
+  quantity: t('Cantidad'),
+  type: t('Tipo'),
+  address: t('Dirección'),
+  routeTopology: t('Forma de la ruta'),
+  restrictionType: t('Tipo de restricción'),
+  fixedRoutes: t('Rutas fijas'),
+  lengthOfStay: t('Duración de la parada'),
+  email: t('Correo'),
+  role: t('Rol'),
+  active: t('Activo'),
 };
 
 export const auditFieldLabel = (field: string): string => FIELD_LABELS[field] ?? field;

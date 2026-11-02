@@ -22,7 +22,9 @@ import { PolygonEditorComponent } from '../../shared/map/polygon-editor.componen
 import { isValidPolygon, polygonIssueMessage, ringFromVertices, validatePolygon, verticesFromRing } from '../../shared/map/polygon-geometry';
 import { ROUTE_COLORS, ROUTE_COLOR_NAMES } from '../../shared/map/route-colors';
 
-const DUPLICATE_CODE = 'Ya existe una zona con ese código';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+const DUPLICATE_CODE = t('Ya existe una zona con ese código');
 export const MAX_CODE_LENGTH = 20;
 const READ_ONLY_FIELDS: readonly (keyof Zone)[] = ['id', 'tenantId', 'createdAt', 'updatedAt'];
 
@@ -41,9 +43,9 @@ function codeValidator(control: AbstractControl): ValidationErrors | null {
 const nameValidator = (control: AbstractControl): ValidationErrors | null => (String(control.value ?? '').trim() === '' ? { required: true } : null);
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
-  required: 'Este campo es obligatorio',
-  spaces: 'El código no puede llevar espacios',
-  tooLong: `El código admite como máximo ${MAX_CODE_LENGTH} caracteres`,
+  required: t('Este campo es obligatorio'),
+  spaces: t('El código no puede llevar espacios'),
+  tooLong: t('El código admite como máximo {0} caracteres', [MAX_CODE_LENGTH]),
 };
 
 /** Cuerpo del PUT: el registro cargado sin los campos de solo lectura y con lo editado encima (conserva `active`). */
@@ -57,7 +59,7 @@ export function buildZoneUpdateBody(record: Zone, edited: Partial<ZoneInput>): P
 
 @Component({
   selector: 'app-zone-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, SkeletonComponent, FocusFirstInvalidDirective, FormActionsComponent, FormHeadComponent, FormResultComponent, MatIconModule, PolygonEditorComponent],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, SkeletonComponent, FocusFirstInvalidDirective, FormActionsComponent, FormHeadComponent, FormResultComponent, MatIconModule, PolygonEditorComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './zone-form.component.html',
   styleUrl: './zone-form.component.scss',
@@ -82,14 +84,14 @@ export class ZoneFormComponent implements HasUnsavedChanges {
       return '';
     }
     if (vertices.length === 0) {
-      return 'Dibuja el polígono de la zona en el mapa o escribe sus vértices';
+      return t('Dibuja el polígono de la zona en el mapa o escribe sus vértices');
     }
     const blocking = validatePolygon(vertices).filter((i) => i.kind !== 'unchecked');
     return blocking.map(polygonIssueMessage).join('. ');
   });
 
   protected readonly colors = [
-    { value: null as string | null, label: 'Sin color' },
+    { value: null as string | null, label: t('Sin color') },
     ...ROUTE_COLORS.map((value, i) => ({ value: value as string | null, label: ROUTE_COLOR_NAMES[i] })),
   ];
 
@@ -145,7 +147,7 @@ export class ZoneFormComponent implements HasUnsavedChanges {
       request$,
       () => {
         this.saved.set(true);
-        void notify(this.injector, this.id === null ? 'Zona creada' : 'Zona guardada');
+        void notify(this.injector, this.id === null ? t('Zona creada') : t('Zona guardada'));
         void this.router.navigateByUrl('/zonas');
       },
       { 409: DUPLICATE_CODE },

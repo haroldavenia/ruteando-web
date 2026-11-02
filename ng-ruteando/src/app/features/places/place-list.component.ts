@@ -15,23 +15,25 @@ import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 import { PlacesMapComponent } from './places-map.component';
 import { PLACE_TYPE_LABELS, formatLocation, placeTypeLabel } from './place-labels';
 
-const IN_USE = 'No se puede eliminar: el lugar se usa como depósito o en otros datos';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otros datos');
 
 @Component({
   selector: 'app-place-list',
-  imports: [DataTableComponent, PlacesMapComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
+  imports: [DataTableComponent, PlacesMapComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './place-list.component.scss',
   template: `
-    <app-page-header title="Lugares" [subtitle]="state.countText('lugar', 'lugares')">
-      <a mat-flat-button class="primary-action" routerLink="/lugares/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo lugar</a>
+    <app-page-header [title]="'Lugares' | t" [subtitle]="state.countText('lugar', 'lugares')">
+      <a mat-flat-button class="primary-action" routerLink="/lugares/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo lugar' | t }}</a>
     </app-page-header>
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
     <!-- Desde 1100px el mapa queda fijo a un lado y la lista al otro; por debajo, uno sobre otra -->
     <div [class.split-view]="state.rows().length > 0">
       @if (state.rows().length > 0) {
         <section class="card sticky" aria-labelledby="places-map-title">
-          <h2 id="places-map-title">Mapa de los lugares</h2>
+          <h2 id="places-map-title">{{ 'Mapa de los lugares' | t }}</h2>
           <app-places-map [places]="mapPlaces()" [selectedId]="selected()?.id ?? null" (placeSelect)="select($event)" />
           @if (selected(); as place) {
             <div class="ficha" role="status">
@@ -39,8 +41,8 @@ const IN_USE = 'No se puede eliminar: el lugar se usa como depósito o en otros 
                 <b>{{ place.name }}</b>
                 <span>{{ typeLabel(place.type) }}{{ place.address ? ' · ' + place.address : '' }}</span>
               </div>
-              <a mat-stroked-button [routerLink]="['/lugares', place.id]" [attr.aria-label]="'Editar lugar ' + place.name">Editar</a>
-              <button mat-icon-button type="button" (click)="selected.set(null)" aria-label="Cerrar la ficha del lugar">
+              <a mat-stroked-button [routerLink]="['/lugares', place.id]" [attr.aria-label]="('Editar lugar ' | t) + place.name">{{ 'Editar' | t }}</a>
+              <button mat-icon-button type="button" (click)="selected.set(null)" [attr.aria-label]="'Cerrar la ficha del lugar' | t">
                 <mat-icon aria-hidden="true">close</mat-icon>
               </button>
             </div>
@@ -51,19 +53,19 @@ const IN_USE = 'No se puede eliminar: el lugar se usa como depósito o en otros 
         [state]="state"
         [columns]="columns"
         [facet]="facet()"
-        entityPlural="lugares"
-        emptyMessage="Todavía no hay lugares"
-        searchPlaceholder="Buscar por nombre o dirección"
+        [entityPlural]="'lugares' | t"
+        [emptyMessage]="'Todavía no hay lugares' | t"
+        [searchPlaceholder]="'Buscar por nombre o dirección' | t"
       >
         <ng-template #rowActions let-row>
-          <a mat-icon-button [routerLink]="['/lugares', row.id]" [attr.aria-label]="'Editar lugar ' + row.name">
+          <a mat-icon-button [routerLink]="['/lugares', row.id]" [attr.aria-label]="('Editar lugar ' | t) + row.name">
             <mat-icon aria-hidden="true">edit</mat-icon>
           </a>
-          <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="'Eliminar lugar ' + row.name">
+          <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar lugar ' | t) + row.name">
             <mat-icon aria-hidden="true">delete</mat-icon>
           </button>
         </ng-template>
-        <a empty-action mat-stroked-button routerLink="/lugares/nuevo">Crear el primer lugar</a>
+        <a empty-action mat-stroked-button routerLink="/lugares/nuevo">{{ 'Crear el primer lugar' | t }}</a>
       </app-data-table>
     </div>
   `,
@@ -83,18 +85,18 @@ export class PlaceListComponent {
   protected readonly facet = computed<DataFacet<Place>>(() => {
     const known = Object.keys(PLACE_TYPE_LABELS);
     const unknown = [...new Set(this.state.rows().map((p) => p.type))].filter((key) => !known.includes(key));
-    return { label: 'Tipo', of: (p) => p.type, options: [...known, ...unknown].map((key) => ({ key, label: placeTypeLabel(key) })) };
+    return { label: t('Tipo'), of: (p) => p.type, options: [...known, ...unknown].map((key) => ({ key, label: placeTypeLabel(key) })) };
   });
 
   /** Los lugares del mapa son los que cumplen la búsqueda y el chip elegidos, no solo los de la página que se ve. */
   protected readonly mapPlaces = computed(() => this.table()?.filtered() ?? this.state.rows());
 
   protected readonly columns: DataColumn<Place>[] = [
-    { id: 'name', header: 'Nombre', cell: (p) => p.name, kind: 'strong' },
-    { id: 'type', header: 'Tipo', cell: (p) => placeTypeLabel(p.type) },
-    { id: 'address', header: 'Dirección', cell: (p) => p.address ?? '', kind: 'muted' },
-    { id: 'phoneNumber', header: 'Teléfono', cell: (p) => p.phoneNumber ?? '', kind: 'muted' },
-    { id: 'location', header: 'Latitud / longitud', cell: (p) => formatLocation(p), kind: 'muted' },
+    { id: 'name', header: t('Nombre'), cell: (p) => p.name, kind: 'strong' },
+    { id: 'type', header: t('Tipo'), cell: (p) => placeTypeLabel(p.type) },
+    { id: 'address', header: t('Dirección'), cell: (p) => p.address ?? '', kind: 'muted' },
+    { id: 'phoneNumber', header: t('Teléfono'), cell: (p) => p.phoneNumber ?? '', kind: 'muted' },
+    { id: 'location', header: t('Latitud / longitud'), cell: (p) => formatLocation(p), kind: 'muted' },
   ];
 
   constructor() {
@@ -107,7 +109,7 @@ export class PlaceListComponent {
 
   protected remove(row: Place): void {
     this.deleter.run({
-      entity: 'lugar',
+      entity: t('lugar'),
       name: row.name,
       request: () => this.api.remove(row.id),
       byStatus: { 400: IN_USE, 409: IN_USE },

@@ -22,6 +22,8 @@ import { RouteVisit, UNAVAILABLE, progressText, visitStatus } from './route-visi
 import { RouteVisitsStore } from './route-visits.store';
 import { StopRef } from './routes-map.component';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 interface StopRow {
   stop: DomainWaypoint;
   /** `null` en las paradas sin paquete (depósitos). */
@@ -34,7 +36,7 @@ interface StopRow {
  */
 @Component({
   selector: 'app-route-visits',
-  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, FormResultComponent, StatusBadgeComponent, ActionTitleDirective],
+  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, FormResultComponent, StatusBadgeComponent, ActionTitleDirective, TranslatePipe],
   providers: [RouteVisitsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-visits.component.html',
@@ -107,7 +109,7 @@ export class RouteVisitsComponent {
 
   protected statusText(visit: RouteVisit): string {
     const status = visitStatus(visit);
-    return status === null ? 'Cargando…' : status === UNAVAILABLE ? 'No disponible' : packageStatusLabel(status);
+    return status === null ? t('Cargando…') : status === UNAVAILABLE ? t('No disponible') : packageStatusLabel(status);
   }
 
   protected statusesExcept(visit: RouteVisit): string[] {

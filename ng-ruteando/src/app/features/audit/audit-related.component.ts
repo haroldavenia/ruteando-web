@@ -7,6 +7,7 @@ import { StatusTone } from '../../shared/ui/status-tone';
 
 import { auditActionLabel, auditActor, auditKind, auditKindIcon, auditKindTone } from './audit-labels';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 interface RelatedItem {
   log: AuditLog;
   action: string;
@@ -23,7 +24,7 @@ interface RelatedItem {
  */
 @Component({
   selector: 'app-audit-related',
-  imports: [MatIconModule],
+  imports: [MatIconModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './audit-related.component.html',

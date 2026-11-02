@@ -11,6 +11,8 @@ import { PASSWORD_REQUIREMENTS, missingRules } from '../../core/auth/password-po
 import { ActionTitleDirective } from '../ui/action-title.directive';
 import { FieldMessages, firstErrorMessage } from './access.messages';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 let nextId = 0;
 
 /**
@@ -19,7 +21,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'app-password-field',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, ActionTitleDirective],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class.open]': 'open()', '[class.has-list]': 'requirements()' },
   template: `
@@ -41,7 +43,7 @@ let nextId = 0;
         mat-icon-button
         matSuffix
         type="button"
-        [attr.aria-label]="visible() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+        [attr.aria-label]="visible() ? ('Ocultar contraseña' | t) : ('Mostrar contraseña' | t)"
         [attr.aria-pressed]="visible()"
         (click)="toggle($event)"
       >
@@ -183,7 +185,7 @@ export class PasswordFieldComponent {
         met,
         failed,
         icon: met ? 'check_circle' : failed ? 'cancel' : 'radio_button_unchecked',
-        status: met ? 'cumplido' : failed ? 'no cumplido' : 'pendiente',
+        status: met ? t('cumplido') : failed ? t('no cumplido') : t('pendiente'),
       };
     });
   });

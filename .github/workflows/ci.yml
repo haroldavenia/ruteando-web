@@ -43,6 +43,9 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
         working-directory: ng-ruteando
+      # Cada texto de la interfaz tiene traducción al inglés y al portugués, y no quedan textos en español sin traducir
+      - name: Traducciones
+        run: node scripts/i18n-check.mjs && node scripts/i18n-check.mjs --spanish
       - name: Pruebas (Chrome sin interfaz)
         run: npm run test:ci
         working-directory: ng-ruteando
