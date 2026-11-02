@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 
 import { AppComponent } from './app.component';
 import { API_BASE_URL } from './core/api/api-config';
@@ -14,6 +15,7 @@ describe('AppComponent', () => {
       providers: [
         { provide: API_BASE_URL, useValue: '/gateway' },
         provideRouter([]),
+        provideServiceWorker('ngsw-worker.js', { enabled: false }), // sin worker: SwUpdate existe pero no emite
         provideNoopAnimations(),
         provideHttpClient(),
         provideHttpClientTesting(),

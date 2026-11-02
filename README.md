@@ -32,9 +32,26 @@ GATEWAY_URL=http://localhost:4010 GATEWAY_API_KEY=mock npm start  # la app contr
 
 Usuarios (contraseña `demo1234`): `admin@example.invalid` (administración), `agente@example.invalid` (agente) y `conductor@example.invalid` (conductor, sin áreas). Las variables del entorno tienen prioridad sobre `.env`.
 
+## Con Docker (desarrollo)
+
+Sin instalar Node ni copiar `.env`: `docker compose up` (o `npm run docker:dev`) levanta el gateway simulado y `ng serve` en http://localhost:4200 (usuarios y contraseña como en la sección anterior). La primera vez instala las dependencias en volúmenes de Docker y tarda unos minutos; después solo reinstala si cambia un `package-lock.json`. El código se monta desde el equipo y recarga al guardar.
+
+```
+docker compose up                              # app en :4200 + gateway simulado en :4010
+docker compose --profile prod-like up app      # compilación + servidor Express en :3000, como en producción
+docker compose --profile test run --rm test    # pruebas del frontend (npm run docker:test)
+docker compose down                            # parar (npm run docker:down); `down -v` borra también las dependencias
+```
+
+Para usar otro gateway define `DOCKER_GATEWAY_URL` y `DOCKER_GATEWAY_API_KEY` (en `.env` o en el entorno); `GATEWAY_URL` y `GATEWAY_API_KEY` no se usan aquí a propósito, para no apuntar al gateway real por accidente. No hay base de datos. Es una imagen de desarrollo (`Dockerfile.dev`), no la de producción.
+
 ## Desarrollo
 
 Desde `ng-ruteando/`: `npm start` (puerto 4200, con el mismo proxy `/gateway` y las mismas variables), `npm run test:ci` (Karma con Chrome sin interfaz) y `npm run build`.
+
+## Instalar como aplicación (PWA)
+
+La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar aplicación» en el menú de usuario (y en la barra de direcciones); en iPhone/iPad, «Compartir → Añadir a pantalla de inicio». Carga desde caché y avisa cuando hay una versión nueva; los datos siempre vienen del gateway (sin conexión se ve la carcasa, no los datos). Se prueba con `npm run build:web && npm start` (en `ng serve` no hay service worker). Requiere HTTPS salvo en `localhost`.
 
 ## Integración continua
 

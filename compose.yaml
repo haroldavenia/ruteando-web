@@ -1,0 +1,102 @@
+# Entorno de DESARROLLO con Docker (ver README.md, «Con Docker»). No es el despliegue de producción.
+#
+#   docker compose up                              -> http://localhost:4200 (ng serve) contra el gateway simulado
+#   docker compose --profile prod-like up app      -> http://localhost:3000 (compilación + servidor Express)
+#   docker compose --profile test run --rm test    -> pruebas del frontend (Karma con Chromium)
+#
+# Por defecto la app habla con el gateway SIMULADO (mock-gateway, datos ficticios). Para usar otro gateway define
+# DOCKER_GATEWAY_URL y DOCKER_GATEWAY_API_KEY (en .env o en el entorno). No se usan GATEWAY_URL/GATEWAY_API_KEY a propósito:
+# así un .env con el gateway real no se aplica por accidente.
+
+x-dev: &dev
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+    target: dev
+  working_dir: /app
+  volumes:
+    - .:/app
+    # node_modules en volúmenes: los binarios de Windows/Mac no sirven en Linux y así es mucho más rápido
+    - node_modules_root:/app/node_modules
+    - node_modules_web:/app/ng-ruteando/node_modules
+    - angular_cache:/app/ng-ruteando/.angular
+
+x-gateway: &gateway
+  GATEWAY_URL: ${DOCKER_GATEWAY_URL:-http://mock-gateway:4010}
+  GATEWAY_API_KEY: ${DOCKER_GATEWAY_API_KEY:-mock}
+
+services:
+  # Instala las dependencias (raíz y frontend) solo cuando cambia el package-lock.json correspondiente
+  deps:
+    <<: *dev
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        for dir in . ng-ruteando; do
+          hash=$$(sha256sum "$$dir/package-lock.json" | cut -d' ' -f1)
+          if [ "$$(cat "$$dir/node_modules/.lock-hash" 2>/dev/null)" != "$$hash" ]; then
+            echo "npm ci en $$dir"
+            (cd "$$dir" && npm ci)
+            echo "$$hash" > "$$dir/node_modules/.lock-hash"
+          fi
+        done
+    restart: "no"
+
+  mock-gateway:
+    <<: *dev
+    command: node scripts/mock-gateway.mjs
+    ports:
+      - "4010:4010"
+    healthcheck:
+      # Cualquier respuesta HTTP (aunque sea 404) significa que está vivo
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4010/').then(() => process.exit(0), () => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    <<: *dev
+    command: npm --prefix ng-ruteando start -- --host 0.0.0.0 --poll 2000
+    environment:
+      <<: *gateway
+    ports:
+      - "4200:4200"
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+      mock-gateway:
+        condition: service_healthy
+
+  app:
+    <<: *dev
+    profiles: ["prod-like"]
+    command: sh -c "npm run build:web && npm start"
+    environment:
+      <<: *gateway
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+      mock-gateway:
+        condition: service_healthy
+
+  test:
+    <<: *dev
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: test
+    profiles: ["test"]
+    command: npm --prefix ng-ruteando run test:ci
+    depends_on:
+      deps:
+        condition: service_completed_successfully
+
+volumes:
+  node_modules_root:
+  node_modules_web:
+  angular_cache:

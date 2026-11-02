@@ -19,6 +19,8 @@ function buildCsp(env) {
     "font-src 'self' https://fonts.gstatic.com",
     ["img-src 'self' data: blob:"].concat(DEFAULT_IMG_SRC, extraImages).join(' '),
     "connect-src 'self'",
+    "worker-src 'self'",
+    "manifest-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

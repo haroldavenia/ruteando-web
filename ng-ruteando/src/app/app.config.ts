@@ -1,8 +1,9 @@
-import { ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, isDevMode, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 
 import { environment } from '../environments/environment';
 import { API_BASE_URL } from './core/api/api-config';
@@ -26,6 +27,8 @@ export const appConfig: ApplicationConfig = {
     // Orden: token -> renovación de sesión -> errores (la renovación ve ya los ApiError)
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, refreshInterceptor, errorInterceptor])),
     provideAnimationsAsync(),
+    // Solo en la compilación de producción (en `ng serve` no hay ngsw-worker.js) y, por dentro, solo en el navegador
+    provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode(), registrationStrategy: 'registerWhenStable:30000' }),
     // Antes de resolver las rutas protegidas se intenta restaurar la sesión (si falla, anónimo)
     provideAppInitializer(() => inject(AuthService).restoreSession()),
   ],
