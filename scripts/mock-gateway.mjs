@@ -5,7 +5,7 @@
 //
 // Uso:
 //   node scripts/mock-gateway.mjs                      # escucha en el puerto 4010
-//   GATEWAY_URL=http://localhost:4010 GATEWAY_API_KEY=mock npm start      # app contra el mock (ver README)
+//   GATEWAY_MODE=mock npm start                        # app contra el mock, que se arranca solo (ver .env.example)
 //
 // Usuarios (contraseña `demo1234`): admin@example.invalid (tenant_admin), agente@example.invalid (agent),
 // conductor@example.invalid (driver). Variables: MOCK_GATEWAY_PORT (4010) y MOCK_GATEWAY_LATENCY_MS (120).
@@ -17,7 +17,10 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = Number(process.env.MOCK_GATEWAY_PORT ?? 4010);
 const LATENCY = Number(process.env.MOCK_GATEWAY_LATENCY_MS ?? 120);
-const PASSWORD = 'demo1234';
+// Contraseña de los tres usuarios: `demo1234` salvo que se defina MOCK_GATEWAY_PASSWORD (obligatorio cambiarla si el simulado
+// queda accesible desde fuera, p. ej. con GATEWAY_MODE=mock en un servidor público).
+const DEFAULT_PASSWORD = 'demo1234';
+const PASSWORD = process.env.MOCK_GATEWAY_PASSWORD || DEFAULT_PASSWORD;
 
 // ------------------------------------------------------------------ utilidades
 
@@ -432,6 +435,16 @@ const server = createServer((req, res) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Gateway falso en http://localhost:${PORT}/api/v1 (usuarios: admin@, agente@, conductor@example.invalid; contraseña ${PASSWORD})`);
+// Si ya hay un simulado en el puerto (p. ej. lanzado a mano) se reutiliza en vez de tumbar el proceso que lo importó
+server.on('error', (err) => {
+  if (err.code !== 'EADDRINUSE') throw err;
+  console.log(`El puerto ${PORT} ya está en uso: se reutiliza el gateway falso que hay en él.`);
 });
+
+server.listen(PORT, () => {
+  const credentials = PASSWORD === DEFAULT_PASSWORD ? `contraseña ${PASSWORD}` : 'contraseña definida con MOCK_GATEWAY_PASSWORD';
+  console.log(`Gateway falso en http://localhost:${PORT}/api/v1 (usuarios: admin@, agente@, conductor@example.invalid; ${credentials})`);
+});
+
+// Lo usa server/gateway-mode.js para arrancarlo dentro del mismo proceso (GATEWAY_MODE=mock) y las pruebas para cerrarlo
+export { server };
