@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -41,7 +41,7 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatProgressBarModule,
+    SkeletonComponent,
     FocusFirstInvalidDirective,
     FormResultComponent,
     LocationFieldsComponent,
@@ -54,7 +54,7 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
     <app-form-head [title]="isNew ? 'Nuevo lugar' : 'Editar lugar'" backLabel="Lugares" backLink="/lugares" />
     @switch (loader.status()) {
       @case ('loading') {
-        <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
+        <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
       }
       @case ('missing') {
         <app-form-result [error]="loader.error()" />

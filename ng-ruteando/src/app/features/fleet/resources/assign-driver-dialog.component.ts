@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 
@@ -20,13 +20,13 @@ export interface AssignDriverData {
 /** Elige entre los conductores del tenant; se cierra con el id elegido o sin valor al cancelar. */
 @Component({
   selector: 'app-assign-driver-dialog',
-  imports: [ReactiveFormsModule, RouterLink, MatDialogModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatProgressBarModule],
+  imports: [ReactiveFormsModule, RouterLink, MatDialogModule, MatButtonModule, MatFormFieldModule, MatSelectModule, SkeletonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2 mat-dialog-title>Asignar conductor a {{ data.vehicle }}</h2>
     <mat-dialog-content>
       @if (loading()) {
-        <mat-progress-bar mode="indeterminate" aria-label="Cargando conductores" />
+        <app-skeleton variant="form" [count]="1" label="Cargando conductores…" />
       } @else if (error()) {
         <p role="alert">{{ error() }}</p>
       } @else if (drivers().length === 0) {

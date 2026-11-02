@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -46,13 +46,13 @@ function documentValidator(missing: 'type' | 'value'): ValidatorFn {
 
 @Component({
   selector: 'app-driver-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatProgressBarModule, FocusFirstInvalidDirective, FormResultComponent, PasswordFieldComponent, FormActionsComponent, FormHeadComponent, MatIconModule],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, PasswordFieldComponent, FormActionsComponent, FormHeadComponent, MatIconModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-form-head [title]="isNew ? 'Nuevo conductor' : 'Editar conductor'" backLabel="Conductores" backLink="/flota/conductores" />
     @switch (loader.status()) {
       @case ('loading') {
-        <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
+        <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
       }
       @case ('missing') {
         <app-form-result [error]="loader.error()" />

@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -100,7 +100,7 @@ export function buildSettingsUpdateBody(record: Settings, edited: Partial<Settin
     MatInputModule,
     MatSelectModule,
     MatSlideToggleModule,
-    MatProgressBarModule,
+    SkeletonComponent,
     FocusFirstInvalidDirective,
     FormActionsComponent,
     FormHeadComponent,

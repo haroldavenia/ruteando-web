@@ -6,7 +6,7 @@
 />
 @switch (loader.status()) {
   @case ('loading') {
-    <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
+    <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
