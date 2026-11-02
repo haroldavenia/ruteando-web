@@ -3,6 +3,7 @@ import { Data, RouterOutlet } from '@angular/router';
 
 import { BrandComponent } from '../../shared/brand/brand.component';
 import { RouteBackdropComponent } from '../../shared/brand/route-backdrop.component';
+import { LanguageToggleComponent } from '../../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../../shared/ui/theme-toggle.component';
 
 import { AccessPitchComponent } from './access-pitch.component';
@@ -18,7 +19,7 @@ import { AccessStepsComponent } from './access-steps.component';
  */
 @Component({
   selector: 'app-access-layout',
-  imports: [RouterOutlet, BrandComponent, RouteBackdropComponent, ThemeToggleComponent, AccessPitchComponent, AccessStepsComponent],
+  imports: [RouterOutlet, BrandComponent, RouteBackdropComponent, LanguageToggleComponent, ThemeToggleComponent, AccessPitchComponent, AccessStepsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './access-layout.component.html',
   styleUrl: './access-layout.component.scss',

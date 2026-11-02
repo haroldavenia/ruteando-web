@@ -34,9 +34,11 @@
     0 2px 6px rgb(0 0 0 / 0.08);
 }
 
-// Selector de tema: arriba a la derecha del formulario; su botón se alinea con el borde de los campos
+// Selectores de idioma y de tema: arriba a la derecha del formulario; su botón se alinea con el borde de los campos
 .tools {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: flex-end;
   margin: -4px 0 12px;
 }

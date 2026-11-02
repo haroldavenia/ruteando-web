@@ -27,6 +27,7 @@ import { CurrentUser } from '../core/auth/current-user';
 import { InstallService } from '../core/pwa/install.service';
 import { BrandComponent } from '../shared/brand/brand.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { LanguageToggleComponent } from '../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../shared/ui/theme-toggle.component';
 import { ActionTitleDirective } from '../shared/ui/action-title.directive';
 
@@ -44,6 +45,7 @@ import { navItemsFor } from './nav-items';
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
+    LanguageToggleComponent,
     ThemeToggleComponent,
     MatButtonModule,
     MatIconModule,
