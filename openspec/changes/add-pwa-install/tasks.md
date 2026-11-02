@@ -8,6 +8,6 @@
 - [x] 6. Botón «Instalar aplicación» (`beforeinstallprompt`) en el menú de usuario; pista de iOS
 - [x] 7. `server/`: `Cache-Control: no-cache` para `ngsw-worker.js`, `ngsw.json`, `manifest.webmanifest`; `worker-src`/`manifest-src` en la CSP; pruebas en `server/test/`
 - [x] 8. `theme-color` que sigue al tema (meta dinámica en `ThemeService`)
-- [ ] 9. (Hecho en Chrome 156 sobre :3100: worker activado, 194 recursos en caché, `/gateway` no cacheado, sin avisos de CSP. Falta: Lighthouse, instalar, modo sin conexión, ciclo de actualización, teselas y fuentes bajo `enforce`) Verificar en Chrome real: Lighthouse instalable, instalar en escritorio, sin conexión (carcasa + aviso, `/gateway` no cacheado), ciclo de actualización con dos compilaciones
+- [x] 9. Verificado en Chrome 156 (compilación de producción, CSP en `enforce`, gateway simulado): worker activo, 194 recursos en caché, `/gateway` no cacheado (sin red responde 504), la app abre sin servidor (carcasa y redirección a acceso), ciclo de actualización con dos compilaciones (aviso y «Recargar» pasan a la versión nueva) y teselas cacheadas (`cacheOpaqueResponses`, porque son peticiones de imagen opacas). No medido: Lighthouse ni la instalación real del cuadro del navegador.
 - [ ] 10. Verificar en Android (Chrome) e iOS (Safari) y a través del proxy real de producción
 - [x] 11. Actualizar `CLAUDE.md` y `README.md`

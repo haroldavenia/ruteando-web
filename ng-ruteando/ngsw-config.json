@@ -30,7 +30,7 @@
     {
       "name": "tiles",
       "urls": ["https://tile.openstreetmap.org/**"],
-      "cacheConfig": { "strategy": "performance", "maxSize": 300, "maxAge": "7d" }
+      "cacheConfig": { "strategy": "performance", "maxSize": 300, "maxAge": "7d", "cacheOpaqueResponses": true }
     }
   ],
   "navigationUrls": ["/**", "!/**/*.*", "!/**/*__*", "!/**/*__*/**", "!/gateway/**", "!/api/**", "!/auth/**"]
