@@ -19,7 +19,7 @@
       <h2 id="figures-title">Paquetes atendidos</h2>
       @switch (figuresStatus()) {
         @case ('loading') {
-          <mat-progress-bar mode="indeterminate" aria-label="Cargando las cifras de paquetes" />
+          <app-skeleton variant="ring" label="Cargando las cifras de paquetes…" />
         }
         @case ('error') {
           <app-form-result [error]="figuresError()" />
@@ -58,7 +58,7 @@
       </div>
       @switch (status()) {
         @case ('loading') {
-          <mat-progress-bar mode="indeterminate" aria-label="Cargando las últimas jornadas" />
+          <app-skeleton variant="list" label="Cargando las últimas jornadas…" />
         }
         @case ('error') {
           <app-form-result [error]="error()" />

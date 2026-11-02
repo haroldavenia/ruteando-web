@@ -1,7 +1,7 @@
 @switch (loader.status()) {
   @case ('loading') {
     <h1>Ruta</h1>
-    <mat-progress-bar mode="indeterminate" aria-label="Cargando la ruta" />
+    <section class="card"><app-skeleton variant="stats" label="Cargando la ruta…" /></section>
   }
   @case ('missing') {
     <h1>Ruta</h1>
