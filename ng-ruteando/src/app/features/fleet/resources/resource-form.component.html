@@ -1,7 +1,7 @@
 <app-form-head [title]="isNew ? 'Nuevo vehículo' : 'Editar vehículo'" backLabel="Vehículos" backLink="/flota/vehiculos" />
 @switch (loader.status()) {
   @case ('loading') {
-    <mat-progress-bar mode="indeterminate" aria-label="Cargando" />
+    <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />

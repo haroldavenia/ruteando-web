@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, 
 import { Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
 
 import { JourneysApi } from '../core/api/data/journeys.api';
@@ -16,6 +15,7 @@ import { CityMapComponent } from '../shared/brand/city-map.component';
 import { FormResultComponent } from '../shared/form/form-result.component';
 import { formatDateTime } from '../shared/format';
 import { ProgressRingComponent } from '../shared/ui/progress-ring.component';
+import { SkeletonComponent } from '../shared/ui/skeleton.component';
 import { StatusBadgeComponent } from '../shared/ui/status-badge.component';
 import { statusTone } from '../shared/ui/status-tone';
 import { journeyStatusLabel } from '../features/journeys/journey-labels';
@@ -35,9 +35,9 @@ import { FIGURES_SAMPLE_SIZE, PackageFigures, packageFigures } from './package-f
     RouterLink,
     MatButtonModule,
     MatIconModule,
-    MatProgressBarModule,
     FormResultComponent,
     ProgressRingComponent,
+    SkeletonComponent,
     CityMapComponent,
     StatusBadgeComponent,
   ],

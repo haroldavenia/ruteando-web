@@ -308,7 +308,7 @@ describe('HomeComponent', () => {
 
     it('mientras llegan muestra un indicador accesible y las jornadas siguen su curso', () => {
       open('agent', page([journey(1)]), 'browser', null);
-      expect(card().querySelector('mat-progress-bar')?.getAttribute('aria-label')).toBe('Cargando las cifras de paquetes');
+      expect(card().querySelector('app-skeleton .visually-hidden')?.textContent).toBe('Cargando las cifras de paquetes…');
       expect(journeyLinks().length).toBe(1);
       expect(kpis().length).toBe(0);
     });
@@ -410,8 +410,8 @@ describe('HomeComponent', () => {
 
     it('mientras carga muestra un indicador accesible', () => {
       open('agent', null);
-      const bars = Array.from(root().querySelectorAll('mat-progress-bar')).map((bar) => bar.getAttribute('aria-label'));
-      expect(bars).toEqual(['Cargando las últimas jornadas']);
+      const skeletons = Array.from(root().querySelectorAll('app-skeleton .visually-hidden')).map((s) => s.textContent);
+      expect(skeletons).toEqual(['Cargando las últimas jornadas…']);
       http.expectOne((r) => r.url === '/gateway/journeys').flush(page([]));
     });
 

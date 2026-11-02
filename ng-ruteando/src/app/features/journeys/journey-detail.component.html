@@ -1,7 +1,7 @@
 @switch (loader.status()) {
   @case ('loading') {
     <h1>Jornada</h1>
-    <mat-progress-bar mode="indeterminate" aria-label="Cargando la jornada" />
+    <section class="card"><app-skeleton variant="stats" label="Cargando la jornada…" [count]="9" /></section>
   }
   @case ('missing') {
     <h1>Jornada</h1>

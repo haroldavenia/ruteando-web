@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { JourneysApi } from '../../core/api/data/journeys.api';
@@ -12,6 +11,7 @@ import { formatCount, formatDateTime, formatDuration } from '../../shared/format
 
 import { JourneyRoutesComponent } from './journey-routes.component';
 import { RoutesMapComponent, StopRef } from './routes-map.component';
+import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
 import { statusTone } from '../../shared/ui/status-tone';
 
@@ -19,7 +19,7 @@ import { journeyStatusLabel } from './journey-labels';
 
 @Component({
   selector: 'app-journey-detail',
-  imports: [RouterLink, MatButtonModule, MatProgressBarModule, FormHeadComponent, FormResultComponent, JourneyRoutesComponent, RoutesMapComponent, StatusBadgeComponent],
+  imports: [RouterLink, MatButtonModule, FormHeadComponent, FormResultComponent, JourneyRoutesComponent, RoutesMapComponent, SkeletonComponent, StatusBadgeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './journey-detail.component.html',
 })

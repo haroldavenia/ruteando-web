@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ZonesApi } from '../../core/api/data/zones.api';
@@ -57,7 +57,7 @@ export function buildZoneUpdateBody(record: Zone, edited: Partial<ZoneInput>): P
 
 @Component({
   selector: 'app-zone-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, FocusFirstInvalidDirective, FormActionsComponent, FormHeadComponent, FormResultComponent, MatIconModule, PolygonEditorComponent],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, SkeletonComponent, FocusFirstInvalidDirective, FormActionsComponent, FormHeadComponent, FormResultComponent, MatIconModule, PolygonEditorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './zone-form.component.html',
   styleUrl: './zone-form.component.scss',
