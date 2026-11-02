@@ -1,7 +1,7 @@
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { THEME_STORAGE_KEY, ThemePreference, ThemeService } from './theme.service';
+import { THEME_COLORS, THEME_STORAGE_KEY, ThemePreference, ThemeService } from './theme.service';
 
 describe('ThemeService', () => {
   const root = document.documentElement;
@@ -20,6 +20,23 @@ describe('ThemeService', () => {
   afterEach(() => {
     localStorage.removeItem(THEME_STORAGE_KEY);
     root.removeAttribute('data-theme');
+  });
+
+  it('la meta theme-color sigue al esquema efectivo', () => {
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    document.head.appendChild(meta);
+    try {
+      const theme = create();
+      theme.set('dark');
+      TestBed.tick();
+      expect(meta.content).toBe(THEME_COLORS.dark);
+      theme.set('light');
+      TestBed.tick();
+      expect(meta.content).toBe(THEME_COLORS.light);
+    } finally {
+      meta.remove();
+    }
   });
 
   it('sin elección guardada sigue al sistema y no marca el documento', () => {

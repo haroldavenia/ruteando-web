@@ -36,6 +36,10 @@ Usuarios (contraseña `demo1234`): `admin@example.invalid` (administración), `a
 
 Desde `ng-ruteando/`: `npm start` (puerto 4200, con el mismo proxy `/gateway` y las mismas variables), `npm run test:ci` (Karma con Chrome sin interfaz) y `npm run build`.
 
+## Instalar como aplicación (PWA)
+
+La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar aplicación» en el menú de usuario (y en la barra de direcciones); en iPhone/iPad, «Compartir → Añadir a pantalla de inicio». Carga desde caché y avisa cuando hay una versión nueva; los datos siempre vienen del gateway (sin conexión se ve la carcasa, no los datos). Se prueba con `npm run build:web && npm start` (en `ng serve` no hay service worker). Requiere HTTPS salvo en `localhost`.
+
 ## Integración continua
 
 `.github/workflows/ci.yml` verifica cada pull request (a cualquier rama base) y cada push a `main` con cinco trabajos: `Frontend` (pruebas con Chrome sin interfaz y compilación de producción), `Servidor` (pruebas), `Specs` (`openspec validate --specs --strict`), `Auditoría` (`npm audit` de las dependencias de producción, nivel alto) y `ci`, que resume los anteriores. **La comprobación obligatoria de `main` es `ci`.** Usa el Node de `ng-ruteando/.nvmrc`, `npm@11` y `npm ci`, y no necesita secretos ni el gateway real.

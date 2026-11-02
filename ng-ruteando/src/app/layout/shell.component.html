@@ -30,6 +30,17 @@
         <span class="user-name">{{ displayName() }}</span>
         <span class="user-email">{{ email() }}</span>
       </div>
+      @if (install.canInstall()) {
+        <button mat-menu-item type="button" (click)="install.install()">
+          <mat-icon aria-hidden="true">install_desktop</mat-icon>
+          <span>Instalar aplicación</span>
+        </button>
+      } @else if (install.showIosHint()) {
+        <button mat-menu-item type="button" (click)="showIosHint()">
+          <mat-icon aria-hidden="true">install_mobile</mat-icon>
+          <span>Instalar aplicación</span>
+        </button>
+      }
       <button mat-menu-item type="button" (click)="confirmLogout()">
         <mat-icon aria-hidden="true">logout</mat-icon>
         <span>Cerrar sesión</span>

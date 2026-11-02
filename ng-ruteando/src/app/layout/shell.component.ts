@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -23,6 +24,7 @@ import { filter, map, startWith } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
 import { CurrentUser } from '../core/auth/current-user';
+import { InstallService } from '../core/pwa/install.service';
 import { BrandComponent } from '../shared/brand/brand.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 import { ThemeToggleComponent } from '../shared/ui/theme-toggle.component';
@@ -62,6 +64,8 @@ export class ShellComponent {
   private readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
+  protected readonly install = inject(InstallService);
   private readonly userMenuTrigger = viewChild.required<MatMenuTrigger>('userMenuTrigger');
   /** El menú desplegable de pantallas estrechas; en las anchas no existe (hay riel de iconos). */
   protected readonly drawer = viewChild(MatSidenav);
@@ -120,6 +124,11 @@ export class ShellComponent {
         .subscribe((state) => this.isWide.set(state.matches));
       this.destroyRef.onDestroy(() => sub.unsubscribe());
     });
+  }
+
+  /** Safari de iPhone y iPad no deja instalar desde la página: se explica el camino manual. */
+  showIosHint(): void {
+    this.snackBar.open('Pulsa Compartir y luego «Añadir a pantalla de inicio»', 'Entendido', { duration: 10000 });
   }
 
   /** Pide confirmación antes de cerrar la sesión; al cancelar el foco vuelve al botón de cuenta. */

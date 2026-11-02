@@ -1,10 +1,13 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { DestroyRef, Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { DestroyRef, Injectable, PLATFORM_ID, computed, effect, inject, signal } from '@angular/core';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 
 /** Esquema de color que se ve de verdad: la elección o, si se sigue al sistema, el del sistema. */
 export type ColorScheme = 'light' | 'dark';
+
+/** Color de la barra del navegador o de la ventana instalada (PWA) en cada esquema; el claro es el de la marca, igual que en el manifiesto. */
+export const THEME_COLORS: Record<ColorScheme, string> = { light: '#5a3fc0', dark: '#1c1b22' };
 
 /** Clave de `localStorage`; la repite `src/assets/theme-init.js`, que aplica la elección antes del primer pintado. */
 export const THEME_STORAGE_KEY = 'ruteando-theme';
@@ -36,6 +39,7 @@ export class ThemeService {
     if (this.browser) {
       this.apply(this.preference());
       this.followSystem();
+      effect(() => this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[this.scheme()]));
     }
   }
 
