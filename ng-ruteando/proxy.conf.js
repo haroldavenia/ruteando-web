@@ -9,9 +9,19 @@ if (fs.existsSync(envFile) && typeof process.loadEnvFile === 'function') {
   process.loadEnvFile(envFile); // no pisa variables ya definidas
 }
 
-const target = (process.env.GATEWAY_URL || '').replace(/\/+$/, '');
-const apiKey = process.env.GATEWAY_API_KEY || '';
-const missing = [!target && 'GATEWAY_URL', !apiKey && 'GATEWAY_API_KEY'].filter(Boolean);
+// GATEWAY_MODE=mock apunta al gateway falso (scripts/mock-gateway.mjs), que se arranca dentro de este mismo proceso y muere
+// con `ng serve`; `real` (por defecto) usa GATEWAY_URL y GATEWAY_API_KEY. Lógica compartida con el servidor: server/gateway-mode.js
+const { gatewayConfig, startMockGateway, MOCK_WARNING } = require('../server/gateway-mode');
+const gateway = gatewayConfig(process.env);
+const target = gateway.target || '';
+const apiKey = gateway.apiKey || '';
+const missing = gateway.invalid
+  ? ['un GATEWAY_MODE válido (real o mock)']
+  : [!target && 'GATEWAY_URL', !apiKey && 'GATEWAY_API_KEY'].filter(Boolean);
+if (gateway.mode === 'mock') {
+  console.warn(MOCK_WARNING);
+  startMockGateway().catch((err) => console.warn(`[proxy /gateway] No se pudo arrancar el gateway falso: ${err.message}`));
+}
 
 if (missing.length) {
   console.warn(`[proxy /gateway] Falta ${missing.join(' y ')} (ver .env.example): las peticiones a /gateway responderán 503.`);
