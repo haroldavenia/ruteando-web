@@ -17,9 +17,10 @@ import { statusTone } from '../../shared/ui/status-tone';
 
 import { journeyStatusLabel } from './journey-labels';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-journey-detail',
-  imports: [RouterLink, MatButtonModule, FormHeadComponent, FormResultComponent, JourneyRoutesComponent, RoutesMapComponent, SkeletonComponent, StatusBadgeComponent],
+  imports: [RouterLink, MatButtonModule, FormHeadComponent, FormResultComponent, JourneyRoutesComponent, RoutesMapComponent, SkeletonComponent, StatusBadgeComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './journey-detail.component.html',
 })

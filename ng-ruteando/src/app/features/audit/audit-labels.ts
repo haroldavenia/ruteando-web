@@ -2,6 +2,7 @@ import { AuditLog } from '../../core/api/models';
 import { roleLabel } from '../../shared/ui/role-label';
 import { StatusTone } from '../../shared/ui/status-tone';
 
+import { t } from '../../core/i18n/i18n';
 /** Tipos en los que se agrupan las acciones, decididos por el verbo de su clave. */
 export type AuditKind = 'creacion' | 'modificacion' | 'eliminacion' | 'estado' | 'asignacion' | 'otras';
 
@@ -9,12 +10,12 @@ export type AuditKind = 'creacion' | 'modificacion' | 'eliminacion' | 'estado' |
 export const AUDIT_KINDS: readonly AuditKind[] = ['creacion', 'modificacion', 'eliminacion', 'estado', 'asignacion', 'otras'];
 
 const KIND_LABELS: Readonly<Record<AuditKind, string>> = {
-  creacion: 'Creación',
-  modificacion: 'Modificación',
-  eliminacion: 'Eliminación',
-  estado: 'Cambio de estado',
-  asignacion: 'Asignación',
-  otras: 'Otras',
+  creacion: t('Creación'),
+  modificacion: t('Modificación'),
+  eliminacion: t('Eliminación'),
+  estado: t('Cambio de estado'),
+  asignacion: t('Asignación'),
+  otras: t('Otras'),
 };
 
 /** Tono de cada tipo: lo bueno en verde, lo reversible en azul, lo destructivo en rojo y los estados en ámbar. */
@@ -80,18 +81,18 @@ interface EntityInfo {
 }
 
 const ENTITIES: Readonly<Record<string, EntityInfo>> = {
-  journey: { label: 'Jornada', feminine: true },
-  package: { label: 'Paquete', feminine: false },
-  place: { label: 'Lugar', feminine: false },
-  resource: { label: 'Vehículo', feminine: false },
-  resource_type: { label: 'Tipo de vehículo', feminine: false },
-  'resource-type': { label: 'Tipo de vehículo', feminine: false },
-  settings: { label: 'Configuración', feminine: true },
-  user: { label: 'Usuario', feminine: false },
-  invitation: { label: 'Invitación', feminine: true },
-  tenant: { label: 'Empresa', feminine: true },
-  zone: { label: 'Zona', feminine: true },
-  notification: { label: 'Notificación', feminine: true },
+  journey: { label: t('Jornada'), feminine: true },
+  package: { label: t('Paquete'), feminine: false },
+  place: { label: t('Lugar'), feminine: false },
+  resource: { label: t('Vehículo'), feminine: false },
+  resource_type: { label: t('Tipo de vehículo'), feminine: false },
+  'resource-type': { label: t('Tipo de vehículo'), feminine: false },
+  settings: { label: t('Configuración'), feminine: true },
+  user: { label: t('Usuario'), feminine: false },
+  invitation: { label: t('Invitación'), feminine: true },
+  tenant: { label: t('Empresa'), feminine: true },
+  zone: { label: t('Zona'), feminine: true },
+  notification: { label: t('Notificación'), feminine: true },
 };
 
 /** Participio en masculino y femenino de los verbos que componen la frase de una acción. */
@@ -108,11 +109,11 @@ const PARTICIPLES: Readonly<Record<string, readonly [string, string]>> = {
 
 /** Acciones cuya frase no sale de «entidad + verbo». */
 const ACTIONS: Readonly<Record<string, string>> = {
-  'resource.assign.driver': 'Conductor asignado',
-  'resource.unassign.driver': 'Conductor desasignado',
-  'package.status.change': 'Estado de paquete cambiado',
-  'notification.push_registered': 'Dispositivo registrado para avisos',
-  'notification.preferences_updated': 'Preferencias de avisos actualizadas',
+  'resource.assign.driver': t('Conductor asignado'),
+  'resource.unassign.driver': t('Conductor desasignado'),
+  'package.status.change': t('Estado de paquete cambiado'),
+  'notification.push_registered': t('Dispositivo registrado para avisos'),
+  'notification.preferences_updated': t('Preferencias de avisos actualizadas'),
 };
 
 /** Nombre en español del tipo de entidad; uno que no se conoce se muestra con su clave. */
@@ -168,9 +169,9 @@ export function auditActor(log: Pick<AuditLog, 'actorEmail' | 'actorRole'>): Aud
   const role = normalizeRole(log.actorRole);
   const email = log.actorEmail?.trim() ?? '';
   if (role === 'anonymous') {
-    return { person: email || 'Anónimo', role: null, identified: email !== '' };
+    return { person: email || t('Anónimo'), role: null, identified: email !== '' };
   }
-  return { person: email || 'Sin identificar', role: role ? roleLabel(role) : null, identified: email !== '' };
+  return { person: email || t('Sin identificar'), role: role ? roleLabel(role) : null, identified: email !== '' };
 }
 
 /**

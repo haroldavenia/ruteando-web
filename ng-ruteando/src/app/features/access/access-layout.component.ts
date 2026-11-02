@@ -3,11 +3,13 @@ import { Data, RouterOutlet } from '@angular/router';
 
 import { BrandComponent } from '../../shared/brand/brand.component';
 import { RouteBackdropComponent } from '../../shared/brand/route-backdrop.component';
+import { LanguageToggleComponent } from '../../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../../shared/ui/theme-toggle.component';
 
 import { AccessPitchComponent } from './access-pitch.component';
 import { AccessStepsComponent } from './access-steps.component';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Layout de las pantallas de acceso, sin barra ni menú lateral. En pantallas estrechas, una tarjeta centrada con la marca y el
  * contenido enrutado sobre la ilustración de rutas; desde 1024px, la ilustración con su presentación queda a la izquierda y el
@@ -18,7 +20,7 @@ import { AccessStepsComponent } from './access-steps.component';
  */
 @Component({
   selector: 'app-access-layout',
-  imports: [RouterOutlet, BrandComponent, RouteBackdropComponent, ThemeToggleComponent, AccessPitchComponent, AccessStepsComponent],
+  imports: [RouterOutlet, BrandComponent, RouteBackdropComponent, LanguageToggleComponent, ThemeToggleComponent, AccessPitchComponent, AccessStepsComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './access-layout.component.html',
   styleUrl: './access-layout.component.scss',

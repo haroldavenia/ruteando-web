@@ -12,8 +12,10 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 /** Texto fijo: no depende de la respuesta del gateway para no revelar si la cuenta existe. */
-const NEUTRAL_MESSAGE = 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña';
+const NEUTRAL_MESSAGE = t('Si el correo existe, recibirás instrucciones para restablecer tu contraseña');
 
 @Component({
   selector: 'app-forgot-password',
@@ -27,33 +29,34 @@ const NEUTRAL_MESSAGE = 'Si el correo existe, recibirás instrucciones para rest
     MatProgressBarModule,
     FocusFirstInvalidDirective,
     FormResultComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (sent()) {
       <div class="state">
         <span class="state-icon"><mat-icon aria-hidden="true">mark_email_unread</mat-icon></span>
-        <h1>Revisa tu correo</h1>
+        <h1>{{ 'Revisa tu correo' | t }}</h1>
         <app-form-result [success]="neutralMessage" />
       </div>
     } @else {
-      <h1>Recuperar contraseña</h1>
-      <p class="lead">Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.</p>
+      <h1>{{ 'Recuperar contraseña' | t }}</h1>
+      <p class="lead">{{ 'Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.' | t }}</p>
       <form [formGroup]="form" (ngSubmit)="submit()" appFocusFirstInvalid novalidate>
         <mat-form-field class="field">
-          <mat-label>Correo electrónico</mat-label>
+          <mat-label>{{ 'Correo electrónico' | t }}</mat-label>
           <mat-icon matPrefix aria-hidden="true">mail</mat-icon>
           <input matInput type="email" formControlName="email" autocomplete="username" />
           <mat-error>{{ emailError() }}</mat-error>
         </mat-form-field>
         <app-form-result [error]="error()" />
         @if (loading()) {
-          <mat-progress-bar mode="indeterminate" aria-label="Enviando la solicitud" />
+          <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Enviando la solicitud' | t" />
         }
-        <button mat-flat-button type="submit" [disabled]="loading()">Enviar enlace</button>
+        <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Enviar enlace' | t }}</button>
       </form>
     }
-    <p class="alt"><a routerLink="/acceso">Volver a iniciar sesión</a></p>
+    <p class="alt"><a routerLink="/acceso">{{ 'Volver a iniciar sesión' | t }}</a></p>
   `,
 })
 export class ForgotPasswordComponent {
@@ -70,9 +73,9 @@ export class ForgotPasswordComponent {
   protected emailError(): string {
     const errors = this.form.controls.email.errors;
     if (errors?.['required']) {
-      return 'Introduce tu correo';
+      return t('Introduce tu correo');
     }
-    return errors?.['email'] ? 'Introduce un correo válido' : '';
+    return errors?.['email'] ? t('Introduce un correo válido') : '';
   }
 
   protected submit(): void {

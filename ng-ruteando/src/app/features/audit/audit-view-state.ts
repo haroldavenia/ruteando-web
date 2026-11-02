@@ -7,7 +7,8 @@ import { ListState } from '../../shared/data/list-state';
 import { AuditFilters, applyAuditFilters } from './audit-filters';
 import { AuditStore } from './audit.store';
 
-export const FORBIDDEN_MESSAGE = 'No tienes permiso para ver este registro de auditoría';
+import { t } from '../../core/i18n/i18n';
+export const FORBIDDEN_MESSAGE = t('No tienes permiso para ver este registro de auditoría');
 
 /**
  * Lo que ve la tabla: los eventos del almacén ya pasados por los filtros que la tabla no tiene (rango, tipo, persona...). No pide

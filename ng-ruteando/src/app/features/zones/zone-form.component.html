@@ -1,34 +1,34 @@
-<app-form-head [title]="isNew ? 'Nueva zona' : 'Editar zona'" backLabel="Zonas" backLink="/zonas" />
+<app-form-head [title]="isNew ? ('Nueva zona' | t) : ('Editar zona' | t)" [backLabel]="'Zonas' | t" backLink="/zonas" />
 @switch (loader.status()) {
   @case ('loading') {
-    <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
+    <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/zonas">Volver al listado</a>
+    <a mat-stroked-button routerLink="/zonas">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/zonas">Volver al listado</a>
+    <a mat-stroked-button routerLink="/zonas">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
       <section class="form-section">
-        <h2><mat-icon aria-hidden="true" fontIcon="hexagon" />Datos de la zona</h2>
+        <h2><mat-icon aria-hidden="true" fontIcon="hexagon" />{{ 'Datos de la zona' | t }}</h2>
         <mat-form-field>
-          <mat-label>Nombre</mat-label>
+          <mat-label>{{ 'Nombre' | t }}</mat-label>
           <input matInput formControlName="name" autocomplete="off" />
           <mat-error>{{ error('name') }}</mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Código</mat-label>
+          <mat-label>{{ 'Código' | t }}</mat-label>
           <input matInput formControlName="code" autocomplete="off" />
-          <mat-hint>Sin espacios, hasta 20 caracteres</mat-hint>
+          <mat-hint>{{ 'Sin espacios, hasta 20 caracteres' | t }}</mat-hint>
           <mat-error>{{ error('code') }}</mat-error>
         </mat-form-field>
 
         <fieldset class="colors">
-          <legend>Color</legend>
+          <legend>{{ 'Color' | t }}</legend>
           @for (option of colors; track option.label) {
             <label class="color" [class.selected]="form.controls.color.value === option.value">
               <input type="radio" name="zone-color" [value]="option.value" [checked]="form.controls.color.value === option.value" (change)="selectColor(option.value)" />
@@ -40,7 +40,7 @@
       </section>
 
       <section class="form-section" aria-labelledby="polygon-title">
-        <h2 id="polygon-title"><mat-icon aria-hidden="true" fontIcon="draw" />Polígono</h2>
+        <h2 id="polygon-title"><mat-icon aria-hidden="true" fontIcon="draw" />{{ 'Polígono' | t }}</h2>
         <app-polygon-editor [(vertices)]="vertices" [color]="form.controls.color.value" />
         @if (polygonError()) {
           <p class="error" role="alert">{{ polygonError() }}</p>
@@ -49,8 +49,8 @@
 
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
-        <a mat-button routerLink="/zonas">Cancelar</a>
-        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+        <a mat-button routerLink="/zonas">{{ 'Cancelar' | t }}</a>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
       </app-form-actions>
     </form>
   }

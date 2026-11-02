@@ -14,13 +14,14 @@ import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { RouteVisitsComponent } from './route-visits.component';
 import { RoutesMapComponent, StopRef } from './routes-map.component';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Detalle de una ruta de una jornada: resumen, mapa de esa sola ruta y sus paradas. Carga la jornada
  * completa (el gateway no tiene un endpoint de una ruta) y elige la ruta por `routeIndex`.
  */
 @Component({
   selector: 'app-route-detail',
-  imports: [RouterLink, MatButtonModule, FormHeadComponent, FormResultComponent, RoutesMapComponent, RouteVisitsComponent, SkeletonComponent],
+  imports: [RouterLink, MatButtonModule, FormHeadComponent, FormResultComponent, RoutesMapComponent, RouteVisitsComponent, SkeletonComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-detail.component.html',
 })

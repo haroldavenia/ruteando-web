@@ -1,7 +1,12 @@
 import { bootstrapApplication, BootstrapContext } from '@angular/platform-browser';
-import { AppComponent } from './app/app.component';
-import { config } from './app/app.config.server';
 
-const bootstrap = (context: BootstrapContext) => bootstrapApplication(AppComponent, config, context);
+import { loadDictionary } from './app/core/i18n/i18n';
+
+// Igual que en main.ts: el diccionario se carga antes de evaluar la aplicación
+const bootstrap = async (context: BootstrapContext) => {
+  await loadDictionary();
+  const [{ AppComponent }, { config }] = await Promise.all([import('./app/app.component'), import('./app/app.config.server')]);
+  return bootstrapApplication(AppComponent, config, context);
+};
 
 export default bootstrap;

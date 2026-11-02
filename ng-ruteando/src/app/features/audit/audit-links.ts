@@ -4,6 +4,7 @@ import { UserRole } from '../../core/auth/session.model';
 
 import { isDeletion } from './audit-labels';
 
+import { t } from '../../core/i18n/i18n';
 interface Target {
   /** Ruta de la pantalla de la entidad, sin el id. */
   base: string;
@@ -14,14 +15,14 @@ interface Target {
 }
 
 const TARGETS: Readonly<Record<string, Target>> = {
-  package: { base: '/paquetes', noun: 'paquete', roles: OPERATIONS_ROLES },
-  journey: { base: '/jornadas', noun: 'jornada', roles: OPERATIONS_ROLES },
-  place: { base: '/lugares', noun: 'lugar', roles: ADMIN_ROLES },
-  settings: { base: '/configuraciones', noun: 'configuración', roles: ADMIN_ROLES },
-  resource: { base: '/flota/vehiculos', noun: 'vehículo', roles: ADMIN_ROLES },
-  resource_type: { base: '/flota/tipos', noun: 'tipo de vehículo', roles: ADMIN_ROLES },
-  'resource-type': { base: '/flota/tipos', noun: 'tipo de vehículo', roles: ADMIN_ROLES },
-  zone: { base: '/zonas', noun: 'zona', roles: ADMIN_ROLES },
+  package: { base: '/paquetes', noun: t('paquete'), roles: OPERATIONS_ROLES },
+  journey: { base: '/jornadas', noun: t('jornada'), roles: OPERATIONS_ROLES },
+  place: { base: '/lugares', noun: t('lugar'), roles: ADMIN_ROLES },
+  settings: { base: '/configuraciones', noun: t('configuración'), roles: ADMIN_ROLES },
+  resource: { base: '/flota/vehiculos', noun: t('vehículo'), roles: ADMIN_ROLES },
+  resource_type: { base: '/flota/tipos', noun: t('tipo de vehículo'), roles: ADMIN_ROLES },
+  'resource-type': { base: '/flota/tipos', noun: t('tipo de vehículo'), roles: ADMIN_ROLES },
+  zone: { base: '/zonas', noun: t('zona'), roles: ADMIN_ROLES },
 };
 
 export interface EntityTarget {
@@ -38,7 +39,7 @@ export function entityTarget(log: Pick<AuditLog, 'action' | 'entityType' | 'enti
   if (!target || !log.entityId || isDeletion(log.action) || role === null || !target.roles.includes(role)) {
     return null;
   }
-  return { commands: [target.base, log.entityId], label: `Abrir ${target.noun}` };
+  return { commands: [target.base, log.entityId], label: t('Abrir {0}', [target.noun]) };
 }
 
 /** La acción borró la entidad, así que no hay nada que abrir. */

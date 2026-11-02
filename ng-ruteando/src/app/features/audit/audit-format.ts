@@ -1,8 +1,10 @@
-const LONG_DATE_TIME = new Intl.DateTimeFormat('es', { dateStyle: 'long', timeStyle: 'medium' });
-const SHORT_DATE = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'short' });
-const LONG_DAY = new Intl.DateTimeFormat('es', { weekday: 'long', day: 'numeric', month: 'long' });
-const CLOCK = new Intl.DateTimeFormat('es', { hour: '2-digit', minute: '2-digit' });
-const COUNT = new Intl.NumberFormat('es');
+import { locale } from '../../core/i18n/i18n';
+
+const LONG_DATE_TIME = new Intl.DateTimeFormat(locale(), { dateStyle: 'long', timeStyle: 'medium' });
+const SHORT_DATE = new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'short' });
+const LONG_DAY = new Intl.DateTimeFormat(locale(), { weekday: 'long', day: 'numeric', month: 'long' });
+const CLOCK = new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit' });
+const COUNT = new Intl.NumberFormat(locale());
 
 const PLACEHOLDER = '—';
 

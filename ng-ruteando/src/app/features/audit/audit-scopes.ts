@@ -1,5 +1,6 @@
 import { UserRole } from '../../core/auth/session.model';
 
+import { t } from '../../core/i18n/i18n';
 /** Qué eventos se consultan: los de la empresa, los de la propia persona o los de todas las empresas. */
 export type AuditScopeId = 'empresa' | 'mia' | 'todas';
 
@@ -9,9 +10,9 @@ export interface AuditScope {
 }
 
 const SCOPES: Readonly<Record<AuditScopeId, AuditScope>> = {
-  empresa: { id: 'empresa', label: 'Mi empresa' },
-  mia: { id: 'mia', label: 'Mi actividad' },
-  todas: { id: 'todas', label: 'Todas las empresas' },
+  empresa: { id: 'empresa', label: t('Mi empresa') },
+  mia: { id: 'mia', label: t('Mi actividad') },
+  todas: { id: 'todas', label: t('Todas las empresas') },
 };
 
 /**

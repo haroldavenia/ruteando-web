@@ -27,6 +27,7 @@ import { CurrentUser } from '../core/auth/current-user';
 import { InstallService } from '../core/pwa/install.service';
 import { BrandComponent } from '../shared/brand/brand.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { LanguageToggleComponent } from '../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../shared/ui/theme-toggle.component';
 import { ActionTitleDirective } from '../shared/ui/action-title.directive';
 
@@ -34,6 +35,8 @@ import { GlobalSearchComponent } from './global-search.component';
 import { NavRailComponent } from './nav-rail.component';
 import { navItemsFor } from './nav-items';
 
+import { t } from '../core/i18n/i18n';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 @Component({
   selector: 'app-shell',
   imports: [
@@ -44,6 +47,7 @@ import { navItemsFor } from './nav-items';
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
+    LanguageToggleComponent,
     ThemeToggleComponent,
     MatButtonModule,
     MatIconModule,
@@ -52,6 +56,7 @@ import { navItemsFor } from './nav-items';
     MatSidenavModule,
     MatToolbarModule,
     ActionTitleDirective,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './shell.component.html',
@@ -110,7 +115,7 @@ export class ShellComponent {
   readonly pageTitle = computed(() => {
     const url = this.url().split(/[?#]/)[0];
     if (url === '/sin-permiso') {
-      return 'Sin permiso';
+      return t('Sin permiso');
     }
     const flat = this.items().flatMap((item) => item.children ?? [item]);
     const match = flat.find((item) => item.link === '/' ? url === '/' : url === item.link || url.startsWith(`${item.link}/`));
@@ -128,14 +133,14 @@ export class ShellComponent {
 
   /** Safari de iPhone y iPad no deja instalar desde la página: se explica el camino manual. */
   showIosHint(): void {
-    this.snackBar.open('Pulsa Compartir y luego «Añadir a pantalla de inicio»', 'Entendido', { duration: 10000 });
+    this.snackBar.open(t('Pulsa Compartir y luego «Añadir a pantalla de inicio»'), t('Entendido'), { duration: 10000 });
   }
 
   /** Pide confirmación antes de cerrar la sesión; al cancelar el foco vuelve al botón de cuenta. */
   confirmLogout(): void {
     this.dialog
       .open(ConfirmDialogComponent, {
-        data: { title: 'Cerrar sesión', message: '¿Quieres cerrar la sesión?', confirmLabel: 'Cerrar sesión' },
+        data: { title: t('Cerrar sesión'), message: t('¿Quieres cerrar la sesión?'), confirmLabel: t('Cerrar sesión') },
       })
       .afterClosed()
       .subscribe((confirmed) => {

@@ -36,6 +36,8 @@ import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 
 import { stopTypeLabel } from './journey-labels';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export interface StopRef {
   routeIndex: number;
   sequence: number;
@@ -63,7 +65,7 @@ const SINGLE_POINT_ZOOM = 15;
  */
 @Component({
   selector: 'app-routes-map',
-  imports: [MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
+  imports: [MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './routes-map.component.html',
   styleUrl: './routes-map.component.scss',
@@ -132,7 +134,7 @@ export class RoutesMapComponent {
   protected readonly routeFocusText = computed(() => {
     const index = this.selectedRoute();
     const route = index === null ? null : this.routes().find((r) => r.routeIndex === index);
-    return route ? `Ruta enfocada: ${route.name}` : '';
+    return route ? t('Ruta enfocada: {0}', [route.name]) : '';
   });
 
   constructor() {
@@ -242,7 +244,7 @@ export class RoutesMapComponent {
       target: this.host().nativeElement,
       layers: [tiles, this.routeLayer, this.stopLayer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: 'Acercar el mapa', zoomOutTipLabel: 'Alejar el mapa' } }),
+      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') } }),
     });
 
     map.on('click', (event) => {

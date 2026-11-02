@@ -16,6 +16,8 @@ import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils
 import { notify } from '../../../shared/form/notify';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 /** Estados del gateway que indican que el enlace ya no sirve (el gateway no documenta cuál usa). */
 const LINK_ERRORS = [400, 401, 404, 410];
 /** Códigos de un 400 que culpan a la contraseña o a los datos escritos, no al enlace: el token sigue valiendo. */
@@ -32,39 +34,40 @@ const FORM_ERROR_CODES = ['PASSWORD_POLICY_VIOLATION', 'VALIDATION_ERROR'];
     FocusFirstInvalidDirective,
     FormResultComponent,
     PasswordFieldComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (linkInvalid()) {
       <div class="state">
         <span class="state-icon bad"><mat-icon aria-hidden="true">link_off</mat-icon></span>
-        <h1>Restablecer contraseña</h1>
+        <h1>{{ 'Restablecer contraseña' | t }}</h1>
         <app-form-result [error]="invalidMessage" />
-        <p class="alt"><a routerLink="/acceso/recuperar">Solicitar un enlace nuevo</a></p>
+        <p class="alt"><a routerLink="/acceso/recuperar">{{ 'Solicitar un enlace nuevo' | t }}</a></p>
       </div>
     } @else {
-      <h1>Restablecer contraseña</h1>
+      <h1>{{ 'Restablecer contraseña' | t }}</h1>
       <form [formGroup]="form" (ngSubmit)="submit()" appFocusFirstInvalid novalidate>
         <app-password-field
           [control]="form.controls.password"
-          label="Contraseña nueva"
+          [label]="'Contraseña nueva' | t"
           leadingIcon="lock"
           autocomplete="new-password"
           [requirements]="true"
-          [messages]="{ required: 'Introduce una contraseña' }"
+          [messages]="{ required: ('Introduce una contraseña' | t) }"
         />
         <app-password-field
           [control]="form.controls.confirm"
-          label="Confirmar contraseña"
+          [label]="'Confirmar contraseña' | t"
           leadingIcon="lock"
           autocomplete="new-password"
-          [messages]="{ required: 'Confirma tu contraseña' }"
+          [messages]="{ required: ('Confirma tu contraseña' | t) }"
         />
         <app-form-result [error]="error()" />
         @if (loading()) {
-          <mat-progress-bar mode="indeterminate" aria-label="Cambiando la contraseña" />
+          <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Cambiando la contraseña' | t" />
         }
-        <button mat-flat-button type="submit" [disabled]="loading()">Cambiar contraseña</button>
+        <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Cambiar contraseña' | t }}</button>
       </form>
     }
   `,
@@ -107,7 +110,7 @@ export class ResetPasswordComponent {
     this.error.set(null);
     this.auth.resetPassword(this.token, this.form.getRawValue().password).subscribe({
       next: () => {
-        void this.router.navigateByUrl('/acceso').then(() => notify(this.injector, 'Contraseña actualizada, ya puedes iniciar sesión'));
+        void this.router.navigateByUrl('/acceso').then(() => notify(this.injector, t('Contraseña actualizada, ya puedes iniciar sesión')));
       },
       error: (error: ApiError) => {
         this.loading.set(false);

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Barra de acciones al final de un formulario. Solo es diseño: proyecta los botones que cada formulario ya tiene («Cancelar» y
  * «Guardar»), de modo que no cambia cómo se validan, envían o cancelan. Avisa de los cambios sin guardar (`dirty`) y, en pantallas
@@ -9,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
  */
 @Component({
   selector: 'app-form-actions',
-  imports: [MatIconModule],
+  imports: [MatIconModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   // `form-actions` da el aspecto común (fila, borde superior y separación) desde el sistema de interfaz
   host: { class: 'form-actions' },
@@ -47,7 +48,7 @@ import { MatIconModule } from '@angular/material/icon';
   template: `
     <span class="status" role="status">
       @if (dirty()) {
-        <span class="dirty"><mat-icon aria-hidden="true" fontIcon="edit_note" />Cambios sin guardar</span>
+        <span class="dirty"><mat-icon aria-hidden="true" fontIcon="edit_note" />{{ 'Cambios sin guardar' | t }}</span>
       }
     </span>
     <ng-content />

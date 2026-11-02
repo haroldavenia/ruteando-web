@@ -5,6 +5,7 @@ import { Observable, map, of } from 'rxjs';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
+import { t } from '../../core/i18n/i18n';
 /** Pantalla con un formulario que puede tener cambios sin guardar. */
 export interface HasUnsavedChanges {
   /** `true` si el formulario está modificado y todavía no se ha guardado. */
@@ -21,10 +22,10 @@ export const unsavedChangesGuard: CanDeactivateFn<HasUnsavedChanges> = (componen
   return inject(MatDialog)
     .open(ConfirmDialogComponent, {
       data: {
-        title: '¿Descartar los cambios?',
-        message: 'Tienes cambios sin guardar. Si sales ahora se perderán.',
-        confirmLabel: 'Descartar',
-        cancelLabel: 'Seguir editando',
+        title: t('¿Descartar los cambios?'),
+        message: t('Tienes cambios sin guardar. Si sales ahora se perderán.'),
+        confirmLabel: t('Descartar'),
+        cancelLabel: t('Seguir editando'),
         ...component.leaveDialog?.(),
       },
     })

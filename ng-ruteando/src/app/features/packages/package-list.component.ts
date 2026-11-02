@@ -31,11 +31,13 @@ import {
 } from './package-labels';
 import { changePackageStatus } from './package-status-change';
 
-const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+const IN_USE = t('No se puede eliminar: el paquete está incluido en una jornada');
 
 @Component({
   selector: 'app-package-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, MatMenuModule, RouterLink, ActionTitleDirective],
+  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, MatMenuModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .empty-actions {
@@ -46,15 +48,15 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
     }
   `,
   template: `
-    <app-page-header title="Paquetes" [subtitle]="state.countText('paquete', 'paquetes')">
-      <a mat-stroked-button routerLink="/paquetes/importar"><mat-icon aria-hidden="true">upload_file</mat-icon>Importar CSV</a>
+    <app-page-header [title]="'Paquetes' | t" [subtitle]="state.countText('paquete', 'paquetes')">
+      <a mat-stroked-button routerLink="/paquetes/importar"><mat-icon aria-hidden="true">upload_file</mat-icon>{{ 'Importar CSV' | t }}</a>
       <button mat-stroked-button type="button" (click)="exportCsv()" [disabled]="exporting() || state.total() === 0">
-        <mat-icon aria-hidden="true">download</mat-icon>Exportar CSV
+        <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/paquetes/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo paquete</a>
+      <a mat-flat-button class="primary-action" routerLink="/paquetes/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo paquete' | t }}</a>
     </app-page-header>
     @if (exporting()) {
-      <p role="status">Exportando… {{ progress().loaded }} de {{ progress().total }}</p>
+      <p role="status">{{ 'Exportando… {0} de {1}' | t: [progress().loaded, progress().total] }}</p>
     }
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
     <app-data-table
@@ -62,12 +64,12 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
       [columns]="columns"
       [facet]="facet()"
       [selectable]="true"
-      entityPlural="paquetes"
-      emptyMessage="Todavía no hay paquetes"
-      searchPlaceholder="Buscar por guía, nombre o dirección"
+      [entityPlural]="'paquetes' | t"
+      [emptyMessage]="'Todavía no hay paquetes' | t"
+      [searchPlaceholder]="'Buscar por guía, nombre o dirección' | t"
     >
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/paquetes', row.id]" [attr.aria-label]="'Editar paquete ' + label(row)">
+        <a mat-icon-button [routerLink]="['/paquetes', row.id]" [attr.aria-label]="('Editar paquete ' | t) + label(row)">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
         <button
@@ -75,23 +77,23 @@ const IN_USE = 'No se puede eliminar: el paquete está incluido en una jornada';
           type="button"
           [matMenuTriggerFor]="statusMenu"
           [matMenuTriggerData]="{ row: row }"
-          [attr.aria-label]="'Cambiar el estado del paquete ' + label(row)"
+          [attr.aria-label]="('Cambiar el estado del paquete ' | t) + label(row)"
         >
           <mat-icon aria-hidden="true">published_with_changes</mat-icon>
         </button>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="'Eliminar paquete ' + label(row)">
+        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar paquete ' | t) + label(row)">
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
       <ng-template #selectionActions let-rows let-clear="clear">
         <button mat-button type="button" [matMenuTriggerFor]="bulkMenu" [matMenuTriggerData]="{ rows: rows, clear: clear }">
-          <mat-icon aria-hidden="true">published_with_changes</mat-icon>Cambiar estado
+          <mat-icon aria-hidden="true">published_with_changes</mat-icon>{{ 'Cambiar estado' | t }}
         </button>
-        <button mat-button type="button" (click)="exportSelected(rows)"><mat-icon aria-hidden="true">download</mat-icon>Exportar</button>
+        <button mat-button type="button" (click)="exportSelected(rows)"><mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}</button>
       </ng-template>
       <span empty-action class="empty-actions">
-        <a mat-stroked-button routerLink="/paquetes/nuevo">Crear el primer paquete</a>
-        <a mat-stroked-button routerLink="/paquetes/importar">Importar un CSV</a>
+        <a mat-stroked-button routerLink="/paquetes/nuevo">{{ 'Crear el primer paquete' | t }}</a>
+        <a mat-stroked-button routerLink="/paquetes/importar">{{ 'Importar un CSV' | t }}</a>
       </span>
     </app-data-table>
 
@@ -138,16 +140,16 @@ export class PackageListComponent {
   protected readonly facet = computed<DataFacet<Package>>(() => {
     const known = Object.keys(PACKAGE_STATUS_LABELS);
     const unknown = [...new Set(this.state.rows().map((p) => p.status))].filter((key) => !known.includes(key));
-    return { label: 'Estado', of: (p) => p.status, options: [...known, ...unknown].map((key) => ({ key, label: packageStatusLabel(key) })) };
+    return { label: t('Estado'), of: (p) => p.status, options: [...known, ...unknown].map((key) => ({ key, label: packageStatusLabel(key) })) };
   });
 
   protected readonly columns: DataColumn<Package>[] = [
-    { id: 'guideNumber', header: 'Guía', cell: (p) => p.guideNumber ?? '', kind: 'id' },
-    { id: 'name', header: 'Nombre', cell: (p) => p.name, primary: true, kind: 'strong' },
-    { id: 'address', header: 'Dirección', cell: (p) => p.address, kind: 'muted' },
-    { id: 'serviceType', header: 'Servicio', cell: (p) => serviceTypeLabel(p.serviceType) },
-    { id: 'status', header: 'Estado', cell: (p) => packageStatusLabel(p.status), tone: (p) => statusTone('package', p.status) },
-    { id: 'updatedAt', header: 'Actualizado', cell: (p) => formatRelativeTime(p.updatedAt), kind: 'muted' },
+    { id: 'guideNumber', header: t('Guía'), cell: (p) => p.guideNumber ?? '', kind: 'id' },
+    { id: 'name', header: t('Nombre'), cell: (p) => p.name, primary: true, kind: 'strong' },
+    { id: 'address', header: t('Dirección'), cell: (p) => p.address, kind: 'muted' },
+    { id: 'serviceType', header: t('Servicio'), cell: (p) => serviceTypeLabel(p.serviceType) },
+    { id: 'status', header: t('Estado'), cell: (p) => packageStatusLabel(p.status), tone: (p) => statusTone('package', p.status) },
+    { id: 'updatedAt', header: t('Actualizado'), cell: (p) => formatRelativeTime(p.updatedAt), kind: 'muted' },
   ];
 
   constructor() {
@@ -168,7 +170,7 @@ export class PackageListComponent {
 
   protected remove(row: Package): void {
     this.deleter.run({
-      entity: 'paquete',
+      entity: t('paquete'),
       name: this.label(row),
       request: () => this.api.remove(row.id),
       byStatus: { 400: IN_USE, 409: IN_USE },
@@ -181,7 +183,7 @@ export class PackageListComponent {
     this.deleter.error.set(null);
     changePackageStatus(this.api, this.dialog, { id: row.id, label: this.label(row) }, status).subscribe({
       next: () => {
-        this.deleter.success.set(`El paquete «${this.label(row)}» ahora está ${packageStatusLabel(status).toLowerCase()}`);
+        this.deleter.success.set(t('El paquete «{0}» ahora está {1}', [this.label(row), packageStatusLabel(status).toLowerCase()]));
         this.state.reload();
       },
       error: (err: unknown) => this.deleter.error.set(messageFor(err)),
@@ -198,12 +200,12 @@ export class PackageListComponent {
         next: ({ changed, failed }) => {
           if (changed > 0) {
             this.deleter.success.set(
-              `${changed === 1 ? 'El estado de 1 paquete' : `El estado de ${changed} paquetes`} ahora es «${packageStatusLabel(status)}»`,
+              changed === 1 ? t('El estado de 1 paquete ahora es «{0}»', [packageStatusLabel(status)]) : t('El estado de {0} paquetes ahora es «{1}»', [changed, packageStatusLabel(status)]),
             );
           }
           if (failed.length > 0) {
             this.deleter.error.set(
-              `No se pudo cambiar el estado de ${failed.length === 1 ? '1 paquete' : `${failed.length} paquetes`}: ${failed.map((f) => `«${f.label}» (${f.message})`).join('; ')}`,
+              t('No se pudo cambiar el estado de {0}: {1}', [failed.length === 1 ? t('1 paquete') : t('{0} paquetes', [failed.length]), failed.map((f) => `«${f.label}» (${f.message})`).join('; ')]),
             );
           }
           clear();
@@ -217,7 +219,7 @@ export class PackageListComponent {
   protected exportSelected(rows: readonly Package[]): void {
     this.deleter.error.set(null);
     downloadCsv(EXPORT_FILE_NAME, packagesToCsv(rows), this.platformId);
-    this.deleter.success.set(`Se exportaron ${rows.length === 1 ? '1 paquete elegido' : `${rows.length} paquetes elegidos`} a ${EXPORT_FILE_NAME}`);
+    this.deleter.success.set(t('Se exportaron {0} a {1}', [rows.length === 1 ? t('1 paquete elegido') : t('{0} paquetes elegidos', [rows.length]), EXPORT_FILE_NAME]));
   }
 
   /** Descarga todos los paquetes en un CSV; ante un fallo no se descarga nada y se puede reintentar. */
@@ -232,11 +234,11 @@ export class PackageListComponent {
     ).subscribe({
       next: (items) => {
         downloadCsv(EXPORT_FILE_NAME, packagesToCsv(items), this.platformId);
-        this.deleter.success.set(`Se exportaron ${items.length} paquetes a ${EXPORT_FILE_NAME}`);
+        this.deleter.success.set(t('Se exportaron {0} paquetes a {1}', [items.length, EXPORT_FILE_NAME]));
         this.exporting.set(false);
       },
       error: (err: unknown) => {
-        this.deleter.error.set(`No se pudo exportar: ${messageFor(err)}. Puedes volver a intentarlo.`);
+        this.deleter.error.set(t('No se pudo exportar: {0}. Puedes volver a intentarlo.', [messageFor(err)]));
         this.exporting.set(false);
       },
     });

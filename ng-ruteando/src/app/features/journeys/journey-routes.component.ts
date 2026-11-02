@@ -13,6 +13,7 @@ import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 import { stopTypeLabel } from './journey-labels';
 import { StopRef } from './routes-map.component';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Rutas de una jornada, una tarjeta por ruta con sus cifras (y una barra para el uso de peso y de volumen) y la franja del color que
  * tiene en el mapa; cada una se abre para ver sus paradas en orden. Lee el modelo de dominio (`DomainRoute`), el mismo que usa el
@@ -20,7 +21,7 @@ import { StopRef } from './routes-map.component';
  */
 @Component({
   selector: 'app-journey-routes',
-  imports: [MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
+  imports: [MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './journey-routes.component.html',
   styleUrl: './journey-routes.component.scss',

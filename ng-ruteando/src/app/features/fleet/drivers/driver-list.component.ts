@@ -21,18 +21,20 @@ import { driversToCsv } from '../fleet-export';
 import { driverName, identifierText } from '../fleet-labels';
 import { FleetListActions } from '../fleet-list-actions';
 
-const ASSIGNED = 'No se puede eliminar: el conductor está asignado a un vehículo';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+const ASSIGNED = t('No se puede eliminar: el conductor está asignado a un vehículo');
 
 @Component({
   selector: 'app-driver-list',
-  imports: [DataTableComponent, FleetTabsComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
+  imports: [DataTableComponent, FleetTabsComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header title="Conductores" [subtitle]="state.countText('conductor', 'conductores')">
+    <app-page-header [title]="'Conductores' | t" [subtitle]="state.countText('conductor', 'conductores')">
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
-        <mat-icon aria-hidden="true">download</mat-icon>Exportar CSV
+        <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/flota/conductores/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo conductor</a>
+      <a mat-flat-button class="primary-action" routerLink="/flota/conductores/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo conductor' | t }}</a>
     </app-page-header>
     <app-fleet-tabs />
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
@@ -40,26 +42,26 @@ const ASSIGNED = 'No se puede eliminar: el conductor está asignado a un vehícu
       [state]="state"
       [columns]="columns"
       [selectable]="true"
-      entityPlural="conductores"
-      emptyMessage="Todavía no hay conductores"
-      searchPlaceholder="Buscar por nombre, correo o documento"
+      [entityPlural]="'conductores' | t"
+      [emptyMessage]="'Todavía no hay conductores' | t"
+      [searchPlaceholder]="'Buscar por nombre, correo o documento' | t"
     >
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/flota/conductores', row.id]" [attr.aria-label]="'Editar conductor ' + name(row)">
+        <a mat-icon-button [routerLink]="['/flota/conductores', row.id]" [attr.aria-label]="('Editar conductor ' | t) + name(row)">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
-        <button mat-icon-button type="button" (click)="sendReset(row)" [attr.aria-label]="'Enviar enlace de restablecimiento a ' + name(row)">
+        <button mat-icon-button type="button" (click)="sendReset(row)" [attr.aria-label]="('Enviar enlace de restablecimiento a ' | t) + name(row)">
           <mat-icon aria-hidden="true">lock_reset</mat-icon>
         </button>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="'Eliminar conductor ' + name(row)">
+        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar conductor ' | t) + name(row)">
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
       <ng-template #selectionActions let-rows let-clear="clear">
-        <button mat-button type="button" (click)="actions.removeMany(rows, clear)"><mat-icon aria-hidden="true">delete</mat-icon>Eliminar</button>
-        <button mat-button type="button" (click)="actions.exportRows(rows)"><mat-icon aria-hidden="true">download</mat-icon>Exportar</button>
+        <button mat-button type="button" (click)="actions.removeMany(rows, clear)"><mat-icon aria-hidden="true">delete</mat-icon>{{ 'Eliminar' | t }}</button>
+        <button mat-button type="button" (click)="actions.exportRows(rows)"><mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}</button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/flota/conductores/nuevo">Crear el primer conductor</a>
+      <a empty-action mat-stroked-button routerLink="/flota/conductores/nuevo">{{ 'Crear el primer conductor' | t }}</a>
     </app-data-table>
   `,
 })
@@ -73,8 +75,8 @@ export class DriverListComponent {
   protected readonly state = new FullListState<User>(this.paging.fetch);
   private readonly table = viewChild<DataTableComponent<User>>(DataTableComponent);
   protected readonly actions = new FleetListActions<User>(this.deleter, {
-    singular: 'conductor',
-    plural: 'conductores',
+    singular: t('conductor'),
+    plural: t('conductores'),
     fileBase: 'conductores',
     label: driverName,
     remove: (id) => this.api.remove(id),
@@ -83,11 +85,11 @@ export class DriverListComponent {
     csv: driversToCsv,
   });
   protected readonly columns: DataColumn<User>[] = [
-    { id: 'name', header: 'Nombre', cell: (u) => driverName(u), kind: 'strong' },
-    { id: 'email', header: 'Correo', cell: (u) => u.email },
-    { id: 'phone', header: 'Teléfono', cell: (u) => u.phone ?? '' },
-    { id: 'document', header: 'Documento', cell: (u) => identifierText(u) },
-    { id: 'active', header: 'Estado', cell: (u) => (u.active ? 'Activo' : 'Inactivo') },
+    { id: 'name', header: t('Nombre'), cell: (u) => driverName(u), kind: 'strong' },
+    { id: 'email', header: t('Correo'), cell: (u) => u.email },
+    { id: 'phone', header: t('Teléfono'), cell: (u) => u.phone ?? '' },
+    { id: 'document', header: t('Documento'), cell: (u) => identifierText(u) },
+    { id: 'active', header: t('Estado'), cell: (u) => (u.active ? t('Activo') : t('Inactivo')) },
   ];
 
   constructor() {
@@ -100,7 +102,7 @@ export class DriverListComponent {
 
   protected remove(user: User): void {
     this.deleter.run({
-      entity: 'conductor',
+      entity: t('conductor'),
       name: driverName(user),
       request: () => this.api.remove(user.id),
       byStatus: { 400: ASSIGNED, 409: ASSIGNED },
@@ -126,9 +128,9 @@ export class DriverListComponent {
     this.dialog
       .open(ConfirmDialogComponent, {
         data: {
-          title: 'Enviar enlace de restablecimiento',
-          message: `Se enviará a ${user.email} un enlace para restablecer su contraseña.`,
-          confirmLabel: 'Enviar enlace',
+          title: t('Enviar enlace de restablecimiento'),
+          message: t('Se enviará a {0} un enlace para restablecer su contraseña.', [user.email]),
+          confirmLabel: t('Enviar enlace'),
         },
       })
       .afterClosed()

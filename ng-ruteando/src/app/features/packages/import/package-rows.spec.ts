@@ -157,6 +157,13 @@ describe('package-rows', () => {
       expect(result.errors.map((e) => e.line)).toEqual([8]);
     });
 
+    it('el tipo de servicio también se acepta en portugués (la plantilla habla el idioma de la interfaz)', () => {
+      const types = ['Entrega', 'Coleta', 'Recolha', 'Misto'];
+      const result = validate(`${HEADER};SERVICIO\n${types.map((t) => `A;-74;4;${t}`).join('\n')}`);
+      expect(result.errors).toEqual([]);
+      expect(result.valid.map((r) => r.input.serviceType)).toEqual(['delivery', 'pickup', 'pickup', 'mixed']);
+    });
+
     it('una guía repetida en el archivo rechaza la segunda e indica la línea de la primera', () => {
       const result = validate(`ID_GUIA;${HEADER}\nG-1;A;-74;4\nG-2;B;-74;4\nG-1;C;-74;4`);
       expect(result.valid.map((r) => r.input.guideNumber)).toEqual(['G-1', 'G-2']);

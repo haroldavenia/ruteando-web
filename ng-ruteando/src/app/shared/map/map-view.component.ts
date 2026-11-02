@@ -22,6 +22,8 @@ import { MAP_CONFIG } from './map-config';
 import { readMapPalette } from './map-palette';
 import { OPENLAYERS_LOADER, OpenLayers } from './openlayers';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /** Redondea a 6 decimales (~10 cm) y lleva la longitud a -180..180 si el mapa dio la vuelta al mundo. */
 function normalize(lon: number, lat: number): LatLng {
   const wrapped = ((((lon + 180) % 360) + 360) % 360) - 180;
@@ -36,12 +38,13 @@ function normalize(lon: number, lat: number): LatLng {
  * El mapa no se puede operar con teclado: quien lo use debe ofrecer también campos de coordenadas.
  */
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-map-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div #host class="map" role="region" [attr.aria-label]="ariaLabel()"></div>
     @if (failed()) {
-      <p class="failed" role="alert">No se pudo cargar el mapa. Puedes seguir usando los campos de coordenadas.</p>
+      <p class="failed" role="alert">{{ 'No se pudo cargar el mapa. Puedes seguir usando los campos de coordenadas.' | t }}</p>
     }
   `,
   styles: `
@@ -64,7 +67,7 @@ function normalize(lon: number, lat: number): LatLng {
 export class MapViewComponent {
   readonly point = input<LatLng | null>(null);
   readonly selectable = input(false);
-  readonly ariaLabel = input('Mapa');
+  readonly ariaLabel = input(t('Mapa'));
   readonly pointChange = output<LatLng>();
 
   /** El mapa de OpenLayers, o `null` mientras carga, en el servidor o si falló; para pruebas. */
@@ -146,7 +149,7 @@ export class MapViewComponent {
       layers: [tiles, markerLayer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
       // La atribución del proveedor debe verse siempre: sin el botón que la pliega
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: 'Acercar el mapa', zoomOutTipLabel: 'Alejar el mapa' } }),
+      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') } }),
     });
 
     this.translate = new ol.Translate({ layers: [markerLayer] });

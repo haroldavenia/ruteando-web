@@ -7,10 +7,11 @@ import { API_BASE_URL } from '../api/api-config';
 import { SessionResponse } from './session.model';
 import { TokenStorageService } from './token-storage.service';
 
+import { t } from '../i18n/i18n';
 /** No hay token de refresco con el que renovar la sesión. */
 export class NoRefreshTokenError extends Error {
   constructor() {
-    super('No hay token de refresco');
+    super(t('No hay token de refresco'));
     this.name = 'NoRefreshTokenError';
   }
 }

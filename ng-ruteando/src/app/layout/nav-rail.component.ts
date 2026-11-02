@@ -9,6 +9,7 @@ import { BrandComponent } from '../shared/brand/brand.component';
 
 import { NavItem } from './nav-items';
 
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 /**
  * Riel de iconos de las pantallas anchas: la marca arriba y una entrada por área, con su icono sobre su nombre. Una sección con
  * varias entradas (Flota) es un botón que abre un menú con ellas. La entrada activa se distingue con fondo propio, con el hilo
@@ -17,10 +18,10 @@ import { NavItem } from './nav-items';
  */
 @Component({
   selector: 'app-nav-rail',
-  imports: [BrandComponent, MatIconModule, MatMenuModule, RouterLink, RouterLinkActive],
+  imports: [BrandComponent, MatIconModule, MatMenuModule, RouterLink, RouterLinkActive, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <nav class="rail" aria-label="Navegación principal">
+    <nav class="rail" [attr.aria-label]="'Navegación principal' | t">
       <a class="rail-brand" routerLink="/"><app-brand size="mark" /></a>
       <ul class="rail-list">
         @for (item of items(); track item.label) {

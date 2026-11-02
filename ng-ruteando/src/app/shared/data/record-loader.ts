@@ -3,9 +3,10 @@ import { Observable } from 'rxjs';
 
 import { ApiError } from '../../core/api/api-error';
 
+import { t } from '../../core/i18n/i18n';
 export type RecordStatus = 'new' | 'loading' | 'ready' | 'missing' | 'error';
 
-export const RECORD_GONE = 'El registro ya no existe';
+export const RECORD_GONE = t('El registro ya no existe');
 
 /**
  * Carga el registro de una pantalla de edición. Sin `id` es un alta (`new`); un 404 es `missing`
@@ -42,7 +43,7 @@ export class RecordLoader<T> {
           this.status.set('missing');
           return;
         }
-        this.error.set(err instanceof ApiError ? err.message : 'No se pudo completar la solicitud');
+        this.error.set(err instanceof ApiError ? err.message : t('No se pudo completar la solicitud'));
         this.status.set('error');
       },
     });

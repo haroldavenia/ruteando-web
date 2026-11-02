@@ -6,6 +6,7 @@ import { ApiError } from '../../core/api/api-error';
 
 import { ListState } from './list-state';
 
+import { t } from '../../core/i18n/i18n';
 /** Registros por petición al traer todo el listado. */
 export const FULL_LIST_PAGE_SIZE = 100;
 /** Tope de registros que se traen: pasado este número se avisa y se trabaja con los primeros. */
@@ -34,7 +35,7 @@ export class FullListState<T> extends ListState<T> {
         this.status.set(total === 0 && rows.length === 0 ? 'empty' : 'ready');
       },
       error: (err: unknown) => {
-        this.error.set(err instanceof ApiError ? err.message : 'No se pudo completar la solicitud');
+        this.error.set(err instanceof ApiError ? err.message : t('No se pudo completar la solicitud'));
         this.status.set('error');
       },
     });

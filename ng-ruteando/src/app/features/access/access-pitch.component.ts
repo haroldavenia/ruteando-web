@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Presentación del producto que acompaña a la ilustración en el diseño ancho de las pantallas de acceso (desde 1024px; en
  * pantallas estrechas no se muestra). Su tarjeta, el título y la palabra con degradado son estilos de `.pitch-card`
@@ -8,15 +9,15 @@ import { MatIconModule } from '@angular/material/icon';
  */
 @Component({
   selector: 'app-access-pitch',
-  imports: [MatIconModule],
+  imports: [MatIconModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'pitch-card' },
   template: `
-    <p class="title">Planifica y sigue tus <span class="accent">rutas</span>.</p>
+    <p class="title">{{ 'Planifica y sigue tus' | t }} <span class="accent">{{ 'rutas' | t }}</span>.</p>
     <ul>
-      <li><span class="icon"><mat-icon aria-hidden="true">route</mat-icon></span>Rutas y paradas en un solo mapa</li>
-      <li><span class="icon"><mat-icon aria-hidden="true">task_alt</mat-icon></span>Seguimiento de cada visita</li>
-      <li><span class="icon"><mat-icon aria-hidden="true">local_shipping</mat-icon></span>Flota, lugares y zonas a mano</li>
+      <li><span class="icon"><mat-icon aria-hidden="true">route</mat-icon></span>{{ 'Rutas y paradas en un solo mapa' | t }}</li>
+      <li><span class="icon"><mat-icon aria-hidden="true">task_alt</mat-icon></span>{{ 'Seguimiento de cada visita' | t }}</li>
+      <li><span class="icon"><mat-icon aria-hidden="true">local_shipping</mat-icon></span>{{ 'Flota, lugares y zonas a mano' | t }}</li>
     </ul>
   `,
   styles: `

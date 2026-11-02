@@ -1,34 +1,34 @@
 @switch (loader.status()) {
   @case ('loading') {
-    <h1>Jornada</h1>
-    <section class="card"><app-skeleton variant="stats" label="Cargando la jornada…" [count]="9" /></section>
+    <h1>{{ 'Jornada' | t }}</h1>
+    <section class="card"><app-skeleton variant="stats" [label]="'Cargando la jornada…' | t" [count]="9" /></section>
   }
   @case ('missing') {
-    <h1>Jornada</h1>
+    <h1>{{ 'Jornada' | t }}</h1>
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/jornadas">Volver al listado</a>
+    <a mat-stroked-button routerLink="/jornadas">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
-    <h1>Jornada</h1>
+    <h1>{{ 'Jornada' | t }}</h1>
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/jornadas">Volver al listado</a>
+    <a mat-stroked-button routerLink="/jornadas">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     @if (loader.record(); as journey) {
-      <app-form-head [title]="journey.name" backLabel="Jornadas" backLink="/jornadas" />
+      <app-form-head [title]="journey.name" [backLabel]="'Jornadas' | t" backLink="/jornadas" />
 
       <section class="card" aria-labelledby="summary-title">
-        <h2 id="summary-title">Resumen</h2>
+        <h2 id="summary-title">{{ 'Resumen' | t }}</h2>
         <dl class="summary stat-grid">
-          <div><dt>Estado</dt><dd><app-status-badge [label]="status(journey.status)" [tone]="tone(journey.status)" /></dd></div>
-          <div><dt>Configuración</dt><dd>{{ journey.settings?.name ?? '—' }}</dd></div>
-          <div><dt>Servicios</dt><dd>{{ count(journey.totalServices) }}</dd></div>
-          <div><dt>Vehículos</dt><dd>{{ count(journey.totalResources) }}</dd></div>
-          <div><dt>Zonas</dt><dd>{{ count(journey.totalZones) }}</dd></div>
-          <div><dt>Tiempo mínimo</dt><dd>{{ duration(journey.stats?.minTime) }}</dd></div>
-          <div><dt>Tiempo medio</dt><dd>{{ duration(journey.stats?.avgTime) }}</dd></div>
-          <div><dt>Tiempo máximo</dt><dd>{{ duration(journey.stats?.maxTime) }}</dd></div>
-          <div><dt>Creada</dt><dd>{{ dateTime(journey.createdAt) }}</dd></div>
+          <div><dt>{{ 'Estado' | t }}</dt><dd><app-status-badge [label]="status(journey.status)" [tone]="tone(journey.status)" /></dd></div>
+          <div><dt>{{ 'Configuración' | t }}</dt><dd>{{ journey.settings?.name ?? '—' }}</dd></div>
+          <div><dt>{{ 'Servicios' | t }}</dt><dd>{{ count(journey.totalServices) }}</dd></div>
+          <div><dt>{{ 'Vehículos' | t }}</dt><dd>{{ count(journey.totalResources) }}</dd></div>
+          <div><dt>{{ 'Zonas' | t }}</dt><dd>{{ count(journey.totalZones) }}</dd></div>
+          <div><dt>{{ 'Tiempo mínimo' | t }}</dt><dd>{{ duration(journey.stats?.minTime) }}</dd></div>
+          <div><dt>{{ 'Tiempo medio' | t }}</dt><dd>{{ duration(journey.stats?.avgTime) }}</dd></div>
+          <div><dt>{{ 'Tiempo máximo' | t }}</dt><dd>{{ duration(journey.stats?.maxTime) }}</dd></div>
+          <div><dt>{{ 'Creada' | t }}</dt><dd>{{ dateTime(journey.createdAt) }}</dd></div>
         </dl>
       </section>
 
@@ -36,15 +36,15 @@
       <div [class.split-view]="journey.routes.length > 0">
         @if (journey.routes.length > 0) {
           <section #mapSection class="card sticky" aria-labelledby="map-title">
-            <h2 id="map-title">Mapa de las rutas</h2>
+            <h2 id="map-title">{{ 'Mapa de las rutas' | t }}</h2>
             <app-routes-map [routes]="journey.routes" [(selectedRoute)]="selectedRoute" [(selectedStop)]="selectedStop" />
           </section>
         }
 
         <section class="card" aria-labelledby="routes-title">
-          <h2 id="routes-title">Rutas</h2>
+          <h2 id="routes-title">{{ 'Rutas' | t }}</h2>
           @if (journey.routes.length === 0) {
-            <p>Esta jornada no tiene rutas.</p>
+            <p>{{ 'Esta jornada no tiene rutas.' | t }}</p>
           } @else {
             <app-journey-routes [routes]="journey.routes" [journeyId]="journey.id" [selectedRoute]="selectedRoute()" (routeFocus)="focusRoute($event)" (stopFocus)="focusStop($event)" />
           }
@@ -53,7 +53,7 @@
 
       @if (journey.invalidPackageIds?.length) {
         <section class="card" aria-labelledby="invalid-title">
-          <h2 id="invalid-title">Paquetes que no se pudieron planificar</h2>
+          <h2 id="invalid-title">{{ 'Paquetes que no se pudieron planificar' | t }}</h2>
           <ul>
             @for (packageId of journey.invalidPackageIds; track packageId) {
               <li><a [routerLink]="['/paquetes', packageId]">{{ packageId }}</a></li>

@@ -16,6 +16,8 @@ import { FormResultComponent } from '../../../shared/form/form-result.component'
 import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 interface TextField {
   name: 'firstName' | 'lastName' | 'tenantName' | 'email';
   label: string;
@@ -26,7 +28,7 @@ interface TextField {
   icon?: string;
 }
 
-const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verificación';
+const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verificación');
 
 @Component({
   selector: 'app-register',
@@ -41,26 +43,27 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
     FocusFirstInvalidDirective,
     FormResultComponent,
     PasswordFieldComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (registeredEmail(); as sentTo) {
       <div class="state">
         <span class="state-icon"><mat-icon aria-hidden="true">mark_email_read</mat-icon></span>
-        <h1>Revisa tu correo</h1>
+        <h1>{{ 'Revisa tu correo' | t }}</h1>
         <p>
-          Hemos enviado un enlace de verificación a <strong>{{ sentTo }}</strong
-          >. Ábrelo para activar tu cuenta.
+          {{ 'Hemos enviado un enlace de verificación a' | t }} <strong>{{ sentTo }}</strong
+          >{{ '. Ábrelo para activar tu cuenta.' | t }}
         </p>
         <app-form-result [error]="resendError()" [success]="resendDone() ? resendMessage : null" />
         <div class="actions">
-          <button mat-stroked-button type="button" [disabled]="resending()" (click)="resend(sentTo)">Reenviar correo</button>
-          <a mat-button routerLink="/acceso">Ir a iniciar sesión</a>
+          <button mat-stroked-button type="button" [disabled]="resending()" (click)="resend(sentTo)">{{ 'Reenviar correo' | t }}</button>
+          <a mat-button routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a>
         </div>
       </div>
     } @else {
-      <h1>Crea tu cuenta</h1>
-      <p class="lead">Empieza a planificar tus rutas.</p>
+      <h1>{{ 'Crea tu cuenta' | t }}</h1>
+      <p class="lead">{{ 'Empieza a planificar tus rutas.' | t }}</p>
       <form [formGroup]="form" (ngSubmit)="submit()" appFocusFirstInvalid novalidate>
         <div class="field-grid">
           @for (field of textFields; track field.name; let i = $index) {
@@ -76,26 +79,26 @@ const RESEND_NEUTRAL = 'Si el correo existe, recibirás instrucciones de verific
         </div>
         <app-password-field
           [control]="form.controls.password"
-          label="Contraseña"
+          [label]="'Contraseña' | t"
           leadingIcon="lock"
           autocomplete="new-password"
           [requirements]="true"
-          [messages]="{ required: 'Introduce una contraseña' }"
+          [messages]="{ required: ('Introduce una contraseña' | t) }"
         />
         <app-password-field
           [control]="form.controls.confirm"
-          label="Confirmar contraseña"
+          [label]="'Confirmar contraseña' | t"
           leadingIcon="lock"
           autocomplete="new-password"
-          [messages]="{ required: 'Confirma tu contraseña' }"
+          [messages]="{ required: ('Confirma tu contraseña' | t) }"
         />
         <app-form-result [error]="error()" />
         @if (loading()) {
-          <mat-progress-bar mode="indeterminate" aria-label="Creando la cuenta" />
+          <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Creando la cuenta' | t" />
         }
-        <button mat-flat-button type="submit" [disabled]="loading()">Crear cuenta</button>
+        <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Crear cuenta' | t }}</button>
       </form>
-      <p class="alt">¿Ya tienes cuenta? <a routerLink="/acceso">Iniciar sesión</a></p>
+      <p class="alt">{{ '¿Ya tienes cuenta?' | t }} <a routerLink="/acceso">{{ 'Iniciar sesión' | t }}</a></p>
     }
   `,
 })
@@ -104,10 +107,10 @@ export class RegisterComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected readonly textFields: readonly TextField[] = [
-    { name: 'firstName', label: 'Nombre', type: 'text', autocomplete: 'given-name', required: 'Introduce tu nombre' },
-    { name: 'lastName', label: 'Apellidos', type: 'text', autocomplete: 'family-name', required: 'Introduce tus apellidos' },
-    { name: 'tenantName', label: 'Nombre de la empresa', type: 'text', autocomplete: 'organization', required: 'Introduce el nombre de tu empresa' },
-    { name: 'email', label: 'Correo electrónico', type: 'email', autocomplete: 'username', required: 'Introduce tu correo', icon: 'mail' },
+    { name: 'firstName', label: t('Nombre||pila'), type: 'text', autocomplete: 'given-name', required: t('Introduce tu nombre') },
+    { name: 'lastName', label: t('Apellidos'), type: 'text', autocomplete: 'family-name', required: t('Introduce tus apellidos') },
+    { name: 'tenantName', label: t('Nombre de la empresa'), type: 'text', autocomplete: 'organization', required: t('Introduce el nombre de tu empresa') },
+    { name: 'email', label: t('Correo electrónico'), type: 'email', autocomplete: 'username', required: t('Introduce tu correo'), icon: 'mail' },
   ];
 
   protected readonly form = inject(FormBuilder).nonNullable.group({

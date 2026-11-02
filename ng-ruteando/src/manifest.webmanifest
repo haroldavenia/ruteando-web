@@ -1,8 +1,8 @@
 {
   "name": "Ruteando",
   "short_name": "Ruteando",
-  "description": "Planificación de rutas, flota y jornadas.",
-  "lang": "es",
+  "description": "Route, fleet and journey planning.",
+  "lang": "en",
   "dir": "ltr",
   "id": "/",
   "start_url": "/",

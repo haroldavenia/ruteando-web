@@ -5,6 +5,7 @@ import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
 
 import { DiffRow } from './audit-diff';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * «Qué cambió»: cada campo con su valor de antes y su valor de después a los lados de una flecha, el de antes tachado y en tono de
  * error y el de después en negrita y en tono de éxito (el color nunca es la única señal: cada lado lleva su rótulo «Antes» o
@@ -12,7 +13,7 @@ import { DiffRow } from './audit-diff';
  */
 @Component({
   selector: 'app-audit-changes',
-  imports: [MatIconModule, StatusBadgeComponent],
+  imports: [MatIconModule, StatusBadgeComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './audit-changes.component.html',

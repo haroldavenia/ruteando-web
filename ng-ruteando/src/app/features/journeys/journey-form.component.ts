@@ -22,6 +22,8 @@ import { FormResultComponent } from '../../shared/form/form-result.component';
 import { PackagePickerComponent } from './package-picker.component';
 import { planErrorMessage } from './plan-errors';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /** Cuántas configuraciones se cargan en el selector; si hay más, el formulario avisa. */
 export const SELECT_LIMIT = 200;
 
@@ -40,6 +42,7 @@ export const SELECT_LIMIT = 200;
     FormHeadComponent,
     FormResultComponent,
     PackagePickerComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './journey-form.component.html',
@@ -57,7 +60,7 @@ export class JourneyFormComponent implements HasUnsavedChanges {
   protected readonly selectedIds = signal<string[]>([]);
   /** `true` tras un intento de envío sin paquetes, para mostrar el error de la selección. */
   protected readonly selectionTouched = signal(false);
-  protected readonly selectionError = computed(() => (this.selectionTouched() && this.selectedIds().length === 0 ? 'Elige al menos un paquete' : ''));
+  protected readonly selectionError = computed(() => (this.selectionTouched() && this.selectedIds().length === 0 ? t('Elige al menos un paquete') : ''));
   private readonly saved = signal(false);
 
   protected readonly form = new FormGroup({
@@ -76,7 +79,7 @@ export class JourneyFormComponent implements HasUnsavedChanges {
     return {
       name: name.trim() || null,
       settings: this.settings().find((item) => item.id === settingsId)?.description ?? null,
-      packages: count === 0 ? null : count === 1 ? '1 paquete' : `${count} paquetes`,
+      packages: count === 0 ? null : count === 1 ? t('1 paquete') : t('{0} paquetes', [count]),
     };
   });
 
@@ -98,7 +101,7 @@ export class JourneyFormComponent implements HasUnsavedChanges {
   }
 
   protected error(name: 'name' | 'settingsId'): string {
-    return this.form.controls[name].errors ? 'Este campo es obligatorio' : '';
+    return this.form.controls[name].errors ? t('Este campo es obligatorio') : '';
   }
 
   protected plan(): void {

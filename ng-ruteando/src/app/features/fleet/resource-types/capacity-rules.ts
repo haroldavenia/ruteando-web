@@ -1,18 +1,19 @@
 import { CapacityValues, effectiveVolume } from './capacity-codec';
 
+import { t } from '../../../core/i18n/i18n';
 export type CapacityField = 'weight' | 'volume' | 'width' | 'height' | 'depth' | 'minWeight' | 'maxWeight' | 'minVolume' | 'maxVolume';
 export type CapacityIssues = Partial<Record<CapacityField, string>>;
 
 const FIELDS: readonly CapacityField[] = ['weight', 'volume', 'width', 'height', 'depth', 'minWeight', 'maxWeight', 'minVolume', 'maxVolume'];
 
 export const CAPACITY_MESSAGES = {
-  negative: 'No puede ser negativo',
-  weight: 'Indica un peso mayor que 0',
-  volume: 'Indica un volumen mayor que 0',
-  measure: 'Indica una medida mayor que 0',
-  maxBelowMin: 'El máximo no puede ser menor que el mínimo',
-  maxWeightAbove: 'El peso máximo no puede superar el peso del vehículo',
-  maxVolumeAbove: 'El volumen máximo no puede superar el volumen',
+  negative: t('No puede ser negativo'),
+  weight: t('Indica un peso mayor que 0'),
+  volume: t('Indica un volumen mayor que 0'),
+  measure: t('Indica una medida mayor que 0'),
+  maxBelowMin: t('El máximo no puede ser menor que el mínimo'),
+  maxWeightAbove: t('El peso máximo no puede superar el peso del vehículo'),
+  maxVolumeAbove: t('El volumen máximo no puede superar el volumen'),
 } as const;
 
 /** Si la persona ha escrito algo de la capacidad (peso, volumen o medidas): en ese caso hace falta completarla. */

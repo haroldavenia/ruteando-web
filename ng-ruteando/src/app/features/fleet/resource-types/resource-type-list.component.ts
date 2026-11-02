@@ -16,18 +16,20 @@ import { typesToCsv } from '../fleet-export';
 import { capacitySummary, profileLabel } from '../fleet-labels';
 import { FleetListActions } from '../fleet-list-actions';
 
-const IN_USE = 'No se puede eliminar: hay vehículos de este tipo';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+const IN_USE = t('No se puede eliminar: hay vehículos de este tipo');
 
 @Component({
   selector: 'app-resource-type-list',
-  imports: [DataTableComponent, FleetTabsComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
+  imports: [DataTableComponent, FleetTabsComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header title="Tipos de vehículo" [subtitle]="state.countText('tipo', 'tipos')">
+    <app-page-header [title]="'Tipos de vehículo' | t" [subtitle]="state.countText('tipo', 'tipos')">
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
-        <mat-icon aria-hidden="true">download</mat-icon>Exportar CSV
+        <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/flota/tipos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nuevo tipo</a>
+      <a mat-flat-button class="primary-action" routerLink="/flota/tipos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo tipo' | t }}</a>
     </app-page-header>
     <app-fleet-tabs />
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
@@ -35,23 +37,23 @@ const IN_USE = 'No se puede eliminar: hay vehículos de este tipo';
       [state]="state"
       [columns]="columns"
       [selectable]="true"
-      entityPlural="tipos de vehículo"
-      emptyMessage="Todavía no hay tipos de vehículo"
-      searchPlaceholder="Buscar por nombre o categoría"
+      [entityPlural]="'tipos de vehículo' | t"
+      [emptyMessage]="'Todavía no hay tipos de vehículo' | t"
+      [searchPlaceholder]="'Buscar por nombre o categoría' | t"
     >
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/flota/tipos', row.id]" [attr.aria-label]="'Editar tipo ' + row.name">
+        <a mat-icon-button [routerLink]="['/flota/tipos', row.id]" [attr.aria-label]="('Editar tipo ' | t) + row.name">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="'Eliminar tipo ' + row.name">
+        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar tipo ' | t) + row.name">
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
       <ng-template #selectionActions let-rows let-clear="clear">
-        <button mat-button type="button" (click)="actions.removeMany(rows, clear)"><mat-icon aria-hidden="true">delete</mat-icon>Eliminar</button>
-        <button mat-button type="button" (click)="actions.exportRows(rows)"><mat-icon aria-hidden="true">download</mat-icon>Exportar</button>
+        <button mat-button type="button" (click)="actions.removeMany(rows, clear)"><mat-icon aria-hidden="true">delete</mat-icon>{{ 'Eliminar' | t }}</button>
+        <button mat-button type="button" (click)="actions.exportRows(rows)"><mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}</button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/flota/tipos/nuevo">Crear el primer tipo</a>
+      <a empty-action mat-stroked-button routerLink="/flota/tipos/nuevo">{{ 'Crear el primer tipo' | t }}</a>
     </app-data-table>
   `,
 })
@@ -63,8 +65,8 @@ export class ResourceTypeListComponent {
   /** Todos los tipos en el cliente (hasta 1000): la búsqueda y el recuento son sobre todos, como en la aplicación anterior. */
   protected readonly state = new FullListState<ResourceType>((params) => this.api.list(params));
   protected readonly actions = new FleetListActions<ResourceType>(this.deleter, {
-    singular: 'tipo',
-    plural: 'tipos',
+    singular: t('tipo'),
+    plural: t('tipos'),
     fileBase: 'tipos-de-vehiculo',
     label: (type) => type.name,
     remove: (id) => this.api.remove(id),
@@ -73,10 +75,10 @@ export class ResourceTypeListComponent {
     csv: typesToCsv,
   });
   protected readonly columns: DataColumn<ResourceType>[] = [
-    { id: 'name', header: 'Nombre', cell: (r) => r.name, kind: 'strong' },
-    { id: 'category', header: 'Categoría', cell: (r) => r.category },
-    { id: 'capacity', header: 'Capacidad', cell: (r) => capacitySummary(r) },
-    { id: 'osrmProfile', header: 'Perfil de ruteo', cell: (r) => profileLabel(r.osrmProfile) },
+    { id: 'name', header: t('Nombre'), cell: (r) => r.name, kind: 'strong' },
+    { id: 'category', header: t('Categoría'), cell: (r) => r.category },
+    { id: 'capacity', header: t('Capacidad'), cell: (r) => capacitySummary(r) },
+    { id: 'osrmProfile', header: t('Perfil de ruteo'), cell: (r) => profileLabel(r.osrmProfile) },
   ];
 
   constructor() {
@@ -85,7 +87,7 @@ export class ResourceTypeListComponent {
 
   protected remove(row: ResourceType): void {
     this.deleter.run({
-      entity: 'tipo de vehículo',
+      entity: t('tipo de vehículo'),
       name: row.name,
       request: () => this.api.remove(row.id),
       byStatus: { 400: IN_USE, 409: IN_USE },

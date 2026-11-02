@@ -5,6 +5,7 @@ import { PackagesApi } from '../../core/api/data/packages.api';
 import { Package } from '../../core/api/models';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
+import { t } from '../../core/i18n/i18n';
 /**
  * Cambia el estado de un paquete. Cancelarlo pide confirmación antes: si se rechaza, el flujo termina
  * sin emitir ni llamar al gateway. Un fallo del gateway sale tal cual (`ApiError`) para que lo muestre quien llama.
@@ -20,10 +21,10 @@ export function changePackageStatus(
       ? dialog
           .open(ConfirmDialogComponent, {
             data: {
-              title: 'Cancelar paquete',
-              message: `¿Cancelar el paquete «${target.label}»?`,
-              confirmLabel: 'Cancelar paquete',
-              cancelLabel: 'Volver',
+              title: t('Cancelar paquete'),
+              message: t('¿Cancelar el paquete «{0}»?', [target.label]),
+              confirmLabel: t('Cancelar paquete'),
+              cancelLabel: t('Volver'),
             },
           })
           .afterClosed()

@@ -1,6 +1,7 @@
 import { ADMIN_ROLES, OPERATIONS_ROLES } from '../core/auth/admin-roles';
 import { UserRole } from '../core/auth/session.model';
 
+import { t } from '../core/i18n/i18n';
 /** Entrada del menú: un enlace (`link`) o una sección con enlaces (`children`). */
 export interface NavItem {
   label: string;
@@ -18,23 +19,23 @@ export interface NavItem {
 export const HOME_LINK = '/';
 
 export const NAV_ITEMS: readonly NavItem[] = [
-  { label: 'Inicio', icon: 'home', link: HOME_LINK, exact: true },
+  { label: t('Inicio'), icon: 'home', link: HOME_LINK, exact: true },
   {
-    label: 'Flota',
+    label: t('Flota'),
     icon: 'local_shipping',
     roles: ADMIN_ROLES,
     children: [
-      { label: 'Vehículos', icon: 'directions_car', link: '/flota/vehiculos' },
-      { label: 'Tipos de vehículo', icon: 'category', link: '/flota/tipos' },
-      { label: 'Conductores', icon: 'badge', link: '/flota/conductores' },
+      { label: t('Vehículos'), icon: 'directions_car', link: '/flota/vehiculos' },
+      { label: t('Tipos de vehículo'), icon: 'category', link: '/flota/tipos' },
+      { label: t('Conductores'), icon: 'badge', link: '/flota/conductores' },
     ],
   },
-  { label: 'Lugares', icon: 'place', link: '/lugares', roles: ADMIN_ROLES },
-  { label: 'Zonas', icon: 'hexagon', link: '/zonas', roles: ADMIN_ROLES },
-  { label: 'Paquetes', icon: 'deployed_code', link: '/paquetes', roles: OPERATIONS_ROLES },
-  { label: 'Jornadas', icon: 'route', link: '/jornadas', roles: OPERATIONS_ROLES },
-  { label: 'Configuraciones', short: 'Config.', icon: 'tune', link: '/configuraciones', roles: ADMIN_ROLES },
-  { label: 'Auditoría', icon: 'history', link: '/auditoria', roles: OPERATIONS_ROLES },
+  { label: t('Lugares'), icon: 'place', link: '/lugares', roles: ADMIN_ROLES },
+  { label: t('Zonas'), icon: 'hexagon', link: '/zonas', roles: ADMIN_ROLES },
+  { label: t('Paquetes'), icon: 'deployed_code', link: '/paquetes', roles: OPERATIONS_ROLES },
+  { label: t('Jornadas'), icon: 'route', link: '/jornadas', roles: OPERATIONS_ROLES },
+  { label: t('Configuraciones'), short: t('Config.'), icon: 'tune', link: '/configuraciones', roles: ADMIN_ROLES },
+  { label: t('Auditoría'), icon: 'history', link: '/auditoria', roles: OPERATIONS_ROLES },
 ];
 
 /** Acción rápida de la búsqueda: lleva a una pantalla en la que se empieza algo. */
@@ -46,9 +47,9 @@ export interface QuickAction {
 }
 
 export const QUICK_ACTIONS: readonly QuickAction[] = [
-  { label: 'Planificar jornada', icon: 'add_road', link: '/jornadas/nueva', roles: OPERATIONS_ROLES },
-  { label: 'Nuevo paquete', icon: 'add_box', link: '/paquetes/nuevo', roles: OPERATIONS_ROLES },
-  { label: 'Importar paquetes', icon: 'upload_file', link: '/paquetes/importar', roles: OPERATIONS_ROLES },
+  { label: t('Planificar jornada'), icon: 'add_road', link: '/jornadas/nueva', roles: OPERATIONS_ROLES },
+  { label: t('Nuevo paquete'), icon: 'add_box', link: '/paquetes/nuevo', roles: OPERATIONS_ROLES },
+  { label: t('Importar paquetes'), icon: 'upload_file', link: '/paquetes/importar', roles: OPERATIONS_ROLES },
 ];
 
 /** Acciones rápidas que el rol puede hacer (las mismas rutas que ya protegen las guardas). */

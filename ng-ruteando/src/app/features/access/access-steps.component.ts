@@ -1,28 +1,30 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Presentación de la pantalla de crear cuenta en el diseño ancho: el camino hasta la primera jornada en tres pasos, unidos por
  * el hilo de la marca. Los números son decorativos (la lista ya dice el orden). Su tarjeta y su título son estilos de
  * `.pitch-card` (`_access-theme.scss`).
  */
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-access-steps',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'pitch-card' },
   template: `
-    <p class="title">Tu primera jornada, en <span class="accent">minutos</span>.</p>
+    <p class="title">{{ 'Tu primera jornada, en' | t }} <span class="accent">{{ 'minutos' | t }}</span>.</p>
     <ol>
       <li class="now">
         <span class="n" aria-hidden="true">1</span>
-        <span><b>Crea tu cuenta</b><small>Tus datos y los de tu empresa</small></span>
+        <span><b>{{ 'Crea tu cuenta' | t }}</b><small>{{ 'Tus datos y los de tu empresa' | t }}</small></span>
       </li>
       <li>
         <span class="n" aria-hidden="true">2</span>
-        <span><b>Verifica tu correo</b><small>Abre el enlace que te enviamos</small></span>
+        <span><b>{{ 'Verifica tu correo' | t }}</b><small>{{ 'Abre el enlace que te enviamos' | t }}</small></span>
       </li>
       <li>
         <span class="n" aria-hidden="true">3</span>
-        <span><b>Planifica tu primera jornada</b><small>Lugares, flota y paquetes</small></span>
+        <span><b>{{ 'Planifica tu primera jornada' | t }}</b><small>{{ 'Lugares, flota y paquetes' | t }}</small></span>
       </li>
     </ol>
   `,

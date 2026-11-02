@@ -28,13 +28,15 @@ import { fleetReturnUrl, readHandoff, toHandoffState } from '../type-handoff';
 import { CM3_PER_M3, CapacityMode, CapacityValues, decodeCapacity, encodeCapacity, volumeOfMeasures } from './capacity-codec';
 import { CapacityField, capacityIssues } from './capacity-rules';
 
+import { locale, t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 const FIELD_ERRORS = {
-  required: 'Este campo es obligatorio',
-  min: 'Debe ser mayor o igual que 0',
+  required: t('Este campo es obligatorio'),
+  min: t('Debe ser mayor o igual que 0'),
 };
 
 const CAPACITY_FIELDS: readonly CapacityField[] = ['weight', 'volume', 'width', 'height', 'depth', 'minWeight', 'maxWeight', 'minVolume', 'maxVolume'];
-const NUMBER = new Intl.NumberFormat('es', { maximumFractionDigits: 2, useGrouping: false });
+const NUMBER = new Intl.NumberFormat(locale(), { maximumFractionDigits: 2, useGrouping: false });
 
 /** Valores de capacidad del formulario, tal como los editó la persona (kg, cm³ y cm). */
 function capacityOf(group: FormGroup): CapacityValues {
@@ -77,7 +79,7 @@ const optionalNumber = (field: CapacityField) => new FormControl<number | null>(
 
 @Component({
   selector: 'app-resource-type-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, FormActionsComponent, FormHeadComponent, MatIconModule],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, FormActionsComponent, FormHeadComponent, MatIconModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './resource-type-form.component.html',
   styleUrl: './resource-type-form.component.scss',
@@ -128,7 +130,7 @@ export class ResourceTypeFormComponent implements HasUnsavedChanges {
   /** El volumen calculado con las tres medidas, «7956000 cm³ · 7,96 m³», o vacío si falta alguna. */
   protected readonly volumeText = computed(() => {
     const volume = volumeOfMeasures(this.capacity());
-    return volume === null ? '' : `${NUMBER.format(volume)} cm³ · ${NUMBER.format(volume / CM3_PER_M3)} m³`;
+    return volume === null ? '' : t('{0} cm³ · {1} m³', [NUMBER.format(volume), NUMBER.format(volume / CM3_PER_M3)]);
   });
 
   constructor() {
@@ -183,7 +185,7 @@ export class ResourceTypeFormComponent implements HasUnsavedChanges {
 
     this.submit.submit(request$, (record) => {
       this.saved.set(true);
-      void notify(this.injector, this.id === null ? 'Tipo de vehículo creado' : 'Tipo de vehículo guardado');
+      void notify(this.injector, this.id === null ? t('Tipo de vehículo creado') : t('Tipo de vehículo guardado'));
       const state = this.handoff ? toHandoffState({ draft: this.handoff.draft, createdTypeId: record.id }) : undefined;
       void this.router.navigateByUrl(this.returnTo ?? '/flota/tipos', { state });
     });

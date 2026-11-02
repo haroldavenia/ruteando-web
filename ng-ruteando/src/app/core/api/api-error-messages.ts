@@ -1,20 +1,21 @@
 import { HttpContext, HttpContextToken } from '@angular/common/http';
 import { InjectionToken, Provider } from '@angular/core';
 
+import { t } from '../i18n/i18n';
 /** Mensajes por código de error del backend (`'PACKAGE_NOT_FOUND'`) o por estado HTTP (`404`). */
 export type ApiErrorMessages = Readonly<Record<string | number, string>>;
 
 /** Mensajes genéricos en español según el estado HTTP. */
 export const DEFAULT_API_ERROR_MESSAGES: ApiErrorMessages = {
-  0: 'No hay conexión con el servidor',
-  400: 'La solicitud no es válida',
-  401: 'Tu sesión no es válida o ha caducado',
-  403: 'No tienes permiso para realizar esta acción',
-  404: 'No se encontró el recurso solicitado',
+  0: t('No hay conexión con el servidor'),
+  400: t('La solicitud no es válida'),
+  401: t('Tu sesión no es válida o ha caducado'),
+  403: t('No tienes permiso para realizar esta acción'),
+  404: t('No se encontró el recurso solicitado'),
 };
 
-const GENERIC_SERVER_ERROR = 'El servicio no está disponible, inténtalo más tarde';
-const GENERIC_OTHER_ERROR = 'No se pudo completar la solicitud';
+const GENERIC_SERVER_ERROR = t('El servicio no está disponible, inténtalo más tarde');
+const GENERIC_OTHER_ERROR = t('No se pudo completar la solicitud');
 
 /** Mensaje genérico para un estado: 5xx comparten texto; el resto de estados, un texto neutro. */
 export function genericMessage(status: number): string {

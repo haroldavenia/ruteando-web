@@ -24,7 +24,9 @@ import { LocationFieldsComponent, createLocationGroup } from '../../shared/map/l
 
 import { DEFAULT_SERVICE_TYPES, serviceTypeLabel } from './package-labels';
 
-const DUPLICATE_GUIDE = 'Ya existe un paquete con ese número de guía';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+const DUPLICATE_GUIDE = t('Ya existe un paquete con ese número de guía');
 
 /** Campos que el gateway calcula o que se cambian por otra vía: no se reenvían al guardar. */
 const READ_ONLY_FIELDS: readonly (keyof Package)[] = [
@@ -39,9 +41,9 @@ const READ_ONLY_FIELDS: readonly (keyof Package)[] = [
 ];
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
-  required: 'Este campo es obligatorio',
-  min: 'El valor no puede ser negativo',
-  pieces: 'Escribe un número entero de 1 o más',
+  required: t('Este campo es obligatorio'),
+  min: t('El valor no puede ser negativo'),
+  pieces: t('Escribe un número entero de 1 o más'),
 };
 
 type FieldName = 'name' | 'serviceType' | 'address' | 'weight' | 'volume' | 'pieceNumber';
@@ -80,6 +82,7 @@ export function buildUpdateBody(record: Package, edited: Partial<PackageInput>):
     FormActionsComponent,
     FormHeadComponent,
     MatIconModule,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './package-form.component.html',
@@ -207,7 +210,7 @@ export class PackageFormComponent implements HasUnsavedChanges {
       request$,
       () => {
         this.saved.set(true);
-        void notify(this.injector, this.id === null ? 'Paquete creado' : 'Paquete guardado');
+        void notify(this.injector, this.id === null ? t('Paquete creado') : t('Paquete guardado'));
         void this.router.navigateByUrl('/paquetes');
       },
       { 409: DUPLICATE_GUIDE },

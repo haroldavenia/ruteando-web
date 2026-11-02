@@ -1,32 +1,32 @@
-<app-form-head [title]="isNew ? 'Nuevo paquete' : 'Editar paquete'" backLabel="Paquetes" backLink="/paquetes" />
+<app-form-head [title]="isNew ? ('Nuevo paquete' | t) : ('Editar paquete' | t)" [backLabel]="'Paquetes' | t" backLink="/paquetes" />
 @switch (loader.status()) {
   @case ('loading') {
-    <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
+    <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/paquetes">Volver al listado</a>
+    <a mat-stroked-button routerLink="/paquetes">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/paquetes">Volver al listado</a>
+    <a mat-stroked-button routerLink="/paquetes">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     <form class="card" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
       <section class="form-section">
-        <h2><mat-icon aria-hidden="true" fontIcon="inventory_2" />Identificación</h2>
+        <h2><mat-icon aria-hidden="true" fontIcon="inventory_2" />{{ 'Identificación' | t }}</h2>
         <mat-form-field>
-          <mat-label>Número de guía (opcional)</mat-label>
+          <mat-label>{{ 'Número de guía (opcional)' | t }}</mat-label>
           <input matInput formControlName="guideNumber" autocomplete="off" />
-          <mat-hint>Único en tu empresa</mat-hint>
+          <mat-hint>{{ 'Único en tu empresa' | t }}</mat-hint>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Nombre</mat-label>
+          <mat-label>{{ 'Nombre' | t }}</mat-label>
           <input matInput formControlName="name" autocomplete="off" />
           <mat-error>{{ error('name') }}</mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Tipo de servicio</mat-label>
+          <mat-label>{{ 'Tipo de servicio' | t }}</mat-label>
           <mat-select formControlName="serviceType">
             @for (type of serviceTypes(); track type.key) {
               <mat-option [value]="type.key">{{ type.label }}</mat-option>
@@ -36,60 +36,60 @@
         </mat-form-field>
       </section>
       <section class="form-section">
-        <h2><mat-icon aria-hidden="true" fontIcon="home_pin" />Dirección</h2>
+        <h2><mat-icon aria-hidden="true" fontIcon="home_pin" />{{ 'Dirección' | t }}</h2>
         <mat-form-field subscriptSizing="dynamic">
-          <mat-label>Dirección</mat-label>
+          <mat-label>{{ 'Dirección' | t }}</mat-label>
           <input matInput formControlName="address" autocomplete="off" />
-          <mat-hint>Se guarda como texto: no se calcula la ubicación a partir de ella</mat-hint>
+          <mat-hint>{{ 'Se guarda como texto: no se calcula la ubicación a partir de ella' | t }}</mat-hint>
           <mat-error>{{ error('address') }}</mat-error>
         </mat-form-field>
         <div class="row">
           <mat-form-field>
-            <mat-label>Ciudad (opcional)</mat-label>
+            <mat-label>{{ 'Ciudad (opcional)' | t }}</mat-label>
             <input matInput formControlName="city" autocomplete="off" />
           </mat-form-field>
           <mat-form-field>
-            <mat-label>País (opcional)</mat-label>
+            <mat-label>{{ 'País (opcional)' | t }}</mat-label>
             <input matInput formControlName="country" autocomplete="off" />
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Código postal (opcional)</mat-label>
+            <mat-label>{{ 'Código postal (opcional)' | t }}</mat-label>
             <input matInput formControlName="postalCode" autocomplete="off" />
           </mat-form-field>
         </div>
       </section>
       <section class="form-section">
-        <h2><mat-icon aria-hidden="true" fontIcon="scale" />Carga</h2>
+        <h2><mat-icon aria-hidden="true" fontIcon="scale" />{{ 'Carga' | t }}</h2>
         <div class="row">
           <mat-form-field>
-            <mat-label>Peso</mat-label>
+            <mat-label>{{ 'Peso' | t }}</mat-label>
             <input matInput type="number" step="any" min="0" formControlName="weight" autocomplete="off" />
             <mat-error>{{ error('weight') }}</mat-error>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Volumen</mat-label>
+            <mat-label>{{ 'Volumen' | t }}</mat-label>
             <input matInput type="number" step="any" min="0" formControlName="volume" autocomplete="off" />
             <mat-error>{{ error('volume') }}</mat-error>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Número de piezas</mat-label>
+            <mat-label>{{ 'Número de piezas' | t }}</mat-label>
             <input matInput type="number" step="1" min="1" formControlName="pieceNumber" autocomplete="off" />
             <mat-error>{{ error('pieceNumber') }}</mat-error>
           </mat-form-field>
         </div>
         <mat-form-field>
-          <mat-label>Observación (opcional)</mat-label>
+          <mat-label>{{ 'Observación (opcional)' | t }}</mat-label>
           <textarea matInput rows="2" formControlName="observation"></textarea>
         </mat-form-field>
       </section>
       <section class="form-section">
-        <h2><mat-icon aria-hidden="true" fontIcon="pin_drop" />Ubicación</h2>
+        <h2><mat-icon aria-hidden="true" fontIcon="pin_drop" />{{ 'Ubicación' | t }}</h2>
         <app-location-fields [location]="form.controls.location" />
       </section>
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
-        <a mat-button routerLink="/paquetes">Cancelar</a>
-        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+        <a mat-button routerLink="/paquetes">{{ 'Cancelar' | t }}</a>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
       </app-form-actions>
     </form>
   }

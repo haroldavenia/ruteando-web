@@ -1,23 +1,24 @@
+import { t } from '../../core/i18n/i18n';
 /** Etiquetas en español de `RouteTopology`. */
 export const ROUTE_TOPOLOGY_LABELS: Readonly<Record<string, string>> = {
-  depot_to_depot: 'Del depósito al depósito',
-  round_trip: 'Ida y vuelta',
-  open_delivery: 'Entrega abierta',
-  open_pickup: 'Recogida abierta',
-  flexible: 'Flexible',
+  depot_to_depot: t('Del depósito al depósito'),
+  round_trip: t('Ida y vuelta'),
+  open_delivery: t('Entrega abierta'),
+  open_pickup: t('Recogida abierta'),
+  flexible: t('Flexible'),
 };
 
 /** Etiquetas en español de `RestrictionType`. */
 export const RESTRICTION_TYPE_LABELS: Readonly<Record<string, string>> = {
-  fixed_routes: 'Rutas fijas',
-  resource_vs_time: 'Recursos y tiempo',
-  time_windows: 'Ventanas horarias',
+  fixed_routes: t('Rutas fijas'),
+  resource_vs_time: t('Recursos y tiempo'),
+  time_windows: t('Ventanas horarias'),
 };
 
 /** Etiquetas en español de `TypeLengthOfStay`. */
 export const LENGTH_OF_STAY_LABELS: Readonly<Record<string, string>> = {
-  fixed: 'Fija',
-  define_itinerary: 'Definida en el itinerario',
+  fixed: t('Fija'),
+  define_itinerary: t('Definida en el itinerario'),
 };
 
 /** Valores habituales para pintar los selectores antes de cargar los dominios del gateway. */
@@ -49,12 +50,12 @@ export interface SettingsSummary {
 function duration(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const rest = Math.round(minutes % 60);
-  return hours === 0 ? `${rest} min` : rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
+  return hours === 0 ? t('{0} min', [rest]) : rest === 0 ? t('{0} h', [hours]) : t('{0} h {1} min', [hours, rest]);
 }
 
 /** «peso», «peso y volumen» o «peso, volumen y zona del itinerario». */
 function list(items: string[]): string {
-  return items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} y ${items[items.length - 1]}`;
+  return items.length <= 1 ? items.join('') : t('{0} y {1}', [items.slice(0, -1).join(', '), items[items.length - 1]]);
 }
 
 /**
@@ -62,30 +63,30 @@ function list(items: string[]): string {
  * volumen.»). Solo da formato a lo que hay en el formulario: no calcula ni decide nada, y lo que falta simplemente no se dice.
  */
 export function describeSettings(s: SettingsSummary): string {
-  let routes = 'rutas';
+  let routes = t('rutas');
   if (s.restrictionType === 'fixed_routes' && s.fixedRoutes !== null && Number.isInteger(s.fixedRoutes) && s.fixedRoutes >= 1) {
-    routes = `${s.fixedRoutes} ${s.fixedRoutes === 1 ? 'ruta' : 'rutas'}`;
+    routes = s.fixedRoutes === 1 ? t('1 ruta') : t('{0} rutas', [s.fixedRoutes]);
   } else if (s.restrictionType === 'resource_vs_time') {
-    routes = s.shiftDurationMin !== null && s.shiftDurationMin > 0 ? `rutas con turnos de ${duration(s.shiftDurationMin)}` : 'rutas según recursos y tiempo';
+    routes = s.shiftDurationMin !== null && s.shiftDurationMin > 0 ? t('rutas con turnos de {0}', [duration(s.shiftDurationMin)]) : t('rutas según recursos y tiempo');
   } else if (s.restrictionType === 'time_windows') {
-    routes = 'rutas con ventanas horarias';
+    routes = t('rutas con ventanas horarias');
   }
-  let text = `Planificará ${routes}`;
+  let text = t('Planificará {0}', [routes]);
   if (s.routeTopology) {
     text += ` (${routeTopologyLabel(s.routeTopology).toLowerCase()})`;
   }
   if (s.placeStartName) {
-    text += ` desde ${s.placeStartName}`;
+    text += t(' desde {0}', [s.placeStartName]);
     if (s.placeEndName && s.placeEndName !== s.placeStartName) {
-      text += ` hasta ${s.placeEndName}`;
+      text += t(' hasta {0}', [s.placeEndName]);
     }
   }
   if (s.vehicleCount > 0) {
-    text += `, con ${s.vehicleCount} ${s.vehicleCount === 1 ? 'vehículo' : 'vehículos'}`;
+    text += s.vehicleCount === 1 ? t(', con 1 vehículo') : t(', con {0} vehículos', [s.vehicleCount]);
   }
-  const evaluated = [s.evaluateWeight && 'peso', s.evaluateVolume && 'volumen', s.evaluateItineraryZone && 'zona del itinerario'].filter((x): x is string => !!x);
+  const evaluated = [s.evaluateWeight && t('peso'), s.evaluateVolume && t('volumen'), s.evaluateItineraryZone && t('zona del itinerario')].filter((x): x is string => !!x);
   if (evaluated.length > 0) {
-    text += `, evaluando ${list(evaluated)}`;
+    text += t(', evaluando {0}', [list(evaluated)]);
   }
   return `${text}.`;
 }

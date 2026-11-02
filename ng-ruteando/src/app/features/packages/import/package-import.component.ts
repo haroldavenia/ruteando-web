@@ -26,6 +26,8 @@ import {
   validateRows,
 } from './package-rows';
 
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 export const MAX_FILE_BYTES = 2 * 1024 * 1024;
 export const MAX_DATA_ROWS = 2000;
 const MAX_ERRORS_SHOWN = 200;
@@ -34,7 +36,7 @@ type Phase = 'empty' | 'reading' | 'preview' | 'importing' | 'done';
 
 @Component({
   selector: 'app-package-import',
-  imports: [RouterLink, FormHeadComponent, MatButtonModule, MatIconModule, MatProgressBarModule],
+  imports: [RouterLink, FormHeadComponent, MatButtonModule, MatIconModule, MatProgressBarModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './package-import.component.html',
   styleUrl: './package-import.component.scss',
@@ -60,7 +62,7 @@ export class PackageImportComponent implements HasUnsavedChanges {
   /** Los cuatro pasos de la importación y en cuál va: la fase decide qué pasos están hechos, cuál es el actual y cuáles faltan. */
   protected readonly steps = computed(() => {
     const current = { empty: 2, reading: 2, preview: 3, importing: 4, done: 4 }[this.phase()];
-    const labels = ['Prepara el archivo', 'Elige el archivo', 'Revisa y confirma', 'Importa'];
+    const labels = [t('Prepara el archivo'), t('Elige el archivo'), t('Revisa y confirma'), t('Importa')];
     return labels.map((label, index) => {
       const number = index + 1;
       const finished = this.phase() === 'done' && number === 4;
@@ -82,7 +84,7 @@ export class PackageImportComponent implements HasUnsavedChanges {
   protected readonly failedRows = computed(() => this.results().filter((r) => r.status === 'failed'));
   protected readonly summaryText = computed(() => {
     const c = this.counts();
-    return `Importación terminada: ${c.created} creados, ${c.existed} ya existían, ${c.failed} fallidos y ${c.skipped} sin procesar.`;
+    return t('Importación terminada: {0} creados, {1} ya existían, {2} fallidos y {3} sin procesar.', [c.created, c.existed, c.failed, c.skipped]);
   });
   protected readonly reportEntries = computed<ReportEntry[]>(() => [
     ...(this.validation()?.errors ?? []).map((e) => ({ ...e, original: this.originalOf(e.line) })),
@@ -104,10 +106,10 @@ export class PackageImportComponent implements HasUnsavedChanges {
 
   leaveDialog(): { title: string; message: string; confirmLabel: string; cancelLabel: string } {
     return {
-      title: '¿Salir de la importación?',
-      message: 'Hay una importación en curso. Si sales ahora se detendrá: los paquetes ya creados se conservan y el resto no se creará.',
-      confirmLabel: 'Salir',
-      cancelLabel: 'Seguir importando',
+      title: t('¿Salir de la importación?'),
+      message: t('Hay una importación en curso. Si sales ahora se detendrá: los paquetes ya creados se conservan y el resto no se creará.'),
+      confirmLabel: t('Salir'),
+      cancelLabel: t('Seguir importando'),
     };
   }
 
@@ -133,45 +135,45 @@ export class PackageImportComponent implements HasUnsavedChanges {
     }
     this.fileName.set(file.name);
     if (!/\.csv$/i.test(file.name)) {
-      return this.reject('El archivo debe ser un CSV (extensión .csv).');
+      return this.reject(t('El archivo debe ser un CSV (extensión .csv).'));
     }
     if (file.size === 0) {
-      return this.reject('El archivo está vacío.');
+      return this.reject(t('El archivo está vacío.'));
     }
     if (file.size > MAX_FILE_BYTES) {
-      return this.reject('El archivo supera los 2 MB. Divídelo en varios archivos más pequeños.');
+      return this.reject(t('El archivo supera los 2 MB. Divídelo en varios archivos más pequeños.'));
     }
     this.phase.set('reading');
     let text: string;
     try {
       text = await file.text();
     } catch {
-      return this.reject('No se pudo leer el archivo.');
+      return this.reject(t('No se pudo leer el archivo.'));
     }
     if (this.destroyed) {
       return;
     }
     const table = parseCsv(text, { maxRows: MAX_DATA_ROWS });
     if (table.truncated) {
-      return this.reject(`El archivo tiene más de ${MAX_DATA_ROWS} filas de datos. Divídelo en varios archivos.`);
+      return this.reject(t('El archivo tiene más de {0} filas de datos. Divídelo en varios archivos.', [MAX_DATA_ROWS]));
     }
     if (table.rows.length < 2) {
-      return this.reject('El archivo no tiene filas de datos: solo la cabecera o nada.');
+      return this.reject(t('El archivo no tiene filas de datos: solo la cabecera o nada.'));
     }
     const result = validateRows(table);
     table.rows.slice(1).forEach((record, i) => this.rawRows.set(table.lines[i + 1], record));
     if (result.missingColumns.length > 0) {
-      return this.reject(`Faltan columnas obligatorias: ${result.missingColumns.join(', ')}. Descarga la plantilla para ver el formato.`);
+      return this.reject(t('Faltan columnas obligatorias: {0}. Descarga la plantilla para ver el formato.', [result.missingColumns.join(', ')]));
     }
     const warnings: string[] = [];
     if (text.includes('�')) {
-      warnings.push('Hay caracteres ilegibles (�): el archivo probablemente no está en UTF-8. Vuelve a guardarlo con esa codificación para conservar las tildes.');
+      warnings.push(t('Hay caracteres ilegibles (�): el archivo probablemente no está en UTF-8. Vuelve a guardarlo con esa codificación para conservar las tildes.'));
     }
     if (table.unterminatedQuote) {
-      warnings.push('Hay una comilla sin cerrar: las últimas filas pueden haberse leído mal. Revisa el archivo.');
+      warnings.push(t('Hay una comilla sin cerrar: las últimas filas pueden haberse leído mal. Revisa el archivo.'));
     }
     if (result.ignoredColumns.length > 0) {
-      warnings.push(`Se ignoran las columnas: ${result.ignoredColumns.join(', ')}.`);
+      warnings.push(t('Se ignoran las columnas: {0}.', [result.ignoredColumns.join(', ')]));
     }
     this.warnings.set(warnings);
     this.validation.set(result);

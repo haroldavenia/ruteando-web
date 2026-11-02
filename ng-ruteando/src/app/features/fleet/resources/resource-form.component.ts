@@ -25,17 +25,19 @@ import { notify } from '../../../shared/form/notify';
 import { fromUtcIso, localDateOf, minutesToSeconds, secondsToMinutes, shiftErrors, toUtcIso, todayLocalDate } from '../../../shared/time/shift-time';
 import { readHandoff, toHandoffState } from '../type-handoff';
 
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 /** Cuántos tipos y lugares se cargan en los selectores; si hay más, el formulario avisa. */
 export const SELECT_LIMIT = 200;
 
-const DUPLICATE_PLATE = 'Ya existe un vehículo con esa matrícula';
+const DUPLICATE_PLATE = t('Ya existe un vehículo con esa matrícula');
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
-  required: 'Este campo es obligatorio',
-  min: 'La cantidad debe ser al menos 1',
-  shiftNotPositive: 'La duración debe ser mayor que 0',
-  shiftTooLong: 'El turno no puede durar más de 24 horas (1440 minutos)',
-  breakNegative: 'El descanso no puede ser negativo',
+  required: t('Este campo es obligatorio'),
+  min: t('La cantidad debe ser al menos 1'),
+  shiftNotPositive: t('La duración debe ser mayor que 0'),
+  shiftTooLong: t('El turno no puede durar más de 24 horas (1440 minutos)'),
+  breakNegative: t('El descanso no puede ser negativo'),
 };
 
 /** Lo escrito en el formulario, para no perderlo al ir a crear un tipo y volver. */
@@ -79,7 +81,7 @@ function breakValidator(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-resource-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, FormActionsComponent, FormHeadComponent, MatIconModule],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, FormActionsComponent, FormHeadComponent, MatIconModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './resource-form.component.html',
   styleUrl: './resource-form.component.scss',
@@ -236,7 +238,7 @@ export class ResourceFormComponent implements HasUnsavedChanges {
       request$,
       () => {
         this.saved.set(true);
-        void notify(this.injector, this.id === null ? 'Vehículo creado' : 'Vehículo guardado');
+        void notify(this.injector, this.id === null ? t('Vehículo creado') : t('Vehículo guardado'));
         void this.router.navigateByUrl('/flota/vehiculos');
       },
       { 409: DUPLICATE_PLATE },

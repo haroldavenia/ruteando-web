@@ -26,6 +26,8 @@ import { routeColorFor } from '../../shared/map/route-colors';
 
 import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Mapa de los lugares: un pin por lugar, del color y con la letra de su tipo (el color nunca es la única señal), y la leyenda de
  * los tipos que hay. Dibuja los lugares que recibe (la lista ya filtrada) y se ajusta para mostrarlos todos; un clic en un pin
@@ -33,14 +35,15 @@ import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
  * al lado es la alternativa accesible.
  */
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-places-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div #host class="map" role="region" aria-label="Mapa de los lugares: un pin por lugar, con el color y la letra de su tipo"></div>
+    <div #host class="map" role="region" [attr.aria-label]="'Mapa de los lugares: un pin por lugar, con el color y la letra de su tipo' | t"></div>
     @if (failed()) {
-      <p class="failed" role="alert">No se pudo cargar el mapa. Puedes seguir usando la lista.</p>
+      <p class="failed" role="alert">{{ 'No se pudo cargar el mapa. Puedes seguir usando la lista.' | t }}</p>
     }
-    <ul class="legend" aria-label="Tipos de lugar">
+    <ul class="legend" [attr.aria-label]="'Tipos de lugar' | t">
       @for (item of legend(); track item.key) {
         <li><span class="pin" [style.background]="item.color" [style.color]="item.ink" aria-hidden="true">{{ item.letter }}</span>{{ item.label }}</li>
       }
@@ -185,7 +188,7 @@ export class PlacesMapComponent {
       layers: [tiles, layer],
       view: new ol.View({ center: ol.fromLonLat([center.lng, center.lat]), zoom }),
       // La atribución del proveedor debe verse siempre: sin el botón que la pliega
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: 'Acercar el mapa', zoomOutTipLabel: 'Alejar el mapa' } }),
+      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') } }),
     });
     map.on('click', (event) => {
       const id = map.forEachFeatureAtPixel(event.pixel, (feature) => feature.get('id') as unknown, { layerFilter: (l) => l === layer, hitTolerance: 6 });

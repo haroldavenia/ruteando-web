@@ -6,6 +6,7 @@ import { ApiError } from '../../core/api/api-error';
 import { messageFor } from './api-messages';
 import { DeleteConfirmation } from './delete-confirmation';
 
+import { t } from '../../core/i18n/i18n';
 export interface DeleteOptions {
   /** Tipo de registro en singular y minúscula ("vehículo"). */
   entity: string;
@@ -20,7 +21,7 @@ export interface DeleteOptions {
 }
 
 /** Texto cuando el registro ya no existe (404 al borrar). */
-export const ALREADY_GONE = 'El registro ya no existe';
+export const ALREADY_GONE = t('El registro ya no existe');
 
 /**
  * Flujo de borrado de un listado: confirmar, borrar, avisar y recargar. El resultado queda en
@@ -43,7 +44,7 @@ export class DeleteFlow {
       )
       .subscribe({
         next: () => {
-          this.success.set(`Se eliminó ${options.entity} «${options.name}»`);
+          this.success.set(t('Se eliminó {0} «{1}»', [options.entity, options.name]));
           options.reload();
         },
         error: (err: unknown) => {

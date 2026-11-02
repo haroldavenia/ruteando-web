@@ -14,27 +14,29 @@ import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 
 import { restrictionTypeLabel, routeTopologyLabel } from './settings-labels';
 
-const IN_USE = 'No se puede eliminar: la configuración se usa en una jornada';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+const IN_USE = t('No se puede eliminar: la configuración se usa en una jornada');
 
 @Component({
   selector: 'app-settings-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective],
+  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-header title="Configuraciones" [subtitle]="state.countText('configuración', 'configuraciones')">
-      <a mat-flat-button class="primary-action" routerLink="/configuraciones/nuevo"><mat-icon aria-hidden="true">add</mat-icon>Nueva configuración</a>
+    <app-page-header [title]="'Configuraciones' | t" [subtitle]="state.countText('configuración', 'configuraciones')">
+      <a mat-flat-button class="primary-action" routerLink="/configuraciones/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva configuración' | t }}</a>
     </app-page-header>
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
-    <app-data-table [state]="state" [columns]="columns" entityPlural="configuraciones" emptyMessage="Todavía no hay configuraciones">
+    <app-data-table [state]="state" [columns]="columns" [entityPlural]="'configuraciones' | t" [emptyMessage]="'Todavía no hay configuraciones' | t">
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/configuraciones', row.id]" [attr.aria-label]="'Editar configuración ' + row.description">
+        <a mat-icon-button [routerLink]="['/configuraciones', row.id]" [attr.aria-label]="('Editar configuración ' | t) + row.description">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="'Eliminar configuración ' + row.description">
+        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar configuración ' | t) + row.description">
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/configuraciones/nuevo">Crear la primera configuración</a>
+      <a empty-action mat-stroked-button routerLink="/configuraciones/nuevo">{{ 'Crear la primera configuración' | t }}</a>
     </app-data-table>
   `,
 })
@@ -44,12 +46,12 @@ export class SettingsListComponent {
   protected readonly deleter = new DeleteFlow();
   protected readonly state = new ListState<Settings>((params) => this.api.list(params));
   protected readonly columns: DataColumn<Settings>[] = [
-    { id: 'description', header: 'Descripción', cell: (s) => s.description, kind: 'strong' },
-    { id: 'routeTopology', header: 'Topología', cell: (s) => routeTopologyLabel(s.routeTopology) },
-    { id: 'restrictionType', header: 'Restricción', cell: (s) => restrictionTypeLabel(s.restrictionType) },
-    { id: 'placeStart', header: 'Salida', cell: (s) => s.placeStart?.name ?? '' },
-    { id: 'resources', header: 'Vehículos', cell: (s) => String(s.resourceIds?.length ?? 0) },
-    { id: 'active', header: 'Estado', cell: (s) => (s.active ? 'Activa' : 'Inactiva') },
+    { id: 'description', header: t('Descripción'), cell: (s) => s.description, kind: 'strong' },
+    { id: 'routeTopology', header: t('Topología'), cell: (s) => routeTopologyLabel(s.routeTopology) },
+    { id: 'restrictionType', header: t('Restricción'), cell: (s) => restrictionTypeLabel(s.restrictionType) },
+    { id: 'placeStart', header: t('Salida'), cell: (s) => s.placeStart?.name ?? '' },
+    { id: 'resources', header: t('Vehículos'), cell: (s) => String(s.resourceIds?.length ?? 0) },
+    { id: 'active', header: t('Estado'), cell: (s) => (s.active ? t('Activa') : t('Inactiva')) },
   ];
 
   constructor() {
@@ -58,7 +60,7 @@ export class SettingsListComponent {
 
   protected remove(row: Settings): void {
     this.deleter.run({
-      entity: 'configuración',
+      entity: t('configuración'),
       name: row.description,
       request: () => this.api.remove(row.id),
       byStatus: { 400: IN_USE, 409: IN_USE },

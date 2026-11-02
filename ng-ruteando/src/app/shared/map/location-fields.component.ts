@@ -8,6 +8,8 @@ import { LatLng, latLng } from '../../core/geo/lat-lng';
 
 import { MapViewComponent } from './map-view.component';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export type LocationGroup = FormGroup<{ lat: FormControl<number | null>; lng: FormControl<number | null> }>;
 
 /** Grupo de formulario con latitud y longitud obligatorias y dentro de rango. */
@@ -25,18 +27,18 @@ export function createLocationGroup(point: LatLng | null = null): LocationGroup 
  */
 @Component({
   selector: 'app-location-fields',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MapViewComponent],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MapViewComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="layout">
       <div class="coordinates">
         <mat-form-field>
-          <mat-label>Latitud</mat-label>
+          <mat-label>{{ 'Latitud' | t }}</mat-label>
           <input matInput type="number" step="any" inputmode="decimal" autocomplete="off" [formControl]="location().controls.lat" />
           <mat-error>{{ error('lat') }}</mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Longitud</mat-label>
+          <mat-label>{{ 'Longitud' | t }}</mat-label>
           <input matInput type="number" step="any" inputmode="decimal" autocomplete="off" [formControl]="location().controls.lng" />
           <mat-error>{{ error('lng') }}</mat-error>
         </mat-form-field>
@@ -44,7 +46,7 @@ export function createLocationGroup(point: LatLng | null = null): LocationGroup 
       <app-map-view
         [point]="point()"
         [selectable]="true"
-        ariaLabel="Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos."
+        [ariaLabel]="'Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos.' | t"
         (pointChange)="pick($event)"
       />
     </div>
@@ -106,8 +108,8 @@ export class LocationFieldsComponent {
       return '';
     }
     if (errors['required']) {
-      return 'Este campo es obligatorio';
+      return t('Este campo es obligatorio');
     }
-    return name === 'lat' ? 'La latitud debe estar entre -90 y 90' : 'La longitud debe estar entre -180 y 180';
+    return name === 'lat' ? t('La latitud debe estar entre -90 y 90') : t('La longitud debe estar entre -180 y 180');
   }
 }

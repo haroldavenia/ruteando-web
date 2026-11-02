@@ -8,58 +8,58 @@
 <app-form-result [error]="store.error()" [success]="store.success()" />
 
 @if (hasVisits()) {
-  <div class="filters" role="search" aria-label="Filtrar visitas">
+  <div class="filters" role="search" [attr.aria-label]="'Filtrar visitas' | t">
     <mat-form-field>
-      <mat-label>Estado</mat-label>
+      <mat-label>{{ 'Estado' | t }}</mat-label>
       <select matNativeControl [value]="store.filters().status" (change)="setStatusFilter($event)">
-        <option value="">Todos los estados</option>
+        <option value="">{{ 'Todos los estados' | t }}</option>
         @for (status of filterStatuses(); track status) {
           <option [value]="status">{{ statusLabel(status) }}</option>
         }
-        <option [value]="unavailable">No disponible</option>
+        <option [value]="unavailable">{{ 'No disponible' | t }}</option>
       </select>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Buscar por nombre o dirección</mat-label>
+      <mat-label>{{ 'Buscar por nombre o dirección' | t }}</mat-label>
       <input matInput type="search" [value]="store.filters().text" (input)="setTextFilter($event)" />
     </mat-form-field>
     <button mat-stroked-button type="button" (click)="store.reload()">
-      <mat-icon aria-hidden="true">refresh</mat-icon>Actualizar
+      <mat-icon aria-hidden="true">refresh</mat-icon>{{ 'Actualizar' | t }}
     </button>
   </div>
   <p class="count" role="status">
     @if (store.pending() > 0) {
-      Cargando {{ store.pending() }} {{ store.pending() === 1 ? 'paquete' : 'paquetes' }}…
+      {{ (store.pending() === 1 ? 'Cargando 1 paquete…' : 'Cargando {0} paquetes…') | t: [store.pending()] }}
     } @else if (store.filtering()) {
-      {{ rows().length }} de {{ store.visits().length }} visitas coinciden con los filtros
+      {{ '{0} de {1} visitas coinciden con los filtros' | t: [rows().length, store.visits().length] }}
     }
   </p>
 }
 
 @if (noMatches()) {
-  <p>Ninguna visita coincide con los filtros.</p>
-  <button mat-stroked-button type="button" (click)="store.clearFilters()">Limpiar filtros</button>
+  <p>{{ 'Ninguna visita coincide con los filtros.' | t }}</p>
+  <button mat-stroked-button type="button" (click)="store.clearFilters()">{{ 'Limpiar filtros' | t }}</button>
 } @else if (rows().length > 0) {
   <div class="scroll stack-scope">
     <table class="grid stack-table" role="table">
-      <caption class="visually-hidden">Paradas y visitas de la ruta</caption>
+      <caption class="visually-hidden">{{ 'Paradas y visitas de la ruta' | t }}</caption>
       <thead role="rowgroup">
         <tr role="row">
-          <th scope="col" role="columnheader">Orden</th>
-          <th scope="col" role="columnheader">Tipo</th>
-          <th scope="col" role="columnheader">Paquete</th>
-          <th scope="col" role="columnheader">Llegada</th>
-          <th scope="col" role="columnheader">Salida</th>
-          <th scope="col" role="columnheader">Estado</th>
-          <th scope="col" role="columnheader"><span class="visually-hidden">Acciones</span></th>
+          <th scope="col" role="columnheader">{{ 'Orden' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Tipo' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Paquete' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Llegada' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Salida' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Estado' | t }}</th>
+          <th scope="col" role="columnheader"><span class="visually-hidden">{{ 'Acciones' | t }}</span></th>
         </tr>
       </thead>
       <tbody role="rowgroup">
         @for (row of rows(); track row.stop.sequence) {
           <tr role="row">
             <td role="cell" class="primary-cell"><span class="seq" [style.--route-color]="color()" [style.--seq-text]="seqText()">{{ row.stop.sequence }}</span></td>
-            <td role="cell" data-label="Tipo">{{ stopType(row.stop.stopType) }}</td>
-            <td role="cell" data-label="Paquete">
+            <td role="cell" [attr.data-label]="'Tipo' | t">{{ stopType(row.stop.stopType) }}</td>
+            <td role="cell" [attr.data-label]="'Paquete' | t">
               @if (row.visit; as visit) {
                 <span class="name">{{ visitName(visit) }}</span>
                 @if (visit.pkg?.address) {
@@ -69,9 +69,9 @@
                 —
               }
             </td>
-            <td role="cell" data-label="Llegada">{{ dateTime(row.stop.arrivalUtc) }}</td>
-            <td role="cell" data-label="Salida">{{ dateTime(row.stop.departureUtc) }}</td>
-            <td role="cell" data-label="Estado">
+            <td role="cell" [attr.data-label]="'Llegada' | t">{{ dateTime(row.stop.arrivalUtc) }}</td>
+            <td role="cell" [attr.data-label]="'Salida' | t">{{ dateTime(row.stop.departureUtc) }}</td>
+            <td role="cell" [attr.data-label]="'Estado' | t">
               @if (row.visit; as visit) {
                 <app-status-badge [label]="statusText(visit)" [tone]="tone(visit)" />
               } @else {
@@ -86,7 +86,7 @@
                   [matMenuTriggerFor]="statusMenu"
                   [matMenuTriggerData]="{ visit: visit }"
                   [disabled]="visit.state !== 'ready' || store.isBusy(visit)"
-                  [attr.aria-label]="'Cambiar el estado de la visita ' + store.label(visit)"
+                  [attr.aria-label]="('Cambiar el estado de la visita ' | t) + store.label(visit)"
                 >
                   <mat-icon aria-hidden="true">published_with_changes</mat-icon>
                 </button>
@@ -96,9 +96,9 @@
                 type="button"
                 [disabled]="!row.stop.position"
                 (click)="focus(row)"
-                [attr.aria-label]="'Ver la parada ' + row.stop.sequence + ' de ' + route().name + ' en el mapa'"
+                [attr.aria-label]="'Ver la parada {0} de {1} en el mapa' | t: [row.stop.sequence, route().name]"
               >
-                Ver en el mapa
+                {{ 'Ver en el mapa' | t }}
               </button>
             </td>
           </tr>

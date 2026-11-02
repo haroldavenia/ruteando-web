@@ -24,12 +24,14 @@ import { LocationFieldsComponent, createLocationGroup } from '../../shared/map/l
 
 import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /** Dígitos, espacios, paréntesis y guiones con un `+` inicial opcional, de 7 a 20 caracteres. */
 export const PHONE_PATTERN = /^\+?[0-9 ()-]{7,20}$/;
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
-  required: 'Este campo es obligatorio',
-  pattern: 'Escribe un teléfono válido: de 7 a 20 caracteres con dígitos, espacios, paréntesis o guiones, y un + inicial opcional',
+  required: t('Este campo es obligatorio'),
+  pattern: t('Escribe un teléfono válido: de 7 a 20 caracteres con dígitos, espacios, paréntesis o guiones, y un + inicial opcional'),
 };
 
 @Component({
@@ -48,33 +50,34 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
     FormActionsComponent,
     FormHeadComponent,
     MatIconModule,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-form-head [title]="isNew ? 'Nuevo lugar' : 'Editar lugar'" backLabel="Lugares" backLink="/lugares" />
+    <app-form-head [title]="isNew ? ('Nuevo lugar' | t) : ('Editar lugar' | t)" [backLabel]="'Lugares' | t" backLink="/lugares" />
     @switch (loader.status()) {
       @case ('loading') {
-        <section class="card"><app-skeleton variant="form" label="Cargando…" /></section>
+        <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
       }
       @case ('missing') {
         <app-form-result [error]="loader.error()" />
-        <a mat-stroked-button routerLink="/lugares">Volver al listado</a>
+        <a mat-stroked-button routerLink="/lugares">{{ 'Volver al listado' | t }}</a>
       }
       @case ('error') {
         <app-form-result [error]="loader.error()" />
-        <a mat-stroked-button routerLink="/lugares">Volver al listado</a>
+        <a mat-stroked-button routerLink="/lugares">{{ 'Volver al listado' | t }}</a>
       }
       @default {
         <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
           <section class="form-section">
-            <h2><mat-icon aria-hidden="true" fontIcon="place" />Datos del lugar</h2>
+            <h2><mat-icon aria-hidden="true" fontIcon="place" />{{ 'Datos del lugar' | t }}</h2>
             <mat-form-field>
-              <mat-label>Nombre</mat-label>
+              <mat-label>{{ 'Nombre' | t }}</mat-label>
               <input matInput formControlName="name" autocomplete="off" />
               <mat-error>{{ error('name') }}</mat-error>
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Tipo</mat-label>
+              <mat-label>{{ 'Tipo' | t }}</mat-label>
               <mat-select formControlName="type">
                 @for (type of types(); track type.key) {
                   <mat-option [value]="type.key">{{ type.label }}</mat-option>
@@ -83,28 +86,28 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
               <mat-error>{{ error('type') }}</mat-error>
             </mat-form-field>
             <mat-form-field subscriptSizing="dynamic">
-              <mat-label>Dirección (opcional)</mat-label>
+              <mat-label>{{ 'Dirección (opcional)' | t }}</mat-label>
               <input matInput formControlName="address" autocomplete="off" />
-              <mat-hint>Se guarda como texto: no se calcula la ubicación a partir de ella</mat-hint>
+              <mat-hint>{{ 'Se guarda como texto: no se calcula la ubicación a partir de ella' | t }}</mat-hint>
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Teléfono (opcional)</mat-label>
+              <mat-label>{{ 'Teléfono (opcional)' | t }}</mat-label>
               <input matInput type="tel" formControlName="phoneNumber" autocomplete="off" />
               <mat-error>{{ error('phoneNumber') }}</mat-error>
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Persona de contacto (opcional)</mat-label>
+              <mat-label>{{ 'Persona de contacto (opcional)' | t }}</mat-label>
               <input matInput formControlName="contactName" autocomplete="off" />
             </mat-form-field>
           </section>
           <section class="form-section">
-            <h2><mat-icon aria-hidden="true" fontIcon="pin_drop" />Ubicación</h2>
+            <h2><mat-icon aria-hidden="true" fontIcon="pin_drop" />{{ 'Ubicación' | t }}</h2>
             <app-location-fields [location]="form.controls.location" />
           </section>
           <app-form-result [error]="submit.error()" />
           <app-form-actions [dirty]="hasUnsavedChanges()">
-            <a mat-button routerLink="/lugares">Cancelar</a>
-            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">Guardar</button>
+            <a mat-button routerLink="/lugares">{{ 'Cancelar' | t }}</a>
+            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
           </app-form-actions>
         </form>
       }
@@ -192,7 +195,7 @@ export class PlaceFormComponent implements HasUnsavedChanges {
 
     this.submit.submit(request$, () => {
       this.saved.set(true);
-      void notify(this.injector, this.id === null ? 'Lugar creado' : 'Lugar guardado');
+      void notify(this.injector, this.id === null ? t('Lugar creado') : t('Lugar guardado'));
       void this.router.navigateByUrl('/lugares');
     });
   }

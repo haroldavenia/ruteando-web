@@ -1,53 +1,53 @@
 @switch (loader.status()) {
   @case ('loading') {
-    <h1>Ruta</h1>
-    <section class="card"><app-skeleton variant="stats" label="Cargando la ruta…" /></section>
+    <h1>{{ 'Ruta' | t }}</h1>
+    <section class="card"><app-skeleton variant="stats" [label]="'Cargando la ruta…' | t" /></section>
   }
   @case ('missing') {
-    <h1>Ruta</h1>
+    <h1>{{ 'Ruta' | t }}</h1>
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/jornadas">Volver al listado</a>
+    <a mat-stroked-button routerLink="/jornadas">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
-    <h1>Ruta</h1>
+    <h1>{{ 'Ruta' | t }}</h1>
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/jornadas">Volver al listado</a>
+    <a mat-stroked-button routerLink="/jornadas">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     @if (route(); as route) {
-      <app-form-head [title]="route.name" [backLabel]="'Jornada ' + loader.record()?.name" [backLink]="'/jornadas/' + journeyId" />
+      <app-form-head [title]="route.name" [backLabel]="('Jornada ' | t) + loader.record()?.name" [backLink]="'/jornadas/' + journeyId" />
 
       <section class="card" aria-labelledby="summary-title">
-        <h2 id="summary-title">Resumen</h2>
+        <h2 id="summary-title">{{ 'Resumen' | t }}</h2>
         <dl class="summary stat-grid">
-          <div><dt>Vehículo</dt><dd>{{ vehicle(route) }}</dd></div>
-          <div><dt>Paradas</dt><dd>{{ count(route.waypoints.length) }}</dd></div>
-          <div><dt>Distancia</dt><dd>{{ distance(route.distanceTraveled) }}</dd></div>
-          <div><dt>Duración</dt><dd>{{ duration(route.duration) }}</dd></div>
-          <div><dt>Uso de peso</dt><dd>{{ percent(route.weightUsagePercent) }}</dd></div>
-          <div><dt>Uso de volumen</dt><dd>{{ percent(route.volumeUsagePercent) }}</dd></div>
-          <div><dt>Inicio</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
-          <div><dt>Fin</dt><dd>{{ dateTime(route.finishRouteUtc) }}</dd></div>
+          <div><dt>{{ 'Vehículo' | t }}</dt><dd>{{ vehicle(route) }}</dd></div>
+          <div><dt>{{ 'Paradas' | t }}</dt><dd>{{ count(route.waypoints.length) }}</dd></div>
+          <div><dt>{{ 'Distancia' | t }}</dt><dd>{{ distance(route.distanceTraveled) }}</dd></div>
+          <div><dt>{{ 'Duración' | t }}</dt><dd>{{ duration(route.duration) }}</dd></div>
+          <div><dt>{{ 'Uso de peso' | t }}</dt><dd>{{ percent(route.weightUsagePercent) }}</dd></div>
+          <div><dt>{{ 'Uso de volumen' | t }}</dt><dd>{{ percent(route.volumeUsagePercent) }}</dd></div>
+          <div><dt>{{ 'Inicio||hora' | t }}</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
+          <div><dt>{{ 'Fin' | t }}</dt><dd>{{ dateTime(route.finishRouteUtc) }}</dd></div>
         </dl>
       </section>
 
       <section #mapSection class="card" aria-labelledby="map-title">
-        <h2 id="map-title">Mapa de la ruta</h2>
+        <h2 id="map-title">{{ 'Mapa de la ruta' | t }}</h2>
         <app-routes-map [routes]="routes()" [(selectedStop)]="selectedStop" />
       </section>
 
       <section class="card" aria-labelledby="stops-title">
-        <h2 id="stops-title">Paradas</h2>
+        <h2 id="stops-title">{{ 'Paradas' | t }}</h2>
         @if (route.waypoints.length === 0) {
-          <p>Esta ruta no tiene paradas.</p>
+          <p>{{ 'Esta ruta no tiene paradas.' | t }}</p>
         } @else {
           <app-route-visits [route]="route" (stopFocus)="focusStop($event)" />
         }
       </section>
     } @else if (routeMissing()) {
-      <h1>Ruta</h1>
+      <h1>{{ 'Ruta' | t }}</h1>
       <app-form-result [error]="gone" />
-      <a mat-stroked-button [routerLink]="['/jornadas', journeyId]">Volver a la jornada</a>
+      <a mat-stroked-button [routerLink]="['/jornadas', journeyId]">{{ 'Volver a la jornada' | t }}</a>
     }
   }
 }
