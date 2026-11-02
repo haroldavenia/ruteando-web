@@ -42,17 +42,21 @@ function webEntryFile() {
   return null;
 }
 
-// redirect: false -> el prerender deja carpetas como acceso/ y `GET /acceso` no debe redirigir a `/acceso/`
 // El service worker, su lista de versiones y el manifiesto no se cachean: si el navegador guardara el worker, nunca vería una versión nueva.
 var NO_CACHE_FILES = ['ngsw-worker.js', 'ngsw.json', 'safety-worker.js', 'worker-basic.min.js', 'manifest.webmanifest'];
-function noCacheServiceWorkerFiles(res, file) {
-  if (NO_CACHE_FILES.indexOf(path.basename(file)) !== -1) {
+// Los ficheros con hash en el nombre (main-7FRZEZGX.js, styles-RZOF6GUB.css) nunca cambian de contenido: se cachean un año.
+var HASHED_FILE = /-[A-Z0-9]{8}\.(js|css)$/;
+function cacheHeaders(res, file) {
+  var name = path.basename(file);
+  if (NO_CACHE_FILES.indexOf(name) !== -1) {
     res.setHeader('Cache-Control', 'no-cache');
+  } else if (HASHED_FILE.test(name)) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
   }
 }
 
 // redirect: false -> el prerender deja carpetas como acceso/ y `GET /acceso` no debe redirigir a `/acceso/`
-app.use(express.static(WEB_DIST, { index: false, redirect: false, setHeaders: noCacheServiceWorkerFiles }));
+app.use(express.static(WEB_DIST, { index: false, redirect: false, setHeaders: cacheHeaders }));
 
 app.get('*', function(req, res) {
   // Ficheros inexistentes (con extensión) y peticiones que no piden HTML no son rutas del cliente

@@ -23,6 +23,7 @@ before(async () => {
   fs.writeFileSync(path.join(full, 'app.js'), 'console.log("ok");');
   fs.writeFileSync(path.join(full, 'ngsw-worker.js'), '// worker');
   fs.writeFileSync(path.join(full, 'ngsw.json'), '{}');
+  fs.writeFileSync(path.join(full, 'main-7FRZEZGX.js'), '// con hash');
   fs.writeFileSync(path.join(full, 'manifest.webmanifest'), '{}');
   // El prerender de Angular deja una carpeta por ruta (acceso/index.html): no debe provocar redirecciones
   fs.mkdirSync(path.join(full, 'acceso'));
@@ -59,6 +60,12 @@ test('el service worker, su lista de versiones y el manifiesto no se cachean; el
   }
   const app = await fetch(withBuild.base + '/app.js');
   assert.notEqual(app.headers.get('cache-control'), 'no-cache');
+});
+
+test('los ficheros con hash en el nombre se cachean un ano como inmutables', async () => {
+  const res = await fetch(withBuild.base + '/main-7FRZEZGX.js');
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('cache-control'), 'public, max-age=31536000, immutable');
 });
 
 test('una ruta profunda del cliente devuelve la aplicación', async () => {
