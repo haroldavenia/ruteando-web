@@ -1,7 +1,7 @@
 // Genera las capturas del manifiesto (ng-ruteando/src/assets/screenshots): la interfaz de instalación enriquecida de la PWA las pide,
 // una `wide` (escritorio) y una `narrow` (móvil). Captura la pantalla de acceso en inglés y en tema claro, con tamaño exacto.
 // Usa Chrome sin interfaz y su protocolo de depuración (WebSocket nativo de Node; CHROME_BIN o la ruta habitual).
-// Uso: con la aplicación sirviéndose (p. ej. `npm run build:web && npm start`): node scripts/generate-pwa-screenshots.mjs [http://localhost:3000]
+// Uso: con la aplicación sirviéndose (p. ej. `pnpm run build:web && pnpm start`): node scripts/generate-pwa-screenshots.mjs [http://localhost:3000]
 import { spawn } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

@@ -9,7 +9,7 @@
 | 21 (`ng-ruteando`) | `21.2.x` | M3 (`mat.theme`), ya aplicado en `src/styles.scss` |
 | 19 | `19.x` | M3 estable (`mat.theme` desde 19.2; antes `define-theme`) |
 
-Instalar: `npx ng add @angular/material` (pregunta tema, tipografía y animaciones). Material y CDK van con la misma versión mayor y menor que `@angular/core`.
+Instalar: `pnpm exec ng add @angular/material` (pregunta tema, tipografía y animaciones). Material y CDK van con la misma versión mayor y menor que `@angular/core`.
 
 ## Qué hay declarado hoy
 

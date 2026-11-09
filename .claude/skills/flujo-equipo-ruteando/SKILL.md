@@ -33,7 +33,7 @@ Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
 - Estado del change en el asunto cuando se avanza por tareas: `(14 de 15 tareas; 2.2 sin verificar)`.
 - Al cerrar: `chore(openspec): archiva <changes> y sincroniza specs`.
 - La línea `Co-Authored-By` va siempre al final cuando el commit lo crea Claude.
-- Antes de commitear: `npm --prefix ng-ruteando run test:ci`, `npm run test:server` y, si tocaste specs, `openspec validate --specs --strict`. El CI exige lo mismo.
+- Antes de commitear: `pnpm --filter ng-ruteando run test:ci`, `pnpm run test:server` y, si tocaste specs, `openspec validate --specs --strict`. El CI exige lo mismo.
 
 ## 3. Pull requests
 

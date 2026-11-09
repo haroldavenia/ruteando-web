@@ -280,4 +280,4 @@ Registro de cómo se tradujo cada módulo de la aplicación AngularJS, que ya no
 
 - Fixtures reales y saneados en `ng-ruteando/src/testing/fixtures/gateway/` (115). Se regeneran con `node scripts/extract-gateway-fixtures.mjs <ruta-colección>`; la colección vive fuera del repo y el script aborta si queda algún secreto.
 - `src/testing/api-testing.ts` y `crud-api-spec.ts` dan `setupApi`, `respondWith` y `describeCrudApi` para las pruebas de contrato.
-- Servidor: `npm run test:server` (gateway falso local, sin red ni MongoDB).
+- Servidor: `pnpm run test:server` (gateway falso local, sin red ni MongoDB).

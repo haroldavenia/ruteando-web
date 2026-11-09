@@ -60,9 +60,9 @@ El frontend consume el **HanoIT Gateway** a través del proxy `/gateway` (la cla
 | Tema Material | M2 | M3 con `mat.theme(...)` |
 | TypeScript | 5.2.x | ~5.9 |
 | Node | 18.13+ | `^20.19 \|\| ^22.12 \|\| >=24` (`.nvmrc` = 22) |
-| `ng test` | Karma + Jasmine | Karma + Jasmine (`npm run test:ci`, Chrome sin interfaz) |
+| `ng test` | Karma + Jasmine | Karma + Jasmine (`pnpm run test:ci`, Chrome sin interfaz) |
 
-Para APIs de las versiones intermedias (`@let`, `@defer`, `httpResource`, `linkedSignal`) verifica en `npx ng version` y en la documentación oficial antes de usarlas: estas cifras envejecen.
+Para APIs de las versiones intermedias (`@let`, `@defer`, `httpResource`, `linkedSignal`) verifica en `pnpm exec ng version` y en la documentación oficial antes de usarlas: estas cifras envejecen.
 
 ## 6. UI
 
@@ -70,13 +70,13 @@ Ver `references/ui-material-openlayers.md`. Resumen: UI con **Angular Material +
 
 ## 7. Trampas conocidas (lee `references/gotchas.md`)
 
-Resumen: bootstrap/ng-bootstrap ya se retiraron; el SSR exige `allowedHosts`; `npm install` desde cero puede requerir npm 11; los puertos son 3000 (servidor), 4000 (SSR) y 4200 (`ng serve`).
+Resumen: bootstrap/ng-bootstrap ya se retiraron; el SSR exige `allowedHosts`; el repositorio usa pnpm (un `pnpm-lock.yaml` en la raíz); los puertos son 3000 (servidor), 4000 (SSR) y 4200 (`ng serve`).
 
 ## 8. Flujo de trabajo recomendado
 
 1. Detectar proyecto/versión (§1).
 2. Leer la referencia de la feature y los fixtures del gateway (`src/testing/fixtures/gateway/`).
 3. Implementar siguiendo la referencia de la versión.
-4. Compilar: `cd ng-ruteando && npm run build` (o `npm run build:web` desde la raíz).
-5. Tests: `cd ng-ruteando && npm run test:ci` (Karma, Chrome sin interfaz); servidor: `npm run test:server` en la raíz.
+4. Compilar: `cd ng-ruteando && pnpm run build` (o `pnpm run build:web` desde la raíz).
+5. Tests: `cd ng-ruteando && pnpm run test:ci` (Karma, Chrome sin interfaz); servidor: `pnpm run test:server` en la raíz.
 6. Nunca propagues secretos; usa variables de entorno / `environment`.

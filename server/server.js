@@ -69,13 +69,13 @@ app.get('*', function(req, res) {
   }
   var entry = webEntryFile();
   if (!entry) {
-    return res.status(503).send({ message: 'El frontend no está compilado. Ejecuta "npm run build:web".' });
+    return res.status(503).send({ message: 'El frontend no está compilado. Ejecuta "pnpm run build:web".' });
   }
   res.sendFile(entry);
 });
 
 if (!webEntryFile()) {
-  console.log(('Frontend sin compilar en ' + WEB_DIST + '. Ejecuta `npm run build:web`.').yellow);
+  console.log(('Frontend sin compilar en ' + WEB_DIST + '. Ejecuta `pnpm run build:web`.').yellow);
 }
 
 app.listen(app.get('port'), function() {

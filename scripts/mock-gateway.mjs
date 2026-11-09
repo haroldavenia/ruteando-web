@@ -5,7 +5,7 @@
 //
 // Uso:
 //   node scripts/mock-gateway.mjs                      # escucha en el puerto 4010
-//   GATEWAY_MODE=mock npm start                        # app contra el mock, que se arranca solo (ver .env.example)
+//   GATEWAY_MODE=mock pnpm start                        # app contra el mock, que se arranca solo (ver .env.example)
 //
 // Usuarios (contraseña `demo1234`): admin@example.invalid (tenant_admin), agente@example.invalid (agent),
 // conductor@example.invalid (driver). Variables: MOCK_GATEWAY_PORT (4010) y MOCK_GATEWAY_LATENCY_MS (120).

@@ -9,7 +9,7 @@ Garantiza que el frontend `ng-ruteando` se ejecute sobre una versión de Angular
 El proyecto `ng-ruteando` SHALL usar Angular 21.x y todos sus paquetes `@angular/*` SHALL compartir la misma versión mayor.
 
 #### Scenario: Versiones del framework coherentes
-- **WHEN** se ejecuta `npm ls @angular/core @angular/common @angular/router @angular/platform-browser @angular/ssr @angular/cdk @angular/material` en `ng-ruteando/`
+- **WHEN** se ejecuta `pnpm ls @angular/core @angular/common @angular/router @angular/platform-browser @angular/ssr @angular/cdk @angular/material` en `ng-ruteando/`
 - **THEN** todos los paquetes resuelven a la versión mayor 21 sin avisos de dependencias no satisfechas (`ERESOLVE`, `invalid`, `missing`)
 
 #### Scenario: Sin paquetes duplicados del framework
@@ -20,18 +20,18 @@ El proyecto `ng-ruteando` SHALL usar Angular 21.x y todos sus paquetes `@angular
 El proyecto SHALL declarar qué versiones de Node permite para desarrollar y construir, y SHALL rechazar las no soportadas por la versión de Angular instalada.
 
 #### Scenario: Node soportado
-- **WHEN** se ejecuta `npm install` y `npx ng build` con una versión de Node incluida en el campo `engines`
+- **WHEN** se ejecuta `pnpm install` y `pnpm exec ng build` con una versión de Node incluida en el campo `engines`
 - **THEN** ambos comandos terminan con código 0 sin avisos de "Unsupported" del CLI
 
 #### Scenario: Node no soportado
-- **WHEN** se ejecuta `npm install` con una versión de Node fuera de `engines`
-- **THEN** npm informa de la incompatibilidad antes de instalar
+- **WHEN** se ejecuta `pnpm install` con una versión de Node fuera de `engines`
+- **THEN** pnpm informa de la incompatibilidad antes de instalar
 
 ### Requirement: Compilación de producción
 El proyecto SHALL compilar en modo producción sin errores ni avisos de presupuesto con `ng build`.
 
 #### Scenario: Build de producción correcto
-- **WHEN** se ejecuta `npx ng build` en `ng-ruteando/` tras `npm install`
+- **WHEN** se ejecuta `pnpm exec ng build` en `ng-ruteando/` tras `pnpm install`
 - **THEN** el comando termina con código 0 y genera las salidas de navegador y de servidor
 
 #### Scenario: Presupuestos respetados
@@ -42,7 +42,7 @@ El proyecto SHALL compilar en modo producción sin errores ni avisos de presupue
 El proyecto SHALL ejecutar su suite de pruebas desde línea de comandos, sin navegador interactivo, con el resultado reflejado en el código de salida.
 
 #### Scenario: Suite verde
-- **WHEN** se ejecuta `npm test` en modo de una sola ejecución y sin interfaz
+- **WHEN** se ejecuta `pnpm test` en modo de una sola ejecución y sin interfaz
 - **THEN** el comando termina con código 0 y ejecuta al menos una prueba por cada componente del shell (`app`, `home`, `shell`)
 
 #### Scenario: Fallo detectado

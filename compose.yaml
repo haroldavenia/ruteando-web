@@ -20,13 +20,15 @@ x-dev: &dev
     - node_modules_root:/app/node_modules
     - node_modules_web:/app/ng-ruteando/node_modules
     - angular_cache:/app/ng-ruteando/.angular
+    # Almacén de pnpm: los paquetes descargados sobreviven a recrear los contenedores
+    - pnpm_store:/pnpm-store
 
 x-gateway: &gateway
   GATEWAY_URL: ${DOCKER_GATEWAY_URL:-http://mock-gateway:4010}
   GATEWAY_API_KEY: ${DOCKER_GATEWAY_API_KEY:-mock}
 
 services:
-  # Instala las dependencias (raíz y frontend) solo cuando cambia el package-lock.json correspondiente
+  # Instala las dependencias (raíz y frontend, un solo pnpm-lock.yaml) solo cuando cambia ese fichero
   deps:
     <<: *dev
     command:
@@ -34,14 +36,12 @@ services:
       - -c
       - |
         set -e
-        for dir in . ng-ruteando; do
-          hash=$$(sha256sum "$$dir/package-lock.json" | cut -d' ' -f1)
-          if [ "$$(cat "$$dir/node_modules/.lock-hash" 2>/dev/null)" != "$$hash" ]; then
-            echo "npm ci en $$dir"
-            (cd "$$dir" && npm ci)
-            echo "$$hash" > "$$dir/node_modules/.lock-hash"
-          fi
-        done
+        hash=$$(sha256sum pnpm-lock.yaml | cut -d' ' -f1)
+        if [ "$$(cat node_modules/.lock-hash 2>/dev/null)" != "$$hash" ]; then
+          echo "pnpm install"
+          pnpm install --frozen-lockfile
+          echo "$$hash" > node_modules/.lock-hash
+        fi
     restart: "no"
 
   mock-gateway:
@@ -58,7 +58,7 @@ services:
 
   web:
     <<: *dev
-    command: npm --prefix ng-ruteando start -- --host 0.0.0.0 --poll 2000
+    command: pnpm --filter ng-ruteando start --host 0.0.0.0 --poll 2000
     environment:
       <<: *gateway
     ports:
@@ -72,7 +72,7 @@ services:
   app:
     <<: *dev
     profiles: ["prod-like"]
-    command: sh -c "npm run build:web && npm start"
+    command: sh -c "pnpm run build:web && pnpm start"
     environment:
       <<: *gateway
       PORT: "3000"
@@ -91,7 +91,7 @@ services:
       dockerfile: Dockerfile.dev
       target: test
     profiles: ["test"]
-    command: npm --prefix ng-ruteando run test:ci
+    command: pnpm --filter ng-ruteando run test:ci
     depends_on:
       deps:
         condition: service_completed_successfully
@@ -100,3 +100,4 @@ volumes:
   node_modules_root:
   node_modules_web:
   angular_cache:
+  pnpm_store:
