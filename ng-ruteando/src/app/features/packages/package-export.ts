@@ -1,10 +1,9 @@
-import { EMPTY, Observable, expand, map, reduce } from 'rxjs';
+import { EMPTY, expand, map, Observable, reduce } from 'rxjs';
 
 import { Page } from '../../core/api/api-config';
 import { Package } from '../../core/api/models';
 import { fromGeoJsonPoint } from '../../core/geo/lat-lng';
 import { toCsv } from '../../shared/data/csv';
-
 import { geocodingStatusLabel, packageStatusLabel } from './package-labels';
 
 export const EXPORT_PAGE_SIZE = 200;
@@ -41,7 +40,7 @@ export function packagesToCsv(items: readonly Package[]): string {
         geocodingStatusLabel(item.geocodingStatus),
         packageStatusLabel(item.status),
       ];
-    }),
+    })
   );
 }
 
@@ -56,7 +55,7 @@ export interface ExportProgress {
  */
 export function fetchAllPackages(
   fetchPage: (page: number, size: number) => Observable<Page<Package>>,
-  onProgress: (progress: ExportProgress) => void,
+  onProgress: (progress: ExportProgress) => void
 ): Observable<Package[]> {
   return fetchPage(0, EXPORT_PAGE_SIZE).pipe(
     expand((page) => (page.page + 1 < page.totalPages ? fetchPage(page.page + 1, EXPORT_PAGE_SIZE) : EMPTY)),
@@ -66,9 +65,8 @@ export function fetchAllPackages(
         onProgress({ loaded: acc.items.length, total: page.totalElements });
         return acc;
       },
-      { items: [] },
+      { items: [] }
     ),
-    map((acc) => acc.items),
+    map((acc) => acc.items)
   );
 }
-

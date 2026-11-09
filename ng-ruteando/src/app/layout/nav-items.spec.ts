@@ -1,6 +1,5 @@
 import { UserRole } from '../core/auth/session.model';
-
-import { NAV_ITEMS, areaLinksFor, navItemsFor, quickActionsFor } from './nav-items';
+import { areaLinksFor, NAV_ITEMS, navItemsFor, quickActionsFor } from './nav-items';
 
 const labels = (items: { label: string }[]) => items.map((i) => i.label);
 
@@ -8,7 +7,16 @@ describe('nav-items', () => {
   describe('navItemsFor', () => {
     it('administración ve todas las áreas', () => {
       for (const role of ['tenant_admin', 'super_admin'] as UserRole[]) {
-        expect(labels(navItemsFor(role))).toEqual(['Inicio', 'Flota', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Configuraciones', 'Auditoría']);
+        expect(labels(navItemsFor(role))).toEqual([
+          'Inicio',
+          'Flota',
+          'Lugares',
+          'Zonas',
+          'Paquetes',
+          'Jornadas',
+          'Configuraciones',
+          'Auditoría',
+        ]);
       }
     });
 

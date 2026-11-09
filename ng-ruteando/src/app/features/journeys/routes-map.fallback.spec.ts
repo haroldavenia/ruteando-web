@@ -2,15 +2,13 @@ import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { toPlannedJourney } from '../../core/api/journey-mapper';
 import { DomainRoute, Journey } from '../../core/api/models';
 import { MAP_CONFIG } from '../../shared/map/map-config';
 import { OPENLAYERS_LOADER } from '../../shared/map/openlayers';
-
 import { RoutesMapComponent } from './routes-map.component';
-
-import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 
 const route = toPlannedJourney(plan.response.body as unknown as Journey).routes[0];
 const wait = () => new Promise((resolve) => setTimeout(resolve, 150));
@@ -29,10 +27,13 @@ function create(routes: readonly DomainRoute[], providers: unknown[] = []) {
 describe('RoutesMapComponent: servidor, fallos y vacío', () => {
   it('en el servidor deja solo el hueco del mapa: no carga OpenLayers ni falla', async () => {
     const loader = jasmine.createSpy('loader').and.rejectWith(new Error('no debería llamarse'));
-    const fixture = create([route], [
-      { provide: PLATFORM_ID, useValue: 'server' },
-      { provide: OPENLAYERS_LOADER, useValue: loader },
-    ]);
+    const fixture = create(
+      [route],
+      [
+        { provide: PLATFORM_ID, useValue: 'server' },
+        { provide: OPENLAYERS_LOADER, useValue: loader },
+      ]
+    );
     await wait();
     fixture.detectChanges();
 
@@ -47,7 +48,10 @@ describe('RoutesMapComponent: servidor, fallos y vacío', () => {
   });
 
   it('si OpenLayers no se puede cargar avisa y la leyenda sigue funcionando', async () => {
-    const fixture = create([route], [{ provide: OPENLAYERS_LOADER, useValue: () => Promise.reject(new Error('sin red')) }]);
+    const fixture = create(
+      [route],
+      [{ provide: OPENLAYERS_LOADER, useValue: () => Promise.reject(new Error('sin red')) }]
+    );
     await wait();
     fixture.detectChanges();
 
@@ -74,7 +78,11 @@ describe('RoutesMapComponent: servidor, fallos y vacío', () => {
   });
 
   it('con rutas que no tienen geometría ni paradas con posición también avisa', async () => {
-    const empty = { ...route, geometry: [], waypoints: route.waypoints.map((w) => ({ ...w, position: null })) } as DomainRoute;
+    const empty = {
+      ...route,
+      geometry: [],
+      waypoints: route.waypoints.map((w) => ({ ...w, position: null })),
+    } as DomainRoute;
     const fixture = create([empty]);
     await wait();
     fixture.detectChanges();

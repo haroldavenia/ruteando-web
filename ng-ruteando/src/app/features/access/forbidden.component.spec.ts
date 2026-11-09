@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { CurrentUser } from '../../core/auth/current-user';
 import { makeUser } from '../../../testing/session';
-
+import { CurrentUser } from '../../core/auth/current-user';
 import { ForbiddenComponent } from './forbidden.component';
 
 describe('ForbiddenComponent', () => {

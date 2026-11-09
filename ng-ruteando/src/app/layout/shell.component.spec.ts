@@ -6,14 +6,13 @@ import { ApplicationRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
-import { Subject, of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
-import { makeUser } from '../../testing/session';
 import { iconButtonsWithoutTitle } from '../../testing/icon-button-titles';
+import { makeUser } from '../../testing/session';
 import { API_BASE_URL } from '../core/api/api-config';
 import { AuthService } from '../core/auth/auth.service';
 import { CurrentUser } from '../core/auth/current-user';
-
 import { ShellComponent } from './shell.component';
 
 describe('ShellComponent', () => {
@@ -47,7 +46,9 @@ describe('ShellComponent', () => {
   it('los botones de icono de la barra (menú y cuenta) llevan título con lo que hacen', () => {
     TestBed.inject(CurrentUser).set(makeUser({ role: 'tenant_admin' }));
     fixture.detectChanges();
-    const buttons = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-toolbar .mat-mdc-icon-button'));
+    const buttons = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('mat-toolbar .mat-mdc-icon-button')
+    );
 
     expect(buttons.length).toBeGreaterThan(0);
     expect(iconButtonsWithoutTitle(fixture.nativeElement)).toEqual([]);
@@ -62,11 +63,16 @@ describe('ShellComponent', () => {
     breakpoints.next({ matches: false, breakpoints: {} });
     fixture.detectChanges();
   };
-  const railLabels = () => Array.from(root().querySelectorAll('nav.rail .rail-item .rail-label')).map((el) => el.textContent!.trim());
-  const railActive = () => Array.from(root().querySelectorAll('nav.rail .rail-item.active .rail-label')).map((el) => el.textContent!.trim());
+  const railLabels = () =>
+    Array.from(root().querySelectorAll('nav.rail .rail-item .rail-label')).map((el) => el.textContent!.trim());
+  const railActive = () =>
+    Array.from(root().querySelectorAll('nav.rail .rail-item.active .rail-label')).map((el) => el.textContent!.trim());
   const navigate = async (path: string, routes: string[]) => {
     const router = TestBed.inject(Router);
-    router.resetConfig([{ path: '', pathMatch: 'full', children: [] }, ...routes.map((route) => ({ path: route, children: [] }))]);
+    router.resetConfig([
+      { path: '', pathMatch: 'full', children: [] },
+      ...routes.map((route) => ({ path: route, children: [] })),
+    ]);
     await router.navigateByUrl(path);
     fixture.detectChanges();
   };
@@ -82,7 +88,16 @@ describe('ShellComponent', () => {
     for (const role of ['tenant_admin', 'super_admin'] as const) {
       it(`${role} ve Inicio, Flota, Lugares, Zonas, Paquetes, Jornadas, Config. y Auditoría`, () => {
         withRole(role);
-        expect(railLabels()).toEqual(['Inicio', 'Flota', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Config.', 'Auditoría']);
+        expect(railLabels()).toEqual([
+          'Inicio',
+          'Flota',
+          'Lugares',
+          'Zonas',
+          'Paquetes',
+          'Jornadas',
+          'Config.',
+          'Auditoría',
+        ]);
       });
     }
 
@@ -105,7 +120,16 @@ describe('ShellComponent', () => {
     it('«Config.» conserva el nombre accesible largo y las demás entradas se nombran por su texto', () => {
       withRole('tenant_admin');
       const items = Array.from(root().querySelectorAll('nav.rail .rail-item')) as HTMLElement[];
-      expect(items.map((item) => item.getAttribute('aria-label'))).toEqual([null, null, null, null, null, null, 'Configuraciones', null]);
+      expect(items.map((item) => item.getAttribute('aria-label'))).toEqual([
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        'Configuraciones',
+        null,
+      ]);
     });
 
     it('cada entrada lleva su icono decorativo sobre su nombre, como botón o enlace con tamaño táctil', () => {
@@ -113,7 +137,9 @@ describe('ShellComponent', () => {
       const items = Array.from(root().querySelectorAll('nav.rail .rail-item')) as HTMLElement[];
       expect(items.every((item) => item.querySelector('mat-icon')?.getAttribute('aria-hidden') === 'true')).toBeTrue();
       expect(items.every((item) => ['A', 'BUTTON'].includes(item.tagName))).toBeTrue();
-      expect(items.every((item) => item.getBoundingClientRect().height >= 56 && item.getBoundingClientRect().width >= 64)).toBeTrue();
+      expect(
+        items.every((item) => item.getBoundingClientRect().height >= 56 && item.getBoundingClientRect().width >= 64)
+      ).toBeTrue();
     });
 
     describe('Flota', () => {
@@ -126,7 +152,9 @@ describe('ShellComponent', () => {
       });
 
       it('es un botón que abre un menú con Vehículos, Tipos de vehículo y Conductores', async () => {
-        const flota = Array.from(root().querySelectorAll('nav.rail button.rail-item')).find((b) => b.textContent?.includes('Flota')) as HTMLButtonElement;
+        const flota = Array.from(root().querySelectorAll('nav.rail button.rail-item')).find((b) =>
+          b.textContent?.includes('Flota')
+        ) as HTMLButtonElement;
         expect(flota.getAttribute('aria-haspopup')).toBe('menu');
         flota.click();
         fixture.detectChanges();
@@ -134,9 +162,15 @@ describe('ShellComponent', () => {
 
         const entries = Array.from(overlay.querySelectorAll('a[mat-menu-item]')) as HTMLAnchorElement[];
         // El texto de cada entrada es el nombre de su icono seguido del de la pantalla: se descarta el del icono
-        const names = entries.map((entry) => entry.textContent!.replace(entry.querySelector('mat-icon')?.textContent ?? '', '').trim());
+        const names = entries.map((entry) =>
+          entry.textContent!.replace(entry.querySelector('mat-icon')?.textContent ?? '', '').trim()
+        );
         expect(names).toEqual(['Vehículos', 'Tipos de vehículo', 'Conductores']);
-        expect(entries.map((entry) => entry.getAttribute('href'))).toEqual(['/flota/vehiculos', '/flota/tipos', '/flota/conductores']);
+        expect(entries.map((entry) => entry.getAttribute('href'))).toEqual([
+          '/flota/vehiculos',
+          '/flota/tipos',
+          '/flota/conductores',
+        ]);
       });
     });
 
@@ -249,7 +283,10 @@ describe('ShellComponent', () => {
   });
 
   describe('menú desplegable (pantalla estrecha)', () => {
-    const titles = () => Array.from(root().querySelectorAll('mat-sidenav a')).map((a) => a.querySelector('[matListItemTitle]')!.textContent!.trim());
+    const titles = () =>
+      Array.from(root().querySelectorAll('mat-sidenav a')).map((a) =>
+        a.querySelector('[matListItemTitle]')!.textContent!.trim()
+      );
 
     it('sustituye al riel y a la búsqueda: botón de menú con etiqueta en español y marca compacta', () => {
       goNarrow();
@@ -273,7 +310,18 @@ describe('ShellComponent', () => {
       withRole('tenant_admin');
       goNarrow();
       expect(root().querySelector('mat-sidenav h3')?.textContent).toContain('Flota');
-      expect(titles()).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Configuraciones', 'Auditoría']);
+      expect(titles()).toEqual([
+        'Inicio',
+        'Vehículos',
+        'Tipos de vehículo',
+        'Conductores',
+        'Lugares',
+        'Zonas',
+        'Paquetes',
+        'Jornadas',
+        'Configuraciones',
+        'Auditoría',
+      ]);
     });
 
     it('un agente ve Inicio, Paquetes, Jornadas y Auditoría, sin sección Flota', () => {
@@ -294,7 +342,9 @@ describe('ShellComponent', () => {
       withRole('tenant_admin');
       goNarrow();
       await navigate('/flota/vehiculos/abc', ['flota/vehiculos/:id']);
-      const active = Array.from(root().querySelectorAll('mat-sidenav a.active')).map((a) => a.querySelector('[matListItemTitle]')!.textContent!.trim());
+      const active = Array.from(root().querySelectorAll('mat-sidenav a.active')).map((a) =>
+        a.querySelector('[matListItemTitle]')!.textContent!.trim()
+      );
       expect(active).toEqual(['Vehículos']);
     });
 
@@ -305,7 +355,9 @@ describe('ShellComponent', () => {
       const active = root().querySelector('mat-sidenav a.active') as HTMLElement;
       expect(active.getAttribute('aria-current')).toBe('page');
       const style = getComputedStyle(active);
-      expect(style.getPropertyValue('--mat-list-list-item-container-color').trim()).toBe(style.getPropertyValue('--mat-sys-secondary-container').trim());
+      expect(style.getPropertyValue('--mat-list-list-item-container-color').trim()).toBe(
+        style.getPropertyValue('--mat-sys-secondary-container').trim()
+      );
     });
   });
 
@@ -361,9 +413,12 @@ describe('ShellComponent', () => {
     let overlay: HTMLElement;
     let logout: jasmine.Spy;
     const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
-    const trigger = () => (fixture.nativeElement as HTMLElement).querySelector('button[aria-label="Menú de usuario"]') as HTMLButtonElement;
+    const trigger = () =>
+      (fixture.nativeElement as HTMLElement).querySelector('button[aria-label="Menú de usuario"]') as HTMLButtonElement;
     const overlayButton = (text: string) =>
-      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
+      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) =>
+        b.textContent?.includes(text)
+      )!;
 
     async function openMenu(): Promise<void> {
       trigger().click();
@@ -391,7 +446,9 @@ describe('ShellComponent', () => {
     });
 
     it('sin nombre muestra el correo como nombre', async () => {
-      TestBed.inject(CurrentUser).set(makeUser({ firstName: null, lastName: null, email: 'sin-nombre@example.invalid' }));
+      TestBed.inject(CurrentUser).set(
+        makeUser({ firstName: null, lastName: null, email: 'sin-nombre@example.invalid' })
+      );
       fixture.detectChanges();
       await openMenu();
 

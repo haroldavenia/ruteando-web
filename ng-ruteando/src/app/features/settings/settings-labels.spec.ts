@@ -2,11 +2,11 @@ import {
   DEFAULT_LENGTH_OF_STAY_TYPES,
   DEFAULT_RESTRICTION_TYPES,
   DEFAULT_ROUTE_TOPOLOGIES,
-  SettingsSummary,
   describeSettings,
   lengthOfStayLabel,
   restrictionTypeLabel,
   routeTopologyLabel,
+  SettingsSummary,
 } from './settings-labels';
 
 describe('describeSettings', () => {
@@ -25,7 +25,9 @@ describe('describeSettings', () => {
   const say = (changes: Partial<SettingsSummary>) => describeSettings({ ...base, ...changes });
 
   it('describe la configuración completa en una frase', () => {
-    expect(say({})).toBe('Planificará 3 rutas (ida y vuelta) desde Depósito central, con 3 vehículos, evaluando peso y volumen.');
+    expect(say({})).toBe(
+      'Planificará 3 rutas (ida y vuelta) desde Depósito central, con 3 vehículos, evaluando peso y volumen.'
+    );
   });
 
   it('usa el singular con una ruta y un vehículo', () => {
@@ -40,10 +42,14 @@ describe('describeSettings', () => {
   });
 
   it('con turnos dice su duración en horas y minutos', () => {
-    expect(say({ restrictionType: 'resource_vs_time', shiftDurationMin: 480 })).toContain('rutas con turnos de 8 h (ida y vuelta)');
+    expect(say({ restrictionType: 'resource_vs_time', shiftDurationMin: 480 })).toContain(
+      'rutas con turnos de 8 h (ida y vuelta)'
+    );
     expect(say({ restrictionType: 'resource_vs_time', shiftDurationMin: 90 })).toContain('turnos de 1 h 30 min');
     expect(say({ restrictionType: 'resource_vs_time', shiftDurationMin: 45 })).toContain('turnos de 45 min');
-    expect(say({ restrictionType: 'resource_vs_time', shiftDurationMin: null })).toContain('rutas según recursos y tiempo');
+    expect(say({ restrictionType: 'resource_vs_time', shiftDurationMin: null })).toContain(
+      'rutas según recursos y tiempo'
+    );
   });
 
   it('con ventanas horarias lo dice', () => {
@@ -52,14 +58,27 @@ describe('describeSettings', () => {
 
   it('lista lo que se evalúa con comas y «y»', () => {
     expect(say({ evaluateWeight: true, evaluateVolume: false })).toContain('evaluando peso.');
-    expect(say({ evaluateWeight: true, evaluateVolume: true, evaluateItineraryZone: true })).toContain('evaluando peso, volumen y zona del itinerario.');
+    expect(say({ evaluateWeight: true, evaluateVolume: true, evaluateItineraryZone: true })).toContain(
+      'evaluando peso, volumen y zona del itinerario.'
+    );
     expect(say({ evaluateWeight: false, evaluateVolume: false })).not.toContain('evaluando');
   });
 
   it('lo que falta no se dice ni se inventa', () => {
-    expect(say({ placeStartName: null })).toBe('Planificará 3 rutas (ida y vuelta), con 3 vehículos, evaluando peso y volumen.');
+    expect(say({ placeStartName: null })).toBe(
+      'Planificará 3 rutas (ida y vuelta), con 3 vehículos, evaluando peso y volumen.'
+    );
     expect(say({ vehicleCount: 0 })).not.toContain('vehículo');
-    expect(say({ restrictionType: '', routeTopology: '', placeStartName: null, vehicleCount: 0, evaluateWeight: false, evaluateVolume: false })).toBe('Planificará rutas.');
+    expect(
+      say({
+        restrictionType: '',
+        routeTopology: '',
+        placeStartName: null,
+        vehicleCount: 0,
+        evaluateWeight: false,
+        evaluateVolume: false,
+      })
+    ).toBe('Planificará rutas.');
     expect(say({ fixedRoutes: null })).toContain('Planificará rutas (ida y vuelta)');
     expect(say({ fixedRoutes: 0 })).toContain('Planificará rutas (ida y vuelta)');
     expect(say({ fixedRoutes: 2.5 })).toContain('Planificará rutas (ida y vuelta)');
@@ -82,7 +101,11 @@ describe('etiquetas de configuraciones', () => {
   });
 
   it('traduce los tipos de restricción', () => {
-    expect(DEFAULT_RESTRICTION_TYPES.map(restrictionTypeLabel)).toEqual(['Rutas fijas', 'Recursos y tiempo', 'Ventanas horarias']);
+    expect(DEFAULT_RESTRICTION_TYPES.map(restrictionTypeLabel)).toEqual([
+      'Rutas fijas',
+      'Recursos y tiempo',
+      'Ventanas horarias',
+    ]);
   });
 
   it('traduce los tipos de estancia', () => {

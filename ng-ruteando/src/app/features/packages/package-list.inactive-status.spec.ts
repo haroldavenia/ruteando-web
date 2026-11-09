@@ -6,12 +6,10 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
 import { Fixture } from '../../../testing/api-testing';
+import list from '../../../testing/fixtures/gateway/get__packages.json';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
-
 import { PackageListComponent } from './package-list.component';
-
-import list from '../../../testing/fixtures/gateway/get__packages.json';
 
 const value = (key: string, active: boolean) => ({ key, label: key, description: null, sortOrder: null, active });
 /** Catálogo como el del gateway real: `returned` y una clave de pruebas están inactivos. */
@@ -21,7 +19,14 @@ const CATALOG = [
     code: 'PackageStatus',
     description: '',
     system: true,
-    values: [value('pending', true), value('attended', true), value('unattended', true), value('cancelled', true), value('returned', false), value('demo_1', false)],
+    values: [
+      value('pending', true),
+      value('attended', true),
+      value('unattended', true),
+      value('cancelled', true),
+      value('returned', false),
+      value('demo_1', false),
+    ],
   },
 ];
 
@@ -32,7 +37,9 @@ describe('PackageListComponent: estados inactivos del catálogo', () => {
   const root = () => fixture.nativeElement as HTMLElement;
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const body = (status: string) => {
-    const page = JSON.parse(JSON.stringify((list as unknown as Fixture).response.body)) as { content: { status: string }[] };
+    const page = JSON.parse(JSON.stringify((list as unknown as Fixture).response.body)) as {
+      content: { status: string }[];
+    };
     page.content[0].status = status;
     return page;
   };

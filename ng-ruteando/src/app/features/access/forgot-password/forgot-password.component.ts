@@ -9,11 +9,10 @@ import { RouterLink } from '@angular/router';
 
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
-import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
-import { FormResultComponent } from '../../../shared/form/form-result.component';
-
 import { t } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
+import { FormResultComponent } from '../../../shared/form/form-result.component';
 /** Texto fijo: no depende de la respuesta del gateway para no revelar si la cuenta existe. */
 const NEUTRAL_MESSAGE = t('Si el correo existe, recibirás instrucciones para restablecer tu contraseña');
 
@@ -56,7 +55,9 @@ const NEUTRAL_MESSAGE = t('Si el correo existe, recibirás instrucciones para re
         <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Enviar enlace' | t }}</button>
       </form>
     }
-    <p class="alt"><a routerLink="/acceso">{{ 'Volver a iniciar sesión' | t }}</a></p>
+    <p class="alt">
+      <a routerLink="/acceso">{{ 'Volver a iniciar sesión' | t }}</a>
+    </p>
   `,
 })
 export class ForgotPasswordComponent {

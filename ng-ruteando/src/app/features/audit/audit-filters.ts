@@ -1,5 +1,4 @@
 import { AuditLog } from '../../core/api/models';
-
 import { hasValueChanges } from './audit-diff';
 import { AUDIT_KINDS, AuditKind, auditKind } from './audit-labels';
 import { AuditScopeId } from './audit-scopes';
@@ -49,7 +48,14 @@ export const EMPTY_FILTERS: AuditFilters = {
   entityId: null,
 };
 
-export const EMPTY_QUERY: AuditQuery = { ...EMPTY_FILTERS, scope: null, tenant: '', text: '', entity: null, event: null };
+export const EMPTY_QUERY: AuditQuery = {
+  ...EMPTY_FILTERS,
+  scope: null,
+  tenant: '',
+  text: '',
+  entity: null,
+  event: null,
+};
 
 export function hasActiveFilters(filters: AuditFilters): boolean {
   return (
@@ -97,7 +103,7 @@ export function addDays(date: Date, days: number): Date {
 /** Límites en milisegundos del rango (`null` = sin límite). 7 y 30 días son días de calendario, el de hoy incluido. */
 export function rangeBounds(
   filters: Pick<AuditFilters, 'range' | 'from' | 'to'>,
-  now: number,
+  now: number
 ): { from: number | null; to: number | null } {
   switch (filters.range) {
     case '24h':
@@ -117,7 +123,11 @@ export function rangeBounds(
 }
 
 /** Eventos que cumplen todos los filtros (se combinan con «y»). */
-export function applyAuditFilters(rows: readonly AuditLog[], filters: AuditFilters, now: number = Date.now()): AuditLog[] {
+export function applyAuditFilters(
+  rows: readonly AuditLog[],
+  filters: AuditFilters,
+  now: number = Date.now()
+): AuditLog[] {
   const { from, to } = rangeBounds(filters, now);
   const person = filters.person?.toLowerCase() ?? null;
   return rows.filter((row) => {

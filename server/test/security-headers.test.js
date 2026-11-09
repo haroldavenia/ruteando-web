@@ -90,7 +90,10 @@ before(async () => {
   tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ruteando-web-csp-'));
   fs.writeFileSync(path.join(tmpDir, 'index.csr.html'), '<!doctype html><body><app-root></app-root></body>');
   fs.writeFileSync(path.join(tmpDir, 'app.js'), 'console.log("ok");');
-  server = await startServer({ webDist: tmpDir, env: { GATEWAY_URL: 'http://127.0.0.1:9', GATEWAY_API_KEY: '', CSP_MODE: '', CSP_IMG_SRC: '' } });
+  server = await startServer({
+    webDist: tmpDir,
+    env: { GATEWAY_URL: 'http://127.0.0.1:9', GATEWAY_API_KEY: '', CSP_MODE: '', CSP_IMG_SRC: '' },
+  });
 });
 
 after(() => {

@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 
-import { PASSWORD_POLICY_TEXT, PASSWORD_REQUIREMENTS, missingRules, passwordPolicy } from './password-policy';
+import { missingRules, PASSWORD_POLICY_TEXT, PASSWORD_REQUIREMENTS, passwordPolicy } from './password-policy';
 
 const VALIDA = 'Ruteando@2026abcdef'; // 19 caracteres, con las cuatro clases
 
@@ -35,7 +35,9 @@ describe('passwordPolicy', () => {
     expect(check('Ruteando#2026abcdef')).toEqual({ policy: { symbol: true } });
     expect(check('Ruteando_2026abcdef')).toEqual({ policy: { symbol: true } });
     for (const symbol of '@$!%*?&') {
-      expect(check(`Ruteando${symbol}2026abcdef`)).withContext(symbol).toBeNull();
+      expect(check(`Ruteando${symbol}2026abcdef`))
+        .withContext(symbol)
+        .toBeNull();
     }
   });
 

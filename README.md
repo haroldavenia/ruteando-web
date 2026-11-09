@@ -55,12 +55,13 @@ La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar a
 
 ## Integración continua
 
-`.github/workflows/ci.yml` verifica cada pull request (a cualquier rama base) y cada push a `main` con cinco trabajos: `Frontend` (pruebas con Chrome sin interfaz y compilación de producción), `Servidor` (pruebas), `Specs` (`openspec validate --specs --strict`), `Auditoría` (`pnpm audit` de las dependencias de producción, nivel alto) y `ci`, que resume los anteriores. **La comprobación obligatoria de `main` es `ci`.** Usa el Node de `ng-ruteando/.nvmrc`, pnpm (versión de `packageManager`) y `pnpm install --frozen-lockfile`, y no necesita secretos ni el gateway real.
+`.github/workflows/ci.yml` verifica cada pull request (a cualquier rama base) y cada push a `main` con cinco trabajos: `Frontend` (lint con ESLint, formato con Prettier, pruebas con Chrome sin interfaz y compilación de producción), `Servidor` (pruebas), `Specs` (`openspec validate --specs --strict`), `Auditoría` (`pnpm audit` de las dependencias de producción, nivel alto) y `ci`, que resume los anteriores. **La comprobación obligatoria de `main` es `ci`.** Usa el Node de `ng-ruteando/.nvmrc`, pnpm (versión de `packageManager`) y `pnpm install --frozen-lockfile`, y no necesita secretos ni el gateway real.
 
 Lo mismo en local:
 
 ```
-pnpm install --frozen-lockfile && pnpm --filter ng-ruteando run test:ci && pnpm --filter ng-ruteando run build
+pnpm install --frozen-lockfile && pnpm lint && pnpm format
+pnpm --filter ng-ruteando run test:ci && pnpm --filter ng-ruteando run build
 pnpm run test:server
 npx --yes @fission-ai/openspec@1.14.3 validate --specs --strict
 pnpm audit --prod --audit-level=high

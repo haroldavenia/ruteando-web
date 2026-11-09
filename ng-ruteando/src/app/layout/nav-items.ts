@@ -1,6 +1,5 @@
 import { ADMIN_ROLES, OPERATIONS_ROLES } from '../core/auth/admin-roles';
 import { UserRole } from '../core/auth/session.model';
-
 import { t } from '../core/i18n/i18n';
 /** Entrada del menú: un enlace (`link`) o una sección con enlaces (`children`). */
 export interface NavItem {

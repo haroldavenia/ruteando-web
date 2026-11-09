@@ -3,16 +3,16 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 
 import { UsersApi } from '../../../core/api/data/users.api';
 import { User } from '../../../core/api/models';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { messageFor } from '../../../shared/data/api-messages';
+import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { driverName } from '../fleet-labels';
 
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 export interface AssignDriverData {
   vehicle: string;
   currentDriverId: string | null;
@@ -21,7 +21,16 @@ export interface AssignDriverData {
 /** Elige entre los conductores del tenant; se cierra con el id elegido o sin valor al cancelar. */
 @Component({
   selector: 'app-assign-driver-dialog',
-  imports: [ReactiveFormsModule, RouterLink, MatDialogModule, MatButtonModule, MatFormFieldModule, MatSelectModule, SkeletonComponent, TranslatePipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    SkeletonComponent,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2 mat-dialog-title>{{ 'Asignar conductor a {0}' | t: [data.vehicle] }}</h2>
@@ -31,7 +40,10 @@ export interface AssignDriverData {
       } @else if (error()) {
         <p role="alert">{{ error() }}</p>
       } @else if (drivers().length === 0) {
-        <p>{{ 'No hay conductores creados.' | t }} <a routerLink="/flota/conductores" mat-dialog-close>{{ 'Crear un conductor' | t }}</a></p>
+        <p>
+          {{ 'No hay conductores creados.' | t }}
+          <a routerLink="/flota/conductores" mat-dialog-close>{{ 'Crear un conductor' | t }}</a>
+        </p>
       } @else {
         <mat-form-field class="field">
           <mat-label>{{ 'Conductor' | t }}</mat-label>
@@ -46,7 +58,9 @@ export interface AssignDriverData {
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button type="button" mat-dialog-close>{{ 'Cancelar' | t }}</button>
-      <button mat-flat-button type="button" [disabled]="drivers().length === 0" (click)="confirm()">{{ 'Asignar' | t }}</button>
+      <button mat-flat-button type="button" [disabled]="drivers().length === 0" (click)="confirm()">
+        {{ 'Asignar' | t }}
+      </button>
     </mat-dialog-actions>
   `,
   styles: `
@@ -65,7 +79,9 @@ export class AssignDriverDialogComponent {
   protected readonly drivers = signal<readonly User[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
-  protected readonly driver = new FormControl<string | null>(this.data.currentDriverId, { validators: [Validators.required] });
+  protected readonly driver = new FormControl<string | null>(this.data.currentDriverId, {
+    validators: [Validators.required],
+  });
   protected readonly name = driverName;
 
   constructor() {

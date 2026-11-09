@@ -53,10 +53,20 @@
 
       <section class="form-section">
         <h2><mat-icon aria-hidden="true" fontIcon="inventory_2" />{{ 'Capacidad' | t }}</h2>
-        <p class="hint">{{ 'Opcional. La planificación la usa cuando su configuración evalúa el peso y el volumen.' | t }}</p>
+        <p class="hint">
+          {{ 'Opcional. La planificación la usa cuando su configuración evalúa el peso y el volumen.' | t }}
+        </p>
         <mat-form-field>
           <mat-label>{{ 'Peso que carga' | t }}</mat-label>
-          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="weight" autocomplete="off" />
+          <input
+            matInput
+            type="number"
+            min="0"
+            step="any"
+            inputmode="decimal"
+            formControlName="weight"
+            autocomplete="off"
+          />
           <span matTextSuffix>{{ 'kg' | t }}</span>
           <mat-error>{{ capacityError('weight') }}</mat-error>
         </mat-form-field>
@@ -70,19 +80,43 @@
         @if (measured()) {
           <mat-form-field>
             <mat-label>{{ 'Ancho' | t }}</mat-label>
-            <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="width" autocomplete="off" />
+            <input
+              matInput
+              type="number"
+              min="0"
+              step="any"
+              inputmode="decimal"
+              formControlName="width"
+              autocomplete="off"
+            />
             <span matTextSuffix>{{ 'cm' | t }}</span>
             <mat-error>{{ capacityError('width') }}</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ 'Alto' | t }}</mat-label>
-            <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="height" autocomplete="off" />
+            <input
+              matInput
+              type="number"
+              min="0"
+              step="any"
+              inputmode="decimal"
+              formControlName="height"
+              autocomplete="off"
+            />
             <span matTextSuffix>{{ 'cm' | t }}</span>
             <mat-error>{{ capacityError('height') }}</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ 'Profundidad' | t }}</mat-label>
-            <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="depth" autocomplete="off" />
+            <input
+              matInput
+              type="number"
+              min="0"
+              step="any"
+              inputmode="decimal"
+              formControlName="depth"
+              autocomplete="off"
+            />
             <span matTextSuffix>{{ 'cm' | t }}</span>
             <mat-error>{{ capacityError('depth') }}</mat-error>
           </mat-form-field>
@@ -97,7 +131,15 @@
         } @else {
           <mat-form-field>
             <mat-label>{{ 'Volumen' | t }}</mat-label>
-            <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="volume" autocomplete="off" />
+            <input
+              matInput
+              type="number"
+              min="0"
+              step="any"
+              inputmode="decimal"
+              formControlName="volume"
+              autocomplete="off"
+            />
             <span matTextSuffix>{{ 'cm³' | t }}</span>
             <mat-error>{{ capacityError('volume') }}</mat-error>
           </mat-form-field>
@@ -106,28 +148,62 @@
 
       <section class="form-section">
         <h2><mat-icon aria-hidden="true" fontIcon="rule" />{{ 'Restricciones de carga' | t }}</h2>
-        <p class="hint">{{ 'Opcional. Límites de carga que respeta el vehículo; no pueden superar su capacidad.' | t }}</p>
+        <p class="hint">
+          {{ 'Opcional. Límites de carga que respeta el vehículo; no pueden superar su capacidad.' | t }}
+        </p>
         <mat-form-field>
           <mat-label>{{ 'Peso mínimo' | t }}</mat-label>
-          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="minWeight" autocomplete="off" />
+          <input
+            matInput
+            type="number"
+            min="0"
+            step="any"
+            inputmode="decimal"
+            formControlName="minWeight"
+            autocomplete="off"
+          />
           <span matTextSuffix>{{ 'kg' | t }}</span>
           <mat-error>{{ capacityError('minWeight') }}</mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-label>{{ 'Peso máximo' | t }}</mat-label>
-          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="maxWeight" autocomplete="off" />
+          <input
+            matInput
+            type="number"
+            min="0"
+            step="any"
+            inputmode="decimal"
+            formControlName="maxWeight"
+            autocomplete="off"
+          />
           <span matTextSuffix>{{ 'kg' | t }}</span>
           <mat-error>{{ capacityError('maxWeight') }}</mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-label>{{ 'Volumen mínimo' | t }}</mat-label>
-          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="minVolume" autocomplete="off" />
+          <input
+            matInput
+            type="number"
+            min="0"
+            step="any"
+            inputmode="decimal"
+            formControlName="minVolume"
+            autocomplete="off"
+          />
           <span matTextSuffix>{{ 'cm³' | t }}</span>
           <mat-error>{{ capacityError('minVolume') }}</mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-label>{{ 'Volumen máximo' | t }}</mat-label>
-          <input matInput type="number" min="0" step="any" inputmode="decimal" formControlName="maxVolume" autocomplete="off" />
+          <input
+            matInput
+            type="number"
+            min="0"
+            step="any"
+            inputmode="decimal"
+            formControlName="maxVolume"
+            autocomplete="off"
+          />
           <span matTextSuffix>{{ 'cm³' | t }}</span>
           <mat-error>{{ capacityError('maxVolume') }}</mat-error>
         </mat-form-field>
@@ -136,7 +212,9 @@
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
         <a mat-button [routerLink]="returnTo ?? '/flota/tipos'" [state]="returnState">{{ 'Cancelar' | t }}</a>
-        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
+          {{ 'Guardar' | t }}
+        </button>
       </app-form-actions>
     </form>
   }

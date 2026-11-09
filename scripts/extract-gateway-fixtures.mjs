@@ -14,7 +14,11 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 function parseArgs(argv) {
-  const args = { collection: null, out: join(root, 'ng-ruteando', 'src', 'testing', 'fixtures', 'gateway'), maxBytes: 100_000 };
+  const args = {
+    collection: null,
+    out: join(root, 'ng-ruteando', 'src', 'testing', 'fixtures', 'gateway'),
+    maxBytes: 100_000,
+  };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--out') args.out = resolve(argv[++i]);
     else if (argv[i] === '--max-bytes') args.maxBytes = Number(argv[++i]);
@@ -25,7 +29,9 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.collection) {
-  console.error('Uso: node scripts/extract-gateway-fixtures.mjs <ruta-de-la-colección.json> [--out <dir>] [--max-bytes <n>]');
+  console.error(
+    'Uso: node scripts/extract-gateway-fixtures.mjs <ruta-de-la-colección.json> [--out <dir>] [--max-bytes <n>]'
+  );
   process.exit(2);
 }
 
@@ -72,7 +78,12 @@ function* walk(items) {
 
 function slug(name) {
   const [method, path] = name.split(' — ')[0].split(' ');
-  const route = path.replace(/^\/api\/v1/, '').replace(/[{}]/g, '').replace(/^\/|\/$/g, '').replace(/\//g, '__') || 'raiz';
+  const route =
+    path
+      .replace(/^\/api\/v1/, '')
+      .replace(/[{}]/g, '')
+      .replace(/^\/|\/$/g, '')
+      .replace(/\//g, '__') || 'raiz';
   return `${method.toLowerCase()}__${route}`;
 }
 
@@ -129,11 +140,14 @@ for (const [file, text] of files) {
   for (const [value] of secrets) {
     if (text.includes(value)) problems.push(`${file} contiene un valor secreto de la colección`);
   }
-  if ((text.match(EMAIL) ?? []).some((email) => !email.endsWith('.invalid'))) problems.push(`${file} contiene un correo que no es .invalid`);
-  if ((text.match(PHONE) ?? []).some((phone) => phone !== '+570000000000')) problems.push(`${file} contiene un teléfono`);
+  if ((text.match(EMAIL) ?? []).some((email) => !email.endsWith('.invalid')))
+    problems.push(`${file} contiene un correo que no es .invalid`);
+  if ((text.match(PHONE) ?? []).some((phone) => phone !== '+570000000000'))
+    problems.push(`${file} contiene un teléfono`);
   if (/\{\{[^}]*\}\}/.test(text)) problems.push(`${file} tiene un placeholder de Postman sin resolver`);
   if (/eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\./.test(text)) problems.push(`${file} parece contener un JWT`);
-  if (/\b[0-9a-f]{64}\b/.test(text)) problems.push(`${file} contiene una cadena hexadecimal de 64 caracteres (¿clave?)`);
+  if (/\b[0-9a-f]{64}\b/.test(text))
+    problems.push(`${file} contiene una cadena hexadecimal de 64 caracteres (¿clave?)`);
 }
 if (problems.length) {
   console.error('No se escribe nada. Problemas de saneado:\n' + problems.map((p) => '  - ' + p).join('\n'));
@@ -144,7 +158,7 @@ mkdirSync(args.out, { recursive: true });
 for (const [file, text] of files) writeFileSync(join(args.out, file), text);
 writeFileSync(
   join(args.out, '_index.json'),
-  JSON.stringify({ files: [...files.keys()].sort(), skipped, withoutExample }, null, 2) + '\n',
+  JSON.stringify({ files: [...files.keys()].sort(), skipped, withoutExample }, null, 2) + '\n'
 );
 
 console.log(`Fixtures escritos: ${files.size} en ${args.out}`);

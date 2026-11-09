@@ -62,7 +62,7 @@ function pick(messages: ApiErrorMessages, status: number, code: string | null): 
 export function resolveErrorMessage(
   error: { status: number; code: string | null },
   requestMessages: ApiErrorMessages,
-  registered: readonly ApiErrorMessages[],
+  registered: readonly ApiErrorMessages[]
 ): string {
   const fromRequest = pick(requestMessages, error.status, error.code);
   if (fromRequest !== undefined) {

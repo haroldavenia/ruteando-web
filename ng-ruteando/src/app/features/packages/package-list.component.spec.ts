@@ -6,18 +6,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../testing/api-testing';
-import { API_BASE_URL } from '../../core/api/api-config';
-import { errorInterceptor } from '../../core/api/error.interceptor';
-
-import { formatRelativeTime } from '../../shared/format';
-
-import { PackageListComponent } from './package-list.component';
-
+import remove from '../../../testing/fixtures/gateway/delete__packages__id.json';
 import list from '../../../testing/fixtures/gateway/get__packages.json';
 import setStatus from '../../../testing/fixtures/gateway/patch__packages__id__status__status.json';
-import remove from '../../../testing/fixtures/gateway/delete__packages__id.json';
+import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
+import { API_BASE_URL } from '../../core/api/api-config';
+import { errorInterceptor } from '../../core/api/error.interceptor';
+import { formatRelativeTime } from '../../shared/format';
+import { PackageListComponent } from './package-list.component';
 
 const fx = (f: unknown) => f as Fixture;
 
@@ -29,7 +26,9 @@ describe('PackageListComponent', () => {
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const item = (fx(list).response.body as { content: { id: string; name: string }[] }).content[0];
   const overlayButton = (text: string) =>
-    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -84,7 +83,9 @@ describe('PackageListComponent', () => {
     expect(row).toContain('Entrega');
     expect(row).toContain('Fixture address');
     expect(row).toContain('Pendiente');
-    expect(row).toContain(formatRelativeTime((fx(list).response.body as { content: { updatedAt: string }[] }).content[0].updatedAt));
+    expect(row).toContain(
+      formatRelativeTime((fx(list).response.body as { content: { updatedAt: string }[] }).content[0].updatedAt)
+    );
   });
 
   it('pide los paquetes de 100 en 100 para tenerlos todos en la tabla', () => {
@@ -115,13 +116,17 @@ describe('PackageListComponent', () => {
     load({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     expect(root().textContent).toContain('Todavía no hay paquetes');
     expect(root().querySelector('[empty-action] a[href="/paquetes/nuevo"]')).not.toBeNull();
-    expect(root().querySelector('[empty-action] a[href="/paquetes/importar"]')?.textContent).toContain('Importar un CSV');
+    expect(root().querySelector('[empty-action] a[href="/paquetes/importar"]')?.textContent).toContain(
+      'Importar un CSV'
+    );
   });
 
   it('el encabezado ofrece «Importar CSV», «Exportar CSV» y «Nuevo paquete»', () => {
     load();
     const header = root().querySelector('app-page-header')!;
-    const labels = Array.from(header.querySelectorAll('a, button')).map((e) => e.textContent!.replace(/\s+/g, ' ').trim());
+    const labels = Array.from(header.querySelectorAll('a, button')).map((e) =>
+      e.textContent!.replace(/\s+/g, ' ').trim()
+    );
     expect(labels.some((l) => l.includes('Importar CSV'))).toBeTrue();
     expect(labels.some((l) => l.includes('Exportar CSV'))).toBeTrue();
     expect(labels.some((l) => l.includes('Nuevo paquete'))).toBeTrue();
@@ -149,7 +154,9 @@ describe('PackageListComponent', () => {
       overlayButton('Atendido').click();
       await wait();
 
-      const req = http.expectOne((r) => r.method === 'PATCH' && r.url === `/gateway/packages/${item.id}/status/attended`);
+      const req = http.expectOne(
+        (r) => r.method === 'PATCH' && r.url === `/gateway/packages/${item.id}/status/attended`
+      );
       respondWith(req, fx(setStatus));
       fixture.detectChanges();
       expect(root().textContent).toContain('ahora está atendido');
@@ -207,7 +214,10 @@ describe('PackageListComponent', () => {
 
     it('borra tras confirmar y recarga', async () => {
       await confirm();
-      respondWith(http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/packages/${item.id}`), fx(remove));
+      respondWith(
+        http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/packages/${item.id}`),
+        fx(remove)
+      );
       fixture.detectChanges();
       expect(root().textContent).toContain('Se eliminó paquete «Postman package»');
       reloadAnswer();
@@ -218,7 +228,9 @@ describe('PackageListComponent', () => {
         await confirm();
         http.expectOne((r) => r.method === 'DELETE').flush({ message: 'in use' }, { status, statusText: 'x' });
         fixture.detectChanges();
-        expect(root().querySelector('[role="alert"]')?.textContent).toContain('No se puede eliminar: el paquete está incluido en una jornada');
+        expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+          'No se puede eliminar: el paquete está incluido en una jornada'
+        );
         expect(root().textContent).toContain('Postman package');
       });
     }
@@ -242,13 +254,17 @@ describe('PackageListComponent', () => {
       page: 0,
       size: 100,
     });
-    const chips = () => Array.from(root().querySelectorAll('.chips .chip')).map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
+    const chips = () =>
+      Array.from(root().querySelectorAll('.chips .chip')).map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
     const pick = (row: number) => {
-      (root().querySelectorAll('tbody tr.mat-mdc-row')[row].querySelector('mat-checkbox input') as HTMLInputElement).click();
+      (
+        root().querySelectorAll('tbody tr.mat-mdc-row')[row].querySelector('mat-checkbox input') as HTMLInputElement
+      ).click();
       fixture.detectChanges();
     };
     const bar = () => root().querySelector('.selbar') as HTMLElement;
-    const barButton = (text: string) => (Array.from(bar().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
+    const barButton = (text: string) =>
+      (Array.from(bar().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
 
     it('ofrece un chip por estado con su recuento y, al elegirlo, filtra todos los paquetes', () => {
       load(withStatuses(['pending', 'attended', 'attended', 'cancelled']));
@@ -304,7 +320,10 @@ describe('PackageListComponent', () => {
       await wait();
 
       const patches = http.match((r) => r.method === 'PATCH' && r.url.endsWith('/status/attended'));
-      expect(patches.map((p) => p.request.url).sort()).toEqual(['/gateway/packages/p0/status/attended', '/gateway/packages/p1/status/attended']);
+      expect(patches.map((p) => p.request.url).sort()).toEqual([
+        '/gateway/packages/p0/status/attended',
+        '/gateway/packages/p1/status/attended',
+      ]);
       patches.forEach((p) => respondWith(p, fx(setStatus)));
       fixture.detectChanges();
 
@@ -329,7 +348,9 @@ describe('PackageListComponent', () => {
       fixture.detectChanges();
 
       expect(root().textContent).toContain('El estado de 1 paquete ahora es «No atendido»');
-      expect(root().querySelector('[role="alert"]')?.textContent).toContain('No se pudo cambiar el estado de 1 paquete');
+      expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+        'No se pudo cambiar el estado de 1 paquete'
+      );
       reloadAnswer(withStatuses(['unattended', 'pending']));
     });
 
@@ -361,9 +382,15 @@ describe('PackageListComponent', () => {
     let downloads: string[];
     let blobs: Blob[];
     const exportButton = () =>
-      (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Exportar CSV'))!;
+      (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) =>
+        b.textContent?.includes('Exportar CSV')
+      )!;
     const withTotal = (items: number, total: number) => ({
-      content: Array.from({ length: items }, (_, i) => ({ ...(fx(list).response.body as { content: object[] }).content[0], id: `i${i}`, name: `P${i}` })),
+      content: Array.from({ length: items }, (_, i) => ({
+        ...(fx(list).response.body as { content: object[] }).content[0],
+        id: `i${i}`,
+        name: `P${i}`,
+      })),
       totalElements: total,
       totalPages: Math.ceil(total / 200),
       page: 0,
@@ -374,7 +401,13 @@ describe('PackageListComponent', () => {
     const loadAll = (total: number) => {
       for (let page = 0; page * 100 < total; page++) {
         http
-          .expectOne((r) => r.method === 'GET' && r.url === '/gateway/packages' && r.params.get('page') === String(page) && r.params.get('size') === '100')
+          .expectOne(
+            (r) =>
+              r.method === 'GET' &&
+              r.url === '/gateway/packages' &&
+              r.params.get('page') === String(page) &&
+              r.params.get('size') === '100'
+          )
           .flush({ ...withTotal(Math.min(100, total - page * 100), total), page });
       }
       fixture.detectChanges();
@@ -398,13 +431,17 @@ describe('PackageListComponent', () => {
       exportButton().click();
       fixture.detectChanges();
 
-      const firstPage = http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/packages' && r.params.get('size') === '200');
+      const firstPage = http.expectOne(
+        (r) => r.method === 'GET' && r.url === '/gateway/packages' && r.params.get('size') === '200'
+      );
       expect(firstPage.request.params.get('page')).toBe('0');
       firstPage.flush(withTotal(200, 201));
       fixture.detectChanges();
       expect(root().textContent).toContain('Exportando… 200 de 201');
 
-      http.expectOne((r) => r.params.get('page') === '1' && r.params.get('size') === '200').flush({ ...withTotal(1, 201), page: 1 });
+      http
+        .expectOne((r) => r.params.get('page') === '1' && r.params.get('size') === '200')
+        .flush({ ...withTotal(1, 201), page: 1 });
       fixture.detectChanges();
 
       expect(downloads).toEqual(['paquetes.csv']);
@@ -419,7 +456,9 @@ describe('PackageListComponent', () => {
       loadAll(201);
       exportButton().click();
       http.expectOne((r) => r.params.get('size') === '200').flush(withTotal(200, 201));
-      http.expectOne((r) => r.params.get('page') === '1').flush({ message: 'x' }, { status: 500, statusText: 'Server Error' });
+      http
+        .expectOne((r) => r.params.get('page') === '1')
+        .flush({ message: 'x' }, { status: 500, statusText: 'Server Error' });
       fixture.detectChanges();
 
       expect(downloads).toEqual([]);

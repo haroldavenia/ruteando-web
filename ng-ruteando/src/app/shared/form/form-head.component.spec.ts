@@ -69,7 +69,9 @@ describe('FormHeadComponent', () => {
       root.appendChild(text);
 
       expect(getComputedStyle(link).color).toBe(getComputedStyle(text).color);
-      expect(root.querySelector('h1')!.getBoundingClientRect().top - link.getBoundingClientRect().bottom).toBeGreaterThanOrEqual(12);
+      expect(
+        root.querySelector('h1')!.getBoundingClientRect().top - link.getBoundingClientRect().bottom
+      ).toBeGreaterThanOrEqual(12);
     } finally {
       root.remove();
     }

@@ -6,24 +6,23 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { MasterDomainsService } from '../../core/api/data/master-domains.service';
+import { DomainRoute, DomainWaypoint } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ThemeService } from '../../core/theme/theme.service';
+import { FormResultComponent } from '../../shared/form/form-result.component';
+import { formatDateTime, formatLatLng } from '../../shared/format';
 import { readableOn } from '../../shared/map/map-palette';
 import { routeColorFor } from '../../shared/map/route-colors';
-import { DomainRoute, DomainWaypoint } from '../../core/api/models';
-import { FormResultComponent } from '../../shared/form/form-result.component';
+import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
 import { StatusTone, statusTone } from '../../shared/ui/status-tone';
-import { formatDateTime, formatLatLng } from '../../shared/format';
-import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 import { DEFAULT_PACKAGE_STATUSES, packageStatusLabel } from '../packages/package-labels';
-
 import { stopTypeLabel } from './journey-labels';
-import { RouteVisit, UNAVAILABLE, progressText, visitStatus } from './route-visit-filters';
+import { progressText, RouteVisit, UNAVAILABLE, visitStatus } from './route-visit-filters';
 import { RouteVisitsStore } from './route-visits.store';
 import { StopRef } from './routes-map.component';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 interface StopRow {
   stop: DomainWaypoint;
   /** `null` en las paradas sin paquete (depósitos). */
@@ -36,7 +35,17 @@ interface StopRow {
  */
 @Component({
   selector: 'app-route-visits',
-  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, FormResultComponent, StatusBadgeComponent, ActionTitleDirective, TranslatePipe],
+  imports: [
+    MatButtonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    FormResultComponent,
+    StatusBadgeComponent,
+    ActionTitleDirective,
+    TranslatePipe,
+  ],
   providers: [RouteVisitsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-visits.component.html',

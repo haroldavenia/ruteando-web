@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { Observable, of, throwError } from 'rxjs';
 
 import { ApiError } from '../../core/api/api-error';
-
 import { RecordLoader } from './record-loader';
 
 describe('RecordLoader', () => {

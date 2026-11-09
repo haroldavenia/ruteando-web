@@ -40,6 +40,11 @@ jobs:
       # Raíz y frontend comparten un solo pnpm-lock.yaml; falla si no coincide con los package.json
       - name: Instalar dependencias
         run: pnpm install --frozen-lockfile
+      # ESLint (angular-eslint, imports ordenados) y Prettier: son rápidos, por eso van antes de las pruebas
+      - name: Lint
+        run: pnpm lint
+      - name: Formato
+        run: pnpm format
       # Cada texto de la interfaz tiene traducción al inglés y al portugués, y no quedan textos en español sin traducir
       - name: Traducciones
         run: node scripts/i18n-check.mjs && node scripts/i18n-check.mjs --spanish

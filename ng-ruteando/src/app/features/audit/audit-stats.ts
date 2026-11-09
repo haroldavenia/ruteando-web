@@ -1,6 +1,5 @@
 import { AuditLog } from '../../core/api/models';
-
-import { AuditFilters, addDays, dayKey, parseDay, startOfDay } from './audit-filters';
+import { addDays, AuditFilters, dayKey, parseDay, startOfDay } from './audit-filters';
 import { AUDIT_KINDS, AuditKind, auditKind } from './audit-labels';
 
 export interface AuditSummary {
@@ -83,7 +82,7 @@ function mondayOf(date: Date): Date {
 export function activityByDay(
   rows: readonly AuditLog[],
   filters: Pick<AuditFilters, 'range' | 'from' | 'to'>,
-  now: number = Date.now(),
+  now: number = Date.now()
 ): ActivityBucket[] {
   const today = startOfDay(now);
   let first: Date | null = null;
@@ -134,7 +133,11 @@ export function activityByDay(
   const todayKey = dayKey(today);
   const buckets: ActivityBucket[] = [];
   const step = weekly ? 7 : 1;
-  for (let cursor = weekly ? mondayOf(first) : first; cursor.getTime() <= last.getTime(); cursor = addDays(cursor, step)) {
+  for (
+    let cursor = weekly ? mondayOf(first) : first;
+    cursor.getTime() <= last.getTime();
+    cursor = addDays(cursor, step)
+  ) {
     const from = dayKey(cursor);
     const to = dayKey(addDays(cursor, step - 1));
     buckets.push({ from, to, count: counts.get(from) ?? 0, partial: from <= todayKey && todayKey <= to, weekly });

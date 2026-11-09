@@ -25,13 +25,20 @@ describe('tamaño y forma de los controles de toda la aplicación', () => {
   });
 
   it('los botones de relleno, contorno y texto miden 44px de alto (el enlace con aspecto de botón también)', () => {
-    const heights = ['button[mat-flat-button]', 'button[mat-stroked-button]', 'button[mat-button]', 'a[mat-flat-button]'].map((selector) => root.querySelector(selector)!.getBoundingClientRect().height);
+    const heights = [
+      'button[mat-flat-button]',
+      'button[mat-stroked-button]',
+      'button[mat-button]',
+      'a[mat-flat-button]',
+    ].map((selector) => root.querySelector(selector)!.getBoundingClientRect().height);
     expect(heights).toEqual([44, 44, 44, 44]);
   });
 
   it('tienen las esquinas de 12px de acceso e Inicio, no la píldora de Material', () => {
     for (const selector of ['button[mat-flat-button]', 'button[mat-stroked-button]', 'button[mat-button]']) {
-      expect(getComputedStyle(root.querySelector(selector)!).borderTopLeftRadius).withContext(selector).toBe('12px');
+      expect(getComputedStyle(root.querySelector(selector)!).borderTopLeftRadius)
+        .withContext(selector)
+        .toBe('12px');
     }
   });
 
@@ -65,7 +72,8 @@ describe('tamaño y forma de los controles de toda la aplicación', () => {
         const host = document.createElement('div');
         host.style.colorScheme = scheme;
         host.style.background = 'var(--mat-sys-surface)';
-        host.innerHTML = '<button mat-button class="mat-mdc-button mdc-button" disabled>Quitar</button><button class="mat-mdc-button mdc-button">Quitar</button>';
+        host.innerHTML =
+          '<button mat-button class="mat-mdc-button mdc-button" disabled>Quitar</button><button class="mat-mdc-button mdc-button">Quitar</button>';
         document.body.appendChild(host);
         try {
           const [disabled, active] = Array.from(host.querySelectorAll('button')).map((b) => getComputedStyle(b).color);

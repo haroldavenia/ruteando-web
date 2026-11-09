@@ -1,4 +1,4 @@
-import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
@@ -6,10 +6,10 @@ import { ApiError } from '../../core/api/api-error';
 import { AuditLogsApi } from '../../core/api/data/audit-logs.api';
 import { AuditLog } from '../../core/api/models';
 import { FullListState } from '../../shared/data/full-list-state';
-
 import { AuditScopeId } from './audit-scopes';
 
-const newestFirst = (a: AuditLog, b: AuditLog): number => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0);
+const newestFirst = (a: AuditLog, b: AuditLog): number =>
+  (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0);
 
 /**
  * Los eventos de un ámbito, todos en el cliente (páginas de 100 hasta el tope de `FullListState`). Se provee en la pantalla del
@@ -65,6 +65,8 @@ export class AuditStore {
         : this.scope() === 'todas'
           ? this.api.listAll(params, this.tenant() || null)
           : this.api.listMine(params);
-    return request.pipe(tap({ error: (error: unknown) => this.errorStatus.set(error instanceof ApiError ? error.status : null) }));
+    return request.pipe(
+      tap({ error: (error: unknown) => this.errorStatus.set(error instanceof ApiError ? error.status : null) })
+    );
   }
 }

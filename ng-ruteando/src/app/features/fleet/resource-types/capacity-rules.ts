@@ -1,10 +1,21 @@
+import { t } from '../../../core/i18n/i18n';
 import { CapacityValues, effectiveVolume } from './capacity-codec';
 
-import { t } from '../../../core/i18n/i18n';
-export type CapacityField = 'weight' | 'volume' | 'width' | 'height' | 'depth' | 'minWeight' | 'maxWeight' | 'minVolume' | 'maxVolume';
+export type CapacityField =
+  'weight' | 'volume' | 'width' | 'height' | 'depth' | 'minWeight' | 'maxWeight' | 'minVolume' | 'maxVolume';
 export type CapacityIssues = Partial<Record<CapacityField, string>>;
 
-const FIELDS: readonly CapacityField[] = ['weight', 'volume', 'width', 'height', 'depth', 'minWeight', 'maxWeight', 'minVolume', 'maxVolume'];
+const FIELDS: readonly CapacityField[] = [
+  'weight',
+  'volume',
+  'width',
+  'height',
+  'depth',
+  'minWeight',
+  'maxWeight',
+  'minVolume',
+  'maxVolume',
+];
 
 export const CAPACITY_MESSAGES = {
   negative: t('No puede ser negativo'),
@@ -18,7 +29,10 @@ export const CAPACITY_MESSAGES = {
 
 /** Si la persona ha escrito algo de la capacidad (peso, volumen o medidas): en ese caso hace falta completarla. */
 function hasCapacityData(values: CapacityValues): boolean {
-  const volumeData = values.mode === 'measure' ? [values.width, values.height, values.depth].some((v) => v !== null) : values.volume !== null;
+  const volumeData =
+    values.mode === 'measure'
+      ? [values.width, values.height, values.depth].some((v) => v !== null)
+      : values.volume !== null;
   return values.weight !== null || volumeData;
 }
 
@@ -54,13 +68,29 @@ export function capacityIssues(values: CapacityValues): CapacityIssues {
   }
 
   const volume = effectiveVolume(values);
-  if (!issues.maxWeight && values.minWeight !== null && values.maxWeight !== null && values.maxWeight < values.minWeight) {
+  if (
+    !issues.maxWeight &&
+    values.minWeight !== null &&
+    values.maxWeight !== null &&
+    values.maxWeight < values.minWeight
+  ) {
     issues.maxWeight = CAPACITY_MESSAGES.maxBelowMin;
   }
-  if (!issues.maxWeight && values.weight !== null && values.weight > 0 && values.maxWeight !== null && values.maxWeight > values.weight) {
+  if (
+    !issues.maxWeight &&
+    values.weight !== null &&
+    values.weight > 0 &&
+    values.maxWeight !== null &&
+    values.maxWeight > values.weight
+  ) {
     issues.maxWeight = CAPACITY_MESSAGES.maxWeightAbove;
   }
-  if (!issues.maxVolume && values.minVolume !== null && values.maxVolume !== null && values.maxVolume < values.minVolume) {
+  if (
+    !issues.maxVolume &&
+    values.minVolume !== null &&
+    values.maxVolume !== null &&
+    values.maxVolume < values.minVolume
+  ) {
     issues.maxVolume = CAPACITY_MESSAGES.maxBelowMin;
   }
   if (!issues.maxVolume && volume !== null && volume > 0 && values.maxVolume !== null && values.maxVolume > volume) {

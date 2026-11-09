@@ -5,28 +5,39 @@ import { RouterLink } from '@angular/router';
 
 import { PlacesApi } from '../../core/api/data/places.api';
 import { Place } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { DataColumn, DataFacet, DataTableComponent } from '../../shared/data/data-table.component';
 import { DeleteFlow } from '../../shared/data/delete-flow';
 import { FullListState } from '../../shared/data/full-list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
+import { formatLocation, PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
 import { PlacesMapComponent } from './places-map.component';
-import { PLACE_TYPE_LABELS, formatLocation, placeTypeLabel } from './place-labels';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otros datos');
 
 @Component({
   selector: 'app-place-list',
-  imports: [DataTableComponent, PlacesMapComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
+  imports: [
+    DataTableComponent,
+    PlacesMapComponent,
+    PageHeaderComponent,
+    FormResultComponent,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    ActionTitleDirective,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './place-list.component.scss',
   template: `
     <app-page-header [title]="'Lugares' | t" [subtitle]="state.countText('lugar', 'lugares')">
-      <a mat-flat-button class="primary-action" routerLink="/lugares/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo lugar' | t }}</a>
+      <a mat-flat-button class="primary-action" routerLink="/lugares/nuevo"
+        ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo lugar' | t }}</a
+      >
     </app-page-header>
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
     <!-- Desde 1100px el mapa queda fijo a un lado y la lista al otro; por debajo, uno sobre otra -->
@@ -41,8 +52,18 @@ const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otro
                 <b>{{ place.name }}</b>
                 <span>{{ typeLabel(place.type) }}{{ place.address ? ' · ' + place.address : '' }}</span>
               </div>
-              <a mat-stroked-button [routerLink]="['/lugares', place.id]" [attr.aria-label]="('Editar lugar ' | t) + place.name">{{ 'Editar' | t }}</a>
-              <button mat-icon-button type="button" (click)="selected.set(null)" [attr.aria-label]="'Cerrar la ficha del lugar' | t">
+              <a
+                mat-stroked-button
+                [routerLink]="['/lugares', place.id]"
+                [attr.aria-label]="('Editar lugar ' | t) + place.name"
+                >{{ 'Editar' | t }}</a
+              >
+              <button
+                mat-icon-button
+                type="button"
+                (click)="selected.set(null)"
+                [attr.aria-label]="'Cerrar la ficha del lugar' | t"
+              >
                 <mat-icon aria-hidden="true">close</mat-icon>
               </button>
             </div>
@@ -61,7 +82,12 @@ const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otro
           <a mat-icon-button [routerLink]="['/lugares', row.id]" [attr.aria-label]="('Editar lugar ' | t) + row.name">
             <mat-icon aria-hidden="true">edit</mat-icon>
           </a>
-          <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar lugar ' | t) + row.name">
+          <button
+            mat-icon-button
+            type="button"
+            (click)="remove(row)"
+            [attr.aria-label]="('Eliminar lugar ' | t) + row.name"
+          >
             <mat-icon aria-hidden="true">delete</mat-icon>
           </button>
         </ng-template>
@@ -85,7 +111,11 @@ export class PlaceListComponent {
   protected readonly facet = computed<DataFacet<Place>>(() => {
     const known = Object.keys(PLACE_TYPE_LABELS);
     const unknown = [...new Set(this.state.rows().map((p) => p.type))].filter((key) => !known.includes(key));
-    return { label: t('Tipo'), of: (p) => p.type, options: [...known, ...unknown].map((key) => ({ key, label: placeTypeLabel(key) })) };
+    return {
+      label: t('Tipo'),
+      of: (p) => p.type,
+      options: [...known, ...unknown].map((key) => ({ key, label: placeTypeLabel(key) })),
+    };
   });
 
   /** Los lugares del mapa son los que cumplen la búsqueda y el chip elegidos, no solo los de la página que se ve. */

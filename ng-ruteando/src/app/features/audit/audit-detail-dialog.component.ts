@@ -1,5 +1,13 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, PLATFORM_ID, ViewEncapsulation, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  Injector,
+  PLATFORM_ID,
+  ViewEncapsulation,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,27 +18,36 @@ import { ApiError } from '../../core/api/api-error';
 import { AuditLogsApi } from '../../core/api/data/audit-logs.api';
 import { AuditLog } from '../../core/api/models';
 import { CurrentUser } from '../../core/auth/current-user';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { readPref } from '../../shared/data/list-prefs';
 import { RecordLoader } from '../../shared/data/record-loader';
 import { formatRelativeTime } from '../../shared/format';
-
 import { AuditChangesComponent } from './audit-changes.component';
-import { AuditDetailHeadComponent } from './audit-detail-head.component';
 import { copyToClipboard } from './audit-clipboard';
+import { AuditDetailHeadComponent } from './audit-detail-head.component';
 import { diffChanges } from './audit-diff';
 import { AuditFactsComponent } from './audit-facts.component';
-import { auditActionLabel, auditKind, auditKindIcon, auditKindLabel, auditKindTone, auditSummary, humanizeIds } from './audit-labels';
+import {
+  auditActionLabel,
+  auditKind,
+  auditKindIcon,
+  auditKindLabel,
+  auditKindTone,
+  auditSummary,
+  humanizeIds,
+} from './audit-labels';
 import { entityTarget, entityWasDeleted } from './audit-links';
 import { AuditRelatedComponent } from './audit-related.component';
 import { AuditTechComponent } from './audit-tech.component';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const TECH_KEY = 'ruteando-audit-tech';
 /** Cuántos eventos de la misma entidad se ofrecen en la línea de tiempo. */
 const RELATED_LIMIT = 5;
 
-export const DIRECT_FORBIDDEN = t('No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.');
+export const DIRECT_FORBIDDEN = t(
+  'No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.'
+);
 export const EVENT_GONE = t('Este evento ya no existe o no está disponible.');
 
 /** Qué se abre: el evento (ya a mano si el listado lo tiene) o solo su identificador, que se pide al gateway. */
@@ -87,11 +104,17 @@ export class AuditDetailDialogComponent {
   protected readonly data = inject<AuditDetailData>(MAT_DIALOG_DATA);
 
   protected readonly loader = new RecordLoader<AuditLog>(this.data.id, (id) =>
-    this.api.get(id).pipe(
-      catchError((error: unknown) =>
-        throwError(() => (error instanceof ApiError && error.status === 403 ? new ApiError({ status: 403, message: DIRECT_FORBIDDEN }) : error)),
-      ),
-    ),
+    this.api
+      .get(id)
+      .pipe(
+        catchError((error: unknown) =>
+          throwError(() =>
+            error instanceof ApiError && error.status === 403
+              ? new ApiError({ status: 403, message: DIRECT_FORBIDDEN })
+              : error
+          )
+        )
+      )
   );
 
   protected readonly log = this.loader.record;
@@ -102,7 +125,9 @@ export class AuditDetailDialogComponent {
   protected readonly tone = computed(() => (this.loader.status() === 'ready' ? this.kindTone() : 'neutral'));
   protected readonly kindIcon = computed(() => auditKindIcon(this.kind()));
   protected readonly kindLabel = computed(() => auditKindLabel(this.kind()));
-  protected readonly title = computed(() => (this.log() ? auditActionLabel(this.log()!.action) : t('Evento de auditoría')));
+  protected readonly title = computed(() =>
+    this.log() ? auditActionLabel(this.log()!.action) : t('Evento de auditoría')
+  );
   protected readonly summary = computed(() => (this.log() ? humanizeIds(auditSummary(this.log()!)) : ''));
   /** La frase de la acción y la descripción dicen lo mismo: no se repite. */
   protected readonly showSummary = computed(() => this.summary() !== this.title());

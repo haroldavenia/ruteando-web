@@ -17,6 +17,11 @@ export function makeUser(overrides: Partial<UserProfile> = {}): UserProfile {
   };
 }
 
-export function makeSession(access = 'acceso-1', refresh = 'refresco-1', expiresIn = 3599, user = makeUser()): SessionResponse {
+export function makeSession(
+  access = 'acceso-1',
+  refresh = 'refresco-1',
+  expiresIn = 3599,
+  user = makeUser()
+): SessionResponse {
   return { message: null, accessToken: access, refreshToken: refresh, expiresIn, user };
 }

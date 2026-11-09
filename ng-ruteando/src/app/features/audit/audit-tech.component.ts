@@ -1,15 +1,21 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, ViewEncapsulation, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  Injector,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuditLog } from '../../core/api/models';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
 import { copyToClipboard } from './audit-clipboard';
 import { formatUtc } from './audit-format';
-
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Lo que necesita quien cruza un evento con otros sistemas: la clave de la acción y del tipo de entidad, los identificadores (con
  * botón para copiarlos), el instante en UTC, el rol tal como lo manda el gateway, la descripción original y los cambios en JSON.
@@ -31,7 +37,9 @@ export class AuditTechComponent {
   readonly open = input(false);
 
   protected readonly utc = computed(() => formatUtc(this.log().createdAt));
-  protected readonly changesJson = computed(() => (this.log().changes ? JSON.stringify(this.log().changes, null, 2) : ''));
+  protected readonly changesJson = computed(() =>
+    this.log().changes ? JSON.stringify(this.log().changes, null, 2) : ''
+  );
 
   protected copy(text: string, what: string): Promise<void> {
     return copyToClipboard(this.document, this.injector, text, what);

@@ -1,16 +1,16 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
-  ElementRef,
-  PLATFORM_ID,
-  afterNextRender,
   computed,
+  DestroyRef,
   effect,
+  ElementRef,
   inject,
   input,
   output,
+  PLATFORM_ID,
   signal,
   viewChild,
 } from '@angular/core';
@@ -18,16 +18,14 @@ import type OlMap from 'ol/Map';
 
 import { Place } from '../../core/api/models';
 import { fromGeoJsonPoint } from '../../core/geo/lat-lng';
-import { ThemeService } from '../../core/theme/theme.service';
-import { MAP_CONFIG } from '../../shared/map/map-config';
-import { readMapPalette, readableOn } from '../../shared/map/map-palette';
-import { OPENLAYERS_LOADER, OpenLayers } from '../../shared/map/openlayers';
-import { routeColorFor } from '../../shared/map/route-colors';
-
-import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ThemeService } from '../../core/theme/theme.service';
+import { MAP_CONFIG } from '../../shared/map/map-config';
+import { readableOn, readMapPalette } from '../../shared/map/map-palette';
+import { OpenLayers, OPENLAYERS_LOADER } from '../../shared/map/openlayers';
+import { routeColorFor } from '../../shared/map/route-colors';
+import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
 /**
  * Mapa de los lugares: un pin por lugar, del color y con la letra de su tipo (el color nunca es la única señal), y la leyenda de
  * los tipos que hay. Dibuja los lugares que recibe (la lista ya filtrada) y se ajusta para mostrarlos todos; un clic en un pin
@@ -39,13 +37,23 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   selector: 'app-places-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div #host class="map" role="region" [attr.aria-label]="'Mapa de los lugares: un pin por lugar, con el color y la letra de su tipo' | t"></div>
+    <div
+      #host
+      class="map"
+      role="region"
+      [attr.aria-label]="'Mapa de los lugares: un pin por lugar, con el color y la letra de su tipo' | t"
+    ></div>
     @if (failed()) {
       <p class="failed" role="alert">{{ 'No se pudo cargar el mapa. Puedes seguir usando la lista.' | t }}</p>
     }
     <ul class="legend" [attr.aria-label]="'Tipos de lugar' | t">
       @for (item of legend(); track item.key) {
-        <li><span class="pin" [style.background]="item.color" [style.color]="item.ink" aria-hidden="true">{{ item.letter }}</span>{{ item.label }}</li>
+        <li>
+          <span class="pin" [style.background]="item.color" [style.color]="item.ink" aria-hidden="true">{{
+            item.letter
+          }}</span
+          >{{ item.label }}
+        </li>
       }
     </ul>
   `,
@@ -176,10 +184,16 @@ export class PlacesMapComponent {
     const { tilesUrl, attribution, center, zoom } = this.config;
 
     this.source = new ol.VectorSource();
-    const layer = new ol.VectorLayer({ source: this.source, style: (feature) => this.styleOf(ol, feature.get('type') as string, feature.get('id') === this.selectedId()) });
+    const layer = new ol.VectorLayer({
+      source: this.source,
+      style: (feature) => this.styleOf(ol, feature.get('type') as string, feature.get('id') === this.selectedId()),
+    });
     this.layer = layer;
     // `app-tiles`: en el tema oscuro las teselas se oscurecen con un filtro de la hoja global (los pines no se tocan)
-    const tiles = new ol.TileLayer({ className: 'app-tiles', source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
+    const tiles = new ol.TileLayer({
+      className: 'app-tiles',
+      source: new ol.XYZ({ url: tilesUrl, attributions: attribution }),
+    });
     tiles.getSource()?.on('tileloaderror', () => this.failed.set(true));
     tiles.getSource()?.on('tileloadend', () => this.failed.set(false));
 
@@ -188,10 +202,16 @@ export class PlacesMapComponent {
       layers: [tiles, layer],
       view: new ol.View({ center: ol.fromLonLat([center.lng, center.lat]), zoom }),
       // La atribución del proveedor debe verse siempre: sin el botón que la pliega
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') } }),
+      controls: ol.defaultControls({
+        attributionOptions: { collapsible: false },
+        zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') },
+      }),
     });
     map.on('click', (event) => {
-      const id = map.forEachFeatureAtPixel(event.pixel, (feature) => feature.get('id') as unknown, { layerFilter: (l) => l === layer, hitTolerance: 6 });
+      const id = map.forEachFeatureAtPixel(event.pixel, (feature) => feature.get('id') as unknown, {
+        layerFilter: (l) => l === layer,
+        hitTolerance: 6,
+      });
       if (typeof id === 'string') {
         this.placeSelect.emit(id);
       }
@@ -212,12 +232,24 @@ export class PlacesMapComponent {
     const color = routeColorFor(this.typeOrder().indexOf(type), this.theme.scheme());
     const styles = [
       new ol.Style({
-        image: new ol.CircleStyle({ radius: 11, fill: new ol.Fill({ color }), stroke: new ol.Stroke({ color: palette.halo, width: 3 }) }),
-        text: new ol.TextStyle({ text: this.letter(type), fill: new ol.Fill({ color: readableOn(color) }), font: '700 12px sans-serif' }),
+        image: new ol.CircleStyle({
+          radius: 11,
+          fill: new ol.Fill({ color }),
+          stroke: new ol.Stroke({ color: palette.halo, width: 3 }),
+        }),
+        text: new ol.TextStyle({
+          text: this.letter(type),
+          fill: new ol.Fill({ color: readableOn(color) }),
+          font: '700 12px sans-serif',
+        }),
       }),
     ];
     if (selected) {
-      styles.unshift(new ol.Style({ image: new ol.CircleStyle({ radius: 17, stroke: new ol.Stroke({ color: palette.ink, width: 3 }) }) }));
+      styles.unshift(
+        new ol.Style({
+          image: new ol.CircleStyle({ radius: 17, stroke: new ol.Stroke({ color: palette.ink, width: 3 }) }),
+        })
+      );
     }
     this.styles.set(key, styles);
     return styles;
@@ -236,7 +268,11 @@ export class PlacesMapComponent {
       if (!point) {
         continue;
       }
-      const feature = new ol.Feature({ geometry: new ol.Point(ol.fromLonLat([point.lng, point.lat])), id: place.id, type: place.type });
+      const feature = new ol.Feature({
+        geometry: new ol.Point(ol.fromLonLat([point.lng, point.lat])),
+        id: place.id,
+        type: place.type,
+      });
       this.source.addFeature(feature);
     }
     const extent = this.source.getExtent();

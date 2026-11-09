@@ -1,8 +1,7 @@
 import { Page } from '../app/core/api/api-config';
 import { Resource, ResourceType, User } from '../app/core/api/models';
-
-import resourceFixture from './fixtures/gateway/get__resources.json';
 import typeFixture from './fixtures/gateway/get__resource-types.json';
+import resourceFixture from './fixtures/gateway/get__resources.json';
 import driverFixture from './fixtures/gateway/get__users__drivers.json';
 
 /** Un registro real de cada colección de flota (capturado del gateway); sirve de base de los constructores. */
@@ -26,7 +25,14 @@ export function resource(overrides: Partial<Resource> = {}): Resource {
 }
 
 export function driver(overrides: Partial<User> = {}): User {
-  return { ...REAL_DRIVER, id: nextId(), email: `conductor${counter}@example.com`, firstName: 'Conductor', lastName: `${counter}`, ...overrides };
+  return {
+    ...REAL_DRIVER,
+    id: nextId(),
+    email: `conductor${counter}@example.com`,
+    firstName: 'Conductor',
+    lastName: `${counter}`,
+    ...overrides,
+  };
 }
 
 /** Página como la entrega el gateway en `resource-types` y `resources` (con `page`). */

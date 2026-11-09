@@ -8,8 +8,6 @@ import { API_BASE_URL } from './api-config';
 import { ApiError } from './api-error';
 import { genericMessage } from './api-error-messages';
 import { apiPath, isApiUrl, isPublicApiPath } from './api-paths';
-
-import { t } from '../i18n/i18n';
 /** Si al token de acceso le quedan menos de 30 s se renueva antes de enviar la petición. */
 export const REFRESH_MARGIN_MS = 30_000;
 
@@ -50,7 +48,7 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
           expire();
         }
         return throwError(() => retryError);
-      }),
+      })
     );
 
   const expiresAt = tokens.expiresAt;
@@ -62,7 +60,7 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
           expire();
           return throwError(() => new SessionExpiredError());
         }),
-        switchMap(() => next(withCurrentToken(req))),
+        switchMap(() => next(withCurrentToken(req)))
       )
     : next(req);
 
@@ -82,8 +80,8 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
           expire();
           return throwError(() => error);
         }),
-        switchMap(() => retry()),
+        switchMap(() => retry())
       );
-    }),
+    })
   );
 };

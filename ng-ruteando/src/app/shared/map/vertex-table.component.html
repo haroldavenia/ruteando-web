@@ -1,12 +1,18 @@
 <div class="scroll stack-scope">
   <table class="stack-table" role="table">
-    <caption>{{ 'Vértices del polígono' | t }}</caption>
+    <caption>
+      {{
+        'Vértices del polígono' | t
+      }}
+    </caption>
     <thead role="rowgroup">
       <tr role="row">
         <th scope="col" role="columnheader">{{ 'Vértice' | t }}</th>
         <th scope="col" role="columnheader">{{ 'Latitud' | t }}</th>
         <th scope="col" role="columnheader">{{ 'Longitud' | t }}</th>
-        <th scope="col" role="columnheader"><span class="visually-hidden">{{ 'Quitar' | t }}</span></th>
+        <th scope="col" role="columnheader">
+          <span class="visually-hidden">{{ 'Quitar' | t }}</span>
+        </th>
       </tr>
     </thead>
     <tbody role="rowgroup">
@@ -14,29 +20,52 @@
         <tr role="row" [formGroup]="row">
           <th scope="row" role="rowheader" class="primary-cell">{{ i + 1 }}</th>
           <td role="cell" [attr.data-label]="'Latitud' | t">
-            <input type="number" step="any" inputmode="decimal" formControlName="lat" [attr.aria-label]="('Latitud del vértice ' | t) + (i + 1)" [attr.aria-invalid]="row.controls.lat.invalid" />
+            <input
+              type="number"
+              step="any"
+              inputmode="decimal"
+              formControlName="lat"
+              [attr.aria-label]="('Latitud del vértice ' | t) + (i + 1)"
+              [attr.aria-invalid]="row.controls.lat.invalid"
+            />
             @if (row.controls.lat.invalid) {
               <span class="error" role="alert">{{ error(row, 'lat') }}</span>
             }
           </td>
           <td role="cell" [attr.data-label]="'Longitud' | t">
-            <input type="number" step="any" inputmode="decimal" formControlName="lng" [attr.aria-label]="('Longitud del vértice ' | t) + (i + 1)" [attr.aria-invalid]="row.controls.lng.invalid" />
+            <input
+              type="number"
+              step="any"
+              inputmode="decimal"
+              formControlName="lng"
+              [attr.aria-label]="('Longitud del vértice ' | t) + (i + 1)"
+              [attr.aria-invalid]="row.controls.lng.invalid"
+            />
             @if (row.controls.lng.invalid) {
               <span class="error" role="alert">{{ error(row, 'lng') }}</span>
             }
           </td>
           <td role="cell" class="actions">
-            <button mat-icon-button type="button" (click)="remove(i)" [attr.aria-label]="('Quitar el vértice ' | t) + (i + 1)">
+            <button
+              mat-icon-button
+              type="button"
+              (click)="remove(i)"
+              [attr.aria-label]="('Quitar el vértice ' | t) + (i + 1)"
+            >
               <mat-icon aria-hidden="true">delete</mat-icon>
             </button>
           </td>
         </tr>
       } @empty {
         <tr role="row">
-          <td role="cell" colspan="4">{{ 'Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.' | t }}</td>
+          <td role="cell" colspan="4">
+            {{ 'Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.' | t }}
+          </td>
         </tr>
       }
     </tbody>
   </table>
 </div>
-<button mat-stroked-button type="button" (click)="add()"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Añadir vértice' | t }}</button>
+<button mat-stroked-button type="button" (click)="add()">
+  <mat-icon aria-hidden="true">add</mat-icon>{{ 'Añadir vértice' | t }}
+</button>

@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LatLng } from '../../core/geo/lat-lng';
-
 import { VertexTableComponent } from './vertex-table.component';
 
 const square: LatLng[] = [
@@ -42,15 +41,29 @@ describe('VertexTableComponent', () => {
   it('lista cada vértice numerado con su latitud y su longitud, bajo un título', () => {
     expect(root().querySelector('caption')?.textContent).toContain('Vértices del polígono');
     expect(root().querySelectorAll('tbody tr').length).toBe(4);
-    expect(Array.from(root().querySelectorAll('tbody th')).map((th) => th.textContent!.trim())).toEqual(['1', '2', '3', '4']);
+    expect(Array.from(root().querySelectorAll('tbody th')).map((th) => th.textContent!.trim())).toEqual([
+      '1',
+      '2',
+      '3',
+      '4',
+    ]);
     expect(input('Latitud del vértice 3').value).toBe('4.7');
     expect(input('Longitud del vértice 3').value).toBe('-74');
-    expect(Array.from(root().querySelectorAll('thead th')).map((th) => th.getAttribute('scope'))).toEqual(['col', 'col', 'col', 'col']);
+    expect(Array.from(root().querySelectorAll('thead th')).map((th) => th.getAttribute('scope'))).toEqual([
+      'col',
+      'col',
+      'col',
+      'col',
+    ]);
   });
 
   it('en una caja estrecha cada vértice es una tarjeta: sus campos caben y la tabla no se desplaza', () => {
     const row = root().querySelector('tbody tr') as HTMLElement;
-    expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual(['Latitud', 'Longitud', null]);
+    expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual([
+      'Latitud',
+      'Longitud',
+      null,
+    ]);
 
     root().style.display = 'block';
     root().style.width = '320px';
@@ -58,7 +71,9 @@ describe('VertexTableComponent', () => {
     expect(getComputedStyle(row).display).toBe('grid');
     expect(getComputedStyle(box.querySelector('caption')!).display).toBe('block');
     expect(box.scrollWidth).toBeLessThanOrEqual(box.clientWidth);
-    expect(input('Latitud del vértice 1').getBoundingClientRect().right).toBeLessThanOrEqual(box.getBoundingClientRect().right);
+    expect(input('Latitud del vértice 1').getBoundingClientRect().right).toBeLessThanOrEqual(
+      box.getBoundingClientRect().right
+    );
   });
 
   it('editar una coordenada válida actualiza los vértices', () => {
@@ -90,7 +105,11 @@ describe('VertexTableComponent', () => {
   });
 
   it('«Añadir vértice» añade uno al final entre el último y el primero, con etiquetas que lo nombran', () => {
-    (Array.from(root().querySelectorAll('button')).find((b) => b.textContent?.includes('Añadir vértice')) as HTMLButtonElement).click();
+    (
+      Array.from(root().querySelectorAll('button')).find((b) =>
+        b.textContent?.includes('Añadir vértice')
+      ) as HTMLButtonElement
+    ).click();
     fixture.detectChanges();
     expect(host().vertices().length).toBe(5);
     expect(input('Latitud del vértice 5')).not.toBeNull();
@@ -101,7 +120,11 @@ describe('VertexTableComponent', () => {
     host().vertices.set([]);
     fixture.detectChanges();
     expect(root().textContent).toContain('Todavía no hay vértices');
-    (Array.from(root().querySelectorAll('button')).find((b) => b.textContent?.includes('Añadir vértice')) as HTMLButtonElement).click();
+    (
+      Array.from(root().querySelectorAll('button')).find((b) =>
+        b.textContent?.includes('Añadir vértice')
+      ) as HTMLButtonElement
+    ).click();
     fixture.detectChanges();
     expect(host().vertices()).toEqual([]);
     type('Latitud del vértice 1', '4.6');

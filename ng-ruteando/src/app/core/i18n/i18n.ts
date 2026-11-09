@@ -30,7 +30,8 @@ function storedLanguage(): Language | null {
   }
 }
 
-const dictionaryOf = (lang: Language): Readonly<Record<string, string>> => (lang === 'en' ? EN : lang === 'pt' ? PT : {});
+const dictionaryOf = (lang: Language): Readonly<Record<string, string>> =>
+  lang === 'en' ? EN : lang === 'pt' ? PT : {};
 
 let current: Language = storedLanguage() ?? DEFAULT_LANGUAGE;
 let dictionary: Readonly<Record<string, string>> = dictionaryOf(current);
@@ -54,7 +55,9 @@ const CONTEXT = '||';
 /** Traduce un texto fuente (en español). Sin traducción devuelve el propio texto (sin contexto): nunca falla ni deja huecos. */
 export function t(text: string, params?: TranslationParams): string {
   const translated = dictionary[text] ?? (text.includes(CONTEXT) ? text.slice(0, text.indexOf(CONTEXT)) : text);
-  return params ? translated.replace(/\{(\d+)\}/g, (marker, index: string) => String(params[Number(index)] ?? marker)) : translated;
+  return params
+    ? translated.replace(/\{(\d+)\}/g, (marker, index: string) => String(params[Number(index)] ?? marker))
+    : translated;
 }
 
 /** Sustituye el diccionario activo (lo usan las pruebas). */

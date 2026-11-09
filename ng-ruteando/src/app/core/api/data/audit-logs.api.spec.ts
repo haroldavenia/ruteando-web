@@ -1,10 +1,9 @@
-import { Fixture, firstResult, respondWith, setupApi } from '../../../../testing/api-testing';
-import { AuditLogsApi } from './audit-logs.api';
-
+import { firstResult, Fixture, respondWith, setupApi } from '../../../../testing/api-testing';
 import list from '../../../../testing/fixtures/gateway/get__audit-logs.json';
-import mine from '../../../../testing/fixtures/gateway/get__audit-logs__me.json';
 import admin from '../../../../testing/fixtures/gateway/get__audit-logs__admin.json';
 import one from '../../../../testing/fixtures/gateway/get__audit-logs__id.json';
+import mine from '../../../../testing/fixtures/gateway/get__audit-logs__me.json';
+import { AuditLogsApi } from './audit-logs.api';
 
 describe('AuditLogsApi', () => {
   const setup = () => setupApi(AuditLogsApi);
@@ -13,7 +12,10 @@ describe('AuditLogsApi', () => {
     const { api, controller } = setup();
     const result = firstResult(api.list());
 
-    respondWith(controller.expectOne({ method: 'GET', url: '/gateway/audit-logs?page=0&size=20' }), list as unknown as Fixture);
+    respondWith(
+      controller.expectOne({ method: 'GET', url: '/gateway/audit-logs?page=0&size=20' }),
+      list as unknown as Fixture
+    );
 
     const page = await result;
     expect(page.content.length).toBe(20);
@@ -28,7 +30,9 @@ describe('AuditLogsApi', () => {
     const { api, controller } = setup();
     api.list({ page: 1, size: 100 }).subscribe();
 
-    controller.expectOne({ method: 'GET', url: '/gateway/audit-logs?page=1&size=100' }).flush((list as unknown as Fixture).response.body as object);
+    controller
+      .expectOne({ method: 'GET', url: '/gateway/audit-logs?page=1&size=100' })
+      .flush((list as unknown as Fixture).response.body as object);
     controller.verify();
   });
 
@@ -36,7 +40,10 @@ describe('AuditLogsApi', () => {
     const { api, controller } = setup();
     const result = firstResult(api.listMine({ page: 0, size: 100 }));
 
-    respondWith(controller.expectOne({ method: 'GET', url: '/gateway/audit-logs/me?page=0&size=100' }), mine as unknown as Fixture);
+    respondWith(
+      controller.expectOne({ method: 'GET', url: '/gateway/audit-logs/me?page=0&size=100' }),
+      mine as unknown as Fixture
+    );
 
     const page = await result;
     expect(page.content.length).toBeGreaterThan(0);
@@ -48,7 +55,9 @@ describe('AuditLogsApi', () => {
     const { api, controller } = setup();
     api.listAll({ page: 0, size: 100 }).subscribe();
 
-    controller.expectOne({ method: 'GET', url: '/gateway/audit-logs/admin?page=0&size=100' }).flush((admin as unknown as Fixture).response.body as object);
+    controller
+      .expectOne({ method: 'GET', url: '/gateway/audit-logs/admin?page=0&size=100' })
+      .flush((admin as unknown as Fixture).response.body as object);
     controller.verify();
   });
 
@@ -56,7 +65,10 @@ describe('AuditLogsApi', () => {
     const { api, controller } = setup();
     const result = firstResult(api.listAll({ page: 0, size: 100 }, 'abc123'));
 
-    respondWith(controller.expectOne({ method: 'GET', url: '/gateway/audit-logs/admin?page=0&size=100&tenantId=abc123' }), admin as unknown as Fixture);
+    respondWith(
+      controller.expectOne({ method: 'GET', url: '/gateway/audit-logs/admin?page=0&size=100&tenantId=abc123' }),
+      admin as unknown as Fixture
+    );
 
     const page = await result;
     expect(page.content.some((log) => typeof log.ipAddress === 'string')).toBeTrue();
@@ -67,7 +79,10 @@ describe('AuditLogsApi', () => {
     const { api, controller } = setup();
     const result = firstResult(api.get('6acb99b6a2fa810fb39fb5c5'));
 
-    respondWith(controller.expectOne({ method: 'GET', url: '/gateway/audit-logs/6acb99b6a2fa810fb39fb5c5' }), one as unknown as Fixture);
+    respondWith(
+      controller.expectOne({ method: 'GET', url: '/gateway/audit-logs/6acb99b6a2fa810fb39fb5c5' }),
+      one as unknown as Fixture
+    );
 
     expect((await result).action).toBe('journey.delete');
     controller.verify();
@@ -77,7 +92,9 @@ describe('AuditLogsApi', () => {
     const { api, controller } = setup();
     api.get('../me').subscribe({ error: () => undefined });
 
-    controller.expectOne({ method: 'GET', url: '/gateway/audit-logs/..%2Fme' }).flush(null, { status: 403, statusText: 'Forbidden' });
+    controller
+      .expectOne({ method: 'GET', url: '/gateway/audit-logs/..%2Fme' })
+      .flush(null, { status: 403, statusText: 'Forbidden' });
     controller.verify();
   });
 });

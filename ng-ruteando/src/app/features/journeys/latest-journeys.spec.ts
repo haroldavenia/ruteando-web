@@ -2,10 +2,10 @@ import { Observable, of } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { Journey } from '../../core/api/models';
-
 import { fetchLatestJourneys, latestJourneys } from './latest-journeys';
 
-const journey = (name: string, createdAt: string | null): Journey => ({ id: name, name, createdAt } as unknown as Journey);
+const journey = (name: string, createdAt: string | null): Journey =>
+  ({ id: name, name, createdAt }) as unknown as Journey;
 const day = (n: number) => `2026-10-${String(n).padStart(2, '0')}T10:00:00Z`;
 const names = (items: Journey[]) => items.map((j) => j.name);
 
@@ -16,15 +16,28 @@ describe('latestJourneys', () => {
   });
 
   it('con pocas jornadas las devuelve todas ordenadas', () => {
-    expect(names(latestJourneys([journey('A', day(1)), journey('B', day(3)), journey('C', day(2))]))).toEqual(['B', 'C', 'A']);
+    expect(names(latestJourneys([journey('A', day(1)), journey('B', day(3)), journey('C', day(2))]))).toEqual([
+      'B',
+      'C',
+      'A',
+    ]);
   });
 
   it('con fechas iguales conserva el orden de entrada', () => {
-    expect(names(latestJourneys([journey('A', day(2)), journey('B', day(2)), journey('C', day(2))]))).toEqual(['A', 'B', 'C']);
+    expect(names(latestJourneys([journey('A', day(2)), journey('B', day(2)), journey('C', day(2))]))).toEqual([
+      'A',
+      'B',
+      'C',
+    ]);
   });
 
   it('las jornadas sin fecha o con fecha inválida quedan al final, en su orden', () => {
-    const items = [journey('Sin1', null), journey('Vieja', day(1)), journey('Mala', 'no-es-fecha'), journey('Nueva', day(9))];
+    const items = [
+      journey('Sin1', null),
+      journey('Vieja', day(1)),
+      journey('Mala', 'no-es-fecha'),
+      journey('Nueva', day(9)),
+    ];
     expect(names(latestJourneys(items))).toEqual(['Nueva', 'Vieja', 'Sin1', 'Mala']);
   });
 
@@ -45,7 +58,13 @@ describe('fetchLatestJourneys', () => {
       calls.push(params);
       const size = params.size ?? 20;
       const page = params.page ?? 0;
-      return of({ content: sorted.slice(page * size, page * size + size), page, size, totalElements: total, totalPages: Math.max(1, Math.ceil(total / size)) });
+      return of({
+        content: sorted.slice(page * size, page * size + size),
+        page,
+        size,
+        totalElements: total,
+        totalPages: Math.max(1, Math.ceil(total / size)),
+      });
     };
     return { list, calls };
   }
@@ -64,13 +83,20 @@ describe('fetchLatestJourneys', () => {
   it('si viene ascendente pide la última página y devuelve las más nuevas', () => {
     const { list, calls } = fake(15, 'asc');
     expect(run(list)).toEqual(['J15', 'J14', 'J13', 'J12', 'J11']);
-    expect(calls).toEqual([{ page: 0, size: 5 }, { page: 2, size: 5 }]);
+    expect(calls).toEqual([
+      { page: 0, size: 5 },
+      { page: 2, size: 5 },
+    ]);
   });
 
   it('si la última página queda corta pide también la anterior', () => {
     const { list, calls } = fake(12, 'asc');
     expect(run(list)).toEqual(['J12', 'J11', 'J10', 'J9', 'J8']);
-    expect(calls).toEqual([{ page: 0, size: 5 }, { page: 2, size: 5 }, { page: 1, size: 5 }]);
+    expect(calls).toEqual([
+      { page: 0, size: 5 },
+      { page: 2, size: 5 },
+      { page: 1, size: 5 },
+    ]);
   });
 
   for (const order of ['asc', 'desc'] as const) {
@@ -88,13 +114,16 @@ describe('fetchLatestJourneys', () => {
 
   it('si la primera página no permite saber el orden (fechas iguales) usa esa página', () => {
     const same = (n: number) => journey(`J${n}`, day(1));
-    const list = (): Observable<Page<Journey>> => of({ content: [1, 2, 3, 4, 5].map(same), page: 0, size: 5, totalElements: 9, totalPages: 2 });
+    const list = (): Observable<Page<Journey>> =>
+      of({ content: [1, 2, 3, 4, 5].map(same), page: 0, size: 5, totalElements: 9, totalPages: 2 });
     expect(run(list)).toEqual(['J1', 'J2', 'J3', 'J4', 'J5']);
   });
 
   it('propaga el error del gateway', () => {
     let failed = false;
-    fetchLatestJourneys(() => new Observable<Page<Journey>>((s) => s.error(new Error('x')))).subscribe({ error: () => (failed = true) });
+    fetchLatestJourneys(() => new Observable<Page<Journey>>((s) => s.error(new Error('x')))).subscribe({
+      error: () => (failed = true),
+    });
     expect(failed).toBeTrue();
   });
 });

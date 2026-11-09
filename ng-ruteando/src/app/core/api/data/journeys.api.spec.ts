@@ -1,17 +1,16 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 
-import { Fixture, expectSameContract, firstResult, respondWith, setupApi } from '../../../../testing/api-testing';
-import { toPlannedJourney } from '../journey-mapper';
-import { Journey } from '../models';
-import { JourneysApi } from './journeys.api';
-
+import { expectSameContract, firstResult, Fixture, respondWith, setupApi } from '../../../../testing/api-testing';
+import remove from '../../../../testing/fixtures/gateway/delete__journeys__id.json';
 import list from '../../../../testing/fixtures/gateway/get__journeys.json';
 import get from '../../../../testing/fixtures/gateway/get__journeys__id.json';
-import plan from '../../../../testing/fixtures/gateway/post__journeys__plan.json';
-import remove from '../../../../testing/fixtures/gateway/delete__journeys__id.json';
 import metrics from '../../../../testing/fixtures/gateway/get__journeys__journeyId__metrics.json';
 import navigations from '../../../../testing/fixtures/gateway/get__journeys__journeyId__navigations.json';
 import navigation from '../../../../testing/fixtures/gateway/get__journeys__journeyId__navigations__routeIndex.json';
+import plan from '../../../../testing/fixtures/gateway/post__journeys__plan.json';
+import { toPlannedJourney } from '../journey-mapper';
+import { Journey } from '../models';
+import { JourneysApi } from './journeys.api';
 
 const fx = (f: unknown) => f as unknown as Fixture;
 

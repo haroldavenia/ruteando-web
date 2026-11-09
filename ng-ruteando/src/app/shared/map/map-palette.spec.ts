@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ThemeService } from '../../core/theme/theme.service';
-
-import { parseColor, readMapPalette, readableOn, toHex, toRgba } from './map-palette';
+import { parseColor, readableOn, readMapPalette, toHex, toRgba } from './map-palette';
 import { ROUTE_COLORS, ROUTE_COLORS_DARK } from './route-colors';
 
 /** Color de fondo que resuelve un token con el esquema actual del documento. */
@@ -43,7 +42,9 @@ describe('paleta de los mapas', () => {
       };
       for (const color of [...ROUTE_COLORS, ...ROUTE_COLORS_DARK]) {
         const [hi, lo] = [luminance(color), luminance(readableOn(color))].sort((a, b) => b - a);
-        expect((hi + 0.05) / (lo + 0.05)).withContext(color).toBeGreaterThanOrEqual(4.5);
+        expect((hi + 0.05) / (lo + 0.05))
+          .withContext(color)
+          .toBeGreaterThanOrEqual(4.5);
       }
     });
 

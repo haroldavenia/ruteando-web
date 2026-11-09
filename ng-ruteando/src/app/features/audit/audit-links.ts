@@ -1,10 +1,9 @@
 import { AuditLog } from '../../core/api/models';
 import { ADMIN_ROLES, OPERATIONS_ROLES } from '../../core/auth/admin-roles';
 import { UserRole } from '../../core/auth/session.model';
-
+import { t } from '../../core/i18n/i18n';
 import { isDeletion } from './audit-labels';
 
-import { t } from '../../core/i18n/i18n';
 interface Target {
   /** Ruta de la pantalla de la entidad, sin el id. */
   base: string;
@@ -34,7 +33,10 @@ export interface EntityTarget {
  * Dónde se abre la entidad que tocó un evento: solo si tiene pantalla, la persona puede abrirla y la acción no la eliminó.
  * Los usuarios, invitaciones, empresas y notificaciones no tienen pantalla propia.
  */
-export function entityTarget(log: Pick<AuditLog, 'action' | 'entityType' | 'entityId'>, role: UserRole | null): EntityTarget | null {
+export function entityTarget(
+  log: Pick<AuditLog, 'action' | 'entityType' | 'entityId'>,
+  role: UserRole | null
+): EntityTarget | null {
   const target = TARGETS[log.entityType];
   if (!target || !log.entityId || isDeletion(log.action) || role === null || !target.roles.includes(role)) {
     return null;

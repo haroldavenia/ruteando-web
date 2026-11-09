@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { DestroyRef, Injectable, PLATFORM_ID, computed, effect, inject, signal } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 
@@ -39,7 +39,9 @@ export class ThemeService {
     if (this.browser) {
       this.apply(this.preference());
       this.followSystem();
-      effect(() => this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[this.scheme()]));
+      effect(() =>
+        this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[this.scheme()])
+      );
     }
   }
 

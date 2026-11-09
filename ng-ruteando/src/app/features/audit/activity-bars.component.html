@@ -1,7 +1,9 @@
 <figure class="audit-chart" aria-labelledby="audit-bars-title">
   <figcaption id="audit-bars-title">
     <b>{{ (weekly() ? 'Eventos por semana' : 'Eventos por día') | t }}</b>
-    <span class="audit-muted">{{ (weekly() ? 'Elige una semana para ver solo esos eventos' : 'Elige una barra para ver solo esos eventos') | t }}</span>
+    <span class="audit-muted">{{
+      (weekly() ? 'Elige una semana para ver solo esos eventos' : 'Elige una barra para ver solo esos eventos') | t
+    }}</span>
   </figcaption>
   <div class="audit-bars" role="group" aria-labelledby="audit-bars-title" aria-describedby="audit-bars-summary">
     @for (bucket of buckets(); track bucket.from; let i = $index) {
@@ -31,14 +33,35 @@
   <details class="audit-table-toggle">
     <summary>{{ 'Ver los datos en una tabla' | t }}</summary>
     <table class="grid">
-      <caption class="visually-hidden">{{ (weekly() ? 'Eventos por semana' : 'Eventos por día') | t }}</caption>
-      <thead><tr><th scope="col">{{ weekly() ? ('Semana' | t) : ('Día' | t) }}</th><th scope="col">{{ 'Eventos' | t }}</th><th scope="col"><span class="visually-hidden">{{ 'Filtrar' | t }}</span></th></tr></thead>
+      <caption class="visually-hidden">
+        {{
+          (weekly() ? 'Eventos por semana' : 'Eventos por día') | t
+        }}
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ weekly() ? ('Semana' | t) : ('Día' | t) }}</th>
+          <th scope="col">{{ 'Eventos' | t }}</th>
+          <th scope="col">
+            <span class="visually-hidden">{{ 'Filtrar' | t }}</span>
+          </th>
+        </tr>
+      </thead>
       <tbody>
         @for (bucket of buckets(); track bucket.from) {
           <tr>
             <th scope="row">{{ label(bucket) }}{{ bucket.partial ? ' (hoy)' : '' }}</th>
             <td>{{ bucket.count }}</td>
-            <td><button mat-button type="button" (click)="dayPicked.emit({ from: bucket.from, to: bucket.to })" [attr.aria-label]="('Ver solo los eventos de: ' | t) + label(bucket)">{{ 'Ver solo' | t }}</button></td>
+            <td>
+              <button
+                mat-button
+                type="button"
+                (click)="dayPicked.emit({ from: bucket.from, to: bucket.to })"
+                [attr.aria-label]="('Ver solo los eventos de: ' | t) + label(bucket)"
+              >
+                {{ 'Ver solo' | t }}
+              </button>
+            </td>
           </tr>
         }
       </tbody>

@@ -26,9 +26,14 @@ describe('errorInterceptor y respuestas de la API', () => {
   }
 
   /** Lanza la petición, responde con un error y devuelve el `ApiError` recibido. */
-  async function failWith(url: string, status: number, body: string | object | null, options: { context?: ReturnType<typeof withErrorMessage> } = {}): Promise<ApiError> {
+  async function failWith(
+    url: string,
+    status: number,
+    body: string | object | null,
+    options: { context?: ReturnType<typeof withErrorMessage> } = {}
+  ): Promise<ApiError> {
     const result = new Promise<ApiError>((resolve, reject) =>
-      http.get(url, options).subscribe({ next: () => reject(new Error('se esperaba un error')), error: resolve }),
+      http.get(url, options).subscribe({ next: () => reject(new Error('se esperaba un error')), error: resolve })
     );
     const req = controller.expectOne(url);
     if (status === 0) {
@@ -72,7 +77,12 @@ describe('errorInterceptor y respuestas de la API', () => {
   });
 
   it('interpreta el formato de error real del gateway ({ error, message, timestamp, path })', async () => {
-    const body = { error: 'CONFLICT', message: 'A record with the same unique key already exists', timestamp: '2026-10-19T16:57:19Z', path: '/api/v1/packages' };
+    const body = {
+      error: 'CONFLICT',
+      message: 'A record with the same unique key already exists',
+      timestamp: '2026-10-19T16:57:19Z',
+      path: '/api/v1/packages',
+    };
     const error = await failWith('/gateway/packages', 409, body);
 
     expect(error.status).toBe(409);
@@ -123,7 +133,9 @@ describe('errorInterceptor y respuestas de la API', () => {
   });
 
   it('un mensaje por petición solo afecta a esa petición', async () => {
-    const custom = await failWith('/gateway/packages/1', 404, null, { context: withErrorMessage({ 404: 'No existe ese paquete' }) });
+    const custom = await failWith('/gateway/packages/1', 404, null, {
+      context: withErrorMessage({ 404: 'No existe ese paquete' }),
+    });
     const other = await failWith('/gateway/packages/2', 404, null);
     expect(custom.message).toBe('No existe ese paquete');
     expect(other.message).toBe('No se encontró el recurso solicitado');
@@ -138,7 +150,9 @@ describe('errorInterceptor y respuestas de la API', () => {
   it('prioridad: petición, código registrado y genérico', async () => {
     setup([provideApiErrorMessages({ PACKAGE_NOT_FOUND: 'Mensaje del código' })]);
     const body = { code: 'PACKAGE_NOT_FOUND' };
-    const byRequest = await failWith('/gateway/p/1', 404, body, { context: withErrorMessage({ 404: 'Mensaje de la petición' }) });
+    const byRequest = await failWith('/gateway/p/1', 404, body, {
+      context: withErrorMessage({ 404: 'Mensaje de la petición' }),
+    });
     const byCode = await failWith('/gateway/p/2', 404, body);
     const generic = await failWith('/gateway/p/3', 404, null);
     expect(byRequest.message).toBe('Mensaje de la petición');
@@ -162,7 +176,7 @@ describe('errorInterceptor y respuestas de la API', () => {
 
     it('un 204 sin cuerpo completa la operación sin error', async () => {
       const result = new Promise<unknown>((resolve, reject) =>
-        http.delete('/gateway/places/1').subscribe({ next: resolve, error: reject }),
+        http.delete('/gateway/places/1').subscribe({ next: resolve, error: reject })
       );
       controller.expectOne('/gateway/places/1').flush(null, { status: 204, statusText: 'No Content' });
       expect(await result).toBeNull();
@@ -170,8 +184,12 @@ describe('errorInterceptor y respuestas de la API', () => {
   });
 
   it('una página del gateway llega tipada y las listas sin paginar llegan como arreglo', async () => {
-    const page = new Promise<Page<{ id: string }>>((resolve) => http.get<Page<{ id: string }>>('/gateway/places').subscribe(resolve));
-    controller.expectOne('/gateway/places').flush({ content: [{ id: 'a' }], page: 0, size: 20, totalElements: 1, totalPages: 1 });
+    const page = new Promise<Page<{ id: string }>>((resolve) =>
+      http.get<Page<{ id: string }>>('/gateway/places').subscribe(resolve)
+    );
+    controller
+      .expectOne('/gateway/places')
+      .flush({ content: [{ id: 'a' }], page: 0, size: 20, totalElements: 1, totalPages: 1 });
     expect((await page).content[0].id).toBe('a');
 
     const list = new Promise<string[]>((resolve) => http.get<string[]>('/gateway/master-domains').subscribe(resolve));

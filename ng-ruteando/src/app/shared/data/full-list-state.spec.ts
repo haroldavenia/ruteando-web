@@ -1,21 +1,27 @@
 import { TestBed } from '@angular/core/testing';
-import { Observable, Subject, of, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
-
 import { FULL_LIST_LIMIT, FULL_LIST_PAGE_SIZE, FullListState } from './full-list-state';
 
 /** Un servidor con `total` registros numerados que responde por páginas, como el gateway. */
 function server(total: number): jasmine.Spy<(p: PageParams) => Observable<Page<number>>> {
   return jasmine.createSpy('fetch').and.callFake(({ page = 0, size = 20 }: PageParams) => {
     const all = Array.from({ length: total }, (_, i) => i);
-    return of({ content: all.slice(page * size, page * size + size), page, size, totalElements: total, totalPages: Math.ceil(total / size) });
+    return of({
+      content: all.slice(page * size, page * size + size),
+      page,
+      size,
+      totalElements: total,
+      totalPages: Math.ceil(total / size),
+    });
   });
 }
 
 describe('FullListState', () => {
-  const create = (fetch: (p: PageParams) => Observable<Page<number>>) => TestBed.runInInjectionContext(() => new FullListState<number>(fetch));
+  const create = (fetch: (p: PageParams) => Observable<Page<number>>) =>
+    TestBed.runInInjectionContext(() => new FullListState<number>(fetch));
 
   it('está en modo cliente: la tabla filtra y pagina ella misma', () => {
     expect(create(server(1)).clientSide).toBeTrue();
@@ -73,9 +79,11 @@ describe('FullListState', () => {
 
   it('si falla una petición muestra el mensaje y recargar vuelve a pedir todo desde la primera página', () => {
     let fail = true;
-    const fetch = jasmine.createSpy('fetch').and.callFake((p: PageParams) =>
-      fail ? throwError(() => new ApiError({ status: 500, message: 'El servicio no está disponible' })) : server(5)(p),
-    );
+    const fetch = jasmine
+      .createSpy('fetch')
+      .and.callFake((p: PageParams) =>
+        fail ? throwError(() => new ApiError({ status: 500, message: 'El servicio no está disponible' })) : server(5)(p)
+      );
     const state = create(fetch);
     state.load();
 

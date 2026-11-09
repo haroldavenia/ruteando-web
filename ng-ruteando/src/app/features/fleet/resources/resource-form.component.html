@@ -1,4 +1,8 @@
-<app-form-head [title]="isNew ? ('Nuevo vehículo' | t) : ('Editar vehículo' | t)" [backLabel]="'Vehículos' | t" backLink="/flota/vehiculos" />
+<app-form-head
+  [title]="isNew ? ('Nuevo vehículo' | t) : ('Editar vehículo' | t)"
+  [backLabel]="'Vehículos' | t"
+  backLink="/flota/vehiculos"
+/>
 @switch (loader.status()) {
   @case ('loading') {
     <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
@@ -35,10 +39,16 @@
           <mat-error>{{ error('resourceTypeId') }}</mat-error>
         </mat-form-field>
         <div class="type-actions">
-          <button mat-stroked-button type="button" (click)="createType()"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Crear tipo' | t }}</button>
+          <button mat-stroked-button type="button" (click)="createType()">
+            <mat-icon aria-hidden="true">add</mat-icon>{{ 'Crear tipo' | t }}
+          </button>
         </div>
         @if (typesLoaded() && types().length === 0) {
-          <p class="hint">{{ 'Todavía no hay tipos de vehículo. Primero' | t }} <a routerLink="/flota/tipos">{{ 'crea un tipo' | t }}</a>.</p>
+          <p class="hint">
+            {{ 'Todavía no hay tipos de vehículo. Primero' | t }}
+            <a routerLink="/flota/tipos">{{ 'crea un tipo' | t }}</a
+            >.
+          </p>
         }
         @if (typesTruncated()) {
           <p class="hint" role="status">{{ 'Se muestran solo los primeros {0} tipos.' | t: [selectLimit] }}</p>
@@ -56,7 +66,11 @@
           <mat-error>{{ error('depotId') }}</mat-error>
         </mat-form-field>
         @if (placesLoaded() && places().length === 0) {
-          <p class="hint">{{ 'Todavía no hay lugares que usar como depósito. Primero' | t }} <a routerLink="/lugares/nuevo">{{ 'crea un lugar' | t }}</a>.</p>
+          <p class="hint">
+            {{ 'Todavía no hay lugares que usar como depósito. Primero' | t }}
+            <a routerLink="/lugares/nuevo">{{ 'crea un lugar' | t }}</a
+            >.
+          </p>
         }
         @if (placesTruncated()) {
           <p class="hint" role="status">{{ 'Se muestran solo los primeros {0} lugares.' | t: [selectLimit] }}</p>
@@ -87,7 +101,9 @@
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
         <a mat-button routerLink="/flota/vehiculos">{{ 'Cancelar' | t }}</a>
-        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
+          {{ 'Guardar' | t }}
+        </button>
       </app-form-actions>
     </form>
   }

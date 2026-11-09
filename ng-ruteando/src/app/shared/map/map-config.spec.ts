@@ -1,6 +1,5 @@
-import { environment as development } from '../../../environments/environment.development';
 import { environment as production } from '../../../environments/environment';
-
+import { environment as development } from '../../../environments/environment.development';
 import { MapConfig } from './map-config';
 
 describe('configuración del mapa por entorno', () => {

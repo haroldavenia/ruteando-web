@@ -2,8 +2,8 @@ import { HttpContext } from '@angular/common/http';
 
 import {
   DEFAULT_API_ERROR_MESSAGES,
-  REQUEST_ERROR_MESSAGES,
   genericMessage,
+  REQUEST_ERROR_MESSAGES,
   resolveErrorMessage,
   withErrorMessage,
 } from './api-error-messages';
@@ -50,12 +50,18 @@ describe('mensajes de error de la API', () => {
 
     it('usa el mensaje registrado para un código del backend', () => {
       const registered = [{ PACKAGE_NOT_FOUND: 'El paquete ya no existe' }];
-      expect(resolveErrorMessage({ status: 404, code: 'PACKAGE_NOT_FOUND' }, {}, registered)).toBe('El paquete ya no existe');
-      expect(resolveErrorMessage({ status: 404, code: 'OTRO' }, {}, registered)).toBe('No se encontró el recurso solicitado');
+      expect(resolveErrorMessage({ status: 404, code: 'PACKAGE_NOT_FOUND' }, {}, registered)).toBe(
+        'El paquete ya no existe'
+      );
+      expect(resolveErrorMessage({ status: 404, code: 'OTRO' }, {}, registered)).toBe(
+        'No se encontró el recurso solicitado'
+      );
     });
 
     it('usa el mensaje registrado para un estado', () => {
-      expect(resolveErrorMessage({ status: 403, code: null }, {}, [{ 403: 'Solo administradores' }])).toBe('Solo administradores');
+      expect(resolveErrorMessage({ status: 403, code: null }, {}, [{ 403: 'Solo administradores' }])).toBe(
+        'Solo administradores'
+      );
     });
 
     it('prioridad: petición, luego código registrado, luego genérico', () => {

@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { ApiError } from '../../core/api/api-error';
-
 import { messageFor } from './api-messages';
 import { DeleteConfirmation } from './delete-confirmation';
 
@@ -14,7 +13,9 @@ describe('DeleteConfirmation', () => {
   let service: DeleteConfirmation;
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const button = (text: string) =>
-    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideNoopAnimations()] });
@@ -70,7 +71,7 @@ describe('DeleteConfirmation', () => {
     const results = await ask();
 
     (overlay.querySelector('.mat-mdc-dialog-container') as HTMLElement).dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true }),
+      new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true })
     );
     await wait();
 
@@ -86,7 +87,9 @@ describe('messageFor', () => {
   });
 
   it('sin texto propio usa el mensaje del error', () => {
-    expect(messageFor(new ApiError({ status: 500, message: 'Servicio caído' }), { 409: 'En uso' })).toBe('Servicio caído');
+    expect(messageFor(new ApiError({ status: 500, message: 'Servicio caído' }), { 409: 'En uso' })).toBe(
+      'Servicio caído'
+    );
   });
 
   it('con un error desconocido usa un texto neutro', () => {

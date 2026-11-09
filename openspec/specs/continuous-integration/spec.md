@@ -25,7 +25,11 @@ El repositorio SHALL ejecutar la verificación automática en cada pull request,
 - **THEN** solo termina la ejecución del último y las anteriores se cancelan, y un push a una rama de trabajo con pull request abierto no lanza una segunda ejecución
 
 ### Requirement: Comprobaciones que se ejecutan
-La verificación SHALL ejecutar las pruebas y la compilación del frontend, las pruebas del servidor, la validación estricta de las specs y la auditoría de dependencias de producción, y SHALL fallar si cualquiera de ellas falla.
+La verificación SHALL ejecutar el lint (ESLint) y la comprobación de formato (Prettier), las pruebas y la compilación del frontend, las pruebas del servidor, la validación estricta de las specs y la auditoría de dependencias de producción, y SHALL fallar si cualquiera de ellas falla.
+
+#### Scenario: Lint o formato incumplidos
+- **WHEN** `pnpm lint` encuentra un error o un aviso, o `pnpm format` encuentra un fichero sin formatear
+- **THEN** la verificación termina en fallo
 
 #### Scenario: Prueba del frontend que falla
 - **WHEN** una prueba del frontend falla

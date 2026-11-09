@@ -49,7 +49,9 @@ describe('ForgotPasswordComponent', () => {
   it('muestra siempre el mismo mensaje neutro, exista o no la cuenta', () => {
     fill('existe@example.invalid');
     submit();
-    controller.expectOne(FORGOT).flush({ message: 'Si el email existe, recibirás instrucciones para resetear tu contraseña.' });
+    controller
+      .expectOne(FORGOT)
+      .flush({ message: 'Si el email existe, recibirás instrucciones para resetear tu contraseña.' });
     harness.detectChanges();
     const existing = root.querySelector('[role="status"]')?.textContent?.trim();
 

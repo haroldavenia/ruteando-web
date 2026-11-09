@@ -4,15 +4,16 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 
 import { UserRole } from '../core/auth/session.model';
-
-import { NavRailComponent } from './nav-rail.component';
 import { navItemsFor } from './nav-items';
+import { NavRailComponent } from './nav-rail.component';
 
 describe('NavRailComponent', () => {
   let fixture: ComponentFixture<NavRailComponent>;
   const root = () => fixture.nativeElement as HTMLElement;
-  const labels = () => Array.from(root().querySelectorAll('.rail-item .rail-label')).map((el) => el.textContent!.trim());
-  const active = () => Array.from(root().querySelectorAll('.rail-item.active .rail-label')).map((el) => el.textContent!.trim());
+  const labels = () =>
+    Array.from(root().querySelectorAll('.rail-item .rail-label')).map((el) => el.textContent!.trim());
+  const active = () =>
+    Array.from(root().querySelectorAll('.rail-item.active .rail-label')).map((el) => el.textContent!.trim());
 
   function open(role: UserRole): void {
     TestBed.resetTestingModule();
@@ -24,7 +25,10 @@ describe('NavRailComponent', () => {
 
   async function navigate(path: string, routes: string[]): Promise<void> {
     const router = TestBed.inject(Router);
-    router.resetConfig([{ path: '', pathMatch: 'full', children: [] }, ...routes.map((route) => ({ path: route, children: [] }))]);
+    router.resetConfig([
+      { path: '', pathMatch: 'full', children: [] },
+      ...routes.map((route) => ({ path: route, children: [] })),
+    ]);
     await router.navigateByUrl(path);
     fixture.detectChanges();
   }
@@ -46,7 +50,15 @@ describe('NavRailComponent', () => {
   it('«Flota» es un botón con menú y el resto son enlaces a su ruta', () => {
     const items = Array.from(root().querySelectorAll('.rail-item')) as HTMLElement[];
     expect(items.map((item) => item.tagName)).toEqual(['A', 'BUTTON', 'A', 'A', 'A', 'A', 'A', 'A']);
-    expect(items.filter((item) => item.tagName === 'A').map((item) => item.getAttribute('href'))).toEqual(['/', '/lugares', '/zonas', '/paquetes', '/jornadas', '/configuraciones', '/auditoria']);
+    expect(items.filter((item) => item.tagName === 'A').map((item) => item.getAttribute('href'))).toEqual([
+      '/',
+      '/lugares',
+      '/zonas',
+      '/paquetes',
+      '/jornadas',
+      '/configuraciones',
+      '/auditoria',
+    ]);
     expect(items[1].getAttribute('aria-haspopup')).toBe('menu');
   });
 
@@ -56,7 +68,11 @@ describe('NavRailComponent', () => {
     fixture.detectChanges();
     await new Promise((resolve) => setTimeout(resolve, 40));
     const entries = Array.from(overlay.querySelectorAll('a[mat-menu-item]')) as HTMLAnchorElement[];
-    expect(entries.map((entry) => entry.getAttribute('href'))).toEqual(['/flota/vehiculos', '/flota/tipos', '/flota/conductores']);
+    expect(entries.map((entry) => entry.getAttribute('href'))).toEqual([
+      '/flota/vehiculos',
+      '/flota/tipos',
+      '/flota/conductores',
+    ]);
   });
 
   it('marca «Flota» como activa en cualquiera de sus pantallas y solo en ellas', async () => {

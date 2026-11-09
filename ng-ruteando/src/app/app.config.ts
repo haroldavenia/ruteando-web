@@ -1,17 +1,17 @@
-import { ApplicationConfig, inject, isDevMode, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { ApplicationConfig, inject, isDevMode, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 
 import { environment } from '../environments/environment';
+import { routes } from './app.routes';
 import { API_BASE_URL } from './core/api/api-config';
 import { authInterceptor } from './core/api/auth.interceptor';
 import { errorInterceptor } from './core/api/error.interceptor';
 import { refreshInterceptor } from './core/api/refresh.interceptor';
 import { AuthService } from './core/auth/auth.service';
-import { routes } from './app.routes';
 import { OUTLINED_FIELDS_PROVIDER } from './shared/form/outlined-fields';
 import { MAP_CONFIG } from './shared/map/map-config';
 

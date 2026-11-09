@@ -1,6 +1,5 @@
 import { Page } from '../app/core/api/api-config';
 import { AuditLog } from '../app/core/api/models';
-
 import list from './fixtures/gateway/get__audit-logs.json';
 
 /** Los 20 eventos reales de la primera página de `GET /audit-logs`. */

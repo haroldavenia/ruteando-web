@@ -10,7 +10,12 @@
         }
       </span>
       <span class="audit-fact-text">
-        <b>@for (part of personParts(); track $index) {<ng-container>{{ part }}</ng-container><wbr />}</b>
+        <b>
+          @for (part of personParts(); track $index) {
+            <ng-container>{{ part }}</ng-container
+            ><wbr />
+          }
+        </b>
         @if (actor().role; as role) {
           <small>{{ role }}</small>
         }
@@ -23,7 +28,9 @@
       <span class="audit-fact-icon" aria-hidden="true"><mat-icon>event</mat-icon></span>
       <span class="audit-fact-text">
         <b>{{ relative() }}</b>
-        <small><time [attr.datetime]="log().createdAt">{{ when() }}</time></small>
+        <small
+          ><time [attr.datetime]="log().createdAt">{{ when() }}</time></small
+        >
       </span>
     </dd>
   </div>
@@ -33,7 +40,9 @@
       <span class="audit-fact-icon" aria-hidden="true"><mat-icon>category</mat-icon></span>
       <span class="audit-fact-text">
         <b>{{ entity() }}</b>
-        <small><code>{{ entityTail() }}</code></small>
+        <small
+          ><code>{{ entityTail() }}</code></small
+        >
       </span>
     </dd>
   </div>
@@ -42,7 +51,11 @@
       <dt>{{ 'Desde la IP' | t }}</dt>
       <dd>
         <span class="audit-fact-icon" aria-hidden="true"><mat-icon>lan</mat-icon></span>
-        <span class="audit-fact-text"><b><code>{{ ip }}</code></b></span>
+        <span class="audit-fact-text"
+          ><b
+            ><code>{{ ip }}</code></b
+          ></span
+        >
       </dd>
     </div>
   }

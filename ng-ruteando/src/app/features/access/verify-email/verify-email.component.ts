@@ -1,5 +1,13 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, PLATFORM_ID, afterNextRender, inject, signal } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Injector,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,12 +19,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { INVALID_LINK_MESSAGE } from '../../../core/auth/auth-messages';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { notify } from '../../../shared/form/notify';
 
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verificación');
 
 /**
@@ -62,7 +70,9 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
           </mat-form-field>
           <button mat-flat-button type="submit" [disabled]="resending()">{{ 'Reenviar verificación' | t }}</button>
         </form>
-        <p class="alt"><a routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a></p>
+        <p class="alt">
+          <a routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a>
+        </p>
       </div>
     }
   `,
@@ -105,7 +115,12 @@ export class VerifyEmailComponent {
     }
     this.started = true;
     // Fuera del historial y de la barra de direcciones, antes de cualquier otra cosa
-    void this.router.navigate([], { relativeTo: this.route, queryParams: { token: null }, queryParamsHandling: 'merge', replaceUrl: true });
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { token: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
 
     if (!this.token) {
       this.fail(INVALID_LINK_MESSAGE);

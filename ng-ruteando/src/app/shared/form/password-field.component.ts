@@ -7,12 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { map, startWith, switchMap } from 'rxjs';
 
-import { PASSWORD_REQUIREMENTS, missingRules } from '../../core/auth/password-policy';
+import { missingRules, PASSWORD_REQUIREMENTS } from '../../core/auth/password-policy';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionTitleDirective } from '../ui/action-title.directive';
 import { FieldMessages, firstErrorMessage } from './access.messages';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 let nextId = 0;
 
 /**
@@ -21,7 +21,15 @@ let nextId = 0;
  */
 @Component({
   selector: 'app-password-field',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, ActionTitleDirective, TranslatePipe],
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    ActionTitleDirective,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class.open]': 'open()', '[class.has-list]': 'requirements()' },
   template: `
@@ -159,15 +167,20 @@ export class PasswordFieldComponent {
   // Valor y estado «tocado» del control, que cambian sin que lo sepa una vista OnPush
   private readonly state = toSignal(
     toObservable(this.control).pipe(
-      switchMap((control) => control.events.pipe(startWith(null), map(() => ({ value: control.value, touched: control.touched })))),
+      switchMap((control) =>
+        control.events.pipe(
+          startWith(null),
+          map(() => ({ value: control.value, touched: control.touched }))
+        )
+      )
     ),
-    { initialValue: { value: '', touched: false } },
+    { initialValue: { value: '', touched: false } }
   );
   private readonly missing = computed(() => missingRules(this.state().value));
 
   /** Visible al enfocar y, una vez tocado el campo, mientras falte algún requisito (así tras un envío fallido se ve cuál). */
   protected readonly open = computed(
-    () => this.requirements() && (this.focused() || (this.state().touched && Object.keys(this.missing()).length > 0)),
+    () => this.requirements() && (this.focused() || (this.state().touched && Object.keys(this.missing()).length > 0))
   );
 
   /** Cuántos requisitos cumple la contraseña escrita. */

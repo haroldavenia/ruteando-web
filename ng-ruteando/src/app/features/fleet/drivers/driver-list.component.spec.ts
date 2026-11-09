@@ -6,16 +6,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../../testing/api-testing';
-import { API_BASE_URL } from '../../../core/api/api-config';
-import { errorInterceptor } from '../../../core/api/error.interceptor';
-
-import { DriverListComponent } from './driver-list.component';
-
+import remove from '../../../../testing/fixtures/gateway/delete__users__id.json';
 import drivers from '../../../../testing/fixtures/gateway/get__users__drivers.json';
 import resetPassword from '../../../../testing/fixtures/gateway/post__users__id__reset-password.json';
-import remove from '../../../../testing/fixtures/gateway/delete__users__id.json';
+import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
+import { API_BASE_URL } from '../../../core/api/api-config';
+import { errorInterceptor } from '../../../core/api/error.interceptor';
+import { DriverListComponent } from './driver-list.component';
 
 describe('DriverListComponent', () => {
   let fixture: ComponentFixture<DriverListComponent>;
@@ -23,10 +21,17 @@ describe('DriverListComponent', () => {
   let overlay: HTMLElement;
   const root = () => fixture.nativeElement as HTMLElement;
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
-  const driver = (drivers as unknown as Fixture).response.body as { id: string; email: string; firstName: string; lastName: string }[];
+  const driver = (drivers as unknown as Fixture).response.body as {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  }[];
   const label = `${driver[0].firstName} ${driver[0].lastName}`;
   const overlayButton = (text: string) =>
-    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -55,7 +60,9 @@ describe('DriverListComponent', () => {
   });
 
   it('bajo el título dice cuántos hay y crear es la acción principal de la pantalla', () => {
-    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(/^\d+ (conductor|conductores)$/);
+    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(
+      /^\d+ (conductor|conductores)$/
+    );
     expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
   });
 
@@ -89,7 +96,10 @@ describe('DriverListComponent', () => {
     await openDialogFrom(`Eliminar conductor ${label}`);
     overlayButton('Eliminar').click();
     await wait();
-    respondWith(http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/users/${driver[0].id}`), remove as unknown as Fixture);
+    respondWith(
+      http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/users/${driver[0].id}`),
+      remove as unknown as Fixture
+    );
     fixture.detectChanges();
 
     expect(root().textContent).toContain(`Se eliminó conductor «${label}»`);
@@ -100,7 +110,9 @@ describe('DriverListComponent', () => {
     await openDialogFrom(`Eliminar conductor ${label}`);
     overlayButton('Eliminar').click();
     await wait();
-    http.expectOne((r) => r.method === 'DELETE').flush({ message: 'assigned' }, { status: 409, statusText: 'Conflict' });
+    http
+      .expectOne((r) => r.method === 'DELETE')
+      .flush({ message: 'assigned' }, { status: 409, statusText: 'Conflict' });
     fixture.detectChanges();
 
     expect(root().querySelector('[role="alert"]')?.textContent).toContain('el conductor está asignado a un vehículo');
@@ -111,7 +123,10 @@ describe('DriverListComponent', () => {
     expect(overlay.textContent).toContain(driver[0].email);
     overlayButton('Enviar enlace').click();
     await wait();
-    respondWith(http.expectOne((r) => r.method === 'POST' && r.url === `/gateway/users/${driver[0].id}/reset-password`), resetPassword as unknown as Fixture);
+    respondWith(
+      http.expectOne((r) => r.method === 'POST' && r.url === `/gateway/users/${driver[0].id}/reset-password`),
+      resetPassword as unknown as Fixture
+    );
     fixture.detectChanges();
 
     expect(root().querySelector('[role="status"]')?.textContent).toContain(driver[0].email);

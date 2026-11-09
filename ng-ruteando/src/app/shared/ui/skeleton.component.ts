@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { t } from '../../core/i18n/i18n';
+
 export type SkeletonVariant = 'stats' | 'form' | 'list' | 'ring';
 
 /** Cuántas piezas dibuja cada variante si no se pide otra cifra. */
@@ -124,5 +125,7 @@ export class SkeletonComponent {
   /** Piezas a dibujar; por defecto las de la variante. */
   readonly count = input<number | undefined>(undefined);
 
-  protected readonly items = computed(() => Array.from({ length: this.count() ?? DEFAULT_COUNT[this.variant()] }, (_, i) => i));
+  protected readonly items = computed(() =>
+    Array.from({ length: this.count() ?? DEFAULT_COUNT[this.variant()] }, (_, i) => i)
+  );
 }

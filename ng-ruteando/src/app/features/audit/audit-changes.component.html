@@ -23,7 +23,9 @@
               <small>{{ 'Antes' | t }}</small>
               <span [class.audit-old]="row.changed && !row.beforeEmpty">{{ row.before }}</span>
             </span>
-            <mat-icon class="audit-arrow" aria-hidden="true">{{ row.changed ? 'arrow_forward' : 'drag_handle' }}</mat-icon>
+            <mat-icon class="audit-arrow" aria-hidden="true">{{
+              row.changed ? 'arrow_forward' : 'drag_handle'
+            }}</mat-icon>
             <span class="audit-val audit-after" [class.is-empty]="row.afterEmpty">
               <small>{{ 'Después' | t }}</small>
               <span [class.audit-new]="row.changed && !row.afterEmpty">{{ row.after }}</span>

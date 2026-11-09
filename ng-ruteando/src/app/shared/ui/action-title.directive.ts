@@ -7,6 +7,7 @@ import { AfterViewChecked, Directive, ElementRef, inject } from '@angular/core';
  *
  * Se importa en cada componente que declare un botón de icono; lo comprueba `icon-button-titles.ts` en las pruebas de cada pantalla.
  */
+// eslint-disable-next-line @angular-eslint/directive-selector -- se engancha a los botones de icono de Material
 @Directive({ selector: '[mat-icon-button]' })
 export class ActionTitleDirective implements AfterViewChecked {
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;

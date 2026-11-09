@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, input, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -6,11 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 
 import { CurrentUser } from '../core/auth/current-user';
-
-import { NavItem, quickActionsFor } from './nav-items';
-
 import { t } from '../core/i18n/i18n';
 import { TranslatePipe } from '../core/i18n/translate.pipe';
+import { NavItem, quickActionsFor } from './nav-items';
 /** Una pantalla o una acción que ofrece la búsqueda. */
 export interface SearchOption {
   readonly label: string;
@@ -20,7 +18,11 @@ export interface SearchOption {
 
 /** Texto sin mayúsculas ni tildes, para buscar «vehiculos» y encontrar «Vehículos». */
 function plain(text: string): string {
-  return text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+  return text
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .trim();
 }
 
 /**
@@ -47,9 +49,17 @@ function plain(text: string): string {
         [matAutocomplete]="results"
         [matAutocompleteConnectedTo]="origin"
       />
-      <span class="hint" aria-hidden="true"><kbd>{{ 'Ctrl' | t }}</kbd><kbd>{{ 'K' | t }}</kbd></span>
+      <span class="hint" aria-hidden="true"
+        ><kbd>{{ 'Ctrl' | t }}</kbd
+        ><kbd>{{ 'K' | t }}</kbd></span
+      >
     </div>
-    <mat-autocomplete #results="matAutocomplete" autoActiveFirstOption [displayWith]="noDisplay" (optionSelected)="go($event.option.value)">
+    <mat-autocomplete
+      #results="matAutocomplete"
+      autoActiveFirstOption
+      [displayWith]="noDisplay"
+      (optionSelected)="go($event.option.value)"
+    >
       @for (group of groups(); track group.label) {
         <mat-optgroup [label]="group.label">
           @for (option of group.options; track option.link) {
@@ -82,7 +92,11 @@ export class GlobalSearchComponent {
       .flatMap((item) => item.children ?? [item])
       .filter((item): item is NavItem & { link: string } => !!item.link)
       .map(({ label, icon, link }) => ({ label, icon, link }));
-    const actions: SearchOption[] = quickActionsFor(this.currentUser.role()).map(({ label, icon, link }) => ({ label, icon, link }));
+    const actions: SearchOption[] = quickActionsFor(this.currentUser.role()).map(({ label, icon, link }) => ({
+      label,
+      icon,
+      link,
+    }));
     const text = plain(typeof this.query() === 'string' ? this.query() : '');
     const matches = (options: SearchOption[]) => options.filter((option) => plain(option.label).includes(text));
     return [

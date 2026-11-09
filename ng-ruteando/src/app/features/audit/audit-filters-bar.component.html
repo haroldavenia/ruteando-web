@@ -6,7 +6,13 @@
       <span class="audit-label" id="audit-range-label">{{ '¿Cuándo?' | t }}</span>
       <div class="audit-chips" role="group" aria-labelledby="audit-range-label">
         @for (range of ranges; track range.value) {
-          <button type="button" class="audit-chip" [class.on]="rangeChoice() === range.value" [attr.aria-pressed]="rangeChoice() === range.value" (click)="pickRange(range.value)">
+          <button
+            type="button"
+            class="audit-chip"
+            [class.on]="rangeChoice() === range.value"
+            [attr.aria-pressed]="rangeChoice() === range.value"
+            (click)="pickRange(range.value)"
+          >
             {{ range.label }}
           </button>
         }
@@ -43,7 +49,13 @@
     <div class="audit-row audit-dates">
       <mat-form-field class="audit-field" subscriptSizing="dynamic">
         <mat-label>{{ 'Desde' | t }}</mat-label>
-        <input matInput type="date" autocomplete="off" [value]="filters().from ?? ''" (change)="setDay('from', $event)" />
+        <input
+          matInput
+          type="date"
+          autocomplete="off"
+          [value]="filters().from ?? ''"
+          (change)="setDay('from', $event)"
+        />
       </mat-form-field>
       <mat-form-field class="audit-field" subscriptSizing="dynamic">
         <mat-label>{{ 'Hasta' | t }}</mat-label>
@@ -64,8 +76,16 @@
     </mat-slide-toggle>
 
     @if (filters().entityId) {
-      <button type="button" class="audit-chip on" (click)="filtersChange.emit({ entityId: null })" [attr.aria-label]="'Quitar el filtro de entidad' | t" [attr.title]="'Quitar el filtro de entidad' | t">
-        <span>{{ entityLabel() ? entityLabel() + ' ' : ('Entidad ' | t) }}<code>{{ entityShort() }}</code></span>
+      <button
+        type="button"
+        class="audit-chip on"
+        (click)="filtersChange.emit({ entityId: null })"
+        [attr.aria-label]="'Quitar el filtro de entidad' | t"
+        [attr.title]="'Quitar el filtro de entidad' | t"
+      >
+        <span
+          >{{ entityLabel() ? entityLabel() + ' ' : ('Entidad ' | t) }}<code>{{ entityShort() }}</code></span
+        >
         <mat-icon aria-hidden="true">close</mat-icon>
       </button>
     }

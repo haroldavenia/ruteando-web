@@ -6,19 +6,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../../testing/api-testing';
+import remove from '../../../../testing/fixtures/gateway/delete__resources__id.json';
+import unassign from '../../../../testing/fixtures/gateway/delete__resources__id__driver.json';
+import list from '../../../../testing/fixtures/gateway/get__resources.json';
+import drivers from '../../../../testing/fixtures/gateway/get__users__drivers.json';
+import assign from '../../../../testing/fixtures/gateway/put__resources__id__driver__driverId.json';
+import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
 import { OUTLINED_FIELDS_PROVIDER } from '../../../shared/form/outlined-fields';
-
 import { ResourceListComponent } from './resource-list.component';
-
-import list from '../../../../testing/fixtures/gateway/get__resources.json';
-import assign from '../../../../testing/fixtures/gateway/put__resources__id__driver__driverId.json';
-import unassign from '../../../../testing/fixtures/gateway/delete__resources__id__driver.json';
-import remove from '../../../../testing/fixtures/gateway/delete__resources__id.json';
-import drivers from '../../../../testing/fixtures/gateway/get__users__drivers.json';
 
 describe('ResourceListComponent', () => {
   let fixture: ComponentFixture<ResourceListComponent>;
@@ -31,14 +29,21 @@ describe('ResourceListComponent', () => {
   const vehicle = resource.content[0];
   const driver = (fx(drivers).response.body as { id: string }[])[0];
   const overlayButton = (text: string) =>
-    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
 
   /** Lista el fixture con o sin conductor asignado. */
   function loadWith(assigned: boolean): void {
     const body = JSON.parse(JSON.stringify(fx(list).response.body));
     if (assigned) {
       body.content[0].driverId = driver.id;
-      body.content[0].assignedUser = { id: driver.id, firstName: 'Postman', lastName: 'Driver', email: 'driver@example.invalid' };
+      body.content[0].assignedUser = {
+        id: driver.id,
+        firstName: 'Postman',
+        lastName: 'Driver',
+        email: 'driver@example.invalid',
+      };
     }
     http.expectOne((r) => r.url === '/gateway/resources').flush(body);
     fixture.detectChanges();
@@ -79,7 +84,9 @@ describe('ResourceListComponent', () => {
 
   it('bajo el título dice cuántos hay y crear es la acción principal de la pantalla', () => {
     loadWith(false);
-    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(/^\d+ (vehículo|vehículos)$/);
+    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(
+      /^\d+ (vehículo|vehículos)$/
+    );
     expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
   });
 
@@ -114,13 +121,17 @@ describe('ResourceListComponent', () => {
     const card = root().querySelector('.card-grid article.vehicle')!;
 
     expect(card.querySelector('.driver-name')?.textContent?.trim()).toBe('Sin conductor');
-    expect(card.querySelector('button[aria-label="Asignar conductor al vehículo Postman resource"]')?.textContent?.trim()).toBe('Asignar');
+    expect(
+      card.querySelector('button[aria-label="Asignar conductor al vehículo Postman resource"]')?.textContent?.trim()
+    ).toBe('Asignar');
     expect(card.querySelector('[aria-label^="Retirar conductor"]')).toBeNull();
   });
 
   it('la tarjeta con conductor ofrece retirarlo y cambiarlo, además de editar y eliminar', () => {
     loadWith(true);
-    const labels = Array.from(root().querySelectorAll('.card-grid article.vehicle footer [aria-label]')).map((e) => e.getAttribute('aria-label'));
+    const labels = Array.from(root().querySelectorAll('.card-grid article.vehicle footer [aria-label]')).map((e) =>
+      e.getAttribute('aria-label')
+    );
 
     expect(labels).toEqual([
       'Elegir vehículo Postman resource',
@@ -146,7 +157,9 @@ describe('ResourceListComponent', () => {
     req.flush(fx(list).response.body as object);
     fixture.detectChanges();
 
-    expect((root().querySelector('input[type="search"]') as HTMLInputElement).placeholder).toBe('Buscar por nombre, matrícula o conductor');
+    expect((root().querySelector('input[type="search"]') as HTMLInputElement).placeholder).toBe(
+      'Buscar por nombre, matrícula o conductor'
+    );
   });
 
   it('muestra nombre, matrícula, tipo y "Sin conductor" cuando no tiene', () => {
@@ -185,7 +198,9 @@ describe('ResourceListComponent', () => {
     overlayButton('Asignar').click();
     await wait();
 
-    const req = http.expectOne((r) => r.method === 'PUT' && r.url === `/gateway/resources/${vehicle.id}/driver/${driver.id}`);
+    const req = http.expectOne(
+      (r) => r.method === 'PUT' && r.url === `/gateway/resources/${vehicle.id}/driver/${driver.id}`
+    );
     respondWith(req, fx(assign));
     fixture.detectChanges();
     expect(root().textContent).toContain('Conductor asignado al vehículo');
@@ -225,7 +240,10 @@ describe('ResourceListComponent', () => {
     await click('Retirar conductor del vehículo Postman resource');
     overlayButton('Retirar').click();
     await wait();
-    respondWith(http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/resources/${vehicle.id}/driver`), fx(unassign));
+    respondWith(
+      http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/resources/${vehicle.id}/driver`),
+      fx(unassign)
+    );
     fixture.detectChanges();
 
     expect(root().textContent).toContain('ya no tiene conductor');
@@ -245,7 +263,10 @@ describe('ResourceListComponent', () => {
     await click('Eliminar vehículo Postman resource');
     overlayButton('Eliminar').click();
     await wait();
-    respondWith(http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/resources/${vehicle.id}`), fx(remove));
+    respondWith(
+      http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/resources/${vehicle.id}`),
+      fx(remove)
+    );
     fixture.detectChanges();
 
     expect(root().textContent).toContain('Se eliminó vehículo «Postman resource»');

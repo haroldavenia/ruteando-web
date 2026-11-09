@@ -1,13 +1,19 @@
 import { AuditLog } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
 import { roleLabel } from '../../shared/ui/role-label';
 import { StatusTone } from '../../shared/ui/status-tone';
-
-import { t } from '../../core/i18n/i18n';
 /** Tipos en los que se agrupan las acciones, decididos por el verbo de su clave. */
 export type AuditKind = 'creacion' | 'modificacion' | 'eliminacion' | 'estado' | 'asignacion' | 'otras';
 
 /** En el orden en que se ofrecen en los filtros y en el reparto. */
-export const AUDIT_KINDS: readonly AuditKind[] = ['creacion', 'modificacion', 'eliminacion', 'estado', 'asignacion', 'otras'];
+export const AUDIT_KINDS: readonly AuditKind[] = [
+  'creacion',
+  'modificacion',
+  'eliminacion',
+  'estado',
+  'asignacion',
+  'otras',
+];
 
 const KIND_LABELS: Readonly<Record<AuditKind, string>> = {
   creacion: t('Creación'),

@@ -89,7 +89,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
     }
     .name {
       color: var(--mat-sys-on-surface);
-      font: 500 1.75rem/1 Roboto, sans-serif;
+      font:
+        500 1.75rem/1 Roboto,
+        sans-serif;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }

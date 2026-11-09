@@ -1,15 +1,14 @@
-import { DestroyRef, PLATFORM_ID, inject } from '@angular/core';
+import { DestroyRef, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
+import { t } from '../../core/i18n/i18n';
 import { bulkDeleteMessages, deleteMany } from '../../shared/data/bulk-run';
 import { downloadCsv } from '../../shared/data/csv';
 import { DeleteFlow } from '../../shared/data/delete-flow';
-
 import { csvFileName } from './fleet-export';
 
-import { t } from '../../core/i18n/i18n';
 export interface FleetListConfig<T> {
   /** «vehículo» / «vehículos». */
   singular: string;
@@ -37,7 +36,7 @@ export class FleetListActions<T extends { id: string }> {
 
   constructor(
     private readonly deleter: DeleteFlow,
-    private readonly config: FleetListConfig<T>,
+    private readonly config: FleetListConfig<T>
   ) {}
 
   removeMany(rows: readonly T[], clear: () => void): void {
@@ -67,6 +66,10 @@ export class FleetListActions<T extends { id: string }> {
     const fileName = csvFileName(this.config.fileBase);
     this.deleter.error.set(null);
     downloadCsv(fileName, this.config.csv(rows), this.platformId);
-    this.deleter.success.set(rows.length === 1 ? t('Se exportó 1 {0} a {1}', [singular, fileName]) : t('Se exportaron {0} {1} a {2}', [rows.length, plural, fileName]));
+    this.deleter.success.set(
+      rows.length === 1
+        ? t('Se exportó 1 {0} a {1}', [singular, fileName])
+        : t('Se exportaron {0} {1} a {2}', [rows.length, plural, fileName])
+    );
   }
 }

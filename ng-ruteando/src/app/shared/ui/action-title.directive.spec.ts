@@ -8,9 +8,13 @@ import { ActionTitleDirective } from './action-title.directive';
 @Component({
   imports: [MatButtonModule, MatIconModule, ActionTitleDirective],
   template: `
-    <button id="dinamico" mat-icon-button type="button" [attr.aria-label]="'Editar lugar ' + name()"><mat-icon fontIcon="edit" /></button>
+    <button id="dinamico" mat-icon-button type="button" [attr.aria-label]="'Editar lugar ' + name()">
+      <mat-icon fontIcon="edit" />
+    </button>
     <a id="enlace" mat-icon-button href="/x" aria-label="Ver la jornada"><mat-icon fontIcon="visibility" /></a>
-    <button id="propio" mat-icon-button type="button" aria-label="Eliminar" title="Borrar para siempre"><mat-icon fontIcon="delete" /></button>
+    <button id="propio" mat-icon-button type="button" aria-label="Eliminar" title="Borrar para siempre">
+      <mat-icon fontIcon="delete" />
+    </button>
     <button id="sin-nombre" mat-icon-button type="button"><mat-icon fontIcon="add" /></button>
     <button id="normal" mat-button type="button" aria-label="No es de icono">Guardar</button>
   `,

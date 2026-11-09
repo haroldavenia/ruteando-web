@@ -6,6 +6,10 @@ import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Fixture, respondWith } from '../../../../testing/api-testing';
+import registerFx from '../../../../testing/fixtures/gateway/post__auth__register.json';
+import resendFx from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
+import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
+import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { authInterceptor } from '../../../core/api/auth.interceptor';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
@@ -13,11 +17,6 @@ import { refreshInterceptor } from '../../../core/api/refresh.interceptor';
 import { CurrentUser } from '../../../core/auth/current-user';
 import { TokenStorageService } from '../../../core/auth/token-storage.service';
 import { RegisterComponent } from './register.component';
-
-import registerFx from '../../../../testing/fixtures/gateway/post__auth__register.json';
-import resendFx from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
-import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
-import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
 
 const fx = (f: unknown) => f as unknown as Fixture;
 const REGISTER = '/gateway/auth/register';
@@ -40,8 +39,18 @@ describe('RegisterComponent', () => {
     input.value = value;
     input.dispatchEvent(new Event('input'));
   }
-  function fill(values: Partial<Record<'first' | 'last' | 'company' | 'email' | 'pass' | 'confirm', string>> = {}): void {
-    const v = { first: 'Ana', last: 'Pérez', company: 'Mi empresa', email: 'ana@example.invalid', pass: VALID_PASSWORD, confirm: VALID_PASSWORD, ...values };
+  function fill(
+    values: Partial<Record<'first' | 'last' | 'company' | 'email' | 'pass' | 'confirm', string>> = {}
+  ): void {
+    const v = {
+      first: 'Ana',
+      last: 'Pérez',
+      company: 'Mi empresa',
+      email: 'ana@example.invalid',
+      pass: VALID_PASSWORD,
+      confirm: VALID_PASSWORD,
+      ...values,
+    };
     [v.first, v.last, v.company, v.email, v.pass, v.confirm].forEach((value, i) => type(inputs()[i], value));
   }
 
@@ -49,7 +58,10 @@ describe('RegisterComponent', () => {
     localStorage.clear();
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'acceso/registro', component: RegisterComponent }, { path: 'acceso', component: RegisterComponent }]),
+        provideRouter([
+          { path: 'acceso/registro', component: RegisterComponent },
+          { path: 'acceso', component: RegisterComponent },
+        ]),
         provideNoopAnimations(),
         { provide: API_BASE_URL, useValue: '/gateway' },
         provideHttpClient(withInterceptors([authInterceptor, refreshInterceptor, errorInterceptor])),
@@ -84,8 +96,20 @@ describe('RegisterComponent', () => {
       fill();
       submit();
       const req = controller.expectOne(REGISTER);
-      expect(Object.keys(req.request.body).sort()).toEqual(['email', 'firstName', 'lastName', 'password', 'tenantName']);
-      expect(req.request.body).toEqual({ firstName: 'Ana', lastName: 'Pérez', tenantName: 'Mi empresa', email: 'ana@example.invalid', password: VALID_PASSWORD });
+      expect(Object.keys(req.request.body).sort()).toEqual([
+        'email',
+        'firstName',
+        'lastName',
+        'password',
+        'tenantName',
+      ]);
+      expect(req.request.body).toEqual({
+        firstName: 'Ana',
+        lastName: 'Pérez',
+        tenantName: 'Mi empresa',
+        email: 'ana@example.invalid',
+        password: VALID_PASSWORD,
+      });
       respondWith(req, fx(registerFx));
       harness.detectChanges();
     });
@@ -102,7 +126,9 @@ describe('RegisterComponent', () => {
     });
 
     it('"Reenviar correo" pide el reenvío, muestra el mensaje neutro y se desactiva mientras dura', () => {
-      const button = Array.from(root.querySelectorAll('button')).find((b) => b.textContent?.includes('Reenviar correo')) as HTMLButtonElement;
+      const button = Array.from(root.querySelectorAll('button')).find((b) =>
+        b.textContent?.includes('Reenviar correo')
+      ) as HTMLButtonElement;
       button.click();
       harness.detectChanges();
       expect(button.disabled).toBeTrue();
@@ -113,11 +139,17 @@ describe('RegisterComponent', () => {
       harness.detectChanges();
 
       expect(button.disabled).toBeFalse();
-      expect(root.querySelector('[role="status"]')?.textContent).toContain('Si el correo existe, recibirás instrucciones de verificación');
+      expect(root.querySelector('[role="status"]')?.textContent).toContain(
+        'Si el correo existe, recibirás instrucciones de verificación'
+      );
     });
 
     it('si el reenvío falla muestra el mensaje genérico y no la confirmación', () => {
-      (Array.from(root.querySelectorAll('button')).find((b) => b.textContent?.includes('Reenviar correo')) as HTMLButtonElement).click();
+      (
+        Array.from(root.querySelectorAll('button')).find((b) =>
+          b.textContent?.includes('Reenviar correo')
+        ) as HTMLButtonElement
+      ).click();
       controller.expectOne(RESEND).flush(null, { status: 503, statusText: 'x' });
       harness.detectChanges();
 
@@ -140,7 +172,13 @@ describe('RegisterComponent', () => {
   });
 
   describe('lista de requisitos de la contraseña', () => {
-    const checks = () => Array.from(list().querySelectorAll('li')).map((li) => li.querySelector('.visually-hidden')?.textContent?.replace(/[,.\s]+/g, ' ').trim());
+    const checks = () =>
+      Array.from(list().querySelectorAll('li')).map((li) =>
+        li
+          .querySelector('.visually-hidden')
+          ?.textContent?.replace(/[,.\s]+/g, ' ')
+          .trim()
+      );
 
     it('está cerrada al abrir la pantalla pero descrita por el campo de contraseña', () => {
       expect(list().classList).toContain('visually-hidden');
@@ -173,7 +211,9 @@ describe('RegisterComponent', () => {
 
     controller.expectNone(REGISTER);
     expect(errors()).toEqual(['La contraseña no cumple los requisitos']);
-    expect(Array.from(list().querySelectorAll('li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(['Al menos 16 caracteres']);
+    expect(Array.from(list().querySelectorAll('li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(
+      ['Al menos 16 caracteres']
+    );
   });
 
   it('con 16 caracteres pero sin mayúscula ni símbolo no envía y marca los que faltan', () => {
@@ -183,7 +223,9 @@ describe('RegisterComponent', () => {
 
     controller.expectNone(REGISTER);
     expect(errors()).toEqual(['La contraseña no cumple los requisitos']);
-    expect(Array.from(list().querySelectorAll('li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(['Una mayúscula', 'Un símbolo (@$!%*?&)']);
+    expect(Array.from(list().querySelectorAll('li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(
+      ['Una mayúscula', 'Un símbolo (@$!%*?&)']
+    );
   });
 
   it('con campos obligatorios vacíos muestra el error de cada uno, no envía y enfoca el primero', () => {
@@ -218,7 +260,11 @@ describe('RegisterComponent', () => {
     harness.detectChanges();
 
     expect(alertText()).toContain('Ya existe una cuenta con ese correo');
-    expect(inputs().slice(0, 4).map((i) => i.value)).toEqual(['Ana', 'Pérez', 'Mi empresa', 'ana@example.invalid']);
+    expect(
+      inputs()
+        .slice(0, 4)
+        .map((i) => i.value)
+    ).toEqual(['Ana', 'Pérez', 'Mi empresa', 'ana@example.invalid']);
     expect(inputs()[4].value).toBe('');
     expect(inputs()[5].value).toBe('');
     expect(root.querySelector('form')).not.toBeNull();
@@ -243,7 +289,11 @@ describe('RegisterComponent', () => {
     expect(alertText()).toContain('La contraseña no cumple la política');
     expect(alertText()).toContain('Mínimo 16 caracteres');
     expect(alertText()).not.toContain('Revisa los datos');
-    expect(inputs().slice(0, 4).map((i) => i.value)).toEqual(['Ana', 'Pérez', 'Mi empresa', 'ana@example.invalid']);
+    expect(
+      inputs()
+        .slice(0, 4)
+        .map((i) => i.value)
+    ).toEqual(['Ana', 'Pérez', 'Mi empresa', 'ana@example.invalid']);
     expect(inputs()[4].value).toBe('');
     expect(inputs()[5].value).toBe('');
     expect(document.activeElement).toBe(inputs()[4]);

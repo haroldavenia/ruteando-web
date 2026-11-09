@@ -3,23 +3,21 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
+import get from '../../../testing/fixtures/gateway/get__zones__id.json';
+import create from '../../../testing/fixtures/gateway/post__zones.json';
+import update from '../../../testing/fixtures/gateway/put__zones__id.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { makeUser } from '../../../testing/session';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
+import { Zone } from '../../core/api/models';
 import { CurrentUser } from '../../core/auth/current-user';
 import { LatLng } from '../../core/geo/lat-lng';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-
-import { MAX_CODE_LENGTH, ZoneFormComponent, buildZoneUpdateBody } from './zone-form.component';
-import { Zone } from '../../core/api/models';
-
-import create from '../../../testing/fixtures/gateway/post__zones.json';
-import get from '../../../testing/fixtures/gateway/get__zones__id.json';
-import update from '../../../testing/fixtures/gateway/put__zones__id.json';
+import { buildZoneUpdateBody, MAX_CODE_LENGTH, ZoneFormComponent } from './zone-form.component';
 
 const fx = (f: unknown) => f as Fixture;
 const SQUARE: LatLng[] = [
@@ -28,7 +26,12 @@ const SQUARE: LatLng[] = [
   { lat: 4.7, lng: -74.0 },
   { lat: 4.7, lng: -74.1 },
 ];
-const BOWTIE: LatLng[] = [{ lat: 0, lng: 0 }, { lat: 1, lng: 1 }, { lat: 1, lng: 0 }, { lat: 0, lng: 1 }];
+const BOWTIE: LatLng[] = [
+  { lat: 0, lng: 0 },
+  { lat: 1, lng: 1 },
+  { lat: 1, lng: 0 },
+  { lat: 0, lng: 1 },
+];
 
 describe('ZoneFormComponent', () => {
   let fixture: ComponentFixture<ZoneFormComponent>;
@@ -66,7 +69,9 @@ describe('ZoneFormComponent', () => {
     fixture.detectChanges();
   };
   const radio = (label: string) =>
-    (Array.from(root().querySelectorAll('label.color')) as HTMLElement[]).find((l) => l.textContent!.trim() === label)!.querySelector('input') as HTMLInputElement;
+    (Array.from(root().querySelectorAll('label.color')) as HTMLElement[])
+      .find((l) => l.textContent!.trim() === label)!
+      .querySelector('input') as HTMLInputElement;
   const fillValid = () => {
     type('name', 'Postman zone');
     type('code', 'PM');
@@ -81,7 +86,9 @@ describe('ZoneFormComponent', () => {
 
     it('la cabecera ofrece volver a las zonas y los campos van en dos secciones con icono', () => {
       expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/zonas');
-      expect(Array.from(root().querySelectorAll('form section.form-section h2')).map((h) => h.textContent?.trim())).toEqual(['Datos de la zona', 'Polígono']);
+      expect(
+        Array.from(root().querySelectorAll('form section.form-section h2')).map((h) => h.textContent?.trim())
+      ).toEqual(['Datos de la zona', 'Polígono']);
       expect(root().querySelector('section[aria-labelledby="polygon-title"] h2#polygon-title')).not.toBeNull();
     });
 
@@ -109,7 +116,9 @@ describe('ZoneFormComponent', () => {
 
       expect(label('Azul').classList).toContain('selected');
       expect(getComputedStyle(label('Azul')).borderTopColor).not.toBe(before);
-      expect(getComputedStyle(label('Azul')).backgroundColor).not.toBe(getComputedStyle(label('Bermellón')).backgroundColor);
+      expect(getComputedStyle(label('Azul')).backgroundColor).not.toBe(
+        getComputedStyle(label('Bermellón')).backgroundColor
+      );
     });
 
     it('con cambios sin guardar lo dice la barra de acciones', () => {
@@ -186,7 +195,9 @@ describe('ZoneFormComponent', () => {
       const ring = req.request.body.boundary.coordinates[0];
       expect(ring.length).toBe(5);
       expect(ring[0]).toEqual(ring[4]);
-      expect(ring).toEqual((fx(create).request.body as { boundary: { coordinates: number[][][] } }).boundary.coordinates[0]);
+      expect(ring).toEqual(
+        (fx(create).request.body as { boundary: { coordinates: number[][][] } }).boundary.coordinates[0]
+      );
       req.flush({});
     });
 
@@ -202,7 +213,17 @@ describe('ZoneFormComponent', () => {
 
     it('ofrece la paleta con nombres y «Sin color», que es la opción por defecto', () => {
       const labels = Array.from(root().querySelectorAll('label.color')).map((l) => l.textContent!.trim());
-      expect(labels).toEqual(['Sin color', 'Azul', 'Bermellón', 'Verde', 'Rosa', 'Naranja', 'Celeste', 'Vino', 'Verde oscuro']);
+      expect(labels).toEqual([
+        'Sin color',
+        'Azul',
+        'Bermellón',
+        'Verde',
+        'Rosa',
+        'Naranja',
+        'Celeste',
+        'Vino',
+        'Verde oscuro',
+      ]);
       expect(radio('Sin color').checked).toBeTrue();
       expect(root().querySelector('fieldset legend')?.textContent).toContain('Color');
     });
@@ -255,7 +276,9 @@ describe('ZoneFormComponent', () => {
       expect(req.request.body.active).toBeFalse();
       expect(req.request.body.color).toBe('#D55E00');
       for (const readOnly of ['id', 'tenantId', 'createdAt', 'updatedAt']) {
-        expect(readOnly in req.request.body).withContext(readOnly).toBeFalse();
+        expect(readOnly in req.request.body)
+          .withContext(readOnly)
+          .toBeFalse();
       }
       respondWith(req, fx(update));
     });
@@ -274,7 +297,9 @@ describe('ZoneFormComponent', () => {
 
     it('con un id inexistente (404) enlaza al listado', () => {
       setup('x');
-      http.expectOne((r) => r.url === '/gateway/zones/x').flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
+      http
+        .expectOne((r) => r.url === '/gateway/zones/x')
+        .flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
       expect(root().querySelector('a[href="/zonas"]')).not.toBeNull();
@@ -285,7 +310,19 @@ describe('ZoneFormComponent', () => {
 
 describe('buildZoneUpdateBody', () => {
   it('lo editado manda sobre el registro y se quitan los campos de solo lectura', () => {
-    const record = { id: '1', tenantId: 't', createdAt: 'a', updatedAt: 'b', name: 'viejo', code: 'V', active: false } as unknown as Zone;
-    expect(buildZoneUpdateBody(record, { name: 'nuevo' })).toEqual({ name: 'nuevo', code: 'V', active: false } as never);
+    const record = {
+      id: '1',
+      tenantId: 't',
+      createdAt: 'a',
+      updatedAt: 'b',
+      name: 'viejo',
+      code: 'V',
+      active: false,
+    } as unknown as Zone;
+    expect(buildZoneUpdateBody(record, { name: 'nuevo' })).toEqual({
+      name: 'nuevo',
+      code: 'V',
+      active: false,
+    } as never);
   });
 });

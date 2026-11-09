@@ -7,14 +7,29 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { DomainRoute, DomainWaypoint } from '../../core/api/models';
-
 import { RouteVisitsComponent } from './route-visits.component';
 
 const waypoint = (sequence: number, packageId: string): DomainWaypoint =>
-  ({ sequence, stopType: 'delivery', packageId, packageInfo: null, placeId: null, arrivalUtc: null, departureUtc: null, position: null }) as DomainWaypoint;
+  ({
+    sequence,
+    stopType: 'delivery',
+    packageId,
+    packageInfo: null,
+    placeId: null,
+    arrivalUtc: null,
+    departureUtc: null,
+    position: null,
+  }) as DomainWaypoint;
 
 const route = { routeIndex: 0, name: 'Ruta Norte', waypoints: [waypoint(1, 'a'), waypoint(2, 'b')] } as DomainRoute;
-const pkg = (id: string, status: string) => ({ id, name: `Paquete ${id}`, guideNumber: null, address: `Calle ${id}`, standardizedAddress: null, status });
+const pkg = (id: string, status: string) => ({
+  id,
+  name: `Paquete ${id}`,
+  guideNumber: null,
+  address: `Calle ${id}`,
+  standardizedAddress: null,
+  status,
+});
 const value = (key: string, active: boolean) => ({ key, label: key, description: null, sortOrder: null, active });
 /** Catálogo como el del gateway real: `returned` y una clave de pruebas están inactivos. */
 const CATALOG = [
@@ -23,7 +38,14 @@ const CATALOG = [
     code: 'PackageStatus',
     description: '',
     system: true,
-    values: [value('pending', true), value('attended', true), value('unattended', true), value('cancelled', true), value('returned', false), value('demo_1', false)],
+    values: [
+      value('pending', true),
+      value('attended', true),
+      value('unattended', true),
+      value('cancelled', true),
+      value('returned', false),
+      value('demo_1', false),
+    ],
   },
 ];
 
@@ -75,13 +97,28 @@ describe('RouteVisitsComponent: estados inactivos del catálogo', () => {
 
   it('sin visitas con estados inactivos el filtro solo ofrece los activos y «No disponible»', () => {
     open('pending', 'attended');
-    expect(filterOptions()).toEqual(['Todos los estados', 'Pendiente', 'Atendido', 'No atendido', 'Cancelado', 'No disponible']);
+    expect(filterOptions()).toEqual([
+      'Todos los estados',
+      'Pendiente',
+      'Atendido',
+      'No atendido',
+      'Cancelado',
+      'No disponible',
+    ]);
   });
 
   it('una visita con un estado inactivo se muestra y su estado aparece en el filtro, pero no como destino', async () => {
     open('pending', 'returned');
     expect(rows()[1].textContent).toContain('Devuelto');
-    expect(filterOptions()).toEqual(['Todos los estados', 'Pendiente', 'Atendido', 'No atendido', 'Cancelado', 'Devuelto', 'No disponible']);
+    expect(filterOptions()).toEqual([
+      'Todos los estados',
+      'Pendiente',
+      'Atendido',
+      'No atendido',
+      'Cancelado',
+      'Devuelto',
+      'No disponible',
+    ]);
 
     const select = root().querySelector('select') as HTMLSelectElement;
     select.value = 'returned';

@@ -1,8 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { Provider, Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Observable, firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 import { API_BASE_URL, Page } from '../app/core/api/api-config';
 
@@ -13,10 +13,18 @@ export interface Fixture {
   response: { status: number; body: unknown };
 }
 
-export function setupApi<T>(api: Type<T>, extraProviders: Provider[] = []): { api: T; controller: HttpTestingController } {
+export function setupApi<T>(
+  api: Type<T>,
+  extraProviders: Provider[] = []
+): { api: T; controller: HttpTestingController } {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
-    providers: [{ provide: API_BASE_URL, useValue: '/gateway' }, provideHttpClient(), provideHttpClientTesting(), ...extraProviders],
+    providers: [
+      { provide: API_BASE_URL, useValue: '/gateway' },
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      ...extraProviders,
+    ],
   });
   return { api: TestBed.inject(api), controller: TestBed.inject(HttpTestingController) };
 }

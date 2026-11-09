@@ -1,5 +1,5 @@
+import create from '../../../testing/fixtures/gateway/post__zones.json';
 import { LatLng } from '../../core/geo/lat-lng';
-
 import {
   areaKm2,
   isValidPolygon,
@@ -10,8 +10,6 @@ import {
   validatePolygon,
   verticesFromRing,
 } from './polygon-geometry';
-
-import create from '../../../testing/fixtures/gateway/post__zones.json';
 
 const ring = (create.request.body as { boundary: { coordinates: number[][][] } }).boundary.coordinates[0];
 const square: LatLng[] = [
@@ -34,7 +32,14 @@ describe('polygon-geometry', () => {
     });
 
     it('descarta posiciones no válidas y tolera null', () => {
-      expect(verticesFromRing([[-74, 4.5], [999, 4], [-74, 4.6], [-73.9, 4.7]]).length).toBe(3);
+      expect(
+        verticesFromRing([
+          [-74, 4.5],
+          [999, 4],
+          [-74, 4.6],
+          [-73.9, 4.7],
+        ]).length
+      ).toBe(3);
       expect(verticesFromRing(null)).toEqual([]);
       expect(verticesFromRing([])).toEqual([]);
     });
@@ -124,7 +129,9 @@ describe('polygon-geometry', () => {
     });
 
     it('con más de 2000 vértices avisa de que no comprueba los cruces pero no lo invalida', () => {
-      const many = Array.from({ length: 2001 }, (_, i) => v(4.5 + 0.1 * Math.sin((2 * Math.PI * i) / 2001), -74 + 0.1 * Math.cos((2 * Math.PI * i) / 2001)));
+      const many = Array.from({ length: 2001 }, (_, i) =>
+        v(4.5 + 0.1 * Math.sin((2 * Math.PI * i) / 2001), -74 + 0.1 * Math.cos((2 * Math.PI * i) / 2001))
+      );
       const issues = validatePolygon(many);
       expect(issues).toEqual([{ kind: 'unchecked' }]);
       expect(isValidPolygon(many)).toBeTrue();

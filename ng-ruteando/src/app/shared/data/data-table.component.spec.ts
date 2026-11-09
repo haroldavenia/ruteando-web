@@ -2,12 +2,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
-import { Observable, Subject, of, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
 import { OUTLINED_FIELDS_PROVIDER } from '../form/outlined-fields';
-
 import { DataColumn, DataTableComponent } from './data-table.component';
 import { ListState } from './list-state';
 
@@ -49,7 +48,11 @@ describe('DataTableComponent', () => {
   const root = () => fixture.nativeElement as HTMLElement;
   const text = () => root().textContent ?? '';
 
-  async function render(fetch: (p: PageParams) => Observable<Page<Row>>, load = true, columns?: DataColumn<Row>[]): Promise<void> {
+  async function render(
+    fetch: (p: PageParams) => Observable<Page<Row>>,
+    load = true,
+    columns?: DataColumn<Row>[]
+  ): Promise<void> {
     fixture = TestBed.createComponent(HostComponent);
     host = fixture.componentInstance;
     host.fetch = fetch;
@@ -64,7 +67,12 @@ describe('DataTableComponent', () => {
     fixture.detectChanges();
   }
 
-  beforeEach(() => TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations(), provideRouter([]), OUTLINED_FIELDS_PROVIDER] }));
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      imports: [HostComponent],
+      providers: [provideNoopAnimations(), provideRouter([]), OUTLINED_FIELDS_PROVIDER],
+    })
+  );
 
   it('muestra el indicador de carga mientras espera', async () => {
     await render(() => new Subject<Page<Row>>(), true);
@@ -73,14 +81,32 @@ describe('DataTableComponent', () => {
   });
 
   it('muestra las filas, el total y las acciones con etiqueta que nombra el registro', async () => {
-    await render(() => of(page([{ name: 'Furgón', plate: 'ABC123' }, { name: 'Camión', plate: 'XYZ789' }], 0, 45)));
+    await render(() =>
+      of(
+        page(
+          [
+            { name: 'Furgón', plate: 'ABC123' },
+            { name: 'Camión', plate: 'XYZ789' },
+          ],
+          0,
+          45
+        )
+      )
+    );
     expect(root().querySelectorAll('tr.mat-mdc-row').length).toBe(2);
     expect(text()).toContain('1 – 20 de 45');
     expect(root().querySelector('button[aria-label="Eliminar vehículo ABC123"]')).not.toBeNull();
   });
 
   it('filtra la página sin distinguir mayúsculas ni acentos', async () => {
-    await render(() => of(page([{ name: 'Camión grande', plate: 'AAA111' }, { name: 'Furgón', plate: 'BBB222' }])));
+    await render(() =>
+      of(
+        page([
+          { name: 'Camión grande', plate: 'AAA111' },
+          { name: 'Furgón', plate: 'BBB222' },
+        ])
+      )
+    );
     const input = root().querySelector('input[type="search"]') as HTMLInputElement;
     input.value = 'CAMION';
     input.dispatchEvent(new Event('input'));
@@ -99,7 +125,11 @@ describe('DataTableComponent', () => {
     fixture.detectChanges();
 
     expect(text()).toContain('No hay resultados');
-    (Array.from(root().querySelectorAll('button')).find((b) => b.textContent?.includes('Limpiar búsqueda')) as HTMLButtonElement).click();
+    (
+      Array.from(root().querySelectorAll('button')).find((b) =>
+        b.textContent?.includes('Limpiar búsqueda')
+      ) as HTMLButtonElement
+    ).click();
     fixture.detectChanges();
     expect(root().querySelectorAll('tr.mat-mdc-row').length).toBe(1);
   });
@@ -111,13 +141,19 @@ describe('DataTableComponent', () => {
   });
 
   it('con error muestra el mensaje en un alert y "Reintentar" pide otra vez la misma página', async () => {
-    const fetch = jasmine.createSpy().and.returnValue(throwError(() => new ApiError({ status: 500, message: 'El servicio no está disponible' })));
+    const fetch = jasmine
+      .createSpy()
+      .and.returnValue(throwError(() => new ApiError({ status: 500, message: 'El servicio no está disponible' })));
     await render(fetch);
     const alert = root().querySelector('[role="alert"]');
     expect(alert?.textContent).toContain('El servicio no está disponible');
 
     fetch.and.returnValue(of(page([{ name: 'Furgón', plate: 'BBB222' }])));
-    (Array.from(root().querySelectorAll('button')).find((b) => b.textContent?.includes('Reintentar')) as HTMLButtonElement).click();
+    (
+      Array.from(root().querySelectorAll('button')).find((b) =>
+        b.textContent?.includes('Reintentar')
+      ) as HTMLButtonElement
+    ).click();
     fixture.detectChanges();
 
     expect(fetch.calls.count()).toBe(2);
@@ -126,7 +162,9 @@ describe('DataTableComponent', () => {
   });
 
   it('el paginador está en español y pide la página elegida', async () => {
-    const fetch = jasmine.createSpy().and.callFake((p: PageParams) => of(page([{ name: 'A', plate: 'P' }], p.page ?? 0, 100)));
+    const fetch = jasmine
+      .createSpy()
+      .and.callFake((p: PageParams) => of(page([{ name: 'A', plate: 'P' }], p.page ?? 0, 100)));
     await render(fetch);
     const next = root().querySelector('button[aria-label="Página siguiente"]') as HTMLButtonElement;
     expect(next).not.toBeNull();
@@ -136,7 +174,18 @@ describe('DataTableComponent', () => {
   });
 
   it('el orden de tabulación es filtro, acciones de fila y paginador', async () => {
-    await render(() => of(page([{ name: 'A', plate: 'P1' }, { name: 'B', plate: 'P2' }], 0, 45)));
+    await render(() =>
+      of(
+        page(
+          [
+            { name: 'A', plate: 'P1' },
+            { name: 'B', plate: 'P2' },
+          ],
+          0,
+          45
+        )
+      )
+    );
     const focusables = Array.from(root().querySelectorAll<HTMLElement>('input, button:not([disabled]), a[href]'));
     const labels = focusables.map((el) => el.getAttribute('aria-label') ?? el.tagName.toLowerCase());
     expect(focusables[0].matches('input[type="search"]')).toBeTrue();
@@ -163,7 +212,10 @@ describe('DataTableComponent', () => {
     fixture = TestBed.createComponent(HostComponent);
     host = fixture.componentInstance;
     host.fetch = () => of(page([{ name: 'Furgón', plate: 'ABC123' }]));
-    (host as { columns: DataColumn<Row>[] }).columns = [{ ...COLUMNS[0], link: (r) => ['/flota', r.plate] }, COLUMNS[1]];
+    (host as { columns: DataColumn<Row>[] }).columns = [
+      { ...COLUMNS[0], link: (r) => ['/flota', r.plate] },
+      COLUMNS[1],
+    ];
     host.state.load(0);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -178,7 +230,13 @@ describe('DataTableComponent', () => {
   it('una columna con muestra de color pinta el cuadro antes del texto y nada si no hay color', async () => {
     fixture = TestBed.createComponent(HostComponent);
     host = fixture.componentInstance;
-    host.fetch = () => of(page([{ name: 'Con color', plate: '#0072B2' }, { name: 'Sin color', plate: '' }]));
+    host.fetch = () =>
+      of(
+        page([
+          { name: 'Con color', plate: '#0072B2' },
+          { name: 'Sin color', plate: '' },
+        ])
+      );
     (host as { columns: DataColumn<Row>[] }).columns = [{ ...COLUMNS[0], swatch: (r) => r.plate || null }, COLUMNS[1]];
     host.state.load(0);
     fixture.detectChanges();
@@ -201,7 +259,10 @@ describe('DataTableComponent', () => {
       input.dispatchEvent(new Event('input'));
       fixture.detectChanges();
     };
-    const two = [{ name: 'Camión grande', plate: 'AAA111' }, { name: 'Furgón', plate: 'BBB222' }];
+    const two = [
+      { name: 'Camión grande', plate: 'AAA111' },
+      { name: 'Furgón', plate: 'BBB222' },
+    ];
 
     it('sin filtro dice cuántas filas se ven del total que informa el gateway', async () => {
       await render(() => of(page(two, 0, 45)));
@@ -269,11 +330,15 @@ describe('DataTableComponent', () => {
         { id: 'plate', header: 'Matrícula', cell: (r) => r.plate, primary: true },
       ]);
 
-      expect(Array.from(root().querySelectorAll('th.mat-mdc-table-sticky')).map((c) => c.textContent?.trim())).toEqual(['Matrícula']);
+      expect(Array.from(root().querySelectorAll('th.mat-mdc-table-sticky')).map((c) => c.textContent?.trim())).toEqual([
+        'Matrícula',
+      ]);
     });
 
     it('el enlace de una celda es un objetivo de al menos 44px y se distingue del texto con el color de la marca', async () => {
-      await render(() => of(page(two)), true, [{ id: 'name', header: 'Nombre', cell: (r) => r.name, link: () => ['/x'] }]);
+      await render(() => of(page(two)), true, [
+        { id: 'name', header: 'Nombre', cell: (r) => r.name, link: () => ['/x'] },
+      ]);
       const link = root().querySelector('td a') as HTMLElement;
 
       expect(link.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
@@ -283,7 +348,9 @@ describe('DataTableComponent', () => {
     it('el campo del filtro mide 44px de alto', async () => {
       await render(() => of(page(two)));
 
-      expect((root().querySelector('.filter .mat-mdc-text-field-wrapper') as HTMLElement).getBoundingClientRect().height).toBe(44);
+      expect(
+        (root().querySelector('.filter .mat-mdc-text-field-wrapper') as HTMLElement).getBoundingClientRect().height
+      ).toBe(44);
     });
   });
 
@@ -337,9 +404,24 @@ describe('DataTableComponent', () => {
     });
 
     it('una columna con tono pinta el texto como etiqueta de estado con icono y tono', async () => {
-      await render(() => of(page([{ name: 'Atendido', plate: 'a' }, { name: 'Cancelado', plate: 'b' }])), true, [
-        { id: 'name', header: 'Estado', cell: (r) => r.name, tone: (r) => (r.name === 'Atendido' ? 'success' : 'danger') },
-      ]);
+      await render(
+        () =>
+          of(
+            page([
+              { name: 'Atendido', plate: 'a' },
+              { name: 'Cancelado', plate: 'b' },
+            ])
+          ),
+        true,
+        [
+          {
+            id: 'name',
+            header: 'Estado',
+            cell: (r) => r.name,
+            tone: (r) => (r.name === 'Atendido' ? 'success' : 'danger'),
+          },
+        ]
+      );
       const badges = Array.from(root().querySelectorAll('app-status-badge'));
       expect(badges.map((b) => b.querySelector('span')?.textContent)).toEqual(['Atendido', 'Cancelado']);
       expect(badges.map((b) => b.getAttribute('data-tone'))).toEqual(['success', 'danger']);
@@ -348,7 +430,10 @@ describe('DataTableComponent', () => {
   });
 
   describe('en una caja estrecha', () => {
-    const rows: Row[] = [{ name: 'Furgón', plate: 'ABC123' }, { name: '', plate: 'XYZ789' }];
+    const rows: Row[] = [
+      { name: 'Furgón', plate: 'ABC123' },
+      { name: '', plate: 'XYZ789' },
+    ];
 
     /** Pone el ancho de la caja que contiene la tabla: la tabla decide según ella y no según la ventana. */
     function widthOf(px: number): void {
@@ -361,7 +446,11 @@ describe('DataTableComponent', () => {
       await render(() => of(page(rows)));
       const [first, second] = Array.from(root().querySelectorAll('tbody tr.mat-mdc-row')) as HTMLElement[];
 
-      expect(Array.from(first.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual(['Nombre', 'Matrícula', null]);
+      expect(Array.from(first.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual([
+        'Nombre',
+        'Matrícula',
+        null,
+      ]);
       expect(first.querySelector('td')?.classList).toContain('primary-cell');
       expect(first.querySelectorAll('.empty-cell').length).toBe(0);
       expect(second.querySelector('td.empty-cell')).not.toBeNull();

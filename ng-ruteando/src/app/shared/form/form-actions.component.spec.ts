@@ -27,7 +27,9 @@ describe('FormActionsComponent', () => {
   });
 
   it('proyecta los botones del formulario tal cual, en su orden', () => {
-    const items = Array.from(root().querySelectorAll('app-form-actions > a, app-form-actions > button')).map((e) => e.textContent?.trim());
+    const items = Array.from(root().querySelectorAll('app-form-actions > a, app-form-actions > button')).map((e) =>
+      e.textContent?.trim()
+    );
 
     expect(items).toEqual(['Cancelar', 'Guardar']);
     expect(root().querySelector('button')?.getAttribute('type')).toBe('submit');

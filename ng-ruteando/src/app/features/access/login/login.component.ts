@@ -10,12 +10,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { safeReturnUrl } from '../../../core/auth/return-url';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
 
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-login',
   imports: [
@@ -49,14 +49,18 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
         autocomplete="current-password"
         [messages]="{ required: ('Introduce tu contraseña' | t) }"
       />
-      <div class="forgot"><a routerLink="/acceso/recuperar">{{ '¿Olvidaste tu contraseña?' | t }}</a></div>
+      <div class="forgot">
+        <a routerLink="/acceso/recuperar">{{ '¿Olvidaste tu contraseña?' | t }}</a>
+      </div>
       <app-form-result [error]="error()" />
       @if (loading()) {
         <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Iniciando sesión' | t" />
       }
       <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Iniciar sesión' | t }}</button>
     </form>
-    <p class="alt">{{ '¿No tienes cuenta?' | t }} <a routerLink="/acceso/registro">{{ 'Crear cuenta' | t }}</a></p>
+    <p class="alt">
+      {{ '¿No tienes cuenta?' | t }} <a routerLink="/acceso/registro">{{ 'Crear cuenta' | t }}</a>
+    </p>
   `,
 })
 export class LoginComponent {
@@ -100,7 +104,9 @@ export class LoginComponent {
           // Credenciales rechazadas: se vacía la contraseña y recibe el foco (el correo se conserva)
           // resetForm también borra «enviado»: sin él, el campo vacío saldría en rojo
           this.formDirective()?.resetForm({ email, password: '' });
-          setTimeout(() => this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="current-password"]')?.focus());
+          setTimeout(() =>
+            this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="current-password"]')?.focus()
+          );
         }
       },
     });

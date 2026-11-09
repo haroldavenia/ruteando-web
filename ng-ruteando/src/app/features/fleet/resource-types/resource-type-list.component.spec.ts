@@ -1,20 +1,18 @@
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { OverlayContainer } from '@angular/cdk/overlay';
 import { ApplicationRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { Fixture, respondWith } from '../../../../testing/api-testing';
+import remove from '../../../../testing/fixtures/gateway/delete__resource-types__id.json';
+import list from '../../../../testing/fixtures/gateway/get__resource-types.json';
 import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
-import { Fixture, respondWith } from '../../../../testing/api-testing';
-
 import { ResourceTypeListComponent } from './resource-type-list.component';
-
-import list from '../../../../testing/fixtures/gateway/get__resource-types.json';
-import remove from '../../../../testing/fixtures/gateway/delete__resource-types__id.json';
 
 describe('ResourceTypeListComponent', () => {
   let fixture: ComponentFixture<ResourceTypeListComponent>;
@@ -41,7 +39,10 @@ describe('ResourceTypeListComponent', () => {
   afterEach(() => http.verify());
 
   function loadList(): void {
-    respondWith(http.expectOne((r) => r.url === '/gateway/resource-types'), list as unknown as Fixture);
+    respondWith(
+      http.expectOne((r) => r.url === '/gateway/resource-types'),
+      list as unknown as Fixture
+    );
     fixture.detectChanges();
   }
 
@@ -90,7 +91,9 @@ describe('ResourceTypeListComponent', () => {
   describe('borrado', () => {
     let overlay: HTMLElement;
     const button = (text: string) =>
-      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+        (b) => b.textContent?.trim() === text
+      )!;
 
     async function confirmDelete(): Promise<void> {
       loadList();
@@ -105,7 +108,10 @@ describe('ResourceTypeListComponent', () => {
 
     it('al confirmar borra, avisa y recarga la misma página', async () => {
       await confirmDelete();
-      respondWith(http.expectOne((r) => r.method === 'DELETE' && r.url.startsWith('/gateway/resource-types/')), remove as unknown as Fixture);
+      respondWith(
+        http.expectOne((r) => r.method === 'DELETE' && r.url.startsWith('/gateway/resource-types/')),
+        remove as unknown as Fixture
+      );
       fixture.detectChanges();
 
       expect(root().textContent).toContain('Se eliminó tipo de vehículo «Postman van»');
@@ -116,10 +122,14 @@ describe('ResourceTypeListComponent', () => {
 
     it('con vehículos de ese tipo (409) explica por qué no se puede y no recarga', async () => {
       await confirmDelete();
-      http.expectOne((r) => r.method === 'DELETE').flush({ message: 'in use' }, { status: 409, statusText: 'Conflict' });
+      http
+        .expectOne((r) => r.method === 'DELETE')
+        .flush({ message: 'in use' }, { status: 409, statusText: 'Conflict' });
       fixture.detectChanges();
 
-      expect(root().querySelector('[role="alert"]')?.textContent).toContain('No se puede eliminar: hay vehículos de este tipo');
+      expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+        'No se puede eliminar: hay vehículos de este tipo'
+      );
       expect(root().textContent).toContain('Postman van');
     });
 
@@ -129,7 +139,10 @@ describe('ResourceTypeListComponent', () => {
       fixture.detectChanges();
 
       expect(root().textContent).toContain('El registro ya no existe');
-      respondWith(http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/resource-types'), list as unknown as Fixture);
+      respondWith(
+        http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/resource-types'),
+        list as unknown as Fixture
+      );
     });
   });
 });

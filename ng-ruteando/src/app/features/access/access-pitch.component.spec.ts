@@ -13,7 +13,7 @@ describe('AccessPitchComponent', () => {
   });
 
   it('presenta el producto con un título y tres ventajas', () => {
-    expect(root().querySelector('.title')?.textContent).toBe('Planifica y sigue tus rutas.');
+    expect(root().querySelector('.title')?.textContent?.trim()).toBe('Planifica y sigue tus rutas.');
     // El texto de cada ventaja es lo que sigue al icono (el nombre del icono también es texto del DOM)
     expect(Array.from(root().querySelectorAll('li')).map((li) => li.lastChild?.textContent?.trim())).toEqual([
       'Rutas y paradas en un solo mapa',
@@ -37,7 +37,10 @@ describe('AccessPitchComponent', () => {
 
   it('en colores forzados la palabra destacada vuelve a texto normal, sin depender del degradado', () => {
     const rules = Array.from(document.styleSheets).flatMap((sheet) => Array.from(sheet.cssRules));
-    const forced = rules.filter((rule): rule is CSSMediaRule => rule instanceof CSSMediaRule && rule.conditionText.includes('forced-colors: active'));
+    const forced = rules.filter(
+      (rule): rule is CSSMediaRule =>
+        rule instanceof CSSMediaRule && rule.conditionText.includes('forced-colors: active')
+    );
     expect(forced.some((rule) => rule.cssText.includes('.accent') && /background: none/.test(rule.cssText))).toBeTrue();
   });
 

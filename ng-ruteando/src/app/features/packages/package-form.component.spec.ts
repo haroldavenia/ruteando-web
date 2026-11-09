@@ -3,19 +3,17 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
+import get from '../../../testing/fixtures/gateway/get__packages__id.json';
+import create from '../../../testing/fixtures/gateway/post__packages.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { Package } from '../../core/api/models';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-
-import { PackageFormComponent, buildUpdateBody } from './package-form.component';
-
-import create from '../../../testing/fixtures/gateway/post__packages.json';
-import get from '../../../testing/fixtures/gateway/get__packages__id.json';
+import { buildUpdateBody, PackageFormComponent } from './package-form.component';
 
 const fx = (f: unknown) => f as Fixture;
 
@@ -52,7 +50,10 @@ describe('PackageFormComponent', () => {
     fixture.detectChanges();
   };
   const typeLocation = (lat: string, lng: string) => {
-    for (const [label, v] of [['Latitud', lat], ['Longitud', lng]]) {
+    for (const [label, v] of [
+      ['Latitud', lat],
+      ['Longitud', lng],
+    ]) {
       const el = Array.from(root().querySelectorAll('app-location-fields mat-form-field'))
         .find((f) => f.querySelector('mat-label')?.textContent === label)!
         .querySelector('input') as HTMLInputElement;
@@ -66,7 +67,14 @@ describe('PackageFormComponent', () => {
     fixture.detectChanges();
   };
   const fillRequired = () => {
-    const body = fx(create).request.body as { name: string; serviceType: string; address: string; weight: number; volume: number; location: { coordinates: [number, number] } };
+    const body = fx(create).request.body as {
+      name: string;
+      serviceType: string;
+      address: string;
+      weight: number;
+      volume: number;
+      location: { coordinates: [number, number] };
+    };
     type('name', body.name);
     form().controls['serviceType'].setValue(body.serviceType);
     type('address', body.address);
@@ -88,7 +96,12 @@ describe('PackageFormComponent', () => {
     it('los campos van en cuatro secciones con icono: identificación, dirección, carga y ubicación', () => {
       const sections = Array.from(root().querySelectorAll('form section.form-section'));
 
-      expect(sections.map((s) => s.querySelector('h2')?.textContent?.trim())).toEqual(['Identificación', 'Dirección', 'Carga', 'Ubicación']);
+      expect(sections.map((s) => s.querySelector('h2')?.textContent?.trim())).toEqual([
+        'Identificación',
+        'Dirección',
+        'Carga',
+        'Ubicación',
+      ]);
       expect(sections[3].querySelector('app-location-fields')).not.toBeNull();
       expect(sections[0].querySelector('[formcontrolname="guideNumber"]')).not.toBeNull();
       expect(sections[1].querySelector('[formcontrolname="address"]')).not.toBeNull();
@@ -113,7 +126,11 @@ describe('PackageFormComponent', () => {
     it('ofrece los tipos de servicio con su etiqueta en español', () => {
       (root().querySelector('mat-select') as HTMLElement).click();
       fixture.detectChanges();
-      expect(Array.from(document.querySelectorAll('mat-option')).map((o) => o.textContent!.trim())).toEqual(['Entrega', 'Recogida', 'Mixto']);
+      expect(Array.from(document.querySelectorAll('mat-option')).map((o) => o.textContent!.trim())).toEqual([
+        'Entrega',
+        'Recogida',
+        'Mixto',
+      ]);
     });
 
     it('envía el cuerpo del ejemplo real sin la guía vacía', () => {
@@ -134,11 +151,18 @@ describe('PackageFormComponent', () => {
       type('observation', 'Frágil');
       submit();
       const req = http.expectOne((r) => r.method === 'POST');
-      expect(req.request.body).toEqual(jasmine.objectContaining({ guideNumber: 'G-100', pieceNumber: 3, observation: 'Frágil' }));
+      expect(req.request.body).toEqual(
+        jasmine.objectContaining({ guideNumber: 'G-100', pieceNumber: 3, observation: 'Frágil' })
+      );
       req.flush({});
     });
 
-    for (const [campo, valor] of [['weight', '-1'], ['volume', '-0.5'], ['pieceNumber', '0'], ['pieceNumber', '1.5']] as const) {
+    for (const [campo, valor] of [
+      ['weight', '-1'],
+      ['volume', '-0.5'],
+      ['pieceNumber', '0'],
+      ['pieceNumber', '1.5'],
+    ] as const) {
       it(`${campo} = ${valor} se rechaza sin enviar nada`, () => {
         fillRequired();
         type(campo, valor);
@@ -152,10 +176,14 @@ describe('PackageFormComponent', () => {
       fillRequired();
       type('guideNumber', 'G-1');
       submit();
-      http.expectOne((r) => r.method === 'POST').flush({ error: 'Conflict', message: 'dup' }, { status: 409, statusText: 'Conflict' });
+      http
+        .expectOne((r) => r.method === 'POST')
+        .flush({ error: 'Conflict', message: 'dup' }, { status: 409, statusText: 'Conflict' });
       fixture.detectChanges();
 
-      expect(root().querySelector('[role="alert"]')?.textContent).toContain('Ya existe un paquete con ese número de guía');
+      expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+        'Ya existe un paquete con ese número de guía'
+      );
       expect(input('guideNumber').value).toBe('G-1');
       expect(root().querySelector('button[type="submit"]')?.hasAttribute('disabled')).toBeFalse();
     });
@@ -219,8 +247,19 @@ describe('PackageFormComponent', () => {
       expect(body.customerId).toBe('c1');
       expect(body.zoneId).toBe('z1');
       expect(body.durationStay).toBe(300);
-      for (const readOnly of ['id', 'tenantId', 'status', 'createdAt', 'updatedAt', 'standardizedAddress', 'geocodingScore', 'geocodingStatus']) {
-        expect(readOnly in body).withContext(readOnly).toBeFalse();
+      for (const readOnly of [
+        'id',
+        'tenantId',
+        'status',
+        'createdAt',
+        'updatedAt',
+        'standardizedAddress',
+        'geocodingScore',
+        'geocodingStatus',
+      ]) {
+        expect(readOnly in body)
+          .withContext(readOnly)
+          .toBeFalse();
       }
       req.flush(complete);
     });
@@ -248,7 +287,15 @@ describe('PackageFormComponent', () => {
 
 describe('buildUpdateBody', () => {
   it('lo editado manda sobre el registro y se quitan los campos de solo lectura', () => {
-    const record = { id: '1', tenantId: 't', status: 'pending', createdAt: 'a', updatedAt: 'b', name: 'viejo', measure: { a: 1 } } as unknown as Package;
+    const record = {
+      id: '1',
+      tenantId: 't',
+      status: 'pending',
+      createdAt: 'a',
+      updatedAt: 'b',
+      name: 'viejo',
+      measure: { a: 1 },
+    } as unknown as Package;
     expect(buildUpdateBody(record, { name: 'nuevo' })).toEqual({ name: 'nuevo', measure: { a: 1 } } as never);
   });
 });

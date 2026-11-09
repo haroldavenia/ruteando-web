@@ -4,7 +4,6 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { LatLng } from '../../core/geo/lat-lng';
-
 import { MAP_CONFIG } from './map-config';
 import { OPENLAYERS_LOADER } from './openlayers';
 import { PolygonEditorComponent } from './polygon-editor.component';
@@ -43,7 +42,11 @@ describe('PolygonEditorComponent: servidor y fallos', () => {
     expect(root.querySelector('.ol-viewport')).toBeNull();
     expect(root.querySelector('[role="alert"]')).toBeNull();
     expect(root.querySelectorAll('app-vertex-table tbody tr').length).toBe(4);
-    expect((Array.from(root.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Dibujar polígono'))!.disabled).toBeTrue();
+    expect(
+      (Array.from(root.querySelectorAll('button')) as HTMLButtonElement[]).find((b) =>
+        b.textContent?.includes('Dibujar polígono')
+      )!.disabled
+    ).toBeTrue();
   });
 
   it('si OpenLayers no se carga avisa y la tabla permite crear el polígono entero', async () => {
@@ -63,12 +66,21 @@ describe('PolygonEditorComponent: servidor y fallos', () => {
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelector('[role="alert"]')?.textContent).toContain('No se pudo cargar el mapa');
 
-    const add = (Array.from(root.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Añadir vértice'))!;
-    const triangle: [number, number][] = [[4.5, -74.1], [4.5, -74.0], [4.7, -74.05]];
+    const add = (Array.from(root.querySelectorAll('button')) as HTMLButtonElement[]).find((b) =>
+      b.textContent?.includes('Añadir vértice')
+    )!;
+    const triangle: [number, number][] = [
+      [4.5, -74.1],
+      [4.5, -74.0],
+      [4.7, -74.05],
+    ];
     triangle.forEach(([lat, lng], i) => {
       add.click();
       fixture.detectChanges();
-      for (const [label, value] of [[`Latitud del vértice ${i + 1}`, lat], [`Longitud del vértice ${i + 1}`, lng]] as const) {
+      for (const [label, value] of [
+        [`Latitud del vértice ${i + 1}`, lat],
+        [`Longitud del vértice ${i + 1}`, lng],
+      ] as const) {
         const input = root.querySelector(`input[aria-label="${label}"]`) as HTMLInputElement;
         input.value = String(value);
         input.dispatchEvent(new Event('input'));

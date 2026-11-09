@@ -10,11 +10,13 @@ export const EN: Readonly<Record<string, string>> = {
   'El enlace no es válido o ha caducado': 'The link is not valid or has expired',
   'Revisa los datos e inténtalo de nuevo': 'Check the data and try again',
   'La contraseña no cumple la política. {0}': 'The password does not meet the policy. {0}',
-  'Demasiados intentos. Espera unos minutos e inténtalo de nuevo': 'Too many attempts. Wait a few minutes and try again',
+  'Demasiados intentos. Espera unos minutos e inténtalo de nuevo':
+    'Too many attempts. Wait a few minutes and try again',
   'La cuenta está bloqueada temporalmente. Inténtalo más tarde': 'The account is temporarily locked. Try again later',
   'Correo o contraseña incorrectos': 'Incorrect email or password',
   'Ya existe una cuenta con ese correo': 'An account with that email already exists',
-  'Mínimo {0} caracteres, con mayúscula, minúscula, número y un símbolo ({1})': 'At least {0} characters, with an uppercase letter, a lowercase letter, a number and a symbol ({1})',
+  'Mínimo {0} caracteres, con mayúscula, minúscula, número y un símbolo ({1})':
+    'At least {0} characters, with an uppercase letter, a lowercase letter, a number and a symbol ({1})',
   'Al menos {0} caracteres': 'At least {0} characters',
   'Una mayúscula': 'An uppercase letter',
   'Una minúscula': 'A lowercase letter',
@@ -34,7 +36,7 @@ export const EN: Readonly<Record<string, string>> = {
   'Tu primera jornada, en': 'Your first journey, in',
   'minutos': 'minutes',
   'Crea tu cuenta': 'Create your account',
-  'Tus datos y los de tu empresa': 'Your details and your company\'s',
+  'Tus datos y los de tu empresa': "Your details and your company's",
   'Verifica tu correo': 'Verify your email',
   'Abre el enlace que te enviamos': 'Open the link we sent you',
   'Planifica tu primera jornada': 'Plan your first journey',
@@ -42,14 +44,17 @@ export const EN: Readonly<Record<string, string>> = {
   'Sin permiso': 'No permission',
   'No tienes permiso para ver esta página.': 'You do not have permission to view this page.',
   'Tu rol es': 'Your role is',
-  '. Si necesitas esta área, pídela a quien administra tu empresa.': '. If you need this area, ask whoever manages your company.',
+  '. Si necesitas esta área, pídela a quien administra tu empresa.':
+    '. If you need this area, ask whoever manages your company.',
   'Volver al inicio': 'Back to home',
-  'Si el correo existe, recibirás instrucciones para restablecer tu contraseña': 'If the email exists, you will receive instructions to reset your password',
+  'Si el correo existe, recibirás instrucciones para restablecer tu contraseña':
+    'If the email exists, you will receive instructions to reset your password',
   'Introduce tu correo': 'Enter your email',
   'Introduce un correo válido': 'Enter a valid email',
   'Revisa tu correo': 'Check your email',
   'Recuperar contraseña': 'Recover password',
-  'Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.': 'Enter your email and we will send you a link to choose a new password.',
+  'Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.':
+    'Enter your email and we will send you a link to choose a new password.',
   'Correo electrónico': 'Email',
   'Enviando la solicitud': 'Sending the request',
   'Enviar enlace': 'Send link',
@@ -61,9 +66,10 @@ export const EN: Readonly<Record<string, string>> = {
   '¿Olvidaste tu contraseña?': 'Forgot your password?',
   'Iniciando sesión': 'Signing in',
   'Iniciar sesión': 'Sign in',
-  '¿No tienes cuenta?': 'Don\'t have an account?',
+  '¿No tienes cuenta?': "Don't have an account?",
   'Crear cuenta': 'Create account',
-  'Si el correo existe, recibirás instrucciones de verificación': 'If the email exists, you will receive verification instructions',
+  'Si el correo existe, recibirás instrucciones de verificación':
+    'If the email exists, you will receive verification instructions',
   'Nombre||pila': 'First name',
   'Introduce tu nombre': 'Enter your first name',
   'Apellidos': 'Last name',
@@ -102,7 +108,8 @@ export const EN: Readonly<Record<string, string>> = {
   '1 evento': '1 event',
   '{0} eventos': '{0} events',
   'No hay eventos en este rango.': 'There are no events in this range.',
-  '{0} en {1}; la semana con más actividad fue la semana del {2}, con {3}.': '{0} in {1}; the most active week was the week of {2}, with {3}.',
+  '{0} en {1}; la semana con más actividad fue la semana del {2}, con {3}.':
+    '{0} in {1}; the most active week was the week of {2}, with {3}.',
   '1 semana': '1 week',
   '{0} semanas': '{0} weeks',
   '{0} en {1}; el día con más actividad fue el {2}, con {3}.': '{0} in {1}; the most active day was {2}, with {3}.',
@@ -123,7 +130,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Por tipo de acción. ': 'By action type. ',
   'Qué cambió': 'What changed',
   'Este evento no registra valores.': 'This event does not record values.',
-  'El evento no registra cambios de valores. Estos son los valores que guardó:': 'This event does not record value changes. These are the values it saved:',
+  'El evento no registra cambios de valores. Estos son los valores que guardó:':
+    'This event does not record value changes. These are the values it saved:',
   'Cambió': 'Changed',
   'Antes': 'Before',
   'Después': 'After',
@@ -134,7 +142,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Esta entidad fue eliminada': 'This entity was deleted',
   'Ver eventos de esta entidad': 'View events for this entity',
   'Copiar enlace': 'Copy link',
-  'No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.': 'You do not have permission to open this event directly. Open it from your activity list.',
+  'No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.':
+    'You do not have permission to open this event directly. Open it from your activity list.',
   'Este evento ya no existe o no está disponible.': 'This event no longer exists or is not available.',
   'Evento de auditoría': 'Audit event',
   'No se pudo abrir el evento': 'The event could not be opened',
@@ -222,15 +231,18 @@ export const EN: Readonly<Record<string, string>> = {
   'Empresa (opcional)': 'Company (optional)',
   'Identificador de la empresa; vacío = todas': 'Company identifier; empty = all',
   'Aplicar': 'Apply',
-  'Tu rol no puede consultar estos eventos. Tu propia actividad sí está disponible.': 'Your role cannot view these events. Your own activity is available.',
+  'Tu rol no puede consultar estos eventos. Tu propia actividad sí está disponible.':
+    'Your role cannot view these events. Your own activity is available.',
   'Ver mi actividad': 'View my activity',
   'eventos': 'events',
   'Todavía no hay eventos de auditoría': 'There are no audit events yet',
   'Buscar por acción o persona': 'Search by action or person',
   'Exportar selección': 'Export selection',
   'Mi actividad': 'My activity',
-  'Aquí ves lo que has hecho en la aplicación y cuándo. Pulsa el ojo de un evento para ver todo su detalle.': 'Here you see what you have done in the application and when. Press the eye on an event to see all its details.',
-  'Aquí se registra lo que ocurre en la cuenta: qué se hizo, quién lo hizo y cuándo. Usa los filtros para encontrar algo y pulsa el ojo de un evento para ver todo su detalle.': 'Everything that happens in the account is recorded here: what was done, who did it and when. Use the filters to find something and press the eye on an event to see all its details.',
+  'Aquí ves lo que has hecho en la aplicación y cuándo. Pulsa el ojo de un evento para ver todo su detalle.':
+    'Here you see what you have done in the application and when. Press the eye on an event to see all its details.',
+  'Aquí se registra lo que ocurre en la cuenta: qué se hizo, quién lo hizo y cuándo. Usa los filtros para encontrar algo y pulsa el ojo de un evento para ver todo su detalle.':
+    'Everything that happens in the account is recorded here: what was done, who did it and when. Use the filters to find something and press the eye on an event to see all its details.',
   '{0} de {1}': '{0} of {1}',
   '{0} · actualizado a las {1}': '{0} · updated at {1}',
   'Se muestran los {0} eventos más recientes de {1}': 'Showing the {0} most recent events of {1}',
@@ -275,7 +287,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Repite la contraseña inicial': 'Repeat the initial password',
   'Cancelar': 'Cancel',
   'Guardar': 'Save',
-  'No se puede eliminar: el conductor está asignado a un vehículo': 'It cannot be deleted: the driver is assigned to a vehicle',
+  'No se puede eliminar: el conductor está asignado a un vehículo':
+    'It cannot be deleted: the driver is assigned to a vehicle',
   'conductor': 'driver',
   'conductores': 'drivers',
   'Teléfono': 'Phone',
@@ -316,7 +329,7 @@ export const EN: Readonly<Record<string, string>> = {
   'Indica un volumen mayor que 0': 'Enter a volume greater than 0',
   'Indica una medida mayor que 0': 'Enter a measurement greater than 0',
   'El máximo no puede ser menor que el mínimo': 'The maximum cannot be less than the minimum',
-  'El peso máximo no puede superar el peso del vehículo': 'The maximum weight cannot exceed the vehicle\'s weight',
+  'El peso máximo no puede superar el peso del vehículo': "The maximum weight cannot exceed the vehicle's weight",
   'El volumen máximo no puede superar el volumen': 'The maximum volume cannot exceed the volume',
   'Nuevo tipo de vehículo': 'New vehicle type',
   'Editar tipo de vehículo': 'Edit vehicle type',
@@ -324,7 +337,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Datos del tipo': 'Type details',
   'Consumo (opcional)': 'Consumption (optional)',
   'Capacidad': 'Capacity',
-  'Opcional. La planificación la usa cuando su configuración evalúa el peso y el volumen.': 'Optional. Planning uses it when its settings evaluate weight and volume.',
+  'Opcional. La planificación la usa cuando su configuración evalúa el peso y el volumen.':
+    'Optional. Planning uses it when its settings evaluate weight and volume.',
   'Peso que carga': 'Weight it carries',
   'kg': 'kg',
   'Capacidad en': 'Capacity in',
@@ -339,7 +353,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Volumen': 'Volume',
   'cm³': 'cm³',
   'Restricciones de carga': 'Load restrictions',
-  'Opcional. Límites de carga que respeta el vehículo; no pueden superar su capacidad.': 'Optional. Load limits the vehicle respects; they cannot exceed its capacity.',
+  'Opcional. Límites de carga que respeta el vehículo; no pueden superar su capacidad.':
+    'Optional. Load limits the vehicle respects; they cannot exceed its capacity.',
   'Peso mínimo': 'Minimum weight',
   'Peso máximo': 'Maximum weight',
   'Volumen mínimo': 'Minimum volume',
@@ -481,8 +496,10 @@ export const EN: Readonly<Record<string, string>> = {
   'Todavía no hay paquetes': 'There are no packages yet',
   'Seleccionar paquete ': 'Select package ',
   'Seleccionar': 'Select',
-  'La planificación tardó demasiado o el servicio no respondió; vuelve a intentarlo': 'The planning took too long or the service did not respond; try again',
-  'La configuración o alguno de los paquetes ya no existe. Revisa la selección y vuelve a intentarlo.': 'The settings or one of the packages no longer exists. Review the selection and try again.',
+  'La planificación tardó demasiado o el servicio no respondió; vuelve a intentarlo':
+    'The planning took too long or the service did not respond; try again',
+  'La configuración o alguno de los paquetes ya no existe. Revisa la selección y vuelve a intentarlo.':
+    'The settings or one of the packages no longer exists. Review the selection and try again.',
   'No se pudo planificar la jornada: {0}': 'The journey could not be planned: {0}',
   'No se pudo planificar la jornada': 'The journey could not be planned',
   'Ruta': 'Route',
@@ -505,9 +522,12 @@ export const EN: Readonly<Record<string, string>> = {
   'Acciones': 'Actions',
   'Cambiar el estado de la visita ': 'Change the status of visit ',
   'La visita «{0}» ahora está {1}': 'Visit “{0}” is now {1}',
-  'Mapa de las rutas de la jornada. Las mismas rutas y paradas están en las tablas de más abajo.': 'Map of the journey\'s routes. The same routes and stops are in the tables below.',
-  'No se pudo cargar el mapa. La leyenda y las tablas de rutas y paradas siguen disponibles.': 'The map could not be loaded. The legend and the route and stop tables are still available.',
-  'No hay rutas con recorrido ni paradas con posición que dibujar.': 'There are no routes with a path or stops with a position to draw.',
+  'Mapa de las rutas de la jornada. Las mismas rutas y paradas están en las tablas de más abajo.':
+    "Map of the journey's routes. The same routes and stops are in the tables below.",
+  'No se pudo cargar el mapa. La leyenda y las tablas de rutas y paradas siguen disponibles.':
+    'The map could not be loaded. The legend and the route and stop tables are still available.',
+  'No hay rutas con recorrido ni paradas con posición que dibujar.':
+    'There are no routes with a path or stops with a position to draw.',
   'Leyenda de las rutas': 'Route legend',
   'Ver todas': 'View all',
   '{0} · Ruta {1}: {2}': '{0} · Route {1}: {2}',
@@ -520,9 +540,12 @@ export const EN: Readonly<Record<string, string>> = {
   'Importar paquetes': 'Import packages',
   'Pasos de la importación': 'Import steps',
   '1. Prepara el archivo': '1. Prepare the file',
-  'El archivo debe ser un CSV en UTF-8 con una fila por paquete.': 'The file must be a UTF-8 CSV with one row per package.',
-  'La aplicación no calcula la ubicación a partir de la dirección:': 'The application does not calculate the location from the address:',
-  'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.': 'each row needs its longitude and latitude. Maximum 2 MB and {0} rows.',
+  'El archivo debe ser un CSV en UTF-8 con una fila por paquete.':
+    'The file must be a UTF-8 CSV with one row per package.',
+  'La aplicación no calcula la ubicación a partir de la dirección:':
+    'The application does not calculate the location from the address:',
+  'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.':
+    'each row needs its longitude and latitude. Maximum 2 MB and {0} rows.',
   'Descargar plantilla': 'Download template',
   'Columnas del archivo': 'File columns',
   'Columna': 'Column',
@@ -541,9 +564,11 @@ export const EN: Readonly<Record<string, string>> = {
   'Línea': 'Line',
   'Campo': 'Field',
   'Motivo': 'Reason',
-  '… y {0} errores más; están todos en el informe de errores.': '… and {0} more errors; all of them are in the error report.',
+  '… y {0} errores más; están todos en el informe de errores.':
+    '… and {0} more errors; all of them are in the error report.',
   'Primeras {0} filas válidas': 'First {0} valid rows',
-  'Ninguna fila es válida: corrige el archivo y vuelve a elegirlo.': 'No row is valid: fix the file and choose it again.',
+  'Ninguna fila es válida: corrige el archivo y vuelve a elegirlo.':
+    'No row is valid: fix the file and choose it again.',
   'Importar {0} paquetes': 'Import {0} packages',
   'Descargar informe de errores': 'Download error report',
   'Importando': 'Importing',
@@ -563,27 +588,35 @@ export const EN: Readonly<Record<string, string>> = {
   'Elige el archivo': 'Choose the file',
   'Revisa y confirma': 'Review and confirm',
   'Importa': 'Import',
-  'Importación terminada: {0} creados, {1} ya existían, {2} fallidos y {3} sin procesar.': 'Import finished: {0} created, {1} already existed, {2} failed and {3} not processed.',
+  'Importación terminada: {0} creados, {1} ya existían, {2} fallidos y {3} sin procesar.':
+    'Import finished: {0} created, {1} already existed, {2} failed and {3} not processed.',
   '¿Salir de la importación?': 'Leave the import?',
-  'Hay una importación en curso. Si sales ahora se detendrá: los paquetes ya creados se conservan y el resto no se creará.': 'An import is in progress. If you leave now it will stop: the packages already created are kept and the rest will not be created.',
+  'Hay una importación en curso. Si sales ahora se detendrá: los paquetes ya creados se conservan y el resto no se creará.':
+    'An import is in progress. If you leave now it will stop: the packages already created are kept and the rest will not be created.',
   'Salir': 'Leave',
   'Seguir importando': 'Keep importing',
   'El archivo debe ser un CSV (extensión .csv).': 'The file must be a CSV (.csv extension).',
   'El archivo está vacío.': 'The file is empty.',
-  'El archivo supera los 2 MB. Divídelo en varios archivos más pequeños.': 'The file is larger than 2 MB. Split it into several smaller files.',
+  'El archivo supera los 2 MB. Divídelo en varios archivos más pequeños.':
+    'The file is larger than 2 MB. Split it into several smaller files.',
   'No se pudo leer el archivo.': 'The file could not be read.',
-  'El archivo tiene más de {0} filas de datos. Divídelo en varios archivos.': 'The file has more than {0} data rows. Split it into several files.',
-  'El archivo no tiene filas de datos: solo la cabecera o nada.': 'The file has no data rows: only the header or nothing.',
-  'Faltan columnas obligatorias: {0}. Descarga la plantilla para ver el formato.': 'Required columns are missing: {0}. Download the template to see the format.',
-  'Hay caracteres ilegibles (�): el archivo probablemente no está en UTF-8. Vuelve a guardarlo con esa codificación para conservar las tildes.': 'There are unreadable characters (�): the file is probably not UTF-8. Save it again with that encoding to keep the accents.',
-  'Hay una comilla sin cerrar: las últimas filas pueden haberse leído mal. Revisa el archivo.': 'There is an unclosed quote: the last rows may have been read wrongly. Check the file.',
+  'El archivo tiene más de {0} filas de datos. Divídelo en varios archivos.':
+    'The file has more than {0} data rows. Split it into several files.',
+  'El archivo no tiene filas de datos: solo la cabecera o nada.':
+    'The file has no data rows: only the header or nothing.',
+  'Faltan columnas obligatorias: {0}. Descarga la plantilla para ver el formato.':
+    'Required columns are missing: {0}. Download the template to see the format.',
+  'Hay caracteres ilegibles (�): el archivo probablemente no está en UTF-8. Vuelve a guardarlo con esa codificación para conservar las tildes.':
+    'There are unreadable characters (�): the file is probably not UTF-8. Save it again with that encoding to keep the accents.',
+  'Hay una comilla sin cerrar: las últimas filas pueden haberse leído mal. Revisa el archivo.':
+    'There is an unclosed quote: the last rows may have been read wrongly. Check the file.',
   'Se ignoran las columnas: {0}.': 'These columns are ignored: {0}.',
   'La importación se canceló antes de procesar esta fila': 'The import was cancelled before this row was processed',
   'Número de guía; debe ser único en tu empresa': 'Waybill number; it must be unique in your company',
   'sin guía': 'no waybill',
   'Nombre o referencia del paquete': 'Package name or reference',
   'la guía o, si no hay, la dirección': 'the waybill or, if there is none, the address',
-  'Paquete de Ana': 'Ana\'s package',
+  'Paquete de Ana': "Ana's package",
   'Entrega, Recogida o Mixto': 'Delivery, Pickup or Mixed',
   'Dirección del servicio': 'Service address',
   'Carrera 7 # 71-21': 'Carrera 7 # 71-21',
@@ -600,9 +633,11 @@ export const EN: Readonly<Record<string, string>> = {
   'Llamar al llegar': 'Call on arrival',
   'Supera los {0} caracteres': 'Exceeds {0} characters',
   'La dirección es obligatoria': 'The address is required',
-  'La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)': 'The longitude is required (the application does not calculate locations from addresses)',
+  'La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)':
+    'The longitude is required (the application does not calculate locations from addresses)',
   'La longitud debe ser un número entre -180 y 180': 'The longitude must be a number between -180 and 180',
-  'La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)': 'The latitude is required (the application does not calculate locations from addresses)',
+  'La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)':
+    'The latitude is required (the application does not calculate locations from addresses)',
   'La latitud debe ser un número entre -90 y 90': 'The latitude must be a number between -90 and 90',
   'El tipo de servicio debe ser Entrega, Recogida o Mixto': 'The service type must be Delivery, Pickup or Mixed',
   '{0} debe ser un número mayor o igual que 0': '{0} must be a number greater than or equal to 0',
@@ -621,7 +656,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Número de guía (opcional)': 'Waybill number (optional)',
   'Único en tu empresa': 'Unique in your company',
   'Tipo de servicio': 'Service type',
-  'Se guarda como texto: no se calcula la ubicación a partir de ella': 'It is saved as text: the location is not calculated from it',
+  'Se guarda como texto: no se calcula la ubicación a partir de ella':
+    'It is saved as text: the location is not calculated from it',
   'Ciudad (opcional)': 'City (optional)',
   'País (opcional)': 'Country (optional)',
   'Código postal (opcional)': 'Postal code (optional)',
@@ -644,7 +680,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Aproximada': 'Approximate',
   'Manual': 'Manual',
   'No ubicada': 'Not located',
-  'No se puede eliminar: el paquete está incluido en una jornada': 'It cannot be deleted: the package is included in a journey',
+  'No se puede eliminar: el paquete está incluido en una jornada':
+    'It cannot be deleted: the package is included in a journey',
   'Actualizado': 'Updated',
   'El paquete «{0}» ahora está {1}': 'Package “{0}” is now {1}',
   'El estado de 1 paquete ahora es «{0}»': 'The status of 1 package is now “{0}”',
@@ -664,7 +701,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Cambiar estado': 'Change status',
   'Crear el primer paquete': 'Create the first package',
   'Importar un CSV': 'Import a CSV',
-  'Escribe un teléfono válido: de 7 a 20 caracteres con dígitos, espacios, paréntesis o guiones, y un + inicial opcional': 'Enter a valid phone number: 7 to 20 characters with digits, spaces, parentheses or hyphens, and an optional leading +',
+  'Escribe un teléfono válido: de 7 a 20 caracteres con dígitos, espacios, paréntesis o guiones, y un + inicial opcional':
+    'Enter a valid phone number: 7 to 20 characters with digits, spaces, parentheses or hyphens, and an optional leading +',
   'Lugar creado': 'Place created',
   'Lugar guardado': 'Place saved',
   'Nuevo lugar': 'New place',
@@ -676,7 +714,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Almacén': 'Warehouse',
   'Tienda': 'Store',
   'Oficina': 'Office',
-  'No se puede eliminar: el lugar se usa como depósito o en otros datos': 'It cannot be deleted: the place is used as a depot or in other data',
+  'No se puede eliminar: el lugar se usa como depósito o en otros datos':
+    'It cannot be deleted: the place is used as a depot or in other data',
   'Mapa de los lugares': 'Map of the places',
   'Editar lugar ': 'Edit place ',
   'Editar': 'Edit',
@@ -685,8 +724,10 @@ export const EN: Readonly<Record<string, string>> = {
   'Todavía no hay lugares': 'There are no places yet',
   'Eliminar lugar ': 'Delete place ',
   'Crear el primer lugar': 'Create the first place',
-  'Mapa de los lugares: un pin por lugar, con el color y la letra de su tipo': 'Map of the places: one pin per place, with the color and letter of its type',
-  'No se pudo cargar el mapa. Puedes seguir usando la lista.': 'The map could not be loaded. You can keep using the list.',
+  'Mapa de los lugares: un pin por lugar, con el color y la letra de su tipo':
+    'Map of the places: one pin per place, with the color and letter of its type',
+  'No se pudo cargar el mapa. Puedes seguir usando la lista.':
+    'The map could not be loaded. You can keep using the list.',
   'Tipos de lugar': 'Place types',
   'Nueva configuración': 'New settings',
   'Editar configuración': 'Edit settings',
@@ -743,7 +784,8 @@ export const EN: Readonly<Record<string, string>> = {
   'volumen': 'volume',
   'zona del itinerario': 'itinerary zone',
   ', evaluando {0}': ', evaluating {0}',
-  'No se puede eliminar: la configuración se usa en una jornada': 'It cannot be deleted: the settings are used in a journey',
+  'No se puede eliminar: la configuración se usa en una jornada':
+    'It cannot be deleted: the settings are used in a journey',
   'Topología': 'Topology',
   'Restricción': 'Restriction',
   'Activa': 'Active',
@@ -763,11 +805,13 @@ export const EN: Readonly<Record<string, string>> = {
   'Ya existe una zona con ese código': 'A zone with that code already exists',
   'El código no puede llevar espacios': 'The code cannot contain spaces',
   'El código admite como máximo {0} caracteres': 'The code allows at most {0} characters',
-  'Dibuja el polígono de la zona en el mapa o escribe sus vértices': 'Draw the zone polygon on the map or enter its vertices',
+  'Dibuja el polígono de la zona en el mapa o escribe sus vértices':
+    'Draw the zone polygon on the map or enter its vertices',
   'Sin color': 'No color',
   'Zona creada': 'Zone created',
   'Zona guardada': 'Zone saved',
-  'No se puede eliminar: la zona se usa en lugares, paquetes o configuraciones': 'It cannot be deleted: the zone is used in places, packages or settings',
+  'No se puede eliminar: la zona se usa en lugares, paquetes o configuraciones':
+    'It cannot be deleted: the zone is used in places, packages or settings',
   'Vértices': 'Vertices',
   'zonas': 'zones',
   'Todavía no hay zonas': 'There are no zones yet',
@@ -795,8 +839,10 @@ export const EN: Readonly<Record<string, string>> = {
   '{0} de las últimas jornadas están en curso': '{0} of the latest journeys are in progress',
   'hay 1 paquete esperando ruta': 'there is 1 package waiting for a route',
   'hay {0} paquetes esperando ruta': 'there are {0} packages waiting for a route',
-  'hay 1 paquete esperando ruta entre los más recientes': 'there is 1 package waiting for a route among the most recent',
-  'hay {0} paquetes esperando ruta entre los más recientes': 'there are {0} packages waiting for a route among the most recent',
+  'hay 1 paquete esperando ruta entre los más recientes':
+    'there is 1 package waiting for a route among the most recent',
+  'hay {0} paquetes esperando ruta entre los más recientes':
+    'there are {0} packages waiting for a route among the most recent',
   'Planificación de rutas.': 'Route planning.',
   ' y ': ' and ',
   '{0} de {1} paquetes': '{0} of {1} packages',
@@ -826,7 +872,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Ruteando': 'Ruteando',
   'Eliminar {0}': 'Delete {0}',
   '¿Eliminar {0} «{1}»? Esta acción no se puede deshacer.': 'Delete {0} “{1}”? This action cannot be undone.',
-  '¿Eliminar los {0} {1} elegidos? Esta acción no se puede deshacer.': 'Delete the {0} chosen {1}? This action cannot be undone.',
+  '¿Eliminar los {0} {1} elegidos? Esta acción no se puede deshacer.':
+    'Delete the {0} chosen {1}? This action cannot be undone.',
   'Se eliminó 1 {0}': '1 {0} was deleted',
   'Se eliminaron {0} {1}': '{0} {1} were deleted',
   'Se eliminaron {0} de {1} {2}': '{0} of {1} {2} were deleted',
@@ -862,7 +909,8 @@ export const EN: Readonly<Record<string, string>> = {
   'El registro ya no existe': 'The record no longer exists',
   'Se eliminó {0} «{1}»': '{0} “{1}” was deleted',
   '¿Descartar los cambios?': 'Discard the changes?',
-  'Tienes cambios sin guardar. Si sales ahora se perderán.': 'You have unsaved changes. If you leave now they will be lost.',
+  'Tienes cambios sin guardar. Si sales ahora se perderán.':
+    'You have unsaved changes. If you leave now they will be lost.',
   'Descartar': 'Discard',
   'Seguir editando': 'Keep editing',
   'Usa al menos 8 caracteres': 'Use at least 8 characters',
@@ -884,26 +932,34 @@ export const EN: Readonly<Record<string, string>> = {
   'La longitud debe estar entre -180 y 180': 'The longitude must be between -180 and 180',
   'Latitud': 'Latitude',
   'Longitud': 'Longitude',
-  'Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos.': 'Map to choose the location. You can also enter the latitude and longitude in their fields.',
-  'No se pudo cargar el mapa. Puedes seguir usando los campos de coordenadas.': 'The map could not be loaded. You can keep using the coordinate fields.',
+  'Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos.':
+    'Map to choose the location. You can also enter the latitude and longitude in their fields.',
+  'No se pudo cargar el mapa. Puedes seguir usando los campos de coordenadas.':
+    'The map could not be loaded. You can keep using the coordinate fields.',
   'Herramientas del polígono': 'Polygon tools',
   'Dibujar polígono': 'Draw polygon',
   'Borrar polígono': 'Delete polygon',
   'Terminar polígono': 'Finish polygon',
-  'Haz clic en el mapa para añadir vértices; doble clic o «Terminar polígono» para cerrarlo. Escape cancela.': 'Click on the map to add vertices; double-click or “Finish polygon” to close it. Escape cancels.',
-  'Mapa para dibujar el polígono. También puedes escribir los vértices en la tabla de más abajo.': 'Map to draw the polygon. You can also enter the vertices in the table below.',
-  'No se pudo cargar el mapa. Puedes seguir escribiendo los vértices en la tabla.': 'The map could not be loaded. You can keep entering the vertices in the table.',
+  'Haz clic en el mapa para añadir vértices; doble clic o «Terminar polígono» para cerrarlo. Escape cancela.':
+    'Click on the map to add vertices; double-click or “Finish polygon” to close it. Escape cancels.',
+  'Mapa para dibujar el polígono. También puedes escribir los vértices en la tabla de más abajo.':
+    'Map to draw the polygon. You can also enter the vertices in the table below.',
+  'No se pudo cargar el mapa. Puedes seguir escribiendo los vértices en la tabla.':
+    'The map could not be loaded. You can keep entering the vertices in the table.',
   'Todavía no hay polígono.': 'There is no polygon yet.',
   '{0} vértices. {1}.': '{0} vertices. {1}.',
-  'Polígono válido: {0} vértices, unos {1} km² (aproximado).{2}': 'Valid polygon: {0} vertices, about {1} km² (approximate).{2}',
+  'Polígono válido: {0} vértices, unos {1} km² (aproximado).{2}':
+    'Valid polygon: {0} vertices, about {1} km² (approximate).{2}',
   'Borrar el polígono': 'Delete the polygon',
   '¿Quitar los {0} vértices del polígono?': 'Remove the {0} vertices of the polygon?',
   'Borrar': 'Delete',
   'Conservar': 'Keep',
   'Hacen falta al menos tres vértices distintos': 'At least three distinct vertices are needed',
-  'El polígono no encierra ninguna superficie: los vértices están alineados': 'The polygon does not enclose any area: the vertices are aligned',
+  'El polígono no encierra ninguna superficie: los vértices están alineados':
+    'The polygon does not enclose any area: the vertices are aligned',
   'Los lados {0} y {1} se cruzan': 'Sides {0} and {1} cross',
-  'Hay más de {0} vértices: no se comprueba si algún lado se cruza': 'There are more than {0} vertices: whether any sides cross is not checked',
+  'Hay más de {0} vértices: no se comprueba si algún lado se cruza':
+    'There are more than {0} vertices: whether any sides cross is not checked',
   'Azul': 'Blue',
   'Bermellón': 'Vermilion',
   'Verde': 'Green',
@@ -918,7 +974,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Latitud del vértice ': 'Latitude of vertex ',
   'Longitud del vértice ': 'Longitude of vertex ',
   'Quitar el vértice ': 'Remove vertex ',
-  'Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.': 'There are no vertices yet. Add at least three or draw the polygon on the map.',
+  'Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.':
+    'There are no vertices yet. Add at least three or draw the polygon on the map.',
   'Añadir vértice': 'Add vertex',
   'Obligatorio': 'Required',
   'Entre -90 y 90': 'Between -90 and 90',

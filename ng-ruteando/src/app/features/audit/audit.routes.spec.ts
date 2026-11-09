@@ -1,11 +1,19 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, CanActivateChildFn, CanActivateFn, Route, Router, RouterStateSnapshot, UrlTree, provideRouter } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivateChildFn,
+  CanActivateFn,
+  provideRouter,
+  Route,
+  Router,
+  RouterStateSnapshot,
+  UrlTree,
+} from '@angular/router';
 
 import { makeUser } from '../../../testing/session';
 import { routes } from '../../app.routes';
 import { CurrentUser } from '../../core/auth/current-user';
 import { UserRole } from '../../core/auth/session.model';
-
 import { AUDIT_ROUTES } from './audit.routes';
 
 describe('rutas de auditoría', () => {
@@ -32,8 +40,12 @@ describe('rutas de auditoría', () => {
 
   it('administradores y agentes entran', () => {
     for (const role of ['tenant_admin', 'super_admin', 'agent'] as const) {
-      expect(guard(audit.canActivate![0] as CanActivateFn, role)).withContext(role).toBeTrue();
-      expect(guard(audit.canActivateChild![0] as CanActivateChildFn, role)).withContext(role).toBeTrue();
+      expect(guard(audit.canActivate![0] as CanActivateFn, role))
+        .withContext(role)
+        .toBeTrue();
+      expect(guard(audit.canActivateChild![0] as CanActivateChildFn, role))
+        .withContext(role)
+        .toBeTrue();
     }
   });
 

@@ -62,13 +62,16 @@ function round(value: number, digits = 3): number {
   return Math.round(value * factor) / factor;
 }
 
-const fromStoredWeight = (stored: number | null): number | null => (stored === null ? null : round(stored / WEIGHT_UNITS_PER_KG));
+const fromStoredWeight = (stored: number | null): number | null =>
+  stored === null ? null : round(stored / WEIGHT_UNITS_PER_KG);
 const toStoredWeight = (kg: number | null): number | null => (kg === null ? null : round(kg * WEIGHT_UNITS_PER_KG));
 
 /** Volumen en cm³ de unas medidas, o `null` si falta alguna o no es mayor que 0. */
 export function volumeOfMeasures(measures: Pick<CapacityValues, 'width' | 'height' | 'depth'>): number | null {
   const { width, height, depth } = measures;
-  return width !== null && height !== null && depth !== null && width > 0 && height > 0 && depth > 0 ? round(width * height * depth) : null;
+  return width !== null && height !== null && depth !== null && width > 0 && height > 0 && depth > 0
+    ? round(width * height * depth)
+    : null;
 }
 
 /** El volumen que vale de verdad: el producto de las medidas en modo medidas, el escrito en modo volumen. */
@@ -125,7 +128,10 @@ export interface EncodedCapacity {
 export function encodeCapacity(values: CapacityValues, current: CapacitySource | null): EncodedCapacity {
   const measured = values.mode === 'measure';
   return {
-    capacity: mergeOpaque(current?.capacity ?? null, { weight: toStoredWeight(values.weight), volume: effectiveVolume(values) }),
+    capacity: mergeOpaque(current?.capacity ?? null, {
+      weight: toStoredWeight(values.weight),
+      volume: effectiveVolume(values),
+    }),
     // En modo volumen se quitan las medidas que hubiera
     measure: mergeOpaque(current?.measure ?? null, {
       width: measured ? values.width : null,

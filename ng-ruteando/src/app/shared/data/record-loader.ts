@@ -2,8 +2,8 @@ import { DestroyRef, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiError } from '../../core/api/api-error';
-
 import { t } from '../../core/i18n/i18n';
+
 export type RecordStatus = 'new' | 'loading' | 'ready' | 'missing' | 'error';
 
 export const RECORD_GONE = t('El registro ya no existe');
@@ -21,7 +21,7 @@ export class RecordLoader<T> {
 
   constructor(
     private readonly id: string | null,
-    private readonly fetch: (id: string) => Observable<T>,
+    private readonly fetch: (id: string) => Observable<T>
   ) {}
 
   /** `onLoaded` recibe el registro para rellenar el formulario. */

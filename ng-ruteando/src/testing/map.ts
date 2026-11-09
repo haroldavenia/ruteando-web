@@ -1,7 +1,8 @@
 import { MapConfig } from '../app/shared/map/map-config';
 
 /** Teselas de prueba: una imagen incrustada, para no pedir nada a la red. */
-const PIXEL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+const PIXEL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
 export const TEST_MAP_CONFIG: MapConfig = {
   tilesUrl: PIXEL,

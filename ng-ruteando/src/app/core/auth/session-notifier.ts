@@ -1,9 +1,8 @@
-import { Injectable, Injector, inject } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { SessionRefreshService } from './session-refresh.service';
-
 import { t } from '../i18n/i18n';
+import { SessionRefreshService } from './session-refresh.service';
 /** Avisa al usuario cuando la sesión caduca y no se puede renovar. Se instancia al inyectarlo. */
 @Injectable({ providedIn: 'root' })
 export class SessionExpiredNotifier {

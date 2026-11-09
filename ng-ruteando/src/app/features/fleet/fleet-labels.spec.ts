@@ -1,4 +1,12 @@
-import { IDENTIFIER_KEYS, IDENTIFIER_LABELS, capacitySummary, driverName, identifierLabel, identifierText, vehicleLabel } from './fleet-labels';
+import {
+  capacitySummary,
+  driverName,
+  IDENTIFIER_KEYS,
+  IDENTIFIER_LABELS,
+  identifierLabel,
+  identifierText,
+  vehicleLabel,
+} from './fleet-labels';
 
 describe('fleet-labels', () => {
   describe('identifierLabel', () => {
@@ -18,7 +26,9 @@ describe('fleet-labels', () => {
 
   describe('identifierText', () => {
     it('junta el tipo y el número', () => {
-      expect(identifierText({ identifierType: 'citizen_id', identifierValue: '1020304050' })).toBe('Documento de identidad 1020304050');
+      expect(identifierText({ identifierType: 'citizen_id', identifierValue: '1020304050' })).toBe(
+        'Documento de identidad 1020304050'
+      );
     });
 
     it('sin tipo muestra solo el número y sin número no muestra nada', () => {
@@ -30,11 +40,15 @@ describe('fleet-labels', () => {
 
   describe('capacitySummary', () => {
     it('resume el peso en kg y el volumen en m³', () => {
-      expect(capacitySummary({ capacity: { weight: 500, volume: 12_000_000 }, measure: null, restriction: null })).toBe('500 kg · 12 m³');
+      expect(capacitySummary({ capacity: { weight: 500, volume: 12_000_000 }, measure: null, restriction: null })).toBe(
+        '500 kg · 12 m³'
+      );
     });
 
     it('usa decimales con coma cuando hacen falta, sin separador de miles', () => {
-      expect(capacitySummary({ capacity: { weight: 1200.5, volume: 7_956_000 }, measure: null, restriction: null })).toBe('1200,5 kg · 7,96 m³');
+      expect(
+        capacitySummary({ capacity: { weight: 1200.5, volume: 7_956_000 }, measure: null, restriction: null })
+      ).toBe('1200,5 kg · 7,96 m³');
     });
 
     it('sin datos dice «Sin capacidad»', () => {

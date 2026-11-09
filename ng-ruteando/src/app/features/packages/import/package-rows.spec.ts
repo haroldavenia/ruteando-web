@@ -1,18 +1,16 @@
+import list from '../../../../testing/fixtures/gateway/get__packages.json';
+import { Package } from '../../../core/api/models';
 import { parseCsv } from '../../../shared/data/csv';
 import { packagesToCsv } from '../package-export';
-import { Package } from '../../../core/api/models';
-
 import {
   IMPORT_COLUMNS,
-  MAX_TEXT_LENGTH,
-  ValidationResult,
   importErrorsCsv,
+  MAX_TEXT_LENGTH,
   normalizeHeader,
   packageTemplateCsv,
   validateRows,
+  ValidationResult,
 } from './package-rows';
-
-import list from '../../../../testing/fixtures/gateway/get__packages.json';
 
 const validate = (csv: string): ValidationResult => validateRows(parseCsv(csv));
 const HEADER = 'DIRECCION;LONGITUD;LATITUD';
@@ -43,7 +41,7 @@ describe('package-rows', () => {
     it('lee todas las columnas opcionales', () => {
       const result = validate(
         'ID_GUIA;NOMBRE;SERVICIO;DIRECCION;CIUDAD;PAIS;CODIGO_POSTAL;LONGITUD;LATITUD;PESO;VOLUMEN;PIEZAS;OBSERVACION\n' +
-          'G-9;Ana;Recogida;Calle 9;Bogotá;Colombia;110231;-74,1;4,7;2.5;0,3;3;Llamar',
+          'G-9;Ana;Recogida;Calle 9;Bogotá;Colombia;110231;-74,1;4,7;2.5;0,3;3;Llamar'
       );
       expect(result.errors).toEqual([]);
       expect(result.valid[0].input).toEqual({
@@ -153,7 +151,14 @@ describe('package-rows', () => {
     it('el tipo de servicio acepta entrega, recogida y mixto (o sus claves) y rechaza lo demás', () => {
       const types = ['entrega', 'Recogida', 'MIXTO', 'delivery', 'pickup', 'mixed', 'Envío'];
       const result = validate(`${HEADER};SERVICIO\n${types.map((t) => `A;-74;4;${t}`).join('\n')}`);
-      expect(result.valid.map((r) => r.input.serviceType)).toEqual(['delivery', 'pickup', 'mixed', 'delivery', 'pickup', 'mixed']);
+      expect(result.valid.map((r) => r.input.serviceType)).toEqual([
+        'delivery',
+        'pickup',
+        'mixed',
+        'delivery',
+        'pickup',
+        'mixed',
+      ]);
       expect(result.errors.map((e) => e.line)).toEqual([8]);
     });
 
@@ -171,7 +176,9 @@ describe('package-rows', () => {
     });
 
     it('un texto de más de 500 caracteres rechaza la fila', () => {
-      const result = validate(`${HEADER};OBSERVACION\nA;-74;4;${'x'.repeat(MAX_TEXT_LENGTH + 1)}\nB;-74;4;${'x'.repeat(MAX_TEXT_LENGTH)}`);
+      const result = validate(
+        `${HEADER};OBSERVACION\nA;-74;4;${'x'.repeat(MAX_TEXT_LENGTH + 1)}\nB;-74;4;${'x'.repeat(MAX_TEXT_LENGTH)}`
+      );
       expect(result.errors.map((e) => `${e.line}:${e.field}`)).toEqual(['2:OBSERVACION']);
       expect(result.valid.length).toBe(1);
     });
@@ -221,7 +228,9 @@ describe('package-rows', () => {
     });
 
     it('el informe empieza por BOM, usa ; y protege las fórmulas', () => {
-      const csv = importErrorsCsv([{ line: 7, field: 'DIRECCION', message: 'La dirección es obligatoria', original: ['=1+1', '-74', '4'] }]);
+      const csv = importErrorsCsv([
+        { line: 7, field: 'DIRECCION', message: 'La dirección es obligatoria', original: ['=1+1', '-74', '4'] },
+      ]);
       expect(csv.charCodeAt(0)).toBe(0xfeff);
       const rows = parseCsv(csv).rows;
       expect(rows[0]).toEqual(['LINEA', 'CAMPO', 'MOTIVO', 'FILA ORIGINAL']);

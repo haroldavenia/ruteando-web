@@ -1,16 +1,16 @@
-import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import { Injectable, NgZone, PLATFORM_ID, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable, NgZone, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Observable, catchError, firstValueFrom, map, of, tap } from 'rxjs';
+import { catchError, firstValueFrom, map, Observable, of, tap } from 'rxjs';
 
 import { API_BASE_URL } from '../api/api-config';
 import { REFRESH_MARGIN_MS } from '../api/refresh.interceptor';
+import { linkErrors, loginErrors, registerErrors } from './auth-messages';
 import { CurrentUser } from './current-user';
-import { SessionRefreshService } from './session-refresh.service';
-import { loginErrors, linkErrors, registerErrors } from './auth-messages';
 import { MessageResponse, RegisterRequest, RegisterResponse, SessionResponse, UserProfile } from './session.model';
+import { SessionRefreshService } from './session-refresh.service';
 import { TokenStorageService } from './token-storage.service';
 
 /**
@@ -72,7 +72,7 @@ export class AuthService {
     return this.http.post<MessageResponse>(
       `${this.baseUrl}/auth/reset-password`,
       { token, newPassword },
-      { context: linkErrors() },
+      { context: linkErrors() }
     );
   }
 
@@ -93,14 +93,14 @@ export class AuthService {
     const notified$: Observable<void> = refreshToken
       ? this.http.post<MessageResponse>(`${this.baseUrl}/auth/logout`, { refreshToken }).pipe(
           map(() => undefined),
-          catchError(() => of(undefined)),
+          catchError(() => of(undefined))
         )
       : of(undefined);
     return notified$.pipe(
       tap(() => {
         this.endSession();
         void this.router.navigate(['/acceso']);
-      }),
+      })
     );
   }
 
@@ -150,7 +150,7 @@ export class AuthService {
       setTimeout(() => {
         this.refreshTimer = null;
         this.zone.run(() => this.refresher.refresh().subscribe({ error: () => this.refresher.expireSession() }));
-      }, delay),
+      }, delay)
     );
   }
 

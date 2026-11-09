@@ -40,7 +40,9 @@ describe('CityMapComponent', () => {
   it('cada ruta pide el par claro y oscuro de su color (`light-dark()`)', () => {
     const groups = Array.from(root().querySelectorAll('svg > g[style]'));
     expect(groups.length).toBe(3);
-    expect(groups.every((g) => /--c:\s*light-dark\(#[0-9A-F]{6}, #[0-9A-F]{6}\)/i.test(g.getAttribute('style') ?? ''))).toBeTrue();
+    expect(
+      groups.every((g) => /--c:\s*light-dark\(#[0-9A-F]{6}, #[0-9A-F]{6}\)/i.test(g.getAttribute('style') ?? ''))
+    ).toBeTrue();
   });
 
   it('no pide imágenes ni recursos externos', () => {
@@ -54,7 +56,10 @@ describe('CityMapComponent', () => {
     wrap.appendChild(root());
     const read = (scheme: string) => {
       wrap.style.colorScheme = scheme;
-      return [getComputedStyle(root().querySelector('.land')!).fill, getComputedStyle(root().querySelector('.route')!).stroke];
+      return [
+        getComputedStyle(root().querySelector('.land')!).fill,
+        getComputedStyle(root().querySelector('.route')!).stroke,
+      ];
     };
     const light = read('light');
     const dark = read('dark');
@@ -64,7 +69,9 @@ describe('CityMapComponent', () => {
   });
 
   it('la animación es de entrada y se desactiva con movimiento reducido', () => {
-    const css = Array.from(document.querySelectorAll('style')).map((s) => s.textContent ?? '').join('\n');
+    const css = Array.from(document.querySelectorAll('style'))
+      .map((s) => s.textContent ?? '')
+      .join('\n');
     expect(css).toMatch(/@media \(prefers-reduced-motion: no-preference\)[\s\S]*animation: draw/);
     expect(getComputedStyle(root().querySelector('.route')!).strokeDasharray).toMatch(/^1(px)?$/);
   });

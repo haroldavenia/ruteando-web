@@ -4,16 +4,25 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import list from '../../../testing/fixtures/gateway/get__packages.json';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
-
 import { PackagePickerComponent } from './package-picker.component';
 
-import list from '../../../testing/fixtures/gateway/get__packages.json';
-
-type Item = { id: string; name: string; guideNumber: string | null; status: string };
-const base = (list.response.body.content[0]) as unknown as Item;
-const item = (n: number, status = 'pending'): Item => ({ ...base, id: `id${n}`, name: `P${n}`, guideNumber: `G-${n}`, status });
+interface Item {
+  id: string;
+  name: string;
+  guideNumber: string | null;
+  status: string;
+}
+const base = list.response.body.content[0] as unknown as Item;
+const item = (n: number, status = 'pending'): Item => ({
+  ...base,
+  id: `id${n}`,
+  name: `P${n}`,
+  guideNumber: `G-${n}`,
+  status,
+});
 const page = (items: Item[], number: number, total: number, size = 20) => ({
   content: items,
   page: number,
@@ -27,8 +36,10 @@ describe('PackagePickerComponent', () => {
   let http: HttpTestingController;
   const root = () => fixture.nativeElement as HTMLElement;
   const selected = () => fixture.componentInstance.selectedIds();
-  const checkbox = (label: string) => root().querySelector(`input[type="checkbox"][aria-label="${label}"]`) as HTMLInputElement | null;
-  const button = (text: string) => (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
+  const checkbox = (label: string) =>
+    root().querySelector(`input[type="checkbox"][aria-label="${label}"]`) as HTMLInputElement | null;
+  const button = (text: string) =>
+    (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
   const firstPage = () => http.expectOne((r) => r.url === '/gateway/packages' && r.params.get('size') === '20');
 
   beforeEach(() => {
@@ -121,7 +132,9 @@ describe('PackagePickerComponent', () => {
     all.flush(page([item(1), item(2, 'attended')], 0, 3, 2));
     fixture.detectChanges();
     expect(root().textContent).toContain('Buscando paquetes pendientes… 2 de 3');
-    http.expectOne((r) => r.params.get('size') === '200' && r.params.get('page') === '1').flush(page([item(3), item(4, 'cancelled')], 1, 3, 2));
+    http
+      .expectOne((r) => r.params.get('size') === '200' && r.params.get('page') === '1')
+      .flush(page([item(3), item(4, 'cancelled')], 1, 3, 2));
     fixture.detectChanges();
 
     expect(selected().sort()).toEqual(['id1', 'id3']);
@@ -162,7 +175,9 @@ describe('PackagePickerComponent', () => {
     firstPage().flush(page([item(1)], 0, 1));
     fixture.detectChanges();
     button('Seleccionar todos los pendientes').click();
-    http.expectOne((r) => r.params.get('size') === '200').flush({ message: 'x' }, { status: 500, statusText: 'Server Error' });
+    http
+      .expectOne((r) => r.params.get('size') === '200')
+      .flush({ message: 'x' }, { status: 500, statusText: 'Server Error' });
     fixture.detectChanges();
     expect(root().querySelector('[role="alert"]')?.textContent).toContain('No se pudieron cargar todos los paquetes');
     expect(selected()).toEqual([]);

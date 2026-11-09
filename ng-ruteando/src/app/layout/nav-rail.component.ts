@@ -5,11 +5,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
-import { BrandComponent } from '../shared/brand/brand.component';
-
-import { NavItem } from './nav-items';
-
 import { TranslatePipe } from '../core/i18n/translate.pipe';
+import { BrandComponent } from '../shared/brand/brand.component';
+import { NavItem } from './nav-items';
 /**
  * Riel de iconos de las pantallas anchas: la marca arriba y una entrada por área, con su icono sobre su nombre. Una sección con
  * varias entradas (Flota) es un botón que abre un menú con ellas. La entrada activa se distingue con fondo propio, con el hilo
@@ -76,16 +74,23 @@ export class NavRailComponent {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map(() => this.router.url),
-      startWith(this.router.url),
+      startWith(this.router.url)
     ),
-    { initialValue: this.router.url },
+    { initialValue: this.router.url }
   );
 
   /** La sección (Flota) está activa cuando lo está cualquiera de sus entradas. */
   protected groupActive(item: NavItem): boolean {
     this.url();
     return (item.children ?? []).some((child) =>
-      child.link ? this.router.isActive(child.link, { paths: 'subset', queryParams: 'ignored', fragment: 'ignored', matrixParams: 'ignored' }) : false,
+      child.link
+        ? this.router.isActive(child.link, {
+            paths: 'subset',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          })
+        : false
     );
   }
 }

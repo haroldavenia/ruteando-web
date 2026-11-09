@@ -1,4 +1,13 @@
-import { MAX_SHIFT_MINUTES, fromUtcIso, localDateOf, minutesToSeconds, secondsToMinutes, shiftErrors, toUtcIso, todayLocalDate } from './shift-time';
+import {
+  fromUtcIso,
+  localDateOf,
+  MAX_SHIFT_MINUTES,
+  minutesToSeconds,
+  secondsToMinutes,
+  shiftErrors,
+  todayLocalDate,
+  toUtcIso,
+} from './shift-time';
 
 /** Huso (minutos respecto a UTC) con un ejemplo de lugar. */
 const ZONES: [string, number][] = [

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { firstErrorMessage } from '../../../shared/form/access.messages';
-import { PASSWORD_MIN_LENGTH, matchesSibling, revalidateOnPasswordChange } from './form-utils';
+import { matchesSibling, PASSWORD_MIN_LENGTH, revalidateOnPasswordChange } from './form-utils';
 
 @Component({ template: '' })
 class HostComponent {

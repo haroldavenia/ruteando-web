@@ -7,10 +7,9 @@ import { AUDIT_FIXTURE_LOGS, auditLog, gatewayAuditPage, localIso } from '../../
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { AuditLog } from '../../core/api/models';
-
+import { AuditStore } from './audit.store';
 import { AuditFilters, EMPTY_FILTERS } from './audit-filters';
 import { AuditViewState, FORBIDDEN_MESSAGE } from './audit-view-state';
-import { AuditStore } from './audit.store';
 
 describe('AuditStore y AuditViewState', () => {
   let http: HttpTestingController;
@@ -51,7 +50,9 @@ describe('AuditStore y AuditViewState', () => {
       http.expectOne('/gateway/audit-logs/me?page=0&size=100').flush(gatewayAuditPage([auditLog()]));
       expect(store.events().length).toBe(1);
       store.open('todas', 'abc123');
-      http.expectOne('/gateway/audit-logs/admin?page=0&size=100&tenantId=abc123').flush(gatewayAuditPage([auditLog(), auditLog()]));
+      http
+        .expectOne('/gateway/audit-logs/admin?page=0&size=100&tenantId=abc123')
+        .flush(gatewayAuditPage([auditLog(), auditLog()]));
       expect(store.events().length).toBe(2);
       store.open('empresa', '');
       http.expectOne(page(0)).flush(gatewayAuditPage([]));

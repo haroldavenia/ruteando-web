@@ -1,8 +1,21 @@
 import { EN } from './dictionaries/en';
 import { PT } from './dictionaries/pt';
-import { DEFAULT_LANGUAGE, LANGUAGES, LANGUAGE_STORAGE_KEY, language, locale, setDictionary, t, useLanguage } from './i18n';
+import {
+  DEFAULT_LANGUAGE,
+  language,
+  LANGUAGE_STORAGE_KEY,
+  LANGUAGES,
+  locale,
+  setDictionary,
+  t,
+  useLanguage,
+} from './i18n';
 
-const markers = (text: string): string => [...text.matchAll(/\{\d+\}/g)].map((m) => m[0]).sort().join('');
+const markers = (text: string): string =>
+  [...text.matchAll(/\{\d+\}/g)]
+    .map((m) => m[0])
+    .sort()
+    .join('');
 
 describe('i18n', () => {
   afterEach(() => {
@@ -105,7 +118,9 @@ describe('i18n', () => {
       });
 
       it(`el diccionario ${name} conserva los espacios del principio y del final (se usan al componer frases)`, () => {
-        const broken = Object.entries(dictionary).filter(([key, value]) => /^\s/.test(key) !== /^\s/.test(value) || /\s$/.test(key) !== /\s$/.test(value));
+        const broken = Object.entries(dictionary).filter(
+          ([key, value]) => /^\s/.test(key) !== /^\s/.test(value) || /\s$/.test(key) !== /\s$/.test(value)
+        );
         expect(broken).toEqual([]);
       });
     }

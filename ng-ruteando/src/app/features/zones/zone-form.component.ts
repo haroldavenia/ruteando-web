@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, inject, Injector, signal } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ZonesApi } from '../../core/api/data/zones.api';
 import { Zone, ZoneInput } from '../../core/api/models';
 import { LatLng } from '../../core/geo/lat-lng';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RecordLoader } from '../../shared/data/record-loader';
 import { SubmitState } from '../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../shared/data/unsaved-changes.guard';
@@ -19,11 +20,16 @@ import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
 import { PolygonEditorComponent } from '../../shared/map/polygon-editor.component';
-import { isValidPolygon, polygonIssueMessage, ringFromVertices, validatePolygon, verticesFromRing } from '../../shared/map/polygon-geometry';
-import { ROUTE_COLORS, ROUTE_COLOR_NAMES } from '../../shared/map/route-colors';
+import {
+  isValidPolygon,
+  polygonIssueMessage,
+  ringFromVertices,
+  validatePolygon,
+  verticesFromRing,
+} from '../../shared/map/polygon-geometry';
+import { ROUTE_COLOR_NAMES, ROUTE_COLORS } from '../../shared/map/route-colors';
+import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const DUPLICATE_CODE = t('Ya existe una zona con ese código');
 export const MAX_CODE_LENGTH = 20;
 const READ_ONLY_FIELDS: readonly (keyof Zone)[] = ['id', 'tenantId', 'createdAt', 'updatedAt'];
@@ -40,7 +46,8 @@ function codeValidator(control: AbstractControl): ValidationErrors | null {
   return value.length > MAX_CODE_LENGTH ? { tooLong: true } : null;
 }
 
-const nameValidator = (control: AbstractControl): ValidationErrors | null => (String(control.value ?? '').trim() === '' ? { required: true } : null);
+const nameValidator = (control: AbstractControl): ValidationErrors | null =>
+  String(control.value ?? '').trim() === '' ? { required: true } : null;
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
   required: t('Este campo es obligatorio'),
@@ -59,7 +66,21 @@ export function buildZoneUpdateBody(record: Zone, edited: Partial<ZoneInput>): P
 
 @Component({
   selector: 'app-zone-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, SkeletonComponent, FocusFirstInvalidDirective, FormActionsComponent, FormHeadComponent, FormResultComponent, MatIconModule, PolygonEditorComponent, TranslatePipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    SkeletonComponent,
+    FocusFirstInvalidDirective,
+    FormActionsComponent,
+    FormHeadComponent,
+    FormResultComponent,
+    MatIconModule,
+    PolygonEditorComponent,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './zone-form.component.html',
   styleUrl: './zone-form.component.scss',
@@ -150,7 +171,7 @@ export class ZoneFormComponent implements HasUnsavedChanges {
         void notify(this.injector, this.id === null ? t('Zona creada') : t('Zona guardada'));
         void this.router.navigateByUrl('/zonas');
       },
-      { 409: DUPLICATE_CODE },
+      { 409: DUPLICATE_CODE }
     );
   }
 }

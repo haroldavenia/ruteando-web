@@ -42,12 +42,18 @@
 <mat-dialog-actions class="audit-dialog-actions">
   @if (loader.status() === 'ready') {
     @if (target(); as entityLink) {
-      <a mat-flat-button class="primary-action" [routerLink]="entityLink.commands" (click)="close()"><mat-icon aria-hidden="true">open_in_new</mat-icon>{{ entityLink.label }}</a>
+      <a mat-flat-button class="primary-action" [routerLink]="entityLink.commands" (click)="close()"
+        ><mat-icon aria-hidden="true">open_in_new</mat-icon>{{ entityLink.label }}</a
+      >
     } @else if (deleted()) {
       <p class="audit-note"><mat-icon aria-hidden="true">delete</mat-icon>{{ 'Esta entidad fue eliminada' | t }}</p>
     }
-    <button mat-stroked-button type="button" (click)="showEntityEvents()"><mat-icon aria-hidden="true">manage_search</mat-icon>{{ 'Ver eventos de esta entidad' | t }}</button>
-    <button mat-stroked-button type="button" (click)="copy(link(), 'Enlace')"><mat-icon aria-hidden="true">link</mat-icon>{{ 'Copiar enlace' | t }}</button>
+    <button mat-stroked-button type="button" (click)="showEntityEvents()">
+      <mat-icon aria-hidden="true">manage_search</mat-icon>{{ 'Ver eventos de esta entidad' | t }}
+    </button>
+    <button mat-stroked-button type="button" (click)="copy(link(), 'Enlace')">
+      <mat-icon aria-hidden="true">link</mat-icon>{{ 'Copiar enlace' | t }}
+    </button>
   }
   <button mat-button type="button" (click)="close()">{{ 'Cerrar' | t }}</button>
 </mat-dialog-actions>

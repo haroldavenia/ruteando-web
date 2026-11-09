@@ -1,6 +1,5 @@
 import { AUDIT_FIXTURE_LOGS, auditLog, localIso, localTime } from '../../../testing/audit';
-
-import { DAILY_LIMIT, WEEKLY_LIMIT, activityByDay, kindShares, summarize } from './audit-stats';
+import { activityByDay, DAILY_LIMIT, kindShares, summarize, WEEKLY_LIMIT } from './audit-stats';
 
 describe('audit-stats', () => {
   describe('summarize', () => {
@@ -65,7 +64,15 @@ describe('audit-stats', () => {
       ];
       const buckets = activityByDay(rows, { range: '7d', from: null, to: null }, now);
       expect(buckets.length).toBe(7);
-      expect(buckets.map((b) => b.from)).toEqual(['2026-10-06', '2026-10-07', '2026-10-08', '2026-10-09', '2026-10-10', '2026-10-11', '2026-10-12']);
+      expect(buckets.map((b) => b.from)).toEqual([
+        '2026-10-06',
+        '2026-10-07',
+        '2026-10-08',
+        '2026-10-09',
+        '2026-10-10',
+        '2026-10-11',
+        '2026-10-12',
+      ]);
       expect(buckets.map((b) => b.count)).toEqual([0, 0, 1, 0, 0, 0, 2]);
       expect(buckets.map((b) => b.partial)).toEqual([false, false, false, false, false, false, true]);
       expect(buckets.every((b) => !b.weekly && b.from === b.to)).toBeTrue();

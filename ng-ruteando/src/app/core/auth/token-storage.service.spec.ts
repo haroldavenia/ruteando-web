@@ -13,7 +13,7 @@ function newService(platform: 'browser' | 'server' = 'browser'): TokenStorageSer
 
 function storedValues(): string[] {
   return [localStorage, sessionStorage].flatMap((storage) =>
-    Object.keys(storage).map((key) => `${key}=${storage.getItem(key)}`),
+    Object.keys(storage).map((key) => `${key}=${storage.getItem(key)}`)
   );
 }
 

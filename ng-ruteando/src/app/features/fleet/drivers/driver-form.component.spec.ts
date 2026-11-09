@@ -2,16 +2,14 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../../testing/api-testing';
+import get from '../../../../testing/fixtures/gateway/get__users__id.json';
+import create from '../../../../testing/fixtures/gateway/post__users.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
-
 import { DriverFormComponent } from './driver-form.component';
-
-import create from '../../../../testing/fixtures/gateway/post__users.json';
-import get from '../../../../testing/fixtures/gateway/get__users__id.json';
 
 describe('DriverFormComponent', () => {
   let fixture: ComponentFixture<DriverFormComponent>;
@@ -28,7 +26,12 @@ describe('DriverFormComponent', () => {
         { provide: API_BASE_URL, useValue: '/gateway' },
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id ? { id } : {}), queryParamMap: convertToParamMap({}) } } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: { paramMap: convertToParamMap(id ? { id } : {}), queryParamMap: convertToParamMap({}) },
+          },
+        },
       ],
     });
     http = TestBed.inject(HttpTestingController);
@@ -190,7 +193,9 @@ describe('DriverFormComponent', () => {
 
     it('muestra el documento guardado y, sin tocarlo, lo reenvía al guardar', () => {
       setup(user.id);
-      http.expectOne(`/gateway/users/${user.id}`).flush({ ...user, identifierType: 'citizen_id', identifierValue: '1020304050' });
+      http
+        .expectOne(`/gateway/users/${user.id}`)
+        .flush({ ...user, identifierType: 'citizen_id', identifierValue: '1020304050' });
       fixture.detectChanges();
 
       expect(field('[formcontrolname="identifierValue"]')!.value).toBe('1020304050');
@@ -204,7 +209,9 @@ describe('DriverFormComponent', () => {
 
     it('un tipo de documento que el dominio maestro no tiene se conserva y se ofrece', () => {
       setup(user.id);
-      http.expectOne(`/gateway/users/${user.id}`).flush({ ...user, identifierType: 'passport', identifierValue: 'P123' });
+      http
+        .expectOne(`/gateway/users/${user.id}`)
+        .flush({ ...user, identifierType: 'passport', identifierValue: 'P123' });
       fixture.detectChanges();
 
       expect(fixture.componentInstance['documentTypes']().map((t: { key: string }) => t.key)).toContain('passport');
@@ -216,7 +223,9 @@ describe('DriverFormComponent', () => {
 
     it('vaciar el documento lo borra (null) en lugar de dejarlo', () => {
       setup(user.id);
-      http.expectOne(`/gateway/users/${user.id}`).flush({ ...user, identifierType: 'citizen_id', identifierValue: '1020' });
+      http
+        .expectOne(`/gateway/users/${user.id}`)
+        .flush({ ...user, identifierType: 'citizen_id', identifierValue: '1020' });
       fixture.detectChanges();
 
       fixture.componentInstance['form'].controls.identifierType.setValue('');

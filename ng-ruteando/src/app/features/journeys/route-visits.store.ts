@@ -1,15 +1,22 @@
-import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription, catchError, finalize, map, mergeMap, of, from } from 'rxjs';
+import { catchError, finalize, from, map, mergeMap, of, Subscription } from 'rxjs';
 
 import { PackagesApi } from '../../core/api/data/packages.api';
 import { DomainWaypoint, Package } from '../../core/api/models';
-import { messageFor } from '../../shared/data/api-messages';
-import { changePackageStatus } from '../packages/package-status-change';
-import { packageStatusLabel } from '../packages/package-labels';
-
-import { NO_FILTERS, RouteVisit, VisitFilters, filterVisits, hasFilters, visitProgress, visitsOf } from './route-visit-filters';
 import { t } from '../../core/i18n/i18n';
+import { messageFor } from '../../shared/data/api-messages';
+import { packageStatusLabel } from '../packages/package-labels';
+import { changePackageStatus } from '../packages/package-status-change';
+import {
+  filterVisits,
+  hasFilters,
+  NO_FILTERS,
+  RouteVisit,
+  VisitFilters,
+  visitProgress,
+  visitsOf,
+} from './route-visit-filters';
 
 /** Paquetes que se piden a la vez: el gateway no tiene un endpoint por lotes. */
 export const VISITS_CONCURRENCY = 6;
@@ -62,10 +69,10 @@ export class RouteVisitsStore {
           (id) =>
             this.api.get(id).pipe(
               map((pkg) => ({ id, pkg })),
-              catchError(() => of({ id, pkg: null })),
+              catchError(() => of({ id, pkg: null }))
             ),
-          VISITS_CONCURRENCY,
-        ),
+          VISITS_CONCURRENCY
+        )
       )
       .subscribe(({ id, pkg }) => this.patch(id, { state: pkg ? 'ready' : 'unavailable', pkg }));
   }
@@ -103,7 +110,9 @@ export class RouteVisitsStore {
       .subscribe({
         next: (updated: Package) => {
           this.patch(visit.packageId, { pkg: { ...visit.pkg, ...updated, status: updated.status ?? status } });
-          this.success.set(t('La visita «{0}» ahora está {1}', [this.label(visit), packageStatusLabel(status).toLowerCase()]));
+          this.success.set(
+            t('La visita «{0}» ahora está {1}', [this.label(visit), packageStatusLabel(status).toLowerCase()])
+          );
         },
         error: (err: unknown) => this.error.set(messageFor(err)),
       });

@@ -5,7 +5,6 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { LANGUAGE_STORAGE_KEY } from '../../core/i18n/i18n';
 import { PAGE_RELOAD, SWITCH_ANIMATION } from '../../core/i18n/language.service';
-
 import { LanguageToggleComponent } from './language-toggle.component';
 
 describe('LanguageToggleComponent', () => {
@@ -17,7 +16,11 @@ describe('LanguageToggleComponent', () => {
   function render(variant: 'segmented' | 'menu' = 'segmented'): void {
     reload = jasmine.createSpy('reload');
     TestBed.configureTestingModule({
-      providers: [provideNoopAnimations(), { provide: PAGE_RELOAD, useValue: reload }, { provide: SWITCH_ANIMATION, useValue: false }],
+      providers: [
+        provideNoopAnimations(),
+        { provide: PAGE_RELOAD, useValue: reload },
+        { provide: SWITCH_ANIMATION, useValue: false },
+      ],
     });
     fixture = TestBed.createComponent(LanguageToggleComponent);
     fixture.componentRef.setInput('variant', variant);
@@ -66,7 +69,9 @@ describe('LanguageToggleComponent', () => {
     });
 
     it('otras teclas no hacen nada', () => {
-      root().querySelector('[role="radiogroup"]')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
+      root()
+        .querySelector('[role="radiogroup"]')!
+        .dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
       expect(reload).not.toHaveBeenCalled();
     });
   });
@@ -90,7 +95,11 @@ describe('LanguageToggleComponent', () => {
 
       const overlay = TestBed.inject(OverlayContainer).getContainerElement();
       const items = Array.from(overlay.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]'));
-      expect(items.map((i) => i.querySelector('.name')?.textContent?.trim())).toEqual(['English', 'Español', 'Português']);
+      expect(items.map((i) => i.querySelector('.name')?.textContent?.trim())).toEqual([
+        'English',
+        'Español',
+        'Português',
+      ]);
       expect(items.map((i) => i.getAttribute('aria-checked'))).toEqual(['false', 'true', 'false']);
 
       items[0].click();

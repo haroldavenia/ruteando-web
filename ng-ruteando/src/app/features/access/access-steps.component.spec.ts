@@ -12,7 +12,7 @@ describe('AccessStepsComponent', () => {
   });
 
   it('cuenta el camino hasta la primera jornada en tres pasos, con su título y la palabra «minutos» destacada', () => {
-    expect(root().querySelector('.title')?.textContent).toBe('Tu primera jornada, en minutos.');
+    expect(root().querySelector('.title')?.textContent?.trim()).toBe('Tu primera jornada, en minutos.');
     expect(Array.from(root().querySelectorAll('.accent')).map((el) => el.textContent)).toEqual(['minutos']);
     expect(Array.from(root().querySelectorAll('li b')).map((el) => el.textContent)).toEqual([
       'Crea tu cuenta',
@@ -29,11 +29,19 @@ describe('AccessStepsComponent', () => {
   it('es una lista ordenada y los números son decorativos: el orden ya lo dice la lista', () => {
     expect(root().querySelector('ol')).not.toBeNull();
     expect(root().querySelectorAll('li').length).toBe(3);
-    expect(Array.from(root().querySelectorAll('.n')).map((el) => el.getAttribute('aria-hidden'))).toEqual(['true', 'true', 'true']);
+    expect(Array.from(root().querySelectorAll('.n')).map((el) => el.getAttribute('aria-hidden'))).toEqual([
+      'true',
+      'true',
+      'true',
+    ]);
   });
 
   it('solo el primer paso, en el que está la persona, lleva el hilo de la marca', () => {
-    expect(Array.from(root().querySelectorAll('li')).map((li) => li.classList.contains('now'))).toEqual([true, false, false]);
+    expect(Array.from(root().querySelectorAll('li')).map((li) => li.classList.contains('now'))).toEqual([
+      true,
+      false,
+      false,
+    ]);
   });
 
   it('es una tarjeta de presentación y no hay nada enfocable', () => {

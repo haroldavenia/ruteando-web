@@ -1,4 +1,4 @@
-import { Observable, map, of, switchMap } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { Journey } from '../../core/api/models';
@@ -39,7 +39,7 @@ function isAscending(items: readonly Pick<Journey, 'createdAt'>[]): boolean {
  */
 export function fetchLatestJourneys(
   list: (params: PageParams) => Observable<Page<Journey>>,
-  count = LATEST_COUNT,
+  count = LATEST_COUNT
 ): Observable<Journey[]> {
   return list({ page: 0, size: count }).pipe(
     switchMap((first) => {
@@ -52,9 +52,11 @@ export function fetchLatestJourneys(
         switchMap((last) =>
           last.content.length >= count || lastIndex === 0
             ? of(latestJourneys(last.content, count))
-            : list({ page: lastIndex - 1, size: count }).pipe(map((previous) => latestJourneys([...previous.content, ...last.content], count))),
-        ),
+            : list({ page: lastIndex - 1, size: count }).pipe(
+                map((previous) => latestJourneys([...previous.content, ...last.content], count))
+              )
+        )
       );
-    }),
+    })
   );
 }

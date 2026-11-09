@@ -1,29 +1,27 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  ElementRef,
-  PLATFORM_ID,
-  afterNextRender,
   effect,
+  ElementRef,
   inject,
   input,
   output,
+  PLATFORM_ID,
   signal,
   viewChild,
 } from '@angular/core';
 import type OlMap from 'ol/Map';
 
 import { LatLng, latLng, toOlCoordinate } from '../../core/geo/lat-lng';
-import { ThemeService } from '../../core/theme/theme.service';
-
-import { MAP_CONFIG } from './map-config';
-import { readMapPalette } from './map-palette';
-import { OPENLAYERS_LOADER, OpenLayers } from './openlayers';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ThemeService } from '../../core/theme/theme.service';
+import { MAP_CONFIG } from './map-config';
+import { readMapPalette } from './map-palette';
+import { OpenLayers, OPENLAYERS_LOADER } from './openlayers';
 /** Redondea a 6 decimales (~10 cm) y lleva la longitud a -180..180 si el mapa dio la vuelta al mundo. */
 function normalize(lon: number, lat: number): LatLng {
   const wrapped = ((((lon + 180) % 360) + 360) % 360) - 180;
@@ -44,7 +42,9 @@ function normalize(lon: number, lat: number): LatLng {
   template: `
     <div #host class="map" role="region" [attr.aria-label]="ariaLabel()"></div>
     @if (failed()) {
-      <p class="failed" role="alert">{{ 'No se pudo cargar el mapa. Puedes seguir usando los campos de coordenadas.' | t }}</p>
+      <p class="failed" role="alert">
+        {{ 'No se pudo cargar el mapa. Puedes seguir usando los campos de coordenadas.' | t }}
+      </p>
     }
   `,
   styles: `
@@ -138,7 +138,10 @@ export class MapViewComponent {
     const markerLayer = new ol.VectorLayer({ source, style: () => this.markerStyle! });
     this.markerLayer = markerLayer;
     // `app-tiles`: en el tema oscuro las teselas se oscurecen con un filtro de la hoja global (el marcador no se toca)
-    const tiles = new ol.TileLayer({ className: 'app-tiles', source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
+    const tiles = new ol.TileLayer({
+      className: 'app-tiles',
+      source: new ol.XYZ({ url: tilesUrl, attributions: attribution }),
+    });
     tiles.getSource()?.on('tileloaderror', () => this.failed.set(true));
     tiles.getSource()?.on('tileloadend', () => this.failed.set(false));
 
@@ -149,7 +152,10 @@ export class MapViewComponent {
       layers: [tiles, markerLayer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
       // La atribución del proveedor debe verse siempre: sin el botón que la pliega
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') } }),
+      controls: ol.defaultControls({
+        attributionOptions: { collapsible: false },
+        zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') },
+      }),
     });
 
     this.translate = new ol.Translate({ layers: [markerLayer] });
@@ -182,7 +188,11 @@ export class MapViewComponent {
   private paintMarker(ol: OpenLayers, scheme: 'light' | 'dark'): InstanceType<OpenLayers['Style']> {
     const palette = readMapPalette(scheme, this.document);
     return new ol.Style({
-      image: new ol.CircleStyle({ radius: 9, fill: new ol.Fill({ color: palette.accent }), stroke: new ol.Stroke({ color: palette.halo, width: 3 }) }),
+      image: new ol.CircleStyle({
+        radius: 9,
+        fill: new ol.Fill({ color: palette.accent }),
+        stroke: new ol.Stroke({ color: palette.halo, width: 3 }),
+      }),
     });
   }
 
@@ -203,7 +213,11 @@ export class MapViewComponent {
     if (recenter) {
       const view = map.getView();
       const extent = view.calculateExtent(map.getSize());
-      const inside = projected[0] >= extent[0] && projected[0] <= extent[2] && projected[1] >= extent[1] && projected[1] <= extent[3];
+      const inside =
+        projected[0] >= extent[0] &&
+        projected[0] <= extent[2] &&
+        projected[1] >= extent[1] &&
+        projected[1] <= extent[3];
       if (!inside) {
         view.setCenter(projected);
       }

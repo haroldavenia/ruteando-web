@@ -5,18 +5,25 @@ import { MatInputModule } from '@angular/material/input';
 import { startWith } from 'rxjs';
 
 import { LatLng, latLng } from '../../core/geo/lat-lng';
-
-import { MapViewComponent } from './map-view.component';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { MapViewComponent } from './map-view.component';
+
 export type LocationGroup = FormGroup<{ lat: FormControl<number | null>; lng: FormControl<number | null> }>;
 
 /** Grupo de formulario con latitud y longitud obligatorias y dentro de rango. */
 export function createLocationGroup(point: LatLng | null = null): LocationGroup {
   return new FormGroup({
-    lat: new FormControl<number | null>(point?.lat ?? null, [Validators.required, Validators.min(-90), Validators.max(90)]),
-    lng: new FormControl<number | null>(point?.lng ?? null, [Validators.required, Validators.min(-180), Validators.max(180)]),
+    lat: new FormControl<number | null>(point?.lat ?? null, [
+      Validators.required,
+      Validators.min(-90),
+      Validators.max(90),
+    ]),
+    lng: new FormControl<number | null>(point?.lng ?? null, [
+      Validators.required,
+      Validators.min(-180),
+      Validators.max(180),
+    ]),
   });
 }
 
@@ -34,19 +41,35 @@ export function createLocationGroup(point: LatLng | null = null): LocationGroup 
       <div class="coordinates">
         <mat-form-field>
           <mat-label>{{ 'Latitud' | t }}</mat-label>
-          <input matInput type="number" step="any" inputmode="decimal" autocomplete="off" [formControl]="location().controls.lat" />
+          <input
+            matInput
+            type="number"
+            step="any"
+            inputmode="decimal"
+            autocomplete="off"
+            [formControl]="location().controls.lat"
+          />
           <mat-error>{{ error('lat') }}</mat-error>
         </mat-form-field>
         <mat-form-field>
           <mat-label>{{ 'Longitud' | t }}</mat-label>
-          <input matInput type="number" step="any" inputmode="decimal" autocomplete="off" [formControl]="location().controls.lng" />
+          <input
+            matInput
+            type="number"
+            step="any"
+            inputmode="decimal"
+            autocomplete="off"
+            [formControl]="location().controls.lng"
+          />
           <mat-error>{{ error('lng') }}</mat-error>
         </mat-form-field>
       </div>
       <app-map-view
         [point]="point()"
         [selectable]="true"
-        [ariaLabel]="'Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos.' | t"
+        [ariaLabel]="
+          'Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos.' | t
+        "
         (pointChange)="pick($event)"
       />
     </div>

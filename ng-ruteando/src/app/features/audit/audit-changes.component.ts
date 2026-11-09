@@ -1,11 +1,9 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
-import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
-
-import { DiffRow } from './audit-diff';
-
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
+import { DiffRow } from './audit-diff';
 /**
  * «Qué cambió»: cada campo con su valor de antes y su valor de después a los lados de una flecha, el de antes tachado y en tono de
  * error y el de después en negrita y en tono de éxito (el color nunca es la única señal: cada lado lleva su rótulo «Antes» o

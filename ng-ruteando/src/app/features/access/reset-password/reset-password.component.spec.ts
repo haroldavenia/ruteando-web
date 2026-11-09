@@ -4,21 +4,20 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Fixture, respondWith } from '../../../../testing/api-testing';
+import resetFx from '../../../../testing/fixtures/gateway/post__auth__reset-password.json';
+import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
+import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
+import invalidTokenFx from '../../../../testing/fixtures/gateway-errors/post__auth__reset-password__invalid-token.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { authInterceptor } from '../../../core/api/auth.interceptor';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
 import { refreshInterceptor } from '../../../core/api/refresh.interceptor';
 import { CurrentUser } from '../../../core/auth/current-user';
 import { ResetPasswordComponent } from './reset-password.component';
-
-import resetFx from '../../../../testing/fixtures/gateway/post__auth__reset-password.json';
-import invalidTokenFx from '../../../../testing/fixtures/gateway-errors/post__auth__reset-password__invalid-token.json';
-import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
-import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
 
 @Component({ template: 'acceso' })
 class AccesoComponent {}
@@ -86,12 +85,17 @@ describe('ResetPasswordComponent', () => {
       await wait();
 
       expect(router.url).toBe('/acceso');
-      expect(snackOpen).toHaveBeenCalledOnceWith('Contraseña actualizada, ya puedes iniciar sesión', 'Cerrar', { duration: 6000 });
+      expect(snackOpen).toHaveBeenCalledOnceWith('Contraseña actualizada, ya puedes iniciar sesión', 'Cerrar', {
+        duration: 6000,
+      });
       expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
     });
 
     it('retira el token de la URL sin añadir una entrada al historial', () => {
-      expect(navigateSpy).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { token: null }, replaceUrl: true }));
+      expect(navigateSpy).toHaveBeenCalledWith(
+        [],
+        jasmine.objectContaining({ queryParams: { token: null }, replaceUrl: true })
+      );
       expect(router.url).toBe('/acceso/restablecer');
     });
 
@@ -115,14 +119,22 @@ describe('ResetPasswordComponent', () => {
       submit();
       harness.detectChanges();
       expect(root.querySelector('mat-error')?.textContent).toContain('La contraseña no cumple los requisitos');
-      expect(Array.from(root.querySelectorAll('ul.requirements li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(['Al menos 16 caracteres', 'Una mayúscula', 'Un número', 'Un símbolo (@$!%*?&)']);
+      expect(
+        Array.from(root.querySelectorAll('ul.requirements li.failed')).map(
+          (li) => li.querySelector('span')?.textContent
+        )
+      ).toEqual(['Al menos 16 caracteres', 'Una mayúscula', 'Un número', 'Un símbolo (@$!%*?&)']);
 
       type(inputs()[0], 'abcdefghijklmnop1234');
       type(inputs()[1], 'abcdefghijklmnop1234');
       submit();
       harness.detectChanges();
       expect(root.querySelector('mat-error')?.textContent).toContain('La contraseña no cumple los requisitos');
-      expect(Array.from(root.querySelectorAll('ul.requirements li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(['Una mayúscula', 'Un símbolo (@$!%*?&)']);
+      expect(
+        Array.from(root.querySelectorAll('ul.requirements li.failed')).map(
+          (li) => li.querySelector('span')?.textContent
+        )
+      ).toEqual(['Una mayúscula', 'Un símbolo (@$!%*?&)']);
       controller.expectNone(RESET);
     });
 
@@ -163,7 +175,9 @@ describe('ResetPasswordComponent', () => {
       expect(alert).toContain('Mínimo 16 caracteres');
       expect(alert).not.toContain('El enlace no es válido');
       expect(root.querySelector('form')).not.toBeNull();
-      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).not.toContain('/acceso/recuperar');
+      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).not.toContain(
+        '/acceso/recuperar'
+      );
       expect(inputs().map((i) => i.value)).toEqual(['', '']);
       expect(document.activeElement).toBe(inputs()[0]);
 

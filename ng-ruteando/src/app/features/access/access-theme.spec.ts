@@ -37,7 +37,9 @@ describe('tema de la aplicación', () => {
   it('.access-theme no redefine el tema: usa los mismos tokens que el resto de la aplicación', () => {
     for (const scheme of ['light', 'dark'] as const) {
       for (const token of ['--mat-sys-surface', '--mat-sys-primary', '--mat-sys-on-surface']) {
-        expect(resolve(make(scheme, 'access-theme'), token)).withContext(`${scheme} ${token}`).toBe(resolve(make(scheme), token));
+        expect(resolve(make(scheme, 'access-theme'), token))
+          .withContext(`${scheme} ${token}`)
+          .toBe(resolve(make(scheme), token));
       }
     }
   });

@@ -1,4 +1,5 @@
 import { locale, t } from '../core/i18n/i18n';
+
 const PLACEHOLDER = '—';
 const KM = new Intl.NumberFormat(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const PERCENT = new Intl.NumberFormat(locale(), { maximumFractionDigits: 1 });
@@ -40,7 +41,9 @@ export function formatDateTime(iso: string | null | undefined, zone?: string): s
   if (Number.isNaN(date.getTime())) {
     return PLACEHOLDER;
   }
-  return (zone ? new Intl.DateTimeFormat(locale(), { dateStyle: 'short', timeStyle: 'short', timeZone: zone }) : DATE_TIME).format(date);
+  return (
+    zone ? new Intl.DateTimeFormat(locale(), { dateStyle: 'short', timeStyle: 'short', timeZone: zone }) : DATE_TIME
+  ).format(date);
 }
 
 const SHORT_DATE = new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'short', year: 'numeric' });
@@ -71,7 +74,11 @@ export function formatCount(value: number | null | undefined): string {
   return value === null || value === undefined ? PLACEHOLDER : String(value);
 }
 
-const COORDINATE = new Intl.NumberFormat(locale(), { minimumFractionDigits: 5, maximumFractionDigits: 5, useGrouping: false });
+const COORDINATE = new Intl.NumberFormat(locale(), {
+  minimumFractionDigits: 5,
+  maximumFractionDigits: 5,
+  useGrouping: false,
+});
 
 /** `latitud / longitud` con cinco decimales; sin posición válida da «—». */
 export function formatLatLng(point: { lat: number; lng: number } | null | undefined): string {

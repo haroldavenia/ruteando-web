@@ -27,7 +27,10 @@ export function readHandoff(state: unknown): TypeHandoff | null {
     return null;
   }
   const createdTypeId = (value as { createdTypeId?: unknown }).createdTypeId;
-  return { draft: (value as { draft: unknown }).draft, ...(typeof createdTypeId === 'string' ? { createdTypeId } : {}) };
+  return {
+    draft: (value as { draft: unknown }).draft,
+    ...(typeof createdTypeId === 'string' ? { createdTypeId } : {}),
+  };
 }
 
 /**

@@ -28,7 +28,9 @@ describe('PageHeaderComponent', () => {
   it('muestra un subtítulo opcional bajo el título y no lo pinta si falta', () => {
     const withSubtitle = TestBed.createComponent(SubtitleHostComponent);
     withSubtitle.detectChanges();
-    expect((withSubtitle.nativeElement as HTMLElement).querySelector('.subtitle')?.textContent).toBe('Tu flota de reparto');
+    expect((withSubtitle.nativeElement as HTMLElement).querySelector('.subtitle')?.textContent).toBe(
+      'Tu flota de reparto'
+    );
 
     const without = TestBed.createComponent(HostComponent);
     without.detectChanges();

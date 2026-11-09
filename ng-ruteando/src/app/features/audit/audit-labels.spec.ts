@@ -1,12 +1,12 @@
+import list from '../../../testing/fixtures/gateway/get__audit-logs.json';
 import { AuditLog } from '../../core/api/models';
-
 import {
-  AUDIT_KINDS,
-  AuditKind,
   actorInitials,
+  AUDIT_KINDS,
   auditActionLabel,
   auditActor,
   auditEntityLabel,
+  AuditKind,
   auditKind,
   auditKindIcon,
   auditKindLabel,
@@ -18,8 +18,6 @@ import {
   normalizeRole,
   shortId,
 } from './audit-labels';
-
-import list from '../../../testing/fixtures/gateway/get__audit-logs.json';
 
 const logs = (list.response.body as unknown as { content: AuditLog[] }).content;
 
@@ -115,13 +113,17 @@ describe('audit-labels', () => {
   describe('resumen', () => {
     it('usa la descripción del gateway cuando dice algo', () => {
       expect(auditSummary({ action: 'journey.delete', description: 'Journey eliminado: name=Postman journey' })).toBe(
-        'Journey eliminado: name=Postman journey',
+        'Journey eliminado: name=Postman journey'
       );
     });
 
     it('arma una frase si la descripción es solo la clave de la acción', () => {
-      expect(auditSummary({ action: 'invitation.created', description: 'invitation.created' })).toBe('Invitación creada');
-      expect(auditSummary({ action: 'invitation.created', description: 'INVITATION.CREATED' })).toBe('Invitación creada');
+      expect(auditSummary({ action: 'invitation.created', description: 'invitation.created' })).toBe(
+        'Invitación creada'
+      );
+      expect(auditSummary({ action: 'invitation.created', description: 'INVITATION.CREATED' })).toBe(
+        'Invitación creada'
+      );
     });
 
     it('arma una frase si la descripción falta o está en blanco', () => {
@@ -154,11 +156,19 @@ describe('audit-labels', () => {
     });
 
     it('el rol anonymous es «Anónimo» y no muestra rol', () => {
-      expect(auditActor({ actorEmail: null, actorRole: 'anonymous' })).toEqual({ person: 'Anónimo', role: null, identified: false });
+      expect(auditActor({ actorEmail: null, actorRole: 'anonymous' })).toEqual({
+        person: 'Anónimo',
+        role: null,
+        identified: false,
+      });
     });
 
     it('sin rol ni correo no inventa nada', () => {
-      expect(auditActor({ actorEmail: null, actorRole: null })).toEqual({ person: 'Sin identificar', role: null, identified: false });
+      expect(auditActor({ actorEmail: null, actorRole: null })).toEqual({
+        person: 'Sin identificar',
+        role: null,
+        identified: false,
+      });
     });
 
     it('un rol que no se conoce se muestra tal cual', () => {
@@ -180,7 +190,9 @@ describe('audit-labels', () => {
   it('humanizeIds deja los identificadores largos como #cola y no toca el resto', () => {
     const driver = '6acb99b1a2fa810fb39fb5a9';
     const resource = '6acb99b48275a26dbdf8fcf5';
-    expect(humanizeIds(`Driver ${driver} asignado al recurso ${resource}`)).toBe(`Driver #${driver.slice(-6)} asignado al recurso #${resource.slice(-6)}`);
+    expect(humanizeIds(`Driver ${driver} asignado al recurso ${resource}`)).toBe(
+      `Driver #${driver.slice(-6)} asignado al recurso #${resource.slice(-6)}`
+    );
     expect(humanizeIds('Paquete creado: guide=G-1042')).toBe('Paquete creado: guide=G-1042');
     expect(humanizeIds('abc123')).toBe('abc123');
   });
@@ -195,7 +207,15 @@ describe('audit-labels', () => {
     });
 
     it('unidos dan siempre el texto original', () => {
-      for (const text of ['ana.martinez@ruteando.demo', 'a_b-c@x.co', 'Sin identificar', 'Anónimo', '@@..', '', 'solo']) {
+      for (const text of [
+        'ana.martinez@ruteando.demo',
+        'a_b-c@x.co',
+        'Sin identificar',
+        'Anónimo',
+        '@@..',
+        '',
+        'solo',
+      ]) {
         expect(breakableParts(text).join('')).withContext(text).toBe(text);
       }
     });

@@ -1,7 +1,7 @@
 import { AuditChanges } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
 import { packageStatusLabel } from '../packages/package-labels';
 
-import { t } from '../../core/i18n/i18n';
 export const EMPTY_VALUE = t('(vacío)');
 
 /** Nombres en español de los campos que más aparecen en `changes`; el resto se muestra con su clave. */

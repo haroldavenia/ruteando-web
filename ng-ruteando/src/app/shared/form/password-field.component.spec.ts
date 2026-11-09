@@ -9,7 +9,14 @@ import { PasswordFieldComponent } from './password-field.component';
 
 @Component({
   imports: [PasswordFieldComponent],
-  template: `<app-password-field [control]="control" label="Contraseña" autocomplete="new-password" [messages]="messages" [requirements]="requirements" [leadingIcon]="leadingIcon" />`,
+  template: `<app-password-field
+    [control]="control"
+    label="Contraseña"
+    autocomplete="new-password"
+    [messages]="messages"
+    [requirements]="requirements"
+    [leadingIcon]="leadingIcon"
+  />`,
 })
 class HostComponent {
   control = new FormControl('', { nonNullable: true, validators: [Validators.required] });
@@ -25,7 +32,10 @@ describe('PasswordFieldComponent', () => {
   const toggle = () => root.querySelector('button') as HTMLButtonElement;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations()] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [HostComponent],
+      providers: [provideNoopAnimations()],
+    }).compileComponents();
     fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
     root = fixture.nativeElement;
@@ -85,7 +95,13 @@ describe('PasswordFieldComponent', () => {
     const VALIDA = 'Ruteando@2026abcdef';
     const list = () => root.querySelector('ul.requirements') as HTMLElement | null;
     const items = () => Array.from(root.querySelectorAll('ul.requirements li')) as HTMLElement[];
-    const statuses = () => items().map((li) => li.querySelector('.visually-hidden')?.textContent?.replace(/[,.\s]+/g, ' ').trim());
+    const statuses = () =>
+      items().map((li) =>
+        li
+          .querySelector('.visually-hidden')
+          ?.textContent?.replace(/[,.\s]+/g, ' ')
+          .trim()
+      );
     const host = () => fixture.debugElement.query(By.directive(PasswordFieldComponent)).nativeElement as HTMLElement;
     const show = () => {
       fixture.componentInstance.requirements = true;

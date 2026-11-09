@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
 
 import { API_BASE_URL, Page, PageParams, pageParams } from '../api-config';
 import { AuditLog, AuditLogPage } from '../models';
@@ -40,7 +40,13 @@ export class AuditLogsApi {
 
   private page(url: string, params: HttpParams): Observable<Page<AuditLog>> {
     return this.http.get<AuditLogPage>(url, { params }).pipe(
-      map(({ number, content, size, totalElements, totalPages }) => ({ content, page: number, size, totalElements, totalPages })),
+      map(({ number, content, size, totalElements, totalPages }) => ({
+        content,
+        page: number,
+        size,
+        totalElements,
+        totalPages,
+      }))
     );
   }
 }

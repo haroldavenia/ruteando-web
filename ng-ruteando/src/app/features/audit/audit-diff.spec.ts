@@ -1,8 +1,6 @@
-import { AuditLog } from '../../core/api/models';
-
-import { EMPTY_VALUE, auditFieldLabel, diffChanges, displayValue, hasValueChanges } from './audit-diff';
-
 import list from '../../../testing/fixtures/gateway/get__audit-logs.json';
+import { AuditLog } from '../../core/api/models';
+import { auditFieldLabel, diffChanges, displayValue, EMPTY_VALUE, hasValueChanges } from './audit-diff';
 
 const logs = (list.response.body as unknown as { content: AuditLog[] }).content;
 
@@ -59,7 +57,10 @@ describe('audit-diff', () => {
     });
 
     it('antes y después idénticos no son un cambio, y vacío contra null tampoco', () => {
-      const rows = diffChanges({ before: { name: 'A', driverId: '', quantity: 1 }, after: { name: 'A', driverId: null, quantity: 1 } });
+      const rows = diffChanges({
+        before: { name: 'A', driverId: '', quantity: 1 },
+        after: { name: 'A', driverId: null, quantity: 1 },
+      });
       expect(rows.every((row) => !row.changed)).toBeTrue();
       expect(hasValueChanges({ before: { name: 'A' }, after: { name: 'A' } })).toBeFalse();
     });

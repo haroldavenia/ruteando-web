@@ -24,10 +24,25 @@ const page = (size) => `<!doctype html><html><body style="margin:0;background:#0
 </g></svg></body></html>`;
 
 const tmp = mkdtempSync(join(tmpdir(), 'pwa-icons-'));
-for (const [name, size] of [['icon-192.png', 192], ['icon-512.png', 512], ['icon-maskable-512.png', 512], ['apple-touch-icon.png', 180]]) {
+for (const [name, size] of [
+  ['icon-192.png', 192],
+  ['icon-512.png', 512],
+  ['icon-maskable-512.png', 512],
+  ['apple-touch-icon.png', 180],
+]) {
   const html = join(tmp, `${size}.html`);
   writeFileSync(html, page(size));
-  execFileSync(chrome, ['--headless=new', '--disable-gpu', '--hide-scrollbars', `--window-size=${size},${size}`,
-    `--screenshot=${join(out, name)}`, pathToFileURL(html).href], { stdio: 'ignore' });
+  execFileSync(
+    chrome,
+    [
+      '--headless=new',
+      '--disable-gpu',
+      '--hide-scrollbars',
+      `--window-size=${size},${size}`,
+      `--screenshot=${join(out, name)}`,
+      pathToFileURL(html).href,
+    ],
+    { stdio: 'ignore' }
+  );
   console.log('✔', name);
 }

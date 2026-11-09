@@ -7,18 +7,16 @@ import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { Fixture, respondWith } from '../../../testing/api-testing';
+import remove from '../../../testing/fixtures/gateway/delete__places__id.json';
+import list from '../../../testing/fixtures/gateway/get__places.json';
 import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
-import { Fixture, respondWith } from '../../../testing/api-testing';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-
 import { PlaceListComponent } from './place-list.component';
 import { PlacesMapComponent } from './places-map.component';
-
-import list from '../../../testing/fixtures/gateway/get__places.json';
-import remove from '../../../testing/fixtures/gateway/delete__places__id.json';
 
 describe('PlaceListComponent', () => {
   let fixture: ComponentFixture<PlaceListComponent>;
@@ -28,7 +26,9 @@ describe('PlaceListComponent', () => {
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const fx = (f: unknown) => f as Fixture;
   const overlayButton = (text: string) =>
-    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -51,7 +51,10 @@ describe('PlaceListComponent', () => {
   afterEach(() => http.verify());
 
   const load = () => {
-    respondWith(http.expectOne((r) => r.url === '/gateway/places'), fx(list));
+    respondWith(
+      http.expectOne((r) => r.url === '/gateway/places'),
+      fx(list)
+    );
     fixture.detectChanges();
   };
 
@@ -109,7 +112,11 @@ describe('PlaceListComponent', () => {
       answer(withTypes(['depot', 'store', 'store']));
       const chips = Array.from(root().querySelectorAll('.chips .chip')) as HTMLButtonElement[];
 
-      expect(chips.map((c) => c.textContent!.replace(/\s+/g, ' ').trim())).toEqual(['Todos 3', 'Depósito 1', 'Tienda 2']);
+      expect(chips.map((c) => c.textContent!.replace(/\s+/g, ' ').trim())).toEqual([
+        'Todos 3',
+        'Depósito 1',
+        'Tienda 2',
+      ]);
       expect(root().querySelector('.chips')?.getAttribute('aria-label')).toBe('Tipo');
 
       chips[2].click();
@@ -157,7 +164,9 @@ describe('PlaceListComponent', () => {
   });
 
   it('con la lista vacía ofrece crear el primero', () => {
-    http.expectOne((r) => r.url === '/gateway/places').flush({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
+    http
+      .expectOne((r) => r.url === '/gateway/places')
+      .flush({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     fixture.detectChanges();
     expect(root().textContent).toContain('Todavía no hay lugares');
     expect(root().querySelector('a[href="/lugares/nuevo"][empty-action]')).not.toBeNull();
@@ -183,10 +192,16 @@ describe('PlaceListComponent', () => {
 
     it('borra tras confirmar y recarga', async () => {
       await confirm();
-      respondWith(http.expectOne((r) => r.method === 'DELETE' && r.url.startsWith('/gateway/places/')), fx(remove));
+      respondWith(
+        http.expectOne((r) => r.method === 'DELETE' && r.url.startsWith('/gateway/places/')),
+        fx(remove)
+      );
       fixture.detectChanges();
       expect(root().textContent).toContain('Se eliminó lugar «Postman depot»');
-      respondWith(http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/places'), fx(list));
+      respondWith(
+        http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/places'),
+        fx(list)
+      );
     });
 
     for (const status of [409, 400]) {
@@ -194,7 +209,9 @@ describe('PlaceListComponent', () => {
         await confirm();
         http.expectOne((r) => r.method === 'DELETE').flush({ message: 'in use' }, { status, statusText: 'x' });
         fixture.detectChanges();
-        expect(root().querySelector('[role="alert"]')?.textContent).toContain('No se puede eliminar: el lugar se usa como depósito');
+        expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+          'No se puede eliminar: el lugar se usa como depósito'
+        );
         expect(root().textContent).toContain('Postman depot');
       });
     }
@@ -204,7 +221,10 @@ describe('PlaceListComponent', () => {
       http.expectOne((r) => r.method === 'DELETE').flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
-      respondWith(http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/places'), fx(list));
+      respondWith(
+        http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/places'),
+        fx(list)
+      );
     });
   });
 });

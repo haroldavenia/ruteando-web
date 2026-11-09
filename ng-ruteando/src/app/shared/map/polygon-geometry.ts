@@ -1,5 +1,4 @@
 import { LatLng, latLng } from '../../core/geo/lat-lng';
-
 import { t } from '../../core/i18n/i18n';
 /** Más vértices que esto y no se comprueban los cruces (la comprobación es O(n²)). */
 export const MAX_CHECKED_VERTICES = 2000;
@@ -63,7 +62,8 @@ export function ringFromVertices(vertices: readonly LatLng[]): [number, number][
   return ring;
 }
 
-const cross = (o: LatLng, a: LatLng, b: LatLng): number => (a.lng - o.lng) * (b.lat - o.lat) - (a.lat - o.lat) * (b.lng - o.lng);
+const cross = (o: LatLng, a: LatLng, b: LatLng): number =>
+  (a.lng - o.lng) * (b.lat - o.lat) - (a.lat - o.lat) * (b.lng - o.lng);
 const within = (v: number, a: number, b: number): boolean => v >= Math.min(a, b) && v <= Math.max(a, b);
 
 /** `true` si los segmentos `p1-p2` y `p3-p4` se cortan o se tocan (incluido el solape colineal). */
@@ -75,8 +75,11 @@ export function segmentsIntersect(p1: LatLng, p2: LatLng, p3: LatLng, p4: LatLng
   if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) {
     return true;
   }
-  const onSegment = (a: LatLng, b: LatLng, c: LatLng, d: number) => d === 0 && within(c.lng, a.lng, b.lng) && within(c.lat, a.lat, b.lat);
-  return onSegment(p3, p4, p1, d1) || onSegment(p3, p4, p2, d2) || onSegment(p1, p2, p3, d3) || onSegment(p1, p2, p4, d4);
+  const onSegment = (a: LatLng, b: LatLng, c: LatLng, d: number) =>
+    d === 0 && within(c.lng, a.lng, b.lng) && within(c.lat, a.lat, b.lat);
+  return (
+    onSegment(p3, p4, p1, d1) || onSegment(p3, p4, p2, d2) || onSegment(p1, p2, p3, d3) || onSegment(p1, p2, p4, d4)
+  );
 }
 
 /** Motivos por los que un polígono no es válido (lista vacía si lo es). */

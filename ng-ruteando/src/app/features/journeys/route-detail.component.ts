@@ -1,27 +1,33 @@
-import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { JourneysApi } from '../../core/api/data/journeys.api';
 import { DomainRoute, PlannedJourney } from '../../core/api/models';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RECORD_GONE, RecordLoader } from '../../shared/data/record-loader';
 import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { formatCount, formatDateTime, formatDistance, formatDuration, formatPercent } from '../../shared/format';
-
 import { SkeletonComponent } from '../../shared/ui/skeleton.component';
-
 import { RouteVisitsComponent } from './route-visits.component';
 import { RoutesMapComponent, StopRef } from './routes-map.component';
-
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Detalle de una ruta de una jornada: resumen, mapa de esa sola ruta y sus paradas. Carga la jornada
  * completa (el gateway no tiene un endpoint de una ruta) y elige la ruta por `routeIndex`.
  */
 @Component({
   selector: 'app-route-detail',
-  imports: [RouterLink, MatButtonModule, FormHeadComponent, FormResultComponent, RoutesMapComponent, RouteVisitsComponent, SkeletonComponent, TranslatePipe],
+  imports: [
+    RouterLink,
+    MatButtonModule,
+    FormHeadComponent,
+    FormResultComponent,
+    RoutesMapComponent,
+    RouteVisitsComponent,
+    SkeletonComponent,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-detail.component.html',
 })
@@ -31,13 +37,17 @@ export class RouteDetailComponent {
 
   protected readonly journeyId = this.params.get('id') as string;
   /** `null` si el parámetro no es un entero no negativo. */
-  private readonly routeIndex = /^\d+$/.test(this.params.get('routeIndex') ?? '') ? Number(this.params.get('routeIndex')) : null;
+  private readonly routeIndex = /^\d+$/.test(this.params.get('routeIndex') ?? '')
+    ? Number(this.params.get('routeIndex'))
+    : null;
 
   protected readonly loader = new RecordLoader<PlannedJourney>(this.journeyId, (id) => this.api.get(id));
 
   protected readonly route = computed<DomainRoute | null>(() => {
     const journey = this.loader.record();
-    return journey && this.routeIndex !== null ? (journey.routes.find((r) => r.routeIndex === this.routeIndex) ?? null) : null;
+    return journey && this.routeIndex !== null
+      ? (journey.routes.find((r) => r.routeIndex === this.routeIndex) ?? null)
+      : null;
   });
   /** La ruta como lista de una sola, estable mientras no cambie la jornada: el mapa no se redibuja. */
   protected readonly routes = computed(() => {

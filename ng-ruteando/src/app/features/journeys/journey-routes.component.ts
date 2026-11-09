@@ -4,16 +4,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
 import { DomainRoute } from '../../core/api/models';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ThemeService } from '../../core/theme/theme.service';
-import { formatCount, formatDateTime, formatDistance, formatDuration, formatLatLng, formatPercent } from '../../shared/format';
-
+import {
+  formatCount,
+  formatDateTime,
+  formatDistance,
+  formatDuration,
+  formatLatLng,
+  formatPercent,
+} from '../../shared/format';
 import { routeColorFor } from '../../shared/map/route-colors';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
 import { stopTypeLabel } from './journey-labels';
 import { StopRef } from './routes-map.component';
-
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Rutas de una jornada, una tarjeta por ruta con sus cifras (y una barra para el uso de peso y de volumen) y la franja del color que
  * tiene en el mapa; cada una se abre para ver sus paradas en orden. Lee el modelo de dominio (`DomainRoute`), el mismo que usa el

@@ -1,4 +1,8 @@
-<app-form-head [title]="isNew ? ('Nuevo paquete' | t) : ('Editar paquete' | t)" [backLabel]="'Paquetes' | t" backLink="/paquetes" />
+<app-form-head
+  [title]="isNew ? ('Nuevo paquete' | t) : ('Editar paquete' | t)"
+  [backLabel]="'Paquetes' | t"
+  backLink="/paquetes"
+/>
 @switch (loader.status()) {
   @case ('loading') {
     <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
@@ -89,7 +93,9 @@
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
         <a mat-button routerLink="/paquetes">{{ 'Cancelar' | t }}</a>
-        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
+          {{ 'Guardar' | t }}
+        </button>
       </app-form-actions>
     </form>
   }

@@ -1,10 +1,9 @@
 import { Injector, runInInjectionContext } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Observable, Subject, of, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
-
 import { ListState } from './list-state';
 
 function page<T>(content: T[], number = 0, total = content.length): Page<T> {
@@ -46,9 +45,13 @@ describe('ListState', () => {
 
   it('publica el mensaje del error y permite reintentar la misma página', () => {
     let fail = true;
-    const fetch = jasmine.createSpy().and.callFake(() =>
-      fail ? throwError(() => new ApiError({ status: 500, message: 'El servicio no está disponible' })) : of(page(['a'], 1, 21)),
-    );
+    const fetch = jasmine
+      .createSpy()
+      .and.callFake(() =>
+        fail
+          ? throwError(() => new ApiError({ status: 500, message: 'El servicio no está disponible' }))
+          : of(page(['a'], 1, 21))
+      );
     const state = make(fetch);
     state.load(1);
     expect(state.status()).toBe('error');
@@ -70,9 +73,9 @@ describe('ListState', () => {
   });
 
   it('retrocede si una página que no es la primera queda vacía pero aún hay registros', () => {
-    const fetch = jasmine.createSpy().and.callFake((p: PageParams) =>
-      p.page === 2 ? of(page([], 2, 40)) : of(page(['z'], p.page ?? 0, 40)),
-    );
+    const fetch = jasmine
+      .createSpy()
+      .and.callFake((p: PageParams) => (p.page === 2 ? of(page([], 2, 40)) : of(page(['z'], p.page ?? 0, 40))));
     const state = make(fetch);
     state.load(2);
     expect(state.page()).toBe(1);

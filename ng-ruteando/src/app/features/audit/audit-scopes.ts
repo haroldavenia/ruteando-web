@@ -1,5 +1,4 @@
 import { UserRole } from '../../core/auth/session.model';
-
 import { t } from '../../core/i18n/i18n';
 /** Qué eventos se consultan: los de la empresa, los de la propia persona o los de todas las empresas. */
 export type AuditScopeId = 'empresa' | 'mia' | 'todas';

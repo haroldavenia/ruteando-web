@@ -3,22 +3,22 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
+import places from '../../../testing/fixtures/gateway/get__places.json';
+import resources from '../../../testing/fixtures/gateway/get__resources.json';
+import get from '../../../testing/fixtures/gateway/get__settings__id.json';
+import create from '../../../testing/fixtures/gateway/post__settings.json';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { Settings } from '../../core/api/models';
-
-import { SettingsFormComponent, buildSettingsUpdateBody } from './settings-form.component';
-
-import create from '../../../testing/fixtures/gateway/post__settings.json';
-import get from '../../../testing/fixtures/gateway/get__settings__id.json';
-import places from '../../../testing/fixtures/gateway/get__places.json';
-import resources from '../../../testing/fixtures/gateway/get__resources.json';
+import { buildSettingsUpdateBody, SettingsFormComponent } from './settings-form.component';
 
 const fx = (f: unknown) => f as Fixture;
-const EMPTY_PAGE = { response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } } };
+const EMPTY_PAGE = {
+  response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } },
+};
 
 describe('SettingsFormComponent', () => {
   let fixture: ComponentFixture<SettingsFormComponent>;
@@ -105,7 +105,9 @@ describe('SettingsFormComponent', () => {
     });
 
     it('los campos van en cinco secciones con icono y título', () => {
-      const titles = Array.from(root().querySelectorAll('form section.form-section h2')).map((h) => h.textContent?.trim());
+      const titles = Array.from(root().querySelectorAll('form section.form-section h2')).map((h) =>
+        h.textContent?.trim()
+      );
 
       expect(titles).toEqual(['Ruta', 'Lugares', 'Flota', 'Qué evalúa la planificación', 'Estancia en cada parada']);
       expect(root().querySelectorAll('form section.form-section h2 mat-icon[aria-hidden="true"]').length).toBe(5);
@@ -125,7 +127,9 @@ describe('SettingsFormComponent', () => {
     });
 
     it('pulsar un interruptor cambia su control y marca el formulario como modificado', () => {
-      const weight = root().querySelector('mat-slide-toggle[formcontrolname="evaluateWeight"] button') as HTMLButtonElement;
+      const weight = root().querySelector(
+        'mat-slide-toggle[formcontrolname="evaluateWeight"] button'
+      ) as HTMLButtonElement;
       expect(form().controls['evaluateWeight'].value).toBeFalse();
 
       weight.click();
@@ -151,7 +155,9 @@ describe('SettingsFormComponent', () => {
 
         expect(sentence()).toContain(`Planificará ${routes} ${routes === 1 ? 'ruta' : 'rutas'}`);
         expect(sentence()).toContain('desde Postman depot');
-        expect(sentence()).toContain(`con ${body.resourceIds.length} ${body.resourceIds.length === 1 ? 'vehículo' : 'vehículos'}`);
+        expect(sentence()).toContain(
+          `con ${body.resourceIds.length} ${body.resourceIds.length === 1 ? 'vehículo' : 'vehículos'}`
+        );
         expect(sentence()).toMatch(/, evaluando peso\.$/);
 
         set({ restrictionType: 'resource_vs_time', shiftDurationMin: 90 });
@@ -183,7 +189,9 @@ describe('SettingsFormComponent', () => {
         (root().querySelector(selector) as HTMLElement).click();
         fixture.detectChanges();
         const texts = Array.from(document.querySelectorAll('mat-option')).map((o) => o.textContent!.trim());
-        document.querySelectorAll('mat-option').forEach((o) => o.parentElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })));
+        document
+          .querySelectorAll('mat-option')
+          .forEach((o) => o.parentElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })));
         return texts;
       };
       expect(optionTexts('mat-select[formcontrolname="routeTopology"]')).toContain('Ida y vuelta');
@@ -232,7 +240,15 @@ describe('SettingsFormComponent', () => {
       });
 
       it('con el turno, una duración de 0 o negativa y un descanso negativo se rechazan', () => {
-        set({ ...{ description: 'X', routeTopology: 'round_trip', restrictionType: 'resource_vs_time', resourceIds: body.resourceIds, placeStartId: body.placeStartId } });
+        set({
+          ...{
+            description: 'X',
+            routeTopology: 'round_trip',
+            restrictionType: 'resource_vs_time',
+            resourceIds: body.resourceIds,
+            placeStartId: body.placeStartId,
+          },
+        });
         set({ shiftDurationMin: 0 });
         submit();
         http.expectNone((r) => r.method === 'POST');
@@ -245,7 +261,13 @@ describe('SettingsFormComponent', () => {
       });
 
       it('con turno envía el inicio en UTC y las duraciones en segundos, y no envía las rutas fijas', () => {
-        set({ description: 'Turno', routeTopology: 'round_trip', restrictionType: 'time_windows', resourceIds: body.resourceIds, placeStartId: body.placeStartId });
+        set({
+          description: 'Turno',
+          routeTopology: 'round_trip',
+          restrictionType: 'time_windows',
+          resourceIds: body.resourceIds,
+          placeStartId: body.placeStartId,
+        });
         set({ shiftStart: '07:30', shiftDurationMin: 480, breakDurationMin: 45 });
         spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
         submit();
@@ -298,7 +320,7 @@ describe('SettingsFormComponent', () => {
       submit();
       const req = http.expectOne((r) => r.method === 'POST');
       expect(req.request.body).toEqual(
-        jasmine.objectContaining({ evaluateWeight: true, evaluateItineraryZone: true, placeEndId: body.placeStartId }),
+        jasmine.objectContaining({ evaluateWeight: true, evaluateItineraryZone: true, placeEndId: body.placeStartId })
       );
       expect('evaluateVolume' in req.request.body).toBeFalse();
       req.flush({});
@@ -354,8 +376,19 @@ describe('SettingsFormComponent', () => {
       expect(sent.globalShiftActive).toBeTrue();
       expect(sent.globalBreakActive).toBeTrue();
       expect(sent.active).toBeFalse();
-      for (const readOnly of ['id', 'tenantId', 'createdAt', 'updatedAt', 'createdBy', 'placeStart', 'placeEnd', 'resources']) {
-        expect(readOnly in sent).withContext(readOnly).toBeFalse();
+      for (const readOnly of [
+        'id',
+        'tenantId',
+        'createdAt',
+        'updatedAt',
+        'createdBy',
+        'placeStart',
+        'placeEnd',
+        'resources',
+      ]) {
+        expect(readOnly in sent)
+          .withContext(readOnly)
+          .toBeFalse();
       }
       req.flush(complete);
     });
@@ -396,7 +429,21 @@ describe('SettingsFormComponent', () => {
 
 describe('buildSettingsUpdateBody', () => {
   it('lo editado manda sobre el registro y se quitan los campos de solo lectura', () => {
-    const record = { id: '1', tenantId: 't', createdAt: 'a', updatedAt: 'b', createdBy: 'u', placeStart: {}, placeEnd: {}, resources: [], description: 'viejo', active: true } as unknown as Settings;
-    expect(buildSettingsUpdateBody(record, { description: 'nuevo' })).toEqual({ description: 'nuevo', active: true } as never);
+    const record = {
+      id: '1',
+      tenantId: 't',
+      createdAt: 'a',
+      updatedAt: 'b',
+      createdBy: 'u',
+      placeStart: {},
+      placeEnd: {},
+      resources: [],
+      description: 'viejo',
+      active: true,
+    } as unknown as Settings;
+    expect(buildSettingsUpdateBody(record, { description: 'nuevo' })).toEqual({
+      description: 'nuevo',
+      active: true,
+    } as never);
   });
 });

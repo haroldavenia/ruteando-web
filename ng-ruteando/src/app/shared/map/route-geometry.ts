@@ -44,7 +44,10 @@ export function routeLine(route: DomainRoute): RouteLine | null {
 
 /** Todas las coordenadas que hay que ver de una o varias rutas: sus líneas y sus paradas. */
 export function routeCoordinates(routes: readonly DomainRoute[]): LonLat[] {
-  return routes.flatMap((route) => [...(routeLine(route)?.coordinates ?? []), ...routeStops(route).map((stop) => stop.coordinate)]);
+  return routes.flatMap((route) => [
+    ...(routeLine(route)?.coordinates ?? []),
+    ...routeStops(route).map((stop) => stop.coordinate),
+  ]);
 }
 
 /** Caja `[oeste, sur, este, norte]` de un conjunto de coordenadas, o `null` si está vacío. */

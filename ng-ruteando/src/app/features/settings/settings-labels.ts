@@ -26,7 +26,8 @@ export const DEFAULT_ROUTE_TOPOLOGIES = Object.keys(ROUTE_TOPOLOGY_LABELS);
 export const DEFAULT_RESTRICTION_TYPES = Object.keys(RESTRICTION_TYPE_LABELS);
 export const DEFAULT_LENGTH_OF_STAY_TYPES = Object.keys(LENGTH_OF_STAY_LABELS);
 
-const label = (labels: Readonly<Record<string, string>>, key: string | null): string => (key === null ? '' : (labels[key] ?? key));
+const label = (labels: Readonly<Record<string, string>>, key: string | null): string =>
+  key === null ? '' : (labels[key] ?? key);
 
 export const routeTopologyLabel = (key: string | null): string => label(ROUTE_TOPOLOGY_LABELS, key);
 export const restrictionTypeLabel = (key: string | null): string => label(RESTRICTION_TYPE_LABELS, key);
@@ -64,10 +65,18 @@ function list(items: string[]): string {
  */
 export function describeSettings(s: SettingsSummary): string {
   let routes = t('rutas');
-  if (s.restrictionType === 'fixed_routes' && s.fixedRoutes !== null && Number.isInteger(s.fixedRoutes) && s.fixedRoutes >= 1) {
+  if (
+    s.restrictionType === 'fixed_routes' &&
+    s.fixedRoutes !== null &&
+    Number.isInteger(s.fixedRoutes) &&
+    s.fixedRoutes >= 1
+  ) {
     routes = s.fixedRoutes === 1 ? t('1 ruta') : t('{0} rutas', [s.fixedRoutes]);
   } else if (s.restrictionType === 'resource_vs_time') {
-    routes = s.shiftDurationMin !== null && s.shiftDurationMin > 0 ? t('rutas con turnos de {0}', [duration(s.shiftDurationMin)]) : t('rutas según recursos y tiempo');
+    routes =
+      s.shiftDurationMin !== null && s.shiftDurationMin > 0
+        ? t('rutas con turnos de {0}', [duration(s.shiftDurationMin)])
+        : t('rutas según recursos y tiempo');
   } else if (s.restrictionType === 'time_windows') {
     routes = t('rutas con ventanas horarias');
   }
@@ -84,7 +93,11 @@ export function describeSettings(s: SettingsSummary): string {
   if (s.vehicleCount > 0) {
     text += s.vehicleCount === 1 ? t(', con 1 vehículo') : t(', con {0} vehículos', [s.vehicleCount]);
   }
-  const evaluated = [s.evaluateWeight && t('peso'), s.evaluateVolume && t('volumen'), s.evaluateItineraryZone && t('zona del itinerario')].filter((x): x is string => !!x);
+  const evaluated = [
+    s.evaluateWeight && t('peso'),
+    s.evaluateVolume && t('volumen'),
+    s.evaluateItineraryZone && t('zona del itinerario'),
+  ].filter((x): x is string => !!x);
   if (evaluated.length > 0) {
     text += t(', evaluando {0}', [list(evaluated)]);
   }

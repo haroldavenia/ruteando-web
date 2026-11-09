@@ -1,6 +1,5 @@
 import { AUDIT_FIXTURE_LOGS, auditLog } from '../../../testing/audit';
 import { parseCsv } from '../../shared/data/csv';
-
 import { auditCsvFileName, auditToCsv } from './audit-export';
 
 describe('audit-export', () => {
@@ -24,7 +23,18 @@ describe('audit-export', () => {
   });
 
   it('muestra la frase, la clave, el tipo, la entidad y el identificador completo', () => {
-    const [, row] = parse([auditLog({ action: 'journey.delete', entityType: 'journey', entityId: '5f6f1325079242c7807dd3c4', description: 'Journey eliminado: name=X', actorEmail: 'ana@x.com', actorRole: 'TENANT_ADMIN', createdAt: '2026-10-11T14:14:14.039Z', ipAddress: '172.18.0.1' })]);
+    const [, row] = parse([
+      auditLog({
+        action: 'journey.delete',
+        entityType: 'journey',
+        entityId: '5f6f1325079242c7807dd3c4',
+        description: 'Journey eliminado: name=X',
+        actorEmail: 'ana@x.com',
+        actorRole: 'TENANT_ADMIN',
+        createdAt: '2026-10-11T14:14:14.039Z',
+        ipAddress: '172.18.0.1',
+      }),
+    ]);
     expect(row).toEqual([
       '2026-10-11T14:14:14.039Z',
       'Jornada eliminada (journey.delete)',
@@ -57,7 +67,11 @@ describe('audit-export', () => {
 
   it('varios cambios se separan con « | » y un evento sin cambios deja la celda vacía', () => {
     const [, changed, plain] = parse([
-      auditLog({ entityType: 'resource', action: 'resource.update', changes: { before: { name: 'A', quantity: 1 }, after: { name: 'B', quantity: 2 } } }),
+      auditLog({
+        entityType: 'resource',
+        action: 'resource.update',
+        changes: { before: { name: 'A', quantity: 1 }, after: { name: 'B', quantity: 2 } },
+      }),
       auditLog({ changes: null }),
     ]);
     expect(changed[changed.length - 1]).toBe('Nombre: A → B | Cantidad: 1 → 2');

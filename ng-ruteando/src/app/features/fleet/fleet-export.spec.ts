@@ -1,5 +1,4 @@
 import { driver, resource, resourceType } from '../../../testing/fleet';
-
 import { csvFileName, driversToCsv, typesToCsv, vehiclesToCsv } from './fleet-export';
 
 const lines = (csv: string): string[] => csv.replace('\uFEFF', '').trim().split('\r\n');
@@ -12,7 +11,13 @@ describe('fleet-export', () => {
 
   it('los tipos exportan el peso en kg y el volumen en m³', () => {
     const csv = typesToCsv([
-      resourceType({ name: 'Camión', category: 'truck', osrmProfile: 'driving', capacity: { weight: 500, volume: 12_000_000 }, gasMileage: 12.5 }),
+      resourceType({
+        name: 'Camión',
+        category: 'truck',
+        osrmProfile: 'driving',
+        capacity: { weight: 500, volume: 12_000_000 },
+        gasMileage: 12.5,
+      }),
       resourceType({ name: 'Camioneta', category: 'car', capacity: null, gasMileage: null }),
     ]);
     const rows = lines(csv);
@@ -36,7 +41,17 @@ describe('fleet-export', () => {
   });
 
   it('los conductores exportan el documento con su etiqueta', () => {
-    const csv = driversToCsv([driver({ firstName: 'Luis', lastName: 'Gómez', email: 'luis@example.com', phone: null, identifierType: 'citizen_id', identifierValue: '1020', active: true })]);
+    const csv = driversToCsv([
+      driver({
+        firstName: 'Luis',
+        lastName: 'Gómez',
+        email: 'luis@example.com',
+        phone: null,
+        identifierType: 'citizen_id',
+        identifierValue: '1020',
+        active: true,
+      }),
+    ]);
     expect(lines(csv)[1]).toBe('Luis;Gómez;luis@example.com;;Documento de identidad;1020;Activo');
   });
 

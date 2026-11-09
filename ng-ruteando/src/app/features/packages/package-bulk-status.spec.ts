@@ -1,12 +1,13 @@
-import { Observable, Subject, of, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { ApiError } from '../../core/api/api-error';
 import { Package } from '../../core/api/models';
-
 import { BULK_STATUS_CONCURRENCY, BulkStatusResult, changeStatusOfMany } from './package-bulk-status';
 
 const targets = (n: number) => Array.from({ length: n }, (_, i) => ({ id: `p${i}`, label: `Paquete ${i}` }));
-const fakeDialog = (answer: boolean | undefined) => ({ open: jasmine.createSpy('open').and.returnValue({ afterClosed: () => of(answer) }) });
+const fakeDialog = (answer: boolean | undefined) => ({
+  open: jasmine.createSpy('open').and.returnValue({ afterClosed: () => of(answer) }),
+});
 
 describe('changeStatusOfMany', () => {
   const run = (obs: Observable<BulkStatusResult>) => {
@@ -20,14 +21,22 @@ describe('changeStatusOfMany', () => {
     const setStatus = jasmine.createSpy('setStatus').and.callFake(() => of({} as Package));
     const { result } = run(changeStatusOfMany({ setStatus }, fakeDialog(true), targets(3), 'attended'));
 
-    expect(setStatus.calls.allArgs()).toEqual([['p0', 'attended'], ['p1', 'attended'], ['p2', 'attended']]);
+    expect(setStatus.calls.allArgs()).toEqual([
+      ['p0', 'attended'],
+      ['p1', 'attended'],
+      ['p2', 'attended'],
+    ]);
     expect(result()).toEqual({ changed: 3, failed: [] });
   });
 
   it('un fallo no detiene a los demás y se cuenta con su nombre y su motivo', () => {
     const setStatus = jasmine
       .createSpy('setStatus')
-      .and.callFake((id: string) => (id === 'p1' ? throwError(() => new ApiError({ status: 409, message: 'Estado no permitido' })) : of({} as Package)));
+      .and.callFake((id: string) =>
+        id === 'p1'
+          ? throwError(() => new ApiError({ status: 409, message: 'Estado no permitido' }))
+          : of({} as Package)
+      );
     const { result } = run(changeStatusOfMany({ setStatus }, fakeDialog(true), targets(3), 'returned'));
 
     expect(result()?.changed).toBe(2);
@@ -58,7 +67,9 @@ describe('changeStatusOfMany', () => {
     run(changeStatusOfMany({ setStatus }, dialog, targets(3), 'cancelled'));
 
     expect(dialog.open).toHaveBeenCalledTimes(1);
-    expect((dialog.open.calls.mostRecent().args[1] as { data: { message: string } }).data.message).toBe('¿Cancelar los 3 paquetes elegidos?');
+    expect((dialog.open.calls.mostRecent().args[1] as { data: { message: string } }).data.message).toBe(
+      '¿Cancelar los 3 paquetes elegidos?'
+    );
     expect(setStatus).toHaveBeenCalledTimes(3);
   });
 

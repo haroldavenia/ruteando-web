@@ -13,7 +13,12 @@ describe('etiquetas de jornadas', () => {
   });
 
   it('traduce los tipos de parada', () => {
-    expect(['depot', 'delivery', 'pickup', 'service'].map(stopTypeLabel)).toEqual(['Depósito', 'Entrega', 'Recogida', 'Servicio']);
+    expect(['depot', 'delivery', 'pickup', 'service'].map(stopTypeLabel)).toEqual([
+      'Depósito',
+      'Entrega',
+      'Recogida',
+      'Servicio',
+    ]);
   });
 
   it('un valor desconocido se muestra con su clave y null queda vacío', () => {

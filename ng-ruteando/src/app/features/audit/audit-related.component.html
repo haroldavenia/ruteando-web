@@ -3,11 +3,21 @@
   <ol class="audit-timeline">
     @for (item of items(); track item.log.id) {
       <li>
-        <button type="button" class="audit-timeline-item" [attr.aria-label]="('Abrir: ' | t) + item.action + ', ' + item.who + ', ' + item.relative" (click)="picked.emit(item.log)">
-          <span class="audit-dot" [attr.data-tone]="item.tone" aria-hidden="true"><mat-icon>{{ item.icon }}</mat-icon></span>
+        <button
+          type="button"
+          class="audit-timeline-item"
+          [attr.aria-label]="('Abrir: ' | t) + item.action + ', ' + item.who + ', ' + item.relative"
+          (click)="picked.emit(item.log)"
+        >
+          <span class="audit-dot" [attr.data-tone]="item.tone" aria-hidden="true"
+            ><mat-icon>{{ item.icon }}</mat-icon></span
+          >
           <span class="audit-timeline-text">
             <b>{{ item.action }}</b>
-            <small>{{ item.who }} · <time [attr.datetime]="item.log.createdAt" [attr.title]="item.exact">{{ item.relative }}</time></small>
+            <small
+              >{{ item.who }} ·
+              <time [attr.datetime]="item.log.createdAt" [attr.title]="item.exact">{{ item.relative }}</time></small
+            >
           </span>
           <mat-icon class="audit-go" aria-hidden="true">chevron_right</mat-icon>
         </button>

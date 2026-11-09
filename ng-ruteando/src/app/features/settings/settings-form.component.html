@@ -1,4 +1,8 @@
-<app-form-head [title]="isNew ? ('Nueva configuración' | t) : ('Editar configuración' | t)" [backLabel]="'Configuraciones' | t" backLink="/configuraciones" />
+<app-form-head
+  [title]="isNew ? ('Nueva configuración' | t) : ('Editar configuración' | t)"
+  [backLabel]="'Configuraciones' | t"
+  backLink="/configuraciones"
+/>
 @switch (loader.status()) {
   @case ('loading') {
     <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
@@ -90,7 +94,10 @@
             </mat-select>
           </mat-form-field>
           @if (placesLoaded() && places().length === 0) {
-            <p class="hint">{{ 'Todavía no hay lugares. Primero' | t }} <a routerLink="/lugares/nuevo">{{ 'crea un lugar' | t }}</a>.</p>
+            <p class="hint">
+              {{ 'Todavía no hay lugares. Primero' | t }} <a routerLink="/lugares/nuevo">{{ 'crea un lugar' | t }}</a
+              >.
+            </p>
           }
           @if (placesTruncated()) {
             <p class="hint" role="status">{{ 'Se muestran solo los primeros {0} lugares.' | t: [selectLimit] }}</p>
@@ -109,7 +116,11 @@
             <mat-error>{{ error('resourceIds') }}</mat-error>
           </mat-form-field>
           @if (vehiclesLoaded() && vehicles().length === 0) {
-            <p class="hint">{{ 'Todavía no hay vehículos. Primero' | t }} <a routerLink="/flota/vehiculos/nuevo">{{ 'crea un vehículo' | t }}</a>.</p>
+            <p class="hint">
+              {{ 'Todavía no hay vehículos. Primero' | t }}
+              <a routerLink="/flota/vehiculos/nuevo">{{ 'crea un vehículo' | t }}</a
+              >.
+            </p>
           }
           @if (vehiclesTruncated()) {
             <p class="hint" role="status">{{ 'Se muestran solo los primeros {0} vehículos.' | t: [selectLimit] }}</p>
@@ -121,7 +132,9 @@
           <div class="toggles" role="group" [attr.aria-label]="'Qué evalúa la planificación' | t">
             <mat-slide-toggle formControlName="evaluateWeight">{{ 'Evaluar peso' | t }}</mat-slide-toggle>
             <mat-slide-toggle formControlName="evaluateVolume">{{ 'Evaluar volumen' | t }}</mat-slide-toggle>
-            <mat-slide-toggle formControlName="evaluateItineraryZone">{{ 'Evaluar zona del itinerario' | t }}</mat-slide-toggle>
+            <mat-slide-toggle formControlName="evaluateItineraryZone">{{
+              'Evaluar zona del itinerario' | t
+            }}</mat-slide-toggle>
           </div>
         </section>
 
@@ -148,7 +161,9 @@
         <app-form-result [error]="submit.error()" />
         <app-form-actions [dirty]="hasUnsavedChanges()">
           <a mat-button routerLink="/configuraciones">{{ 'Cancelar' | t }}</a>
-          <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
+          <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
+            {{ 'Guardar' | t }}
+          </button>
         </app-form-actions>
       </form>
 

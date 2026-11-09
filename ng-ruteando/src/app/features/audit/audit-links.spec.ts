@@ -1,22 +1,30 @@
 import { auditLog } from '../../../testing/audit';
-
 import { entityTarget, entityWasDeleted } from './audit-links';
 
 describe('audit-links', () => {
-  const log = (entityType: string, action = `${entityType}.update`, entityId = 'abc123') => auditLog({ entityType, action, entityId });
+  const log = (entityType: string, action = `${entityType}.update`, entityId = 'abc123') =>
+    auditLog({ entityType, action, entityId });
 
   it('los paquetes, jornadas, lugares, configuraciones, vehículos y zonas se abren en su pantalla', () => {
-    expect(entityTarget(log('package'), 'tenant_admin')).toEqual({ commands: ['/paquetes', 'abc123'], label: 'Abrir paquete' });
+    expect(entityTarget(log('package'), 'tenant_admin')).toEqual({
+      commands: ['/paquetes', 'abc123'],
+      label: 'Abrir paquete',
+    });
     expect(entityTarget(log('journey'), 'tenant_admin')?.commands).toEqual(['/jornadas', 'abc123']);
     expect(entityTarget(log('place'), 'tenant_admin')?.commands).toEqual(['/lugares', 'abc123']);
     expect(entityTarget(log('settings'), 'tenant_admin')?.commands).toEqual(['/configuraciones', 'abc123']);
-    expect(entityTarget(log('resource'), 'tenant_admin')).toEqual({ commands: ['/flota/vehiculos', 'abc123'], label: 'Abrir vehículo' });
+    expect(entityTarget(log('resource'), 'tenant_admin')).toEqual({
+      commands: ['/flota/vehiculos', 'abc123'],
+      label: 'Abrir vehículo',
+    });
     expect(entityTarget(log('zone'), 'tenant_admin')?.commands).toEqual(['/zonas', 'abc123']);
   });
 
   it('los usuarios, invitaciones, empresas y notificaciones no tienen pantalla propia', () => {
     for (const type of ['user', 'invitation', 'tenant', 'notification']) {
-      expect(entityTarget(log(type), 'tenant_admin')).withContext(type).toBeNull();
+      expect(entityTarget(log(type), 'tenant_admin'))
+        .withContext(type)
+        .toBeNull();
     }
   });
 

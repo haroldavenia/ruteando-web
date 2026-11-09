@@ -10,7 +10,6 @@ import { driver, fleetPage, resource, resourceType } from '../../../testing/flee
 import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
-
 import { DriverListComponent } from './drivers/driver-list.component';
 import { ResourceTypeListComponent } from './resource-types/resource-type-list.component';
 import { ResourceListComponent } from './resources/resource-list.component';
@@ -26,8 +25,12 @@ describe('Listados de flota', () => {
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const tick = () => TestBed.inject(ApplicationRef).tick();
   const bar = () => root().querySelector('.selbar') as HTMLElement;
-  const barButton = (text: string) => (Array.from(bar().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
-  const overlayButton = (text: string) => (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+  const barButton = (text: string) =>
+    (Array.from(bar().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
+  const overlayButton = (text: string) =>
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
   const rowText = (index: number) => root().querySelectorAll('tbody tr.mat-mdc-row')[index].textContent ?? '';
 
   function mount<T>(component: Type<T>): void {
@@ -49,7 +52,9 @@ describe('Listados de flota', () => {
 
   /** Marca la fila `row` de la tabla (la vista de tabla es la que tiene casillas por fila). */
   function pickRow(row: number): void {
-    (root().querySelectorAll('tbody tr.mat-mdc-row')[row].querySelector('mat-checkbox input') as HTMLInputElement).click();
+    (
+      root().querySelectorAll('tbody tr.mat-mdc-row')[row].querySelector('mat-checkbox input') as HTMLInputElement
+    ).click();
     fixture.detectChanges();
   }
 
@@ -66,12 +71,15 @@ describe('Listados de flota', () => {
     return captured;
   }
   /** El CSV empieza con un BOM para que Excel lo abra en UTF-8; aquí se quita para comparar el contenido. */
-  const csvText = async (blob: Blob) => new TextDecoder('utf-8', { ignoreBOM: true }).decode(await blob.arrayBuffer()).replace(/^\uFEFF/, '');
+  const csvText = async (blob: Blob) =>
+    new TextDecoder('utf-8', { ignoreBOM: true }).decode(await blob.arrayBuffer()).replace(/^\uFEFF/, '');
 
   afterEach(() => http.verify());
 
   describe('conductores', () => {
-    const many = Array.from({ length: 130 }, (_, i) => driver({ firstName: 'Conductor', lastName: String(i + 1), email: `c${i + 1}@example.com` }));
+    const many = Array.from({ length: 130 }, (_, i) =>
+      driver({ firstName: 'Conductor', lastName: String(i + 1), email: `c${i + 1}@example.com` })
+    );
 
     it('trae a todos con una sola petición y busca entre todos, no solo en la primera página', () => {
       mount(DriverListComponent);
@@ -92,7 +100,12 @@ describe('Listados de flota', () => {
 
     it('muestra el documento con la etiqueta del tipo', () => {
       mount(DriverListComponent);
-      http.expectOne('/gateway/users/drivers').flush([driver({ identifierType: 'citizen_id', identifierValue: '1020304050' }), driver({ identifierType: null, identifierValue: null })]);
+      http
+        .expectOne('/gateway/users/drivers')
+        .flush([
+          driver({ identifierType: 'citizen_id', identifierValue: '1020304050' }),
+          driver({ identifierType: null, identifierValue: null }),
+        ]);
       fixture.detectChanges();
 
       expect(rowText(0)).toContain('Documento de identidad 1020304050');
@@ -131,7 +144,12 @@ describe('Listados de flota', () => {
       await wait();
 
       const deletes = http.match((r) => r.method === 'DELETE');
-      expect(deletes.map((d) => d.request.url).sort()).toEqual(rows.slice(0, 3).map((r) => `/gateway/users/${r.id}`).sort());
+      expect(deletes.map((d) => d.request.url).sort()).toEqual(
+        rows
+          .slice(0, 3)
+          .map((r) => `/gateway/users/${r.id}`)
+          .sort()
+      );
       deletes[0].flush(null, { status: 204, statusText: 'No Content' });
       deletes[1].flush({ message: 'assigned' }, { status: 409, statusText: 'Conflict' });
       deletes[2].flush(null, { status: 204, statusText: 'No Content' });
@@ -165,7 +183,12 @@ describe('Listados de flota', () => {
     it('exporta solo los elegidos, con la fecha en el nombre y sin volver a pedirlos', async () => {
       const downloads = captureDownloads();
       mount(DriverListComponent);
-      http.expectOne('/gateway/users/drivers').flush([driver({ firstName: 'Ana', lastName: 'Pérez', identifierType: 'citizen_id', identifierValue: '77' }), ...many.slice(0, 2)]);
+      http
+        .expectOne('/gateway/users/drivers')
+        .flush([
+          driver({ firstName: 'Ana', lastName: 'Pérez', identifierType: 'citizen_id', identifierValue: '77' }),
+          ...many.slice(0, 2),
+        ]);
       fixture.detectChanges();
       pickRow(0);
       barButton('Exportar').click();
@@ -190,7 +213,9 @@ describe('Listados de flota', () => {
       search.dispatchEvent(new Event('input'));
       fixture.detectChanges();
       const matching = root().querySelector('app-page-header')!;
-      (Array.from(matching.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Exportar CSV'))!.click();
+      (Array.from(matching.querySelectorAll('button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.includes('Exportar CSV'))!
+        .click();
 
       const lines = (await csvText(downloads.blobs[0])).trimEnd().split('\r\n');
       // «Conductor 12», «Conductor 120» … «Conductor 129»: 11 conductores más la cabecera
@@ -199,7 +224,14 @@ describe('Listados de flota', () => {
 
     it('pinta como texto lo que trae el gateway: un nombre con HTML no crea elementos', () => {
       mount(DriverListComponent);
-      http.expectOne('/gateway/users/drivers').flush([driver({ firstName: '<img src=x onerror=alert(1)>', lastName: '<b>Gómez</b>', identifierType: 'citizen_id', identifierValue: '<script>1</script>' })]);
+      http.expectOne('/gateway/users/drivers').flush([
+        driver({
+          firstName: '<img src=x onerror=alert(1)>',
+          lastName: '<b>Gómez</b>',
+          identifierType: 'citizen_id',
+          identifierValue: '<script>1</script>',
+        }),
+      ]);
       fixture.detectChanges();
 
       const row = root().querySelector('tbody tr.mat-mdc-row')!;
@@ -213,7 +245,9 @@ describe('Listados de flota', () => {
       mount(DriverListComponent);
       http.expectOne('/gateway/users/drivers').flush([]);
       fixture.detectChanges();
-      const button = (Array.from(root().querySelectorAll('app-page-header button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Exportar CSV'))!;
+      const button = (Array.from(root().querySelectorAll('app-page-header button')) as HTMLButtonElement[]).find((b) =>
+        b.textContent?.includes('Exportar CSV')
+      )!;
       expect(button.disabled).toBeTrue();
     });
   });
@@ -240,9 +274,20 @@ describe('Listados de flota', () => {
       mount(ResourceTypeListComponent);
       const page0 = http.expectOne((r) => r.url === '/gateway/resource-types');
       expect(page0.request.params.get('size')).toBe('100');
-      page0.flush(fleetPage(Array.from({ length: 100 }, () => resourceType()), 130));
+      page0.flush(
+        fleetPage(
+          Array.from({ length: 100 }, () => resourceType()),
+          130
+        )
+      );
       const page1 = http.expectOne((r) => r.url === '/gateway/resource-types' && r.params.get('page') === '1');
-      page1.flush(fleetPage(Array.from({ length: 30 }, () => resourceType()), 130, 1));
+      page1.flush(
+        fleetPage(
+          Array.from({ length: 30 }, () => resourceType()),
+          130,
+          1
+        )
+      );
       fixture.detectChanges();
       expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toBe('130 tipos');
     });
@@ -266,7 +311,9 @@ describe('Listados de flota', () => {
       fixture.detectChanges();
 
       expect(root().querySelector('[role="status"]')?.textContent).toContain('Se eliminaron 1 de 2 tipos');
-      expect(root().querySelector('[role="alert"]')?.textContent).toContain('No se puede eliminar: hay vehículos de este tipo');
+      expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+        'No se puede eliminar: hay vehículos de este tipo'
+      );
       http.expectOne((r) => r.url === '/gateway/resource-types').flush(fleetPage(types.slice(0, 1)));
     });
 
@@ -286,7 +333,11 @@ describe('Listados de flota', () => {
   });
 
   describe('vehículos', () => {
-    const vehicles = [resource({ name: 'Furgón', licensePlate: 'ABC-1' }), resource({ name: 'Moto', licensePlate: null }), resource({ name: 'Camión', licensePlate: 'XYZ-9' })];
+    const vehicles = [
+      resource({ name: 'Furgón', licensePlate: 'ABC-1' }),
+      resource({ name: 'Moto', licensePlate: null }),
+      resource({ name: 'Camión', licensePlate: 'XYZ-9' }),
+    ];
 
     function open(): void {
       mount(ResourceListComponent);
@@ -333,7 +384,9 @@ describe('Listados de flota', () => {
     it('«Exportar CSV» exporta todos los vehículos filtrados', async () => {
       const downloads = captureDownloads();
       open();
-      (Array.from(root().querySelectorAll('app-page-header button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Exportar CSV'))!.click();
+      (Array.from(root().querySelectorAll('app-page-header button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.includes('Exportar CSV'))!
+        .click();
 
       const lines = (await csvText(downloads.blobs[0])).trimEnd().split('\r\n');
       expect(downloads.names[0]).toMatch(/^vehiculos-\d{4}-\d{2}-\d{2}\.csv$/);
@@ -344,14 +397,18 @@ describe('Listados de flota', () => {
     it('pinta como texto el nombre y la matrícula: con HTML no crea elementos, ni en tarjetas ni en el CSV', async () => {
       const downloads = captureDownloads();
       mount(ResourceListComponent);
-      http.expectOne((r) => r.url === '/gateway/resources').flush(fleetPage([resource({ name: '<img src=x onerror=alert(1)>', licensePlate: '=HYPERLINK("x")' })]));
+      http
+        .expectOne((r) => r.url === '/gateway/resources')
+        .flush(fleetPage([resource({ name: '<img src=x onerror=alert(1)>', licensePlate: '=HYPERLINK("x")' })]));
       fixture.detectChanges();
 
       const card = root().querySelector('.card-grid article.vehicle')!;
       expect(card.querySelector('img')).toBeNull();
       expect(card.textContent).toContain('<img src=x onerror=alert(1)>');
 
-      (Array.from(root().querySelectorAll('app-page-header button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Exportar CSV'))!.click();
+      (Array.from(root().querySelectorAll('app-page-header button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.includes('Exportar CSV'))!
+        .click();
       const csv = await csvText(downloads.blobs[0]);
       expect(csv).toContain(`'=HYPERLINK`);
       expect(csv).not.toMatch(/;=HYPERLINK/);

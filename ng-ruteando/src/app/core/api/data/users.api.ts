@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CrudApi } from '../crud-api';
 import { MessageResponse } from '../../auth/session.model';
+import { CrudApi } from '../crud-api';
 import { User, UserInput } from '../models';
 
 @Injectable({ providedIn: 'root' })

@@ -1,12 +1,10 @@
 import { signal } from '@angular/core';
-import { EMPTY, Observable, expand, reduce } from 'rxjs';
+import { EMPTY, expand, Observable, reduce } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
-
-import { ListState } from './list-state';
-
 import { t } from '../../core/i18n/i18n';
+import { ListState } from './list-state';
 /** Registros por petición al traer todo el listado. */
 export const FULL_LIST_PAGE_SIZE = 100;
 /** Tope de registros que se traen: pasado este número se avisa y se trabaja con los primeros. */
@@ -42,13 +40,19 @@ export class FullListState<T> extends ListState<T> {
   }
 
   private fetchAll(): Observable<{ rows: T[]; total: number }> {
-    const pageAt = (page: number): Observable<Page<T>> => this.fetch({ page, size: FULL_LIST_PAGE_SIZE } satisfies PageParams);
+    const pageAt = (page: number): Observable<Page<T>> =>
+      this.fetch({ page, size: FULL_LIST_PAGE_SIZE } satisfies PageParams);
     return pageAt(0).pipe(
-      expand((result, index) => ((index + 1) * FULL_LIST_PAGE_SIZE < Math.min(result.totalElements, FULL_LIST_LIMIT) ? pageAt(index + 1) : EMPTY)),
-      reduce(
-        (acc, result) => ({ rows: [...acc.rows, ...result.content].slice(0, FULL_LIST_LIMIT), total: acc.total || result.totalElements }),
-        { rows: [] as T[], total: 0 },
+      expand((result, index) =>
+        (index + 1) * FULL_LIST_PAGE_SIZE < Math.min(result.totalElements, FULL_LIST_LIMIT) ? pageAt(index + 1) : EMPTY
       ),
+      reduce(
+        (acc, result) => ({
+          rows: [...acc.rows, ...result.content].slice(0, FULL_LIST_LIMIT),
+          total: acc.total || result.totalElements,
+        }),
+        { rows: [] as T[], total: 0 }
+      )
     );
   }
 }

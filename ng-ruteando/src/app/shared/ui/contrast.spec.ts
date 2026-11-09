@@ -52,7 +52,11 @@ const TEXT_PAIRS: [string, string, string][] = [
   // La cabecera de Inicio es un tinte de `primary-container` sobre `surface-container-low`: el peor caso es el contenedor puro
   ['título de la cabecera de Inicio', '--mat-sys-on-surface', '--mat-sys-primary-container'],
   ['saludo de la cabecera de Inicio', '--mat-sys-on-surface-variant', '--mat-sys-primary-container'],
-  ['texto del botón con degradado (extremo rosa; el violeta es «texto del botón principal»)', '--mat-sys-on-primary', '--mat-sys-tertiary'],
+  [
+    'texto del botón con degradado (extremo rosa; el violeta es «texto del botón principal»)',
+    '--mat-sys-on-primary',
+    '--mat-sys-tertiary',
+  ],
   ['palabra con el degradado de la marca (extremo violeta)', '--mat-sys-primary', '--mat-sys-surface'],
   ['palabra con el degradado de la marca (extremo rosa)', '--mat-sys-tertiary', '--mat-sys-surface'],
   ['texto sobre tarjeta', '--mat-sys-on-surface', '--mat-sys-surface-container-low'],
@@ -105,8 +109,12 @@ describe('contraste de la interfaz', () => {
     const surface = resolve(host, '--mat-sys-surface');
     const tint = resolve(host, '--mat-sys-primary-container');
     for (const color of ROUTE_COLORS_DARK) {
-      expect(contrast(hex(color), surface)).withContext(`${color} sobre la superficie`).toBeGreaterThanOrEqual(3);
-      expect(contrast(hex(color), tint)).withContext(`${color} sobre el tinte`).toBeGreaterThanOrEqual(3);
+      expect(contrast(hex(color), surface))
+        .withContext(`${color} sobre la superficie`)
+        .toBeGreaterThanOrEqual(3);
+      expect(contrast(hex(color), tint))
+        .withContext(`${color} sobre el tinte`)
+        .toBeGreaterThanOrEqual(3);
     }
   });
 

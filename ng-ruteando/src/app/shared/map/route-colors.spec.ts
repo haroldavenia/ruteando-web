@@ -1,4 +1,11 @@
-import { ROUTE_COLORS, ROUTE_COLORS_DARK, ROUTE_COLOR_NAMES, colorName, routeColor, routeColorThemed } from './route-colors';
+import {
+  colorName,
+  ROUTE_COLOR_NAMES,
+  ROUTE_COLORS,
+  ROUTE_COLORS_DARK,
+  routeColor,
+  routeColorThemed,
+} from './route-colors';
 
 describe('routeColor', () => {
   it('las ocho primeras rutas tienen colores distintos', () => {

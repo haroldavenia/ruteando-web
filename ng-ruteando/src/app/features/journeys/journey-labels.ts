@@ -17,7 +17,8 @@ export const STOP_TYPE_LABELS: Readonly<Record<string, string>> = {
   service: t('Servicio'),
 };
 
-const label = (labels: Readonly<Record<string, string>>, key: string | null): string => (key === null ? '' : (labels[key] ?? key));
+const label = (labels: Readonly<Record<string, string>>, key: string | null): string =>
+  key === null ? '' : (labels[key] ?? key);
 
 export const journeyStatusLabel = (key: string | null): string => label(JOURNEY_STATUS_LABELS, key);
 export const stopTypeLabel = (key: string | null): string => label(STOP_TYPE_LABELS, key);

@@ -1,13 +1,11 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuditLog } from '../../core/api/models';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { formatRelativeTime } from '../../shared/format';
-
 import { formatLongDateTime } from './audit-format';
 import { actorInitials, auditActor, auditEntityLabel, breakableParts, shortId } from './audit-labels';
-
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Las cuatro cosas que dice un evento, cada una en su tarjeta: quién (con avatar de iniciales y su rol), cuándo (hace cuánto y la
  * fecha exacta), sobre qué (el tipo y la cola de su identificador) y, si el ámbito la entrega, desde qué dirección IP.

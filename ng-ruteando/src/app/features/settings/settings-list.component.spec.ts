@@ -6,15 +6,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../testing/api-testing';
+import remove from '../../../testing/fixtures/gateway/delete__settings__id.json';
+import list from '../../../testing/fixtures/gateway/get__settings.json';
+import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
-
 import { SettingsListComponent } from './settings-list.component';
-
-import list from '../../../testing/fixtures/gateway/get__settings.json';
-import remove from '../../../testing/fixtures/gateway/delete__settings__id.json';
 
 const fx = (f: unknown) => f as Fixture;
 
@@ -26,7 +24,9 @@ describe('SettingsListComponent', () => {
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const item = (fx(list).response.body as { content: { id: string; description: string }[] }).content[0];
   const overlayButton = (text: string) =>
-    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -60,7 +60,9 @@ describe('SettingsListComponent', () => {
 
   it('bajo el título dice cuántos hay y crear es la acción principal de la pantalla', () => {
     load();
-    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(/^\d+ (configuración|configuraciones)$/);
+    expect(root().querySelector('app-page-header .subtitle')?.textContent?.trim()).toMatch(
+      /^\d+ (configuración|configuraciones)$/
+    );
     expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
   });
 
@@ -100,11 +102,17 @@ describe('SettingsListComponent', () => {
       overlayButton('Eliminar').click();
       await wait();
     }
-    const reloadAnswer = () => http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/settings').flush(fx(list).response.body as object);
+    const reloadAnswer = () =>
+      http
+        .expectOne((r) => r.method === 'GET' && r.url === '/gateway/settings')
+        .flush(fx(list).response.body as object);
 
     it('borra tras confirmar y recarga', async () => {
       await confirm();
-      respondWith(http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/settings/${item.id}`), fx(remove));
+      respondWith(
+        http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/settings/${item.id}`),
+        fx(remove)
+      );
       fixture.detectChanges();
       expect(root().textContent).toContain('Se eliminó configuración «Postman settings»');
       reloadAnswer();
@@ -115,7 +123,9 @@ describe('SettingsListComponent', () => {
         await confirm();
         http.expectOne((r) => r.method === 'DELETE').flush({ message: 'in use' }, { status, statusText: 'x' });
         fixture.detectChanges();
-        expect(root().querySelector('[role="alert"]')?.textContent).toContain('No se puede eliminar: la configuración se usa en una jornada');
+        expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+          'No se puede eliminar: la configuración se usa en una jornada'
+        );
         expect(root().textContent).toContain('Postman settings');
       });
     }
