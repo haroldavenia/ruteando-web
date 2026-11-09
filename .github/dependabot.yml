@@ -1,7 +1,8 @@
 version: 2
 
 # Revisión semanal de dependencias. Los pull requests de Dependabot pasan por el mismo CI.
-# El ecosistema `npm` también cubre pnpm: Dependabot detecta pnpm-lock.yaml y pnpm-workspace.yaml (raíz y ng-ruteando).
+# El ecosistema `npm` también cubre pnpm: con un workspace (pnpm-workspace.yaml) basta UNA entrada en la raíz;
+# actualiza servidor y ng-ruteando sobre el único pnpm-lock.yaml (una entrada por carpeta duplicaba los pull requests).
 updates:
   - package-ecosystem: npm
     directory: /
@@ -12,23 +13,24 @@ updates:
     commit-message:
       prefix: chore(deps)
     groups:
-      menores-y-parches:
-        update-types: [minor, patch]
-
-  - package-ecosystem: npm
-    directory: /ng-ruteando
-    schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: chore(deps)
-    groups:
-      # Los paquetes de Angular se actualizan juntos para no mezclar versiones
+      # Parches y menores de Angular juntos, para no mezclar versiones
       angular:
         patterns: ['@angular/*', '@angular-devkit/*']
+        update-types: [minor, patch]
       menores-y-parches:
         update-types: [minor, patch]
+    ignore:
+      # Las versiones mayores de Angular se suben a mano y todas a la vez (`ng update`): un pull
+      # request suelto de un solo paquete deja versiones mezcladas y rompe las pruebas.
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular-devkit/*'
+        update-types: ['version-update:semver-major']
+      # karma-jasmine 5.1 (la última) no funciona con jasmine-core 7 y con la 6 ensucia la salida de las pruebas
+      - dependency-name: jasmine-core
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/jasmine'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions
     directory: /
