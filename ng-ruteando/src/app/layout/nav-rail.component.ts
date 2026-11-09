@@ -76,16 +76,23 @@ export class NavRailComponent {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map(() => this.router.url),
-      startWith(this.router.url),
+      startWith(this.router.url)
     ),
-    { initialValue: this.router.url },
+    { initialValue: this.router.url }
   );
 
   /** La sección (Flota) está activa cuando lo está cualquiera de sus entradas. */
   protected groupActive(item: NavItem): boolean {
     this.url();
     return (item.children ?? []).some((child) =>
-      child.link ? this.router.isActive(child.link, { paths: 'subset', queryParams: 'ignored', fragment: 'ignored', matrixParams: 'ignored' }) : false,
+      child.link
+        ? this.router.isActive(child.link, {
+            paths: 'subset',
+            queryParams: 'ignored',
+            fragment: 'ignored',
+            matrixParams: 'ignored',
+          })
+        : false
     );
   }
 }

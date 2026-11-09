@@ -2,10 +2,26 @@ import { AuditLog } from '../../core/api/models';
 import { toCsv } from '../../shared/data/csv';
 
 import { diffChanges } from './audit-diff';
-import { auditActionLabel, auditActor, auditEntityLabel, auditKind, auditKindLabel, auditSummary } from './audit-labels';
+import {
+  auditActionLabel,
+  auditActor,
+  auditEntityLabel,
+  auditKind,
+  auditKindLabel,
+  auditSummary,
+} from './audit-labels';
 
 import { t } from '../../core/i18n/i18n';
-const HEADER = ['Instante (UTC)', t('Acción'), t('Tipo de acción'), t('Entidad'), t('Identificador'), t('Persona'), t('Rol'), t('Resumen')];
+const HEADER = [
+  'Instante (UTC)',
+  t('Acción'),
+  t('Tipo de acción'),
+  t('Entidad'),
+  t('Identificador'),
+  t('Persona'),
+  t('Rol'),
+  t('Resumen'),
+];
 
 /** Qué cambió, para una celda: `campo: antes → después` de los campos que cambiaron, separados por « | ». */
 function changesText(log: AuditLog): string {

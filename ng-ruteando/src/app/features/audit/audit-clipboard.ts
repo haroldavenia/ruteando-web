@@ -7,7 +7,12 @@ import { t } from '../../core/i18n/i18n';
  * Copia un texto al portapapeles y avisa. Si el navegador no lo permite (página sin HTTPS, permiso denegado) el aviso trae el
  * texto para copiarlo a mano.
  */
-export async function copyToClipboard(document: Document, injector: Injector, text: string, what: string): Promise<void> {
+export async function copyToClipboard(
+  document: Document,
+  injector: Injector,
+  text: string,
+  what: string
+): Promise<void> {
   try {
     await document.defaultView?.navigator.clipboard.writeText(text);
     void notify(injector, t('{0} copiado', [what]));

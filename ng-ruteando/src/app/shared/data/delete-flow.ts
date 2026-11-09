@@ -40,7 +40,7 @@ export class DeleteFlow {
       .ask(options.entity, options.name)
       .pipe(
         filter((confirmed) => confirmed),
-        switchMap(() => options.request()),
+        switchMap(() => options.request())
       )
       .subscribe({
         next: () => {

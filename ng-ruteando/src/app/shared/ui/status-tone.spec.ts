@@ -2,11 +2,15 @@ import { TONE_ICONS, statusTone } from './status-tone';
 
 describe('statusTone', () => {
   it('paquetes: atendido es éxito, pendiente neutro, no atendido aviso, cancelado peligro y devuelto información', () => {
-    expect(['attended', 'pending', 'unattended', 'cancelled', 'returned'].map((k) => statusTone('package', k))).toEqual(['success', 'neutral', 'warning', 'danger', 'info']);
+    expect(['attended', 'pending', 'unattended', 'cancelled', 'returned'].map((k) => statusTone('package', k))).toEqual(
+      ['success', 'neutral', 'warning', 'danger', 'info']
+    );
   });
 
   it('jornadas: completada es éxito, planificada y en curso información, fallida y cancelada peligro, en planificación neutro', () => {
-    expect(['completed', 'planned', 'in_progress', 'failed', 'cancelled', 'planning'].map((k) => statusTone('journey', k))).toEqual(['success', 'info', 'info', 'danger', 'danger', 'neutral']);
+    expect(
+      ['completed', 'planned', 'in_progress', 'failed', 'cancelled', 'planning'].map((k) => statusTone('journey', k))
+    ).toEqual(['success', 'info', 'info', 'danger', 'danger', 'neutral']);
   });
 
   it('las visitas usan los tonos de los paquetes y «No disponible» es neutro', () => {

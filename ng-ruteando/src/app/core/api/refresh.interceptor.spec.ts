@@ -51,7 +51,7 @@ describe('interceptores de autenticación y renovación de sesión', () => {
   /** Suscribe y devuelve una promesa con el valor o el error. */
   function call<T = unknown>(url: string, method = 'GET', body: unknown = null): Promise<T> {
     return new Promise<T>((resolve, reject) =>
-      http.request<T>(method, url, { body }).subscribe({ next: resolve, error: reject }),
+      http.request<T>(method, url, { body }).subscribe({ next: resolve, error: reject })
     );
   }
 

@@ -1,7 +1,15 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +33,14 @@ import { notify } from '../../../shared/form/notify';
 import { RESOURCE_CATEGORIES, profileLabel } from '../fleet-labels';
 import { fleetReturnUrl, readHandoff, toHandoffState } from '../type-handoff';
 
-import { CM3_PER_M3, CapacityMode, CapacityValues, decodeCapacity, encodeCapacity, volumeOfMeasures } from './capacity-codec';
+import {
+  CM3_PER_M3,
+  CapacityMode,
+  CapacityValues,
+  decodeCapacity,
+  encodeCapacity,
+  volumeOfMeasures,
+} from './capacity-codec';
 import { CapacityField, capacityIssues } from './capacity-rules';
 
 import { locale, t } from '../../../core/i18n/i18n';
@@ -35,7 +50,17 @@ const FIELD_ERRORS = {
   min: t('Debe ser mayor o igual que 0'),
 };
 
-const CAPACITY_FIELDS: readonly CapacityField[] = ['weight', 'volume', 'width', 'height', 'depth', 'minWeight', 'maxWeight', 'minVolume', 'maxVolume'];
+const CAPACITY_FIELDS: readonly CapacityField[] = [
+  'weight',
+  'volume',
+  'width',
+  'height',
+  'depth',
+  'minWeight',
+  'maxWeight',
+  'minVolume',
+  'maxVolume',
+];
 const NUMBER = new Intl.NumberFormat(locale(), { maximumFractionDigits: 2, useGrouping: false });
 
 /** Valores de capacidad del formulario, tal como los editó la persona (kg, cm³ y cm). */
@@ -75,11 +100,26 @@ function capacityValidator(field: CapacityField): ValidatorFn {
   };
 }
 
-const optionalNumber = (field: CapacityField) => new FormControl<number | null>(null, { validators: [capacityValidator(field)] });
+const optionalNumber = (field: CapacityField) =>
+  new FormControl<number | null>(null, { validators: [capacityValidator(field)] });
 
 @Component({
   selector: 'app-resource-type-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, FormActionsComponent, FormHeadComponent, MatIconModule, TranslatePipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    SkeletonComponent,
+    FocusFirstInvalidDirective,
+    FormResultComponent,
+    FormActionsComponent,
+    FormHeadComponent,
+    MatIconModule,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './resource-type-form.component.html',
   styleUrl: './resource-type-form.component.scss',
@@ -101,11 +141,13 @@ export class ResourceTypeFormComponent implements HasUnsavedChanges {
   /** A dónde se vuelve al guardar o cancelar si se llegó desde el formulario de vehículo (`?volver=`); si no, al listado. */
   protected readonly returnTo = fleetReturnUrl(this.route.queryParamMap.get('volver'));
   /** El borrador del formulario de vehículo que viajó hasta aquí, para devolvérselo al volver. */
-  private readonly handoff = readHandoff(this.router.currentNavigation()?.extras.state ?? inject(DOCUMENT).defaultView?.history.state);
+  private readonly handoff = readHandoff(
+    this.router.currentNavigation()?.extras.state ?? inject(DOCUMENT).defaultView?.history.state
+  );
   protected readonly returnState = this.handoff ? toHandoffState({ draft: this.handoff.draft }) : undefined;
 
   protected readonly profiles = computed(() =>
-    this.masters.values('OsrmProfile').map((value) => ({ key: value.key, label: profileLabel(value.key) })),
+    this.masters.values('OsrmProfile').map((value) => ({ key: value.key, label: profileLabel(value.key) }))
   );
 
   protected readonly form = new FormGroup({
@@ -125,7 +167,13 @@ export class ResourceTypeFormComponent implements HasUnsavedChanges {
     maxVolume: optionalNumber('maxVolume'),
   });
 
-  private readonly capacity = toSignal(this.form.valueChanges.pipe(startWith(null), map(() => capacityOf(this.form))), { initialValue: capacityOf(this.form) });
+  private readonly capacity = toSignal(
+    this.form.valueChanges.pipe(
+      startWith(null),
+      map(() => capacityOf(this.form))
+    ),
+    { initialValue: capacityOf(this.form) }
+  );
   protected readonly measured = computed(() => this.capacity().mode === 'measure');
   /** El volumen calculado con las tres medidas, «7956000 cm³ · 7,96 m³», o vacío si falta alguna. */
   protected readonly volumeText = computed(() => {
@@ -143,7 +191,13 @@ export class ResourceTypeFormComponent implements HasUnsavedChanges {
     });
     this.loader.load((record) => {
       const capacity = decodeCapacity(record);
-      this.form.reset({ name: record.name, category: record.category, osrmProfile: record.osrmProfile, gasMileage: record.gasMileage, ...capacity });
+      this.form.reset({
+        name: record.name,
+        category: record.category,
+        osrmProfile: record.osrmProfile,
+        gasMileage: record.gasMileage,
+        ...capacity,
+      });
     });
   }
 
@@ -153,7 +207,9 @@ export class ResourceTypeFormComponent implements HasUnsavedChanges {
 
   protected error(name: 'name' | 'category' | 'osrmProfile' | 'gasMileage'): string {
     const errors = this.form.controls[name].errors;
-    const key = errors ? (Object.keys(errors).find((k) => k in FIELD_ERRORS) as keyof typeof FIELD_ERRORS | undefined) : undefined;
+    const key = errors
+      ? (Object.keys(errors).find((k) => k in FIELD_ERRORS) as keyof typeof FIELD_ERRORS | undefined)
+      : undefined;
     return key ? FIELD_ERRORS[key] : '';
   }
 

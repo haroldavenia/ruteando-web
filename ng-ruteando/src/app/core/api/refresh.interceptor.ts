@@ -50,7 +50,7 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
           expire();
         }
         return throwError(() => retryError);
-      }),
+      })
     );
 
   const expiresAt = tokens.expiresAt;
@@ -62,7 +62,7 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
           expire();
           return throwError(() => new SessionExpiredError());
         }),
-        switchMap(() => next(withCurrentToken(req))),
+        switchMap(() => next(withCurrentToken(req)))
       )
     : next(req);
 
@@ -82,8 +82,8 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
           expire();
           return throwError(() => error);
         }),
-        switchMap(() => retry()),
+        switchMap(() => retry())
       );
-    }),
+    })
   );
 };

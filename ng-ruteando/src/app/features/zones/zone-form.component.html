@@ -31,8 +31,19 @@
           <legend>{{ 'Color' | t }}</legend>
           @for (option of colors; track option.label) {
             <label class="color" [class.selected]="form.controls.color.value === option.value">
-              <input type="radio" name="zone-color" [value]="option.value" [checked]="form.controls.color.value === option.value" (change)="selectColor(option.value)" />
-              <span class="swatch" [class.none]="option.value === null" [style.background]="option.value ?? 'transparent'" aria-hidden="true"></span>
+              <input
+                type="radio"
+                name="zone-color"
+                [value]="option.value"
+                [checked]="form.controls.color.value === option.value"
+                (change)="selectColor(option.value)"
+              />
+              <span
+                class="swatch"
+                [class.none]="option.value === null"
+                [style.background]="option.value ?? 'transparent'"
+                aria-hidden="true"
+              ></span>
               {{ option.label }}
             </label>
           }
@@ -50,7 +61,9 @@
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
         <a mat-button routerLink="/zonas">{{ 'Cancelar' | t }}</a>
-        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
+        <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
+          {{ 'Guardar' | t }}
+        </button>
       </app-form-actions>
     </form>
   }

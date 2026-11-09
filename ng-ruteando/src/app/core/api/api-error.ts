@@ -12,7 +12,13 @@ export class ApiError extends Error {
   readonly details: unknown;
   readonly raw: HttpErrorResponse | null;
 
-  constructor(init: { status: number; code?: string | null; message: string; details?: unknown; raw?: HttpErrorResponse | null }) {
+  constructor(init: {
+    status: number;
+    code?: string | null;
+    message: string;
+    details?: unknown;
+    raw?: HttpErrorResponse | null;
+  }) {
     super(init.message);
     this.name = 'ApiError';
     this.status = init.status;

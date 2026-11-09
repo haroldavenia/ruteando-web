@@ -14,7 +14,13 @@ import { HomeComponent } from './home.component';
 
 const day = (n: number) => `2026-10-${String(n).padStart(2, '0')}T10:00:00Z`;
 const journey = (n: number, status = 'planned') => ({ id: `j${n}`, name: `Jornada ${n}`, status, createdAt: day(n) });
-const page = (content: unknown[], total = content.length) => ({ content, page: 0, size: 5, totalElements: total, totalPages: Math.max(1, Math.ceil(total / 5)) });
+const page = (content: unknown[], total = content.length) => ({
+  content,
+  page: 0,
+  size: 5,
+  totalElements: total,
+  totalPages: Math.max(1, Math.ceil(total / 5)),
+});
 
 /** Un paquete mínimo: las cifras solo miran su estado. */
 const pack = (status: string, n = 0) => ({ id: `p${n}`, name: `Paquete ${n}`, status });
@@ -39,7 +45,12 @@ describe('HomeComponent', () => {
    * Abre la home; `answer` contesta la petición de jornadas (por defecto, una lista vacía) y `packages` la de paquetes de las cifras
    * (por defecto, sin paquetes; `null` la deja pendiente).
    */
-  function open(role: UserRole, answer: unknown | null = page([]), platform = 'browser', packages: unknown | null = packagePage([])): void {
+  function open(
+    role: UserRole,
+    answer: unknown | null = page([]),
+    platform = 'browser',
+    packages: unknown | null = packagePage([])
+  ): void {
     TestBed.configureTestingModule({
       imports: [HomeComponent],
       providers: [
@@ -95,19 +106,31 @@ describe('HomeComponent', () => {
     it('sin nombre saluda con el correo', () => {
       TestBed.configureTestingModule({
         imports: [HomeComponent],
-        providers: [provideRouter([]), { provide: API_BASE_URL, useValue: '/gateway' }, provideHttpClient(withInterceptors([errorInterceptor])), provideHttpClientTesting()],
+        providers: [
+          provideRouter([]),
+          { provide: API_BASE_URL, useValue: '/gateway' },
+          provideHttpClient(withInterceptors([errorInterceptor])),
+          provideHttpClientTesting(),
+        ],
       });
       http = TestBed.inject(HttpTestingController);
-      TestBed.inject(CurrentUser).set(makeUser({ role: 'driver', firstName: null, lastName: null, email: 'zoe@example.invalid' }));
+      TestBed.inject(CurrentUser).set(
+        makeUser({ role: 'driver', firstName: null, lastName: null, email: 'zoe@example.invalid' })
+      );
       const nameless = TestBed.createComponent(HomeComponent);
       nameless.detectChanges();
-      expect((nameless.nativeElement as HTMLElement).querySelector('h1')?.textContent).toMatch(/^Buen[oa]s (días|tardes|noches), zoe@example\.invalid$/);
+      expect((nameless.nativeElement as HTMLElement).querySelector('h1')?.textContent).toMatch(
+        /^Buen[oa]s (días|tardes|noches), zoe@example\.invalid$/
+      );
     });
 
     it('tiene un único h1, el saludo, y los títulos de sus tarjetas son h2', () => {
       open('agent');
       expect(root().querySelectorAll('h1').length).toBe(1);
-      expect(Array.from(root().querySelectorAll('h2')).map((h) => h.textContent)).toEqual(['Paquetes atendidos', 'Últimas jornadas']);
+      expect(Array.from(root().querySelectorAll('h2')).map((h) => h.textContent)).toEqual([
+        'Paquetes atendidos',
+        'Últimas jornadas',
+      ]);
     });
 
     it('muestra la fecha de hoy con el día de la semana, sin coma: «viernes 30 de octubre»', () => {
@@ -132,7 +155,12 @@ describe('HomeComponent', () => {
     });
 
     it('con jornadas en curso y paquetes pendientes los dice con lo que ya se sabe', () => {
-      open('agent', page([journey(3, 'in_progress'), journey(2, 'in_progress'), journey(1)]), 'browser', packagePage(['pending', 'pending', 'pending', 'attended']));
+      open(
+        'agent',
+        page([journey(3, 'in_progress'), journey(2, 'in_progress'), journey(1)]),
+        'browser',
+        packagePage(['pending', 'pending', 'pending', 'attended'])
+      );
       expect(summary()).toBe('2 de las últimas jornadas están en curso y hay 3 paquetes esperando ruta.');
     });
 
@@ -166,7 +194,9 @@ describe('HomeComponent', () => {
 
     it('el conductor lee que su rol no tiene áreas, y los demás roles no ven ese mensaje', () => {
       open('driver', null);
-      expect(root().querySelector('.no-areas')?.textContent).toContain('Tu rol no tiene áreas disponibles en la aplicación web');
+      expect(root().querySelector('.no-areas')?.textContent).toContain(
+        'Tu rol no tiene áreas disponibles en la aplicación web'
+      );
       TestBed.resetTestingModule();
       open('agent');
       expect(root().querySelector('.no-areas')).toBeNull();
@@ -270,7 +300,10 @@ describe('HomeComponent', () => {
 
     it('la leyenda dice cuántos hay pendientes y sin atender, con un punto de color que no es la única señal', () => {
       open('agent', page([]), 'browser', packagePage(mixed));
-      expect(Array.from(card().querySelectorAll('.legend li')).map((li) => li.textContent?.trim())).toEqual(['2 pendientes', '1 sin atender']);
+      expect(Array.from(card().querySelectorAll('.legend li')).map((li) => li.textContent?.trim())).toEqual([
+        '2 pendientes',
+        '1 sin atender',
+      ]);
       expect(card().querySelectorAll('.legend .dot[aria-hidden="true"]').length).toBe(2);
     });
 
@@ -281,7 +314,13 @@ describe('HomeComponent', () => {
 
     it('muestra las cifras de pendientes y sin atender, con la de aviso diferenciada', () => {
       open('agent', page([]), 'browser', packagePage(mixed));
-      expect(kpis().map((kpi) => [kpi.querySelector('mat-icon')?.textContent?.trim(), kpi.querySelector('.num')?.textContent, kpi.querySelector('.lbl')?.textContent])).toEqual([
+      expect(
+        kpis().map((kpi) => [
+          kpi.querySelector('mat-icon')?.textContent?.trim(),
+          kpi.querySelector('.num')?.textContent,
+          kpi.querySelector('.lbl')?.textContent,
+        ])
+      ).toEqual([
         ['schedule', '2', 'Pendientes de ruta'],
         ['warning', '1', 'Sin atender'],
       ]);
@@ -300,7 +339,9 @@ describe('HomeComponent', () => {
     it('sin paquetes lo dice, ofrece crear el primero y no muestra cifras sueltas', () => {
       open('agent', page([]), 'browser', packagePage([]));
       expect(card().textContent).toContain('Todavía no hay paquetes');
-      const create = Array.from(card().querySelectorAll('a')).find((a) => a.textContent?.includes('Crear el primer paquete'))!;
+      const create = Array.from(card().querySelectorAll('a')).find((a) =>
+        a.textContent?.includes('Crear el primer paquete')
+      )!;
       expect(create.getAttribute('href')).toBe('/paquetes/nuevo');
       expect(card().querySelector('app-progress-ring')).toBeNull();
       expect(kpis().length).toBe(0);
@@ -308,20 +349,28 @@ describe('HomeComponent', () => {
 
     it('mientras llegan muestra un indicador accesible y las jornadas siguen su curso', () => {
       open('agent', page([journey(1)]), 'browser', null);
-      expect(card().querySelector('app-skeleton .visually-hidden')?.textContent).toBe('Cargando las cifras de paquetes…');
+      expect(card().querySelector('app-skeleton .visually-hidden')?.textContent).toBe(
+        'Cargando las cifras de paquetes…'
+      );
       expect(journeyLinks().length).toBe(1);
       expect(kpis().length).toBe(0);
     });
 
     it('ante un error muestra el mensaje y «Reintentar» vuelve a pedirlas, sin afectar a las jornadas', () => {
       open('agent', page([journey(1)]), 'browser', null);
-      http.expectOne((r) => r.url === '/gateway/packages').flush({ message: 'caído' }, { status: 500, statusText: 'Server Error' });
+      http
+        .expectOne((r) => r.url === '/gateway/packages')
+        .flush({ message: 'caído' }, { status: 500, statusText: 'Server Error' });
       fixture.detectChanges();
       expect(card().querySelector('[role="alert"]')?.textContent?.trim()).toBeTruthy();
       expect(journeyLinks().length).toBe(1);
       expect(root().querySelectorAll('section.card[aria-labelledby="journeys-title"] [role="alert"]').length).toBe(0);
 
-      (Array.from(card().querySelectorAll('button')).find((b) => b.textContent?.trim() === 'Reintentar') as HTMLButtonElement).click();
+      (
+        Array.from(card().querySelectorAll('button')).find(
+          (b) => b.textContent?.trim() === 'Reintentar'
+        ) as HTMLButtonElement
+      ).click();
       fixture.detectChanges();
       http.expectOne((r) => r.url === '/gateway/packages').flush(packagePage(mixed));
       fixture.detectChanges();
@@ -331,7 +380,9 @@ describe('HomeComponent', () => {
 
     it('un error en las jornadas no oculta las cifras', () => {
       open('agent', null, 'browser', packagePage(mixed));
-      http.expectOne((r) => r.url === '/gateway/journeys').flush({ message: 'caído' }, { status: 500, statusText: 'Server Error' });
+      http
+        .expectOne((r) => r.url === '/gateway/journeys')
+        .flush({ message: 'caído' }, { status: 500, statusText: 'Server Error' });
       fixture.detectChanges();
       expect(card().querySelector('.summary')?.textContent).toBe('3 de 8 paquetes');
       expect(kpis().length).toBe(2);
@@ -365,9 +416,15 @@ describe('HomeComponent', () => {
       req.flush(page([journey(3, 'completed'), journey(2), journey(1)]));
       fixture.detectChanges();
 
-      expect(root().querySelector('section[aria-labelledby="journeys-title"] h2#journeys-title')?.textContent).toBe('Últimas jornadas');
+      expect(root().querySelector('section[aria-labelledby="journeys-title"] h2#journeys-title')?.textContent).toBe(
+        'Últimas jornadas'
+      );
       expect(journeyLinks().map((a) => a.textContent)).toEqual(['Jornada 3', 'Jornada 2', 'Jornada 1']);
-      expect(journeyLinks().map((a) => a.getAttribute('href'))).toEqual(['/jornadas/j3', '/jornadas/j2', '/jornadas/j1']);
+      expect(journeyLinks().map((a) => a.getAttribute('href'))).toEqual([
+        '/jornadas/j3',
+        '/jornadas/j2',
+        '/jornadas/j1',
+      ]);
       const first = row(0).textContent!;
       expect(first).toContain('Completada');
       expect(row(0).querySelector('app-status-badge')?.getAttribute('data-tone')).toBe('success');
@@ -402,7 +459,9 @@ describe('HomeComponent', () => {
     it('sin jornadas lo explica y enlaza a planificar la primera, con botón de 48px', () => {
       open('agent', page([]));
       expect(text()).toContain('Todavía no hay jornadas');
-      const link = Array.from(root().querySelectorAll('a')).find((a) => a.textContent?.includes('Planificar la primera jornada'))!;
+      const link = Array.from(root().querySelectorAll('a')).find((a) =>
+        a.textContent?.includes('Planificar la primera jornada')
+      )!;
       expect(link.getAttribute('href')).toBe('/jornadas/nueva');
       expect(Math.round(link.getBoundingClientRect().height)).toBe(48);
       expect(journeyLinks().length).toBe(0);
@@ -417,11 +476,17 @@ describe('HomeComponent', () => {
 
     it('ante un error muestra el mensaje y «Reintentar» vuelve a pedirlas', () => {
       open('agent', null);
-      http.expectOne((r) => r.url === '/gateway/journeys').flush({ message: 'caído' }, { status: 500, statusText: 'Server Error' });
+      http
+        .expectOne((r) => r.url === '/gateway/journeys')
+        .flush({ message: 'caído' }, { status: 500, statusText: 'Server Error' });
       fixture.detectChanges();
       expect(root().querySelector('[role="alert"]')?.textContent?.trim()).toBeTruthy();
 
-      (Array.from(root().querySelectorAll('button')).find((b) => b.textContent?.trim() === 'Reintentar') as HTMLButtonElement).click();
+      (
+        Array.from(root().querySelectorAll('button')).find(
+          (b) => b.textContent?.trim() === 'Reintentar'
+        ) as HTMLButtonElement
+      ).click();
       fixture.detectChanges();
       http.expectOne((r) => r.url === '/gateway/journeys').flush(page([journey(1)]));
       fixture.detectChanges();
@@ -443,11 +508,19 @@ describe('HomeComponent', () => {
 
     it('sus enlaces son operables con teclado: son enlaces con texto', () => {
       open('agent', page([journey(1)]));
-      expect(journeyLinks().every((a) => a.tagName === 'A' && !!a.getAttribute('href') && !!a.textContent?.trim())).toBeTrue();
+      expect(
+        journeyLinks().every((a) => a.tagName === 'A' && !!a.getAttribute('href') && !!a.textContent?.trim())
+      ).toBeTrue();
     });
 
     it('muestra servicios y vehículos, en singular o plural, antes de la fecha', () => {
-      open('agent', page([{ ...journey(3), totalServices: 1, totalResources: 3 }, { ...journey(2), totalServices: 12, totalResources: 1 }]));
+      open(
+        'agent',
+        page([
+          { ...journey(3), totalServices: 1, totalResources: 3 },
+          { ...journey(2), totalServices: 12, totalResources: 1 },
+        ])
+      );
       expect(row(0).querySelector('.meta')?.textContent).toContain('1 servicio · 3 vehículos · ');
       expect(row(1).querySelector('.meta')?.textContent).toContain('12 servicios · 1 vehículo · ');
     });

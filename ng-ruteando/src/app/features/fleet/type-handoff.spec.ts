@@ -14,8 +14,18 @@ describe('type-handoff', () => {
     });
 
     it('rechaza destinos externos o ambiguos', () => {
-      for (const raw of ['//otro.invalid/flota/x', 'https://otro.invalid/flota/x', '/\\otro.invalid', '/flota/../acceso', 'javascript:alert(1)', '', null]) {
-        expect(fleetReturnUrl(raw as string | null)).withContext(String(raw)).toBeNull();
+      for (const raw of [
+        '//otro.invalid/flota/x',
+        'https://otro.invalid/flota/x',
+        '/\\otro.invalid',
+        '/flota/../acceso',
+        'javascript:alert(1)',
+        '',
+        null,
+      ]) {
+        expect(fleetReturnUrl(raw as string | null))
+          .withContext(String(raw))
+          .toBeNull();
       }
     });
   });
@@ -31,7 +41,17 @@ describe('type-handoff', () => {
     });
 
     it('cualquier otro estado es null', () => {
-      for (const state of [null, undefined, 'x', 1, {}, { navigationId: 3 }, { fleetTypeHandoff: null }, { fleetTypeHandoff: 'x' }, { fleetTypeHandoff: {} }]) {
+      for (const state of [
+        null,
+        undefined,
+        'x',
+        1,
+        {},
+        { navigationId: 3 },
+        { fleetTypeHandoff: null },
+        { fleetTypeHandoff: 'x' },
+        { fleetTypeHandoff: {} },
+      ]) {
         expect(readHandoff(state)).withContext(JSON.stringify(state)).toBeNull();
       }
     });

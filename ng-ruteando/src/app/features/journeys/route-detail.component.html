@@ -15,19 +15,47 @@
   }
   @default {
     @if (route(); as route) {
-      <app-form-head [title]="route.name" [backLabel]="('Jornada ' | t) + loader.record()?.name" [backLink]="'/jornadas/' + journeyId" />
+      <app-form-head
+        [title]="route.name"
+        [backLabel]="('Jornada ' | t) + loader.record()?.name"
+        [backLink]="'/jornadas/' + journeyId"
+      />
 
       <section class="card" aria-labelledby="summary-title">
         <h2 id="summary-title">{{ 'Resumen' | t }}</h2>
         <dl class="summary stat-grid">
-          <div><dt>{{ 'Vehículo' | t }}</dt><dd>{{ vehicle(route) }}</dd></div>
-          <div><dt>{{ 'Paradas' | t }}</dt><dd>{{ count(route.waypoints.length) }}</dd></div>
-          <div><dt>{{ 'Distancia' | t }}</dt><dd>{{ distance(route.distanceTraveled) }}</dd></div>
-          <div><dt>{{ 'Duración' | t }}</dt><dd>{{ duration(route.duration) }}</dd></div>
-          <div><dt>{{ 'Uso de peso' | t }}</dt><dd>{{ percent(route.weightUsagePercent) }}</dd></div>
-          <div><dt>{{ 'Uso de volumen' | t }}</dt><dd>{{ percent(route.volumeUsagePercent) }}</dd></div>
-          <div><dt>{{ 'Inicio||hora' | t }}</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
-          <div><dt>{{ 'Fin' | t }}</dt><dd>{{ dateTime(route.finishRouteUtc) }}</dd></div>
+          <div>
+            <dt>{{ 'Vehículo' | t }}</dt>
+            <dd>{{ vehicle(route) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Paradas' | t }}</dt>
+            <dd>{{ count(route.waypoints.length) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Distancia' | t }}</dt>
+            <dd>{{ distance(route.distanceTraveled) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Duración' | t }}</dt>
+            <dd>{{ duration(route.duration) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Uso de peso' | t }}</dt>
+            <dd>{{ percent(route.weightUsagePercent) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Uso de volumen' | t }}</dt>
+            <dd>{{ percent(route.volumeUsagePercent) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Inicio||hora' | t }}</dt>
+            <dd>{{ dateTime(route.startRouteUtc) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Fin' | t }}</dt>
+            <dd>{{ dateTime(route.finishRouteUtc) }}</dd>
+          </div>
         </dl>
       </section>
 

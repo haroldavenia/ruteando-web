@@ -52,9 +52,14 @@ describe('PlaceFormComponent', () => {
     fixture.detectChanges();
   };
   const latLngInput = (label: string) =>
-    Array.from(root().querySelectorAll('app-location-fields mat-form-field')).find((f) => f.querySelector('mat-label')?.textContent === label)!.querySelector('input') as HTMLInputElement;
+    Array.from(root().querySelectorAll('app-location-fields mat-form-field'))
+      .find((f) => f.querySelector('mat-label')?.textContent === label)!
+      .querySelector('input') as HTMLInputElement;
   const typeLocation = (lat: string, lng: string) => {
-    for (const [label, v] of [['Latitud', lat], ['Longitud', lng]]) {
+    for (const [label, v] of [
+      ['Latitud', lat],
+      ['Longitud', lng],
+    ]) {
       const el = latLngInput(label);
       el.value = v;
       el.dispatchEvent(new Event('input'));
@@ -107,7 +112,9 @@ describe('PlaceFormComponent', () => {
       type('contactName', 'Ana');
       submit();
       const req = http.expectOne((r) => r.method === 'POST');
-      expect(req.request.body).toEqual(jasmine.objectContaining({ address: 'Calle 1 # 2-3', phoneNumber: '+57 300 123 4567', contactName: 'Ana' }));
+      expect(req.request.body).toEqual(
+        jasmine.objectContaining({ address: 'Calle 1 # 2-3', phoneNumber: '+57 300 123 4567', contactName: 'Ana' })
+      );
       req.flush({});
     });
 
@@ -185,7 +192,8 @@ describe('PlaceFormComponent', () => {
 
       expect(input('name').value).toBe(record.name);
       expect(latLngInput('Latitud').value).toBe(String(record.location.coordinates[1]));
-      const map = fixture.debugElement.query((d) => d.componentInstance instanceof MapViewComponent).componentInstance as MapViewComponent;
+      const map = fixture.debugElement.query((d) => d.componentInstance instanceof MapViewComponent)
+        .componentInstance as MapViewComponent;
       for (let i = 0; i < 100 && !map.olMap(); i++) {
         await new Promise((resolve) => setTimeout(resolve, 50));
       }
@@ -214,7 +222,6 @@ describe('PlaceFormComponent', () => {
       expect(root().querySelector('a[href="/lugares"]')).not.toBeNull();
     });
   });
-
 });
 
 // Fuera del describe anterior: su `afterEach` verifica peticiones HTTP que esta prueba no usa

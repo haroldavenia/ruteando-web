@@ -15,7 +15,9 @@ describe('sistema de interfaz común', () => {
   afterEach(() => mounted.splice(0).forEach((host) => host.remove()));
 
   it('.page es un marco centrado con ancho máximo y lo enrutado dentro es una columna con espacio entre bloques', () => {
-    const host = mount('<div style="width: 3000px"><div class="page"><router-outlet></router-outlet><app-x><h1>Título</h1><p>a</p></app-x></div></div>');
+    const host = mount(
+      '<div style="width: 3000px"><div class="page"><router-outlet></router-outlet><app-x><h1>Título</h1><p>a</p></app-x></div></div>'
+    );
     const page = host.querySelector('.page') as HTMLElement;
     const style = getComputedStyle(page);
     expect(style.maxWidth).toBe('1200px');
@@ -54,7 +56,8 @@ describe('sistema de interfaz común', () => {
   });
 
   it('.stat-grid es una rejilla que conserva el marcado dl > div > dt y dd', () => {
-    const grid = mount('<dl class="summary stat-grid"><div><dt>Estado</dt><dd>Planificada</dd></div></dl>').firstElementChild as HTMLElement;
+    const grid = mount('<dl class="summary stat-grid"><div><dt>Estado</dt><dd>Planificada</dd></div></dl>')
+      .firstElementChild as HTMLElement;
     expect(getComputedStyle(grid).display).toBe('grid');
     expect(grid.querySelector('div > dt')?.textContent).toBe('Estado');
     expect(getComputedStyle(grid.querySelector('dd')!).marginLeft).toBe('0px');
@@ -82,8 +85,12 @@ describe('sistema de interfaz común', () => {
   });
 
   it('la acción principal (.primary-action) lleva el degradado de la marca y, desactivada, el color liso', () => {
-    const host = mount('<button mat-flat-button class="primary-action mat-mdc-unelevated-button mdc-button" type="button">Nuevo</button><button class="primary-action mat-mdc-unelevated-button mdc-button" type="button" disabled>Nuevo</button>');
-    const [active, disabled] = Array.from(host.querySelectorAll('button')).map((b) => getComputedStyle(b).backgroundImage);
+    const host = mount(
+      '<button mat-flat-button class="primary-action mat-mdc-unelevated-button mdc-button" type="button">Nuevo</button><button class="primary-action mat-mdc-unelevated-button mdc-button" type="button" disabled>Nuevo</button>'
+    );
+    const [active, disabled] = Array.from(host.querySelectorAll('button')).map(
+      (b) => getComputedStyle(b).backgroundImage
+    );
     expect(active).toContain('linear-gradient');
     expect(disabled).toBe('none');
   });
@@ -99,7 +106,9 @@ describe('sistema de interfaz común', () => {
   });
 
   it('un texto oculto dentro de una tabla ancha no amplía el área desplazable de la página', () => {
-    const host = mount('<div id="marco" style="width: 300px; overflow: auto"><table style="width: 900px"><thead><tr><th>A</th><th><span class="visually-hidden">Acciones</span></th></tr></thead></table></div>');
+    const host = mount(
+      '<div id="marco" style="width: 300px; overflow: auto"><table style="width: 900px"><thead><tr><th>A</th><th><span class="visually-hidden">Acciones</span></th></tr></thead></table></div>'
+    );
     const marco = host.querySelector('#marco') as HTMLElement;
     expect(host.scrollWidth).toBeLessThanOrEqual(host.clientWidth + 1);
     expect(marco.scrollWidth).toBeGreaterThan(marco.clientWidth);

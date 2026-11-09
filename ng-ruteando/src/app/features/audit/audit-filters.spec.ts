@@ -88,7 +88,11 @@ describe('audit-filters', () => {
         auditLog({ id: 'fin', createdAt: localIso(2026, 10, 7, 23, 59) }),
         auditLog({ id: 'despues', createdAt: localIso(2026, 10, 8, 0, 1) }),
       ];
-      const result = applyAuditFilters(rows, filters({ range: 'personalizado', from: '2026-10-05', to: '2026-10-07' }), now);
+      const result = applyAuditFilters(
+        rows,
+        filters({ range: 'personalizado', from: '2026-10-05', to: '2026-10-07' }),
+        now
+      );
       expect(result.map((r) => r.id)).toEqual(['inicio', 'fin']);
     });
 
@@ -99,10 +103,11 @@ describe('audit-filters', () => {
     });
 
     it('por tipo de acción deja solo ese tipo', () => {
-      expect(applyAuditFilters(AUDIT_FIXTURE_LOGS, filters({ kind: 'eliminacion' }), now).map((r) => r.action).sort()).toEqual([
-        'invitation.revoked',
-        'journey.delete',
-      ]);
+      expect(
+        applyAuditFilters(AUDIT_FIXTURE_LOGS, filters({ kind: 'eliminacion' }), now)
+          .map((r) => r.action)
+          .sort()
+      ).toEqual(['invitation.revoked', 'journey.delete']);
       expect(applyAuditFilters(AUDIT_FIXTURE_LOGS, filters({ kind: 'estado' }), now).length).toBe(1);
     });
 
@@ -128,9 +133,15 @@ describe('audit-filters', () => {
     });
 
     it('los filtros se combinan con «y»', () => {
-      const result = applyAuditFilters(AUDIT_FIXTURE_LOGS, filters({ kind: 'asignacion', onlyChanges: true, entityId: '6acb99b48275a26dbdf8fcf5' }), now);
+      const result = applyAuditFilters(
+        AUDIT_FIXTURE_LOGS,
+        filters({ kind: 'asignacion', onlyChanges: true, entityId: '6acb99b48275a26dbdf8fcf5' }),
+        now
+      );
       expect(result.length).toBe(3);
-      expect(applyAuditFilters(AUDIT_FIXTURE_LOGS, filters({ kind: 'eliminacion', onlyChanges: true }), now)).toEqual([]);
+      expect(applyAuditFilters(AUDIT_FIXTURE_LOGS, filters({ kind: 'eliminacion', onlyChanges: true }), now)).toEqual(
+        []
+      );
     });
 
     it('no modifica la lista de entrada', () => {
@@ -167,7 +178,7 @@ describe('audit-filters', () => {
           cambios: '1',
           id: 'ent1',
           evento: 'evt9',
-        }),
+        })
       );
       expect(query).toEqual({
         scope: 'empresa',
@@ -210,7 +221,7 @@ describe('audit-filters', () => {
           cambios: 'si',
           id: '../me',
           evento: '<script>',
-        }),
+        })
       );
       expect(query).toEqual(EMPTY_QUERY);
     });
@@ -258,9 +269,11 @@ describe('audit-filters', () => {
     });
 
     it('un rango rápido no escribe desde ni hasta, y uno personalizado no escribe rango', () => {
-      expect(toQueryParams({ ...EMPTY_QUERY, range: '30d' })).toEqual(jasmine.objectContaining({ rango: '30d', desde: null, hasta: null }));
+      expect(toQueryParams({ ...EMPTY_QUERY, range: '30d' })).toEqual(
+        jasmine.objectContaining({ rango: '30d', desde: null, hasta: null })
+      );
       expect(toQueryParams({ ...EMPTY_QUERY, range: 'personalizado', from: '2026-10-05' })).toEqual(
-        jasmine.objectContaining({ rango: null, desde: '2026-10-05', hasta: null }),
+        jasmine.objectContaining({ rango: null, desde: '2026-10-05', hasta: null })
       );
     });
   });

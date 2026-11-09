@@ -29,7 +29,14 @@ const route = {
   waypoints: [waypoint(0, null), waypoint(1, 'a'), waypoint(2, 'b', false), waypoint(3, 'c'), waypoint(4, null)],
 } as DomainRoute;
 
-const pkg = (id: string, name: string, address: string, status = 'pending') => ({ id, name, guideNumber: null, address, standardizedAddress: null, status });
+const pkg = (id: string, name: string, address: string, status = 'pending') => ({
+  id,
+  name,
+  guideNumber: null,
+  address,
+  standardizedAddress: null,
+  status,
+});
 
 describe('RouteVisitsComponent', () => {
   let fixture: ComponentFixture<RouteVisitsComponent>;
@@ -40,11 +47,16 @@ describe('RouteVisitsComponent', () => {
   const text = () => root().textContent!.replace(/\s+/g, ' ');
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const rows = () => Array.from(root().querySelectorAll('tbody tr'));
-  const cells = (row: Element) => Array.from(row.querySelectorAll('td')).map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
-  const get = (id: string): TestRequest => http.expectOne((r) => r.method === 'GET' && r.url === `/gateway/packages/${id}`);
+  const cells = (row: Element) =>
+    Array.from(row.querySelectorAll('td')).map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
+  const get = (id: string): TestRequest =>
+    http.expectOne((r) => r.method === 'GET' && r.url === `/gateway/packages/${id}`);
   const patch = (id: string, status: string): TestRequest =>
     http.expectOne((r) => r.method === 'PATCH' && r.url === `/gateway/packages/${id}/status/${status}`);
-  const overlayButton = (label: string) => (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === label)!;
+  const overlayButton = (label: string) =>
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === label
+    )!;
 
   function loadAll(statusOfA = 'pending'): void {
     get('a').flush(pkg('a', 'Café Ñandú', 'Calle Mayor 1', statusOfA));
@@ -53,7 +65,8 @@ describe('RouteVisitsComponent', () => {
     fixture.detectChanges();
   }
 
-  const changeButton = (name: string) => root().querySelector(`[aria-label="Cambiar el estado de la visita ${name}"]`) as HTMLButtonElement;
+  const changeButton = (name: string) =>
+    root().querySelector(`[aria-label="Cambiar el estado de la visita ${name}"]`) as HTMLButtonElement;
 
   async function pickStatus(name: string, label: string): Promise<void> {
     changeButton(name).click();
@@ -103,9 +116,21 @@ describe('RouteVisitsComponent', () => {
       loadAll();
       const row = rows()[1] as HTMLElement;
 
-      expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual([null, 'Tipo', 'Paquete', 'Llegada', 'Salida', 'Estado', null]);
+      expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual([
+        null,
+        'Tipo',
+        'Paquete',
+        'Llegada',
+        'Salida',
+        'Estado',
+        null,
+      ]);
       expect(row.querySelector('td')?.classList).toContain('primary-cell');
-      expect([root().querySelector('table')?.getAttribute('role'), row.getAttribute('role'), row.querySelector('td')?.getAttribute('role')]).toEqual(['table', 'row', 'cell']);
+      expect([
+        root().querySelector('table')?.getAttribute('role'),
+        row.getAttribute('role'),
+        row.querySelector('td')?.getAttribute('role'),
+      ]).toEqual(['table', 'row', 'cell']);
 
       root().style.display = 'block';
       root().style.width = '360px';
@@ -192,7 +217,11 @@ describe('RouteVisitsComponent', () => {
       type('no existe');
       expect(text()).toContain('Ninguna visita coincide con los filtros');
       expect(rows().length).toBe(0);
-      (Array.from(root().querySelectorAll('button')).find((b) => b.textContent?.trim() === 'Limpiar filtros') as HTMLButtonElement).click();
+      (
+        Array.from(root().querySelectorAll('button')).find(
+          (b) => b.textContent?.trim() === 'Limpiar filtros'
+        ) as HTMLButtonElement
+      ).click();
       fixture.detectChanges();
       expect(rows().length).toBe(5);
       expect(input().value).toBe('');
@@ -208,7 +237,11 @@ describe('RouteVisitsComponent', () => {
 
     it('«Actualizar» vuelve a leer los paquetes y conserva los filtros', () => {
       type('calle');
-      (Array.from(root().querySelectorAll('button')).find((b) => b.textContent?.includes('Actualizar')) as HTMLButtonElement).click();
+      (
+        Array.from(root().querySelectorAll('button')).find((b) =>
+          b.textContent?.includes('Actualizar')
+        ) as HTMLButtonElement
+      ).click();
       fixture.detectChanges();
       get('a').flush(pkg('a', 'Café Ñandú', 'Calle Mayor 1', 'attended'));
       get('b').flush(pkg('b', 'Tienda Sur', 'Avenida Sur 2'));
@@ -241,7 +274,9 @@ describe('RouteVisitsComponent', () => {
       fixture.detectChanges();
       expect(cells(rows()[2])[5]).toBe('Atendido');
       expect(text()).toContain('2 de 3 visitas atendidas');
-      expect(root().querySelector('[role="status"].success')?.textContent).toContain('La visita «Tienda Sur» ahora está atendido');
+      expect(root().querySelector('[role="status"].success')?.textContent).toContain(
+        'La visita «Tienda Sur» ahora está atendido'
+      );
     });
 
     it('mientras dura el cambio la acción de esa visita queda desactivada y la de las demás no', async () => {
@@ -294,7 +329,7 @@ describe('RouteVisitsComponent', () => {
       const table = root().querySelector('table') as HTMLTableElement;
 
       expect(table.classList).toContain('grid');
-      expect(table.querySelector('caption')?.textContent).toBe('Paradas y visitas de la ruta');
+      expect(table.querySelector('caption')?.textContent?.trim()).toBe('Paradas y visitas de la ruta');
       expect(Array.from(table.querySelectorAll('th[scope="col"]')).length).toBe(7);
       expect(getComputedStyle(table.querySelector('td')!).borderBottomWidth).toBe('1px');
     });

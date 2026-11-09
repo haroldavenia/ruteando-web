@@ -16,13 +16,13 @@ export const MASTER_DOMAIN_DEFAULTS: Readonly<Record<string, readonly MasterDoma
     ['round_trip', 'Round Trip'],
     ['open_delivery', 'Open Delivery'],
     ['open_pickup', 'Open Pickup'],
-    ['flexible', 'Flexible'],
+    ['flexible', 'Flexible']
   ),
   PackageStatus: values(
     ['pending', 'Pending'],
     ['attended', 'Attended'],
     ['unattended', 'Unattended'],
-    ['cancelled', 'Cancelled'],
+    ['cancelled', 'Cancelled']
   ),
 };
 
@@ -57,7 +57,7 @@ export class MasterDomainsService {
         this.loaded = null; // el siguiente intento vuelve a pedirlos
         return throwError(() => error);
       }),
-      shareReplay({ bufferSize: 1, refCount: false }),
+      shareReplay({ bufferSize: 1, refCount: false })
     );
     this.loaded = request$;
     return request$;

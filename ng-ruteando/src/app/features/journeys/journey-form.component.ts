@@ -60,7 +60,9 @@ export class JourneyFormComponent implements HasUnsavedChanges {
   protected readonly selectedIds = signal<string[]>([]);
   /** `true` tras un intento de envío sin paquetes, para mostrar el error de la selección. */
   protected readonly selectionTouched = signal(false);
-  protected readonly selectionError = computed(() => (this.selectionTouched() && this.selectedIds().length === 0 ? t('Elige al menos un paquete') : ''));
+  protected readonly selectionError = computed(() =>
+    this.selectionTouched() && this.selectedIds().length === 0 ? t('Elige al menos un paquete') : ''
+  );
   private readonly saved = signal(false);
 
   protected readonly form = new FormGroup({
@@ -68,9 +70,15 @@ export class JourneyFormComponent implements HasUnsavedChanges {
     settingsId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
-  private readonly value = toSignal(this.form.valueChanges.pipe(map(() => this.form.getRawValue()), startWith(this.form.getRawValue())), {
-    initialValue: this.form.getRawValue(),
-  });
+  private readonly value = toSignal(
+    this.form.valueChanges.pipe(
+      map(() => this.form.getRawValue()),
+      startWith(this.form.getRawValue())
+    ),
+    {
+      initialValue: this.form.getRawValue(),
+    }
+  );
 
   /** Lo que se va a planificar, para el resumen «Revisa»: solo da formato a lo que hay en el formulario. */
   protected readonly review = computed(() => {
@@ -117,7 +125,7 @@ export class JourneyFormComponent implements HasUnsavedChanges {
         void this.router.navigate(['/jornadas', journey.id]);
       },
       {},
-      planErrorMessage,
+      planErrorMessage
     );
   }
 }

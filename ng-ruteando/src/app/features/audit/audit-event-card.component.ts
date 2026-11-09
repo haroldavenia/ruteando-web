@@ -37,7 +37,9 @@ export class AuditEventCardComponent {
   });
   protected readonly relative = computed(() => formatRelativeTime(this.log().createdAt));
   protected readonly exact = computed(() => formatDateTime(this.log().createdAt));
-  protected readonly label = computed(() => t('Ver el detalle de «{0}» de {1}', [this.action(), auditActorPerson(this.log())]));
+  protected readonly label = computed(() =>
+    t('Ver el detalle de «{0}» de {1}', [this.action(), auditActorPerson(this.log())])
+  );
 }
 
 const auditActorPerson = (log: AuditLog): string => auditActor(log).person;

@@ -19,7 +19,18 @@ const SHOTS = [
 
 mkdirSync(out, { recursive: true });
 const profile = mkdtempSync(join(tmpdir(), 'pwa-shots-'));
-const child = spawn(chrome, ['--headless=new', '--disable-gpu', '--hide-scrollbars', `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
+const child = spawn(
+  chrome,
+  [
+    '--headless=new',
+    '--disable-gpu',
+    '--hide-scrollbars',
+    `--remote-debugging-port=${PORT}`,
+    `--user-data-dir=${profile}`,
+    'about:blank',
+  ],
+  { stdio: 'ignore' }
+);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 async function pageSocket() {
@@ -38,20 +49,41 @@ async function pageSocket() {
 
 try {
   const ws = new WebSocket(await pageSocket());
-  await new Promise((resolve, reject) => { ws.onopen = resolve; ws.onerror = reject; });
+  await new Promise((resolve, reject) => {
+    ws.onopen = resolve;
+    ws.onerror = reject;
+  });
   let id = 0;
   const pending = new Map();
   const events = [];
   ws.onmessage = (event) => {
     const message = JSON.parse(event.data);
-    if (message.id && pending.has(message.id)) { pending.get(message.id)(message); pending.delete(message.id); } else events.push(message.method);
+    if (message.id && pending.has(message.id)) {
+      pending.get(message.id)(message);
+      pending.delete(message.id);
+    } else events.push(message.method);
   };
-  const send = (method, params = {}) => new Promise((resolve) => { const n = ++id; pending.set(n, resolve); ws.send(JSON.stringify({ id: n, method, params })); });
+  const send = (method, params = {}) =>
+    new Promise((resolve) => {
+      const n = ++id;
+      pending.set(n, resolve);
+      ws.send(JSON.stringify({ id: n, method, params }));
+    });
 
   await send('Page.enable');
   for (const shot of SHOTS) {
-    await send('Emulation.setDeviceMetricsOverride', { width: shot.width, height: shot.height, deviceScaleFactor: 1, mobile: shot.mobile });
-    await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }, { name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await send('Emulation.setDeviceMetricsOverride', {
+      width: shot.width,
+      height: shot.height,
+      deviceScaleFactor: 1,
+      mobile: shot.mobile,
+    });
+    await send('Emulation.setEmulatedMedia', {
+      features: [
+        { name: 'prefers-color-scheme', value: 'light' },
+        { name: 'prefers-reduced-motion', value: 'reduce' },
+      ],
+    });
     events.length = 0;
     await send('Page.navigate', { url: `${base}/acceso` });
     for (let i = 0; i < 80 && !events.includes('Page.loadEventFired'); i++) await sleep(250);
@@ -64,5 +96,9 @@ try {
 } finally {
   child.kill();
   await sleep(500);
-  try { rmSync(profile, { recursive: true, force: true }); } catch { /* Windows puede tener el perfil abierto un instante */ }
+  try {
+    rmSync(profile, { recursive: true, force: true });
+  } catch {
+    /* Windows puede tener el perfil abierto un instante */
+  }
 }

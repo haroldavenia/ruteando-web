@@ -21,7 +21,14 @@ const CATALOG = [
     code: 'PackageStatus',
     description: '',
     system: true,
-    values: [value('pending', true), value('attended', true), value('unattended', true), value('cancelled', true), value('returned', false), value('demo_1', false)],
+    values: [
+      value('pending', true),
+      value('attended', true),
+      value('unattended', true),
+      value('cancelled', true),
+      value('returned', false),
+      value('demo_1', false),
+    ],
   },
 ];
 
@@ -32,7 +39,9 @@ describe('PackageListComponent: estados inactivos del catálogo', () => {
   const root = () => fixture.nativeElement as HTMLElement;
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const body = (status: string) => {
-    const page = JSON.parse(JSON.stringify((list as unknown as Fixture).response.body)) as { content: { status: string }[] };
+    const page = JSON.parse(JSON.stringify((list as unknown as Fixture).response.body)) as {
+      content: { status: string }[];
+    };
     page.content[0].status = status;
     return page;
   };

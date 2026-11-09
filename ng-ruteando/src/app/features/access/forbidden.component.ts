@@ -47,7 +47,10 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
       <h1>{{ 'Sin permiso' | t }}</h1>
       <p>{{ 'No tienes permiso para ver esta página.' | t }}</p>
       @if (role(); as name) {
-        <p class="role">{{ 'Tu rol es' | t }} <strong>{{ name }}</strong>{{ '. Si necesitas esta área, pídela a quien administra tu empresa.' | t }}</p>
+        <p class="role">
+          {{ 'Tu rol es' | t }} <strong>{{ name }}</strong
+          >{{ '. Si necesitas esta área, pídela a quien administra tu empresa.' | t }}
+        </p>
       }
       <a mat-flat-button class="primary-action" routerLink="/">{{ 'Volver al inicio' | t }}</a>
     </section>

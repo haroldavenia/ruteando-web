@@ -22,7 +22,14 @@ const CIRCUMFERENCE = 2 * Math.PI * 42;
         </linearGradient>
       </defs>
       <circle class="track" cx="50" cy="50" r="42" />
-      <circle class="progress" cx="50" cy="50" r="42" [attr.stroke]="'url(#' + gradientId + ')'" [attr.stroke-dasharray]="dash()" />
+      <circle
+        class="progress"
+        cx="50"
+        cy="50"
+        r="42"
+        [attr.stroke]="'url(#' + gradientId + ')'"
+        [attr.stroke-dasharray]="dash()"
+      />
     </svg>
     <span class="value">{{ rounded() }}%</span>
   `,
@@ -71,5 +78,7 @@ export class ProgressRingComponent {
 
   protected readonly gradientId = `progress-ring-${nextId++}`;
   protected readonly rounded = computed(() => Math.round(Math.min(100, Math.max(0, this.value()))));
-  protected readonly dash = computed(() => `${((CIRCUMFERENCE * this.rounded()) / 100).toFixed(1)} ${CIRCUMFERENCE.toFixed(1)}`);
+  protected readonly dash = computed(
+    () => `${((CIRCUMFERENCE * this.rounded()) / 100).toFixed(1)} ${CIRCUMFERENCE.toFixed(1)}`
+  );
 }

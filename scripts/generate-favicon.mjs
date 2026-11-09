@@ -17,9 +17,23 @@ const images = SIZES.map((size) => {
   const html = join(tmp, `${size}.html`);
   const png = join(tmp, `${size}.png`);
   // Fondo transparente: las esquinas redondeadas del icono no deben salir con relleno
-  writeFileSync(html, `<!doctype html><html><body style="margin:0;background:transparent"><div style="width:${size}px;height:${size}px">${svg.replace('<svg ', `<svg width="${size}" height="${size}" `)}</div></body></html>`);
-  execFileSync(chrome, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--default-background-color=00000000',
-    `--window-size=${size},${size}`, `--screenshot=${png}`, pathToFileURL(html).href], { stdio: 'ignore' });
+  writeFileSync(
+    html,
+    `<!doctype html><html><body style="margin:0;background:transparent"><div style="width:${size}px;height:${size}px">${svg.replace('<svg ', `<svg width="${size}" height="${size}" `)}</div></body></html>`
+  );
+  execFileSync(
+    chrome,
+    [
+      '--headless=new',
+      '--disable-gpu',
+      '--hide-scrollbars',
+      '--default-background-color=00000000',
+      `--window-size=${size},${size}`,
+      `--screenshot=${png}`,
+      pathToFileURL(html).href,
+    ],
+    { stdio: 'ignore' }
+  );
   return { size, data: readFileSync(png) };
 });
 

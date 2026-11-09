@@ -12,19 +12,31 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'pitch-card' },
   template: `
-    <p class="title">{{ 'Tu primera jornada, en' | t }} <span class="accent">{{ 'minutos' | t }}</span>.</p>
+    <p class="title">
+      {{ 'Tu primera jornada, en' | t }} <span class="accent">{{ 'minutos' | t }}</span
+      >.
+    </p>
     <ol>
       <li class="now">
         <span class="n" aria-hidden="true">1</span>
-        <span><b>{{ 'Crea tu cuenta' | t }}</b><small>{{ 'Tus datos y los de tu empresa' | t }}</small></span>
+        <span
+          ><b>{{ 'Crea tu cuenta' | t }}</b
+          ><small>{{ 'Tus datos y los de tu empresa' | t }}</small></span
+        >
       </li>
       <li>
         <span class="n" aria-hidden="true">2</span>
-        <span><b>{{ 'Verifica tu correo' | t }}</b><small>{{ 'Abre el enlace que te enviamos' | t }}</small></span>
+        <span
+          ><b>{{ 'Verifica tu correo' | t }}</b
+          ><small>{{ 'Abre el enlace que te enviamos' | t }}</small></span
+        >
       </li>
       <li>
         <span class="n" aria-hidden="true">3</span>
-        <span><b>{{ 'Planifica tu primera jornada' | t }}</b><small>{{ 'Lugares, flota y paquetes' | t }}</small></span>
+        <span
+          ><b>{{ 'Planifica tu primera jornada' | t }}</b
+          ><small>{{ 'Lugares, flota y paquetes' | t }}</small></span
+        >
       </li>
     </ol>
   `,

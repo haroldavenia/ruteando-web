@@ -27,7 +27,10 @@ describe('MasterDomainsApi', () => {
     await one;
 
     const vals = firstResult(api.values('PackageStatus'));
-    respondWith(controller.expectOne({ method: 'GET', url: '/gateway/master-domains/PackageStatus/values' }), fx(values));
+    respondWith(
+      controller.expectOne({ method: 'GET', url: '/gateway/master-domains/PackageStatus/values' }),
+      fx(values)
+    );
     await vals;
 
     const add = firstResult(api.addValue('PackageStatus', addValue.request.body as never));
@@ -37,7 +40,10 @@ describe('MasterDomainsApi', () => {
     expect((await add).values.length).toBeGreaterThan(0);
 
     const tog = firstResult(api.toggleValue('PackageStatus', 'returned'));
-    respondWith(controller.expectOne({ method: 'PATCH', url: '/gateway/master-domains/PackageStatus/values/returned/toggle' }), fx(toggle));
+    respondWith(
+      controller.expectOne({ method: 'PATCH', url: '/gateway/master-domains/PackageStatus/values/returned/toggle' }),
+      fx(toggle)
+    );
     expect((await tog).values.length).toBeGreaterThan(0);
     controller.verify();
   });
@@ -62,7 +68,12 @@ describe('MasterDomainsService', () => {
       'flexible',
     ]);
     expect(service.values('OsrmProfile').map((v) => v.key)).toEqual(['driving', 'cycling', 'walking']);
-    expect(service.values('PackageStatus').map((v) => v.key)).toEqual(['pending', 'attended', 'unattended', 'cancelled']);
+    expect(service.values('PackageStatus').map((v) => v.key)).toEqual([
+      'pending',
+      'attended',
+      'unattended',
+      'cancelled',
+    ]);
     expect(Object.keys(MASTER_DOMAIN_DEFAULTS)).toEqual(['OsrmProfile', 'RouteTopology', 'PackageStatus']);
   });
 
@@ -73,7 +84,13 @@ describe('MasterDomainsService', () => {
 
   it('activeValues devuelve solo los valores activos, en el mismo orden que values', async () => {
     const value = (key: string, active: boolean) => ({ key, label: key, description: null, sortOrder: null, active });
-    const domain = { id: 'd1', code: 'PackageStatus', description: '', system: true, values: [value('pending', true), value('returned', false), value('attended', true), value('demo_x', false)] };
+    const domain = {
+      id: 'd1',
+      code: 'PackageStatus',
+      description: '',
+      system: true,
+      values: [value('pending', true), value('returned', false), value('attended', true), value('demo_x', false)],
+    };
     const result = firstResult(service.load());
     controller.expectOne({ method: 'GET', url: '/gateway/master-domains' }).flush([domain]);
     await result;
@@ -83,7 +100,12 @@ describe('MasterDomainsService', () => {
   });
 
   it('antes de cargar, activeValues devuelve los valores por defecto, todos activos', () => {
-    expect(service.activeValues('PackageStatus').map((v) => v.key)).toEqual(['pending', 'attended', 'unattended', 'cancelled']);
+    expect(service.activeValues('PackageStatus').map((v) => v.key)).toEqual([
+      'pending',
+      'attended',
+      'unattended',
+      'cancelled',
+    ]);
     expect(service.activeValues('OsrmProfile').length).toBe(3);
   });
 

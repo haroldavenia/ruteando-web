@@ -19,7 +19,11 @@
         <mat-error>{{ error('settingsId') }}</mat-error>
       </mat-form-field>
       @if (settingsLoaded() && settings().length === 0) {
-        <p class="hint">{{ 'Todavía no hay configuraciones. Primero' | t }} <a routerLink="/configuraciones/nuevo">{{ 'crea una configuración' | t }}</a>.</p>
+        <p class="hint">
+          {{ 'Todavía no hay configuraciones. Primero' | t }}
+          <a routerLink="/configuraciones/nuevo">{{ 'crea una configuración' | t }}</a
+          >.
+        </p>
       }
       @if (settingsTruncated()) {
         <p class="hint" role="status">{{ 'Se muestran solo las primeras {0} configuraciones.' | t: [selectLimit] }}</p>
@@ -29,7 +33,10 @@
     <section class="form-section">
       <h2><span class="step-num" aria-hidden="true">2</span>{{ 'Paquetes' | t }}</h2>
       @if (picker.isEmpty()) {
-        <p class="hint">{{ 'Todavía no hay paquetes. Primero' | t }} <a routerLink="/paquetes/nuevo">{{ 'crea un paquete' | t }}</a>.</p>
+        <p class="hint">
+          {{ 'Todavía no hay paquetes. Primero' | t }} <a routerLink="/paquetes/nuevo">{{ 'crea un paquete' | t }}</a
+          >.
+        </p>
       }
       <app-package-picker #picker [(selectedIds)]="selectedIds" />
       @if (selectionError()) {
@@ -44,7 +51,9 @@
     <app-form-result [error]="submit.error()" />
     <app-form-actions [dirty]="hasUnsavedChanges()">
       <a mat-button routerLink="/jornadas">{{ 'Cancelar' | t }}</a>
-      <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Planificar' | t }}</button>
+      <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
+        {{ 'Planificar' | t }}
+      </button>
     </app-form-actions>
   </form>
 

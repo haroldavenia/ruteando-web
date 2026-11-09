@@ -1,6 +1,13 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, Injector, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,7 +31,15 @@ import { FormActionsComponent } from '../../shared/form/form-actions.component';
 import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
-import { fromUtcIso, localDateOf, minutesToSeconds, secondsToMinutes, shiftErrors, toUtcIso, todayLocalDate } from '../../shared/time/shift-time';
+import {
+  fromUtcIso,
+  localDateOf,
+  minutesToSeconds,
+  secondsToMinutes,
+  shiftErrors,
+  toUtcIso,
+  todayLocalDate,
+} from '../../shared/time/shift-time';
 
 import {
   DEFAULT_LENGTH_OF_STAY_TYPES,
@@ -46,7 +61,16 @@ export const FIXED_STAY = 'fixed';
 const NO_STAY = '';
 
 /** Campos que el gateway calcula o resume: no se reenvían al guardar. */
-const READ_ONLY_FIELDS: readonly (keyof Settings)[] = ['id', 'tenantId', 'createdAt', 'updatedAt', 'createdBy', 'placeStart', 'placeEnd', 'resources'];
+const READ_ONLY_FIELDS: readonly (keyof Settings)[] = [
+  'id',
+  'tenantId',
+  'createdAt',
+  'updatedAt',
+  'createdBy',
+  'placeStart',
+  'placeEnd',
+  'resources',
+];
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
   required: t('Este campo es obligatorio'),
@@ -72,12 +96,14 @@ type FieldName =
 
 const wholeRoutes = (c: AbstractControl): ValidationErrors | null =>
   c.value === null || c.value === '' || (Number.isInteger(c.value) && c.value >= 1) ? null : { whole: true };
-const positive = (c: AbstractControl): ValidationErrors | null => (c.value === null || c.value === '' || Number(c.value) > 0 ? null : { positive: true });
+const positive = (c: AbstractControl): ValidationErrors | null =>
+  c.value === null || c.value === '' || Number(c.value) > 0 ? null : { positive: true };
 const shiftDuration = (c: AbstractControl): ValidationErrors | null => {
   const errors = shiftErrors(Number(c.value), 0).filter((e) => e !== 'breakNegative');
   return errors.length ? { [errors[0]]: true } : null;
 };
-const breakDuration = (c: AbstractControl): ValidationErrors | null => (shiftErrors(1, Number(c.value)).includes('breakNegative') ? { breakNegative: true } : null);
+const breakDuration = (c: AbstractControl): ValidationErrors | null =>
+  shiftErrors(1, Number(c.value)).includes('breakNegative') ? { breakNegative: true } : null;
 
 /**
  * Cuerpo del PUT: el registro cargado sin los campos de solo lectura ni los resúmenes y con lo editado
@@ -136,9 +162,15 @@ export class SettingsFormComponent implements HasUnsavedChanges {
   protected readonly placesTruncated = signal(false);
   protected readonly vehiclesTruncated = signal(false);
 
-  protected readonly topologies = computed(() => this.options('RouteTopology', DEFAULT_ROUTE_TOPOLOGIES, routeTopologyLabel));
-  protected readonly restrictions = computed(() => this.options('RestrictionType', DEFAULT_RESTRICTION_TYPES, restrictionTypeLabel));
-  protected readonly stayTypes = computed(() => this.options('TypeLengthOfStay', DEFAULT_LENGTH_OF_STAY_TYPES, lengthOfStayLabel));
+  protected readonly topologies = computed(() =>
+    this.options('RouteTopology', DEFAULT_ROUTE_TOPOLOGIES, routeTopologyLabel)
+  );
+  protected readonly restrictions = computed(() =>
+    this.options('RestrictionType', DEFAULT_RESTRICTION_TYPES, restrictionTypeLabel)
+  );
+  protected readonly stayTypes = computed(() =>
+    this.options('TypeLengthOfStay', DEFAULT_LENGTH_OF_STAY_TYPES, lengthOfStayLabel)
+  );
 
   protected readonly form = new FormGroup({
     description: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -158,9 +190,15 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     lengthOfStay: new FormControl<number | null>(null, [Validators.required, positive]),
   });
 
-  private readonly value = toSignal(this.form.valueChanges.pipe(map(() => this.form.getRawValue()), startWith(this.form.getRawValue())), {
-    initialValue: this.form.getRawValue(),
-  });
+  private readonly value = toSignal(
+    this.form.valueChanges.pipe(
+      map(() => this.form.getRawValue()),
+      startWith(this.form.getRawValue())
+    ),
+    {
+      initialValue: this.form.getRawValue(),
+    }
+  );
 
   /** La configuración que se está escribiendo, en una frase: solo da formato a lo que hay en el formulario. */
   protected readonly summary = computed(() => {
@@ -189,8 +227,12 @@ export class SettingsFormComponent implements HasUnsavedChanges {
 
   constructor() {
     this.applySections();
-    this.form.controls.restrictionType.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.applySections());
-    this.form.controls.typeLengthOfStay.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.applySections());
+    this.form.controls.restrictionType.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.applySections());
+    this.form.controls.typeLengthOfStay.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.applySections());
 
     this.masters.load().subscribe({ error: () => undefined });
     inject(PlacesApi)
@@ -241,12 +283,24 @@ export class SettingsFormComponent implements HasUnsavedChanges {
 
   /** Activa solo los controles de las secciones que aplican: los demás ni se validan ni se envían. */
   private applySections(): void {
-    const { restrictionType, typeLengthOfStay, fixedRoutes, shiftStart, shiftDurationMin, breakDurationMin, lengthOfStay } = this.form.controls;
+    const {
+      restrictionType,
+      typeLengthOfStay,
+      fixedRoutes,
+      shiftStart,
+      shiftDurationMin,
+      breakDurationMin,
+      lengthOfStay,
+    } = this.form.controls;
     this.restriction.set(restrictionType.value);
     this.stay.set(typeLengthOfStay.value);
-    const toggle = (controls: AbstractControl[], on: boolean) => controls.forEach((c) => (on ? c.enable({ emitEvent: false }) : c.disable({ emitEvent: false })));
+    const toggle = (controls: AbstractControl[], on: boolean) =>
+      controls.forEach((c) => (on ? c.enable({ emitEvent: false }) : c.disable({ emitEvent: false })));
     toggle([fixedRoutes], restrictionType.value === FIXED_ROUTES);
-    toggle([shiftStart, shiftDurationMin, breakDurationMin], restrictionType.value !== '' && restrictionType.value !== FIXED_ROUTES);
+    toggle(
+      [shiftStart, shiftDurationMin, breakDurationMin],
+      restrictionType.value !== '' && restrictionType.value !== FIXED_ROUTES
+    );
     toggle([lengthOfStay], typeLengthOfStay.value === FIXED_STAY);
   }
 
@@ -302,7 +356,9 @@ export class SettingsFormComponent implements HasUnsavedChanges {
             ...(value.evaluateWeight ? { evaluateWeight: true } : {}),
             ...(value.evaluateVolume ? { evaluateVolume: true } : {}),
             ...(value.evaluateItineraryZone ? { evaluateItineraryZone: true } : {}),
-            ...(hasStayType ? { typeLengthOfStay: value.typeLengthOfStay, ...(stayFixed ? { lengthOfStay: value.lengthOfStay } : {}) } : {}),
+            ...(hasStayType
+              ? { typeLengthOfStay: value.typeLengthOfStay, ...(stayFixed ? { lengthOfStay: value.lengthOfStay } : {}) }
+              : {}),
           })
         : this.api.update(
             this.id,
@@ -319,7 +375,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
               breakDurationSec: fixed ? null : shift.breakDurationSec,
               typeLengthOfStay: hasStayType ? value.typeLengthOfStay : null,
               lengthOfStay: stayFixed ? value.lengthOfStay : null,
-            }),
+            })
           );
 
     this.submit.submit(request$, () => {

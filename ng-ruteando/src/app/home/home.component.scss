@@ -2,10 +2,12 @@
 
 // Botones de 48px en toda la página (acciones, «Ver todas», «Reintentar»…); sus esquinas de 12px son las de toda la aplicación
 :host {
-  @include mat.button-overrides((
-    filled-container-height: 48px,
-    outlined-container-height: 48px,
-  ));
+  @include mat.button-overrides(
+    (
+      filled-container-height: 48px,
+      outlined-container-height: 48px,
+    )
+  );
 }
 
 // Cabecera y cifras (arriba) y últimas jornadas y cifras sueltas (abajo): una columna y, con espacio, dos de 3 a 1

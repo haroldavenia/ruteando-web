@@ -6,7 +6,10 @@ export const PASSWORD_POLICY_LENGTH = 16;
 export const PASSWORD_SYMBOLS = '@$!%*?&';
 
 /** La regla en una frase: es lo que se muestra cuando el gateway rechaza la contraseña. */
-export const PASSWORD_POLICY_TEXT = t('Mínimo {0} caracteres, con mayúscula, minúscula, número y un símbolo ({1})', [PASSWORD_POLICY_LENGTH, PASSWORD_SYMBOLS]);
+export const PASSWORD_POLICY_TEXT = t('Mínimo {0} caracteres, con mayúscula, minúscula, número y un símbolo ({1})', [
+  PASSWORD_POLICY_LENGTH,
+  PASSWORD_SYMBOLS,
+]);
 
 export type PasswordRule = 'length' | 'upper' | 'lower' | 'digit' | 'symbol';
 /** Reglas que incumple una contraseña (solo las que faltan). */

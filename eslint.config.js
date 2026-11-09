@@ -106,5 +106,5 @@ module.exports = tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',
     },
-  },
+  }
 );

@@ -13,10 +13,18 @@ export interface Fixture {
   response: { status: number; body: unknown };
 }
 
-export function setupApi<T>(api: Type<T>, extraProviders: Provider[] = []): { api: T; controller: HttpTestingController } {
+export function setupApi<T>(
+  api: Type<T>,
+  extraProviders: Provider[] = []
+): { api: T; controller: HttpTestingController } {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
-    providers: [{ provide: API_BASE_URL, useValue: '/gateway' }, provideHttpClient(), provideHttpClientTesting(), ...extraProviders],
+    providers: [
+      { provide: API_BASE_URL, useValue: '/gateway' },
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      ...extraProviders,
+    ],
   });
   return { api: TestBed.inject(api), controller: TestBed.inject(HttpTestingController) };
 }

@@ -33,8 +33,11 @@ export class ActivitySharesComponent {
   protected readonly shares = computed(() => kindShares(this.rows()));
   protected readonly summary = computed(() =>
     this.shares()
-      .map((share) => `${auditKindLabel(share.kind)}: ${share.count === 1 ? t('1 evento') : t('{0} eventos', [formatNumber(share.count)])} (${formatPercent(share.percent)})`)
-      .join('; '),
+      .map(
+        (share) =>
+          `${auditKindLabel(share.kind)}: ${share.count === 1 ? t('1 evento') : t('{0} eventos', [formatNumber(share.count)])} (${formatPercent(share.percent)})`
+      )
+      .join('; ')
   );
 
   protected readonly label = auditKindLabel;

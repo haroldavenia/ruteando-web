@@ -12,7 +12,10 @@ export const FIELD_ERRORS: Readonly<Record<string, string>> = {
 export type FieldMessages = Readonly<Record<string, string>>;
 
 /** Primer mensaje que corresponde a los errores de un control, con `overrides` por encima de los comunes. */
-export function firstErrorMessage(errors: Readonly<Record<string, unknown>> | null, overrides: FieldMessages = {}): string {
+export function firstErrorMessage(
+  errors: Readonly<Record<string, unknown>> | null,
+  overrides: FieldMessages = {}
+): string {
   if (!errors) {
     return '';
   }

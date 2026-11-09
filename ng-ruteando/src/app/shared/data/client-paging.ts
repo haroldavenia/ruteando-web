@@ -25,7 +25,7 @@ export class ClientPaging<T> {
         size,
         totalElements: all.length,
         totalPages: Math.ceil(all.length / size),
-      })),
+      }))
     );
   };
 }

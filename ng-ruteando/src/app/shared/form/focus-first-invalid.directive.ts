@@ -16,7 +16,9 @@ export class FocusFirstInvalidDirective {
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.control.markAllAsTouched();
-      this.host.nativeElement.querySelector<HTMLElement>('input.ng-invalid, textarea.ng-invalid, select.ng-invalid')?.focus();
+      this.host.nativeElement
+        .querySelector<HTMLElement>('input.ng-invalid, textarea.ng-invalid, select.ng-invalid')
+        ?.focus();
     }
   }
 }

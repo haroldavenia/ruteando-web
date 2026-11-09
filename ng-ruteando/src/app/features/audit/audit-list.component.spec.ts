@@ -28,14 +28,25 @@ describe('AuditListComponent', () => {
   const root = () => harness.routeNativeElement as HTMLElement;
   const page = (n = 0, scope = 'audit-logs') => `/gateway/${scope}?page=${n}&size=100`;
   const cards = () => Array.from(root().querySelectorAll('app-data-table .audit-event')) as HTMLElement[];
-  const chip = (text: string) => (Array.from(root().querySelectorAll('button.audit-chip')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
-  const button = (text: string) => (Array.from(root().querySelectorAll('button, a')) as HTMLElement[]).find((b) => b.textContent?.trim().includes(text))!;
+  const chip = (text: string) =>
+    (Array.from(root().querySelectorAll('button.audit-chip')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
+  const button = (text: string) =>
+    (Array.from(root().querySelectorAll('button, a')) as HTMLElement[]).find((b) =>
+      b.textContent?.trim().includes(text)
+    )!;
   const url = () => TestBed.inject(Router).url;
   const overlay = () => TestBed.inject(OverlayContainer).getContainerElement();
   const modal = () => overlay().querySelector('app-audit-detail-dialog') as HTMLElement | null;
   const eyes = () => Array.from(root().querySelectorAll('button.audit-eye')) as HTMLButtonElement[];
 
-  async function open(role: UserRole, to = '/auditoria', rows: AuditLog[] | null = AUDIT_FIXTURE_LOGS, scope = 'audit-logs'): Promise<void> {
+  async function open(
+    role: UserRole,
+    to = '/auditoria',
+    rows: AuditLog[] | null = AUDIT_FIXTURE_LOGS,
+    scope = 'audit-logs'
+  ): Promise<void> {
     TestBed.inject(CurrentUser).set(makeUser({ role }));
     harness = await RouterTestingHarness.create();
     // El router escucha la ubicación simulada: así «atrás» y el cierre de la modal cambian la dirección de verdad
@@ -67,7 +78,11 @@ describe('AuditListComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideLocationMocks(),
-        provideRouter([{ path: '', children: [] }, { path: 'auditoria', component: AuditListComponent }, { path: 'paquetes/:id', children: [] }]),
+        provideRouter([
+          { path: '', children: [] },
+          { path: 'auditoria', component: AuditListComponent },
+          { path: 'paquetes/:id', children: [] },
+        ]),
         provideNoopAnimations(),
         { provide: API_BASE_URL, useValue: '/gateway' },
         provideHttpClient(withInterceptors([errorInterceptor])),
@@ -87,7 +102,9 @@ describe('AuditListComponent', () => {
       await open('tenant_admin');
       expect(root().querySelector('h1')?.textContent).toContain('Auditoría');
       expect(root().querySelector('.subtitle')?.textContent).toContain('20 eventos');
-      const scopes = Array.from(root().querySelectorAll('.audit-scope-group .mat-button-toggle')).map((el) => el.textContent?.trim());
+      const scopes = Array.from(root().querySelectorAll('.audit-scope-group .mat-button-toggle')).map((el) =>
+        el.textContent?.trim()
+      );
       expect(scopes).toEqual(['Mi empresa', 'Mi actividad']);
       expect(cards().length).toBe(20);
     });
@@ -101,7 +118,9 @@ describe('AuditListComponent', () => {
 
     it('el superadministrador ve todas las empresas y puede limitarlas con el identificador de una', async () => {
       await open('super_admin', '/auditoria', AUDIT_FIXTURE_LOGS, 'audit-logs/admin');
-      const scopes = Array.from(root().querySelectorAll('.audit-scope-group .mat-button-toggle')).map((el) => el.textContent?.trim());
+      const scopes = Array.from(root().querySelectorAll('.audit-scope-group .mat-button-toggle')).map((el) =>
+        el.textContent?.trim()
+      );
       expect(scopes).toEqual(['Todas las empresas', 'Mi actividad']);
 
       const input = root().querySelector('.audit-tenant input') as HTMLInputElement;
@@ -111,14 +130,18 @@ describe('AuditListComponent', () => {
       await settle();
 
       expect(url()).toContain('empresa=abc123');
-      http.expectOne('/gateway/audit-logs/admin?page=0&size=100&tenantId=abc123').flush(gatewayAuditPage(AUDIT_FIXTURE_LOGS.slice(0, 3)));
+      http
+        .expectOne('/gateway/audit-logs/admin?page=0&size=100&tenantId=abc123')
+        .flush(gatewayAuditPage(AUDIT_FIXTURE_LOGS.slice(0, 3)));
       await settle();
       expect(cards().length).toBe(3);
     });
 
     it('«Mi actividad» no ofrece filtrar por persona ni cuenta personas, aunque la dirección lo pida', async () => {
       await open('agent', '/auditoria?persona=ana@example.com', AUDIT_FIXTURE_LOGS, 'audit-logs/me');
-      const labels = Array.from(root().querySelectorAll('app-audit-filters mat-label')).map((el) => el.textContent?.trim());
+      const labels = Array.from(root().querySelectorAll('app-audit-filters mat-label')).map((el) =>
+        el.textContent?.trim()
+      );
       expect(labels).toEqual(['Tipo de acción']);
       expect(cards().length).toBe(20);
       expect(root().querySelector('app-activity-panel')?.textContent).not.toContain('Persona activa');
@@ -133,7 +156,13 @@ describe('AuditListComponent', () => {
   describe('lectura de los eventos', () => {
     it('cada tarjeta muestra solo lo esencial: la acción en español, cuándo, quién y sobre qué tipo de cosa', async () => {
       await open('tenant_admin', '/auditoria', [
-        auditLog({ action: 'journey.delete', entityType: 'journey', description: 'Journey eliminado: name=Reparto', actorEmail: 'ana@example.com', actorRole: 'TENANT_ADMIN' }),
+        auditLog({
+          action: 'journey.delete',
+          entityType: 'journey',
+          description: 'Journey eliminado: name=Reparto',
+          actorEmail: 'ana@example.com',
+          actorRole: 'TENANT_ADMIN',
+        }),
       ]);
       const card = cards()[0];
       expect(card.querySelector('app-status-badge')?.textContent).toContain('Jornada eliminada');
@@ -144,7 +173,12 @@ describe('AuditListComponent', () => {
 
     it('el detalle completo no está en el listado: ni la descripción ni los identificadores', async () => {
       await open('tenant_admin', '/auditoria', [
-        auditLog({ action: 'resource.assign.driver', entityType: 'resource', entityId: '6acb99b48275a26dbdf8fcf5', description: 'Driver 6acb99b1a2fa810fb39fb5a9 asignado' }),
+        auditLog({
+          action: 'resource.assign.driver',
+          entityType: 'resource',
+          entityId: '6acb99b48275a26dbdf8fcf5',
+          description: 'Driver 6acb99b1a2fa810fb39fb5a9 asignado',
+        }),
       ]);
       expect(cards()[0].textContent).not.toContain('Driver');
       expect(cards()[0].textContent).not.toContain('6acb99b1a2fa810fb39fb5a9');
@@ -162,7 +196,9 @@ describe('AuditListComponent', () => {
     });
 
     it('con los datos técnicos la tarjeta añade la clave de la acción, y sin ellos no', async () => {
-      await open('tenant_admin', '/auditoria', [auditLog({ action: 'resource.assign.driver', entityType: 'resource' })]);
+      await open('tenant_admin', '/auditoria', [
+        auditLog({ action: 'resource.assign.driver', entityType: 'resource' }),
+      ]);
       expect(cards()[0].querySelector('.audit-key')).toBeNull();
       (root().querySelectorAll('.audit-switches button[role=switch]')[1] as HTMLButtonElement).click();
       await settle();
@@ -171,7 +207,9 @@ describe('AuditListComponent', () => {
 
     it('la tabla tiene solo tres columnas: acción, quién y cuándo', async () => {
       localStorage.setItem('ruteando-list-view', 'table');
-      await open('tenant_admin', '/auditoria', [auditLog({ action: 'place.create', entityType: 'place', description: 'Lugar creado: name=Bodega' })]);
+      await open('tenant_admin', '/auditoria', [
+        auditLog({ action: 'place.create', entityType: 'place', description: 'Lugar creado: name=Bodega' }),
+      ]);
       // La columna de acciones tiene un encabezado solo para lectores de pantalla
       const headers = Array.from(root().querySelectorAll('app-data-table th'))
         .map((th) => th.textContent?.trim())
@@ -186,20 +224,32 @@ describe('AuditListComponent', () => {
       await open('tenant_admin', '/auditoria', [auditLog({ action: 'place.create', entityType: 'place' })]);
       (root().querySelectorAll('.audit-switches button[role=switch]')[1] as HTMLButtonElement).click();
       await settle();
-      const headers = Array.from(root().querySelectorAll('app-data-table th')).map((th) => th.textContent?.trim()).filter((text) => text && text !== 'Acciones');
+      const headers = Array.from(root().querySelectorAll('app-data-table th'))
+        .map((th) => th.textContent?.trim())
+        .filter((text) => text && text !== 'Acciones');
       expect(headers).toEqual(['Acción', 'Quién', 'Cuándo', 'Clave']);
       expect(root().querySelector('app-data-table tbody')?.textContent).toContain('place.create');
     });
 
     it('con la lista vacía lo dice sin ofrecer crear nada', async () => {
       await open('tenant_admin', '/auditoria', []);
-      expect(root().querySelector('app-data-table .state')?.textContent).toContain('Todavía no hay eventos de auditoría');
+      expect(root().querySelector('app-data-table .state')?.textContent).toContain(
+        'Todavía no hay eventos de auditoría'
+      );
       expect(root().querySelector('app-data-table a[routerLink]')).toBeNull();
     });
   });
 
   describe('el ojo y la modal de detalle', () => {
-    const one = () => auditLog({ id: 'evento-1', action: 'package.status.change', entityType: 'package', entityId: 'pkg1', description: 'Status cambiado', changes: { before: { status: 'pending' }, after: { status: 'attended' } } });
+    const one = () =>
+      auditLog({
+        id: 'evento-1',
+        action: 'package.status.change',
+        entityType: 'package',
+        entityId: 'pkg1',
+        description: 'Status cambiado',
+        changes: { before: { status: 'pending' }, after: { status: 'attended' } },
+      });
 
     it('cada fila de la tabla trae un ojo siempre visible que dice qué evento abre', async () => {
       localStorage.setItem('ruteando-list-view', 'table');
@@ -243,7 +293,9 @@ describe('AuditListComponent', () => {
 
     it('un evento que no está entre los traídos se pide al gateway por su identificador', async () => {
       await open('tenant_admin', '/auditoria?evento=lejano');
-      http.expectOne('/gateway/audit-logs/lejano').flush({ ...one(), id: 'lejano', action: 'journey.delete', entityType: 'journey', changes: null });
+      http
+        .expectOne('/gateway/audit-logs/lejano')
+        .flush({ ...one(), id: 'lejano', action: 'journey.delete', entityType: 'journey', changes: null });
       await settleModal();
       expect(modal()?.textContent).toContain('Jornada eliminada');
     });
@@ -254,7 +306,9 @@ describe('AuditListComponent', () => {
       eyes()[0].click();
       await settleModal();
       expect(url()).toContain('evento=evento-1');
-      ((Array.from(overlay().querySelectorAll('mat-dialog-actions button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === 'Cerrar')!).click();
+      (Array.from(overlay().querySelectorAll('mat-dialog-actions button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.trim() === 'Cerrar')!
+        .click();
       await wait(50);
       await settleModal();
       expect(url()).toBe('/auditoria?accion=estado');
@@ -277,7 +331,9 @@ describe('AuditListComponent', () => {
       await open('tenant_admin', '/auditoria', [one(), auditLog({ entityId: 'otra' })]);
       cards()[0].click();
       await settleModal();
-      ((Array.from(overlay().querySelectorAll('mat-dialog-actions button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Ver eventos de esta entidad'))!).click();
+      (Array.from(overlay().querySelectorAll('mat-dialog-actions button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.includes('Ver eventos de esta entidad'))!
+        .click();
       await wait(50);
       await settleModal();
       expect(url()).toBe('/auditoria?id=pkg1');
@@ -387,10 +443,16 @@ describe('AuditListComponent', () => {
 
     it('el chip de entidad lleva su recuento y escribe la dirección', async () => {
       await open('tenant_admin');
-      const chips = Array.from(root().querySelectorAll('app-data-table .chip')).map((c) => c.textContent?.replace(/\s+/g, ' ').trim());
+      const chips = Array.from(root().querySelectorAll('app-data-table .chip')).map((c) =>
+        c.textContent?.replace(/\s+/g, ' ').trim()
+      );
       expect(chips[0]).toBe('Todos 20');
       expect(chips).toContain('Vehículo 5');
-      (Array.from(root().querySelectorAll('app-data-table .chip')).find((c) => c.textContent?.includes('Vehículo')) as HTMLButtonElement).click();
+      (
+        Array.from(root().querySelectorAll('app-data-table .chip')).find((c) =>
+          c.textContent?.includes('Vehículo')
+        ) as HTMLButtonElement
+      ).click();
       await settle();
       expect(url()).toContain('entidad=resource');
       expect(cards().length).toBe(5);
@@ -423,18 +485,30 @@ describe('AuditListComponent', () => {
       harness = await RouterTestingHarness.create();
       await harness.navigateByUrl('/auditoria', AuditListComponent);
       for (let n = 0; n < 10; n++) {
-        http.expectOne(page(n)).flush(gatewayAuditPage(Array.from({ length: 100 }, () => auditLog()), 1500, n));
+        http.expectOne(page(n)).flush(
+          gatewayAuditPage(
+            Array.from({ length: 100 }, () => auditLog()),
+            1500,
+            n
+          )
+        );
       }
       await settle();
-      expect(root().querySelector('.audit-notice')?.textContent).toContain('Se muestran los 1000 eventos más recientes de 1500');
+      expect(root().querySelector('.audit-notice')?.textContent).toContain(
+        'Se muestran los 1000 eventos más recientes de 1500'
+      );
     });
 
     it('un 403 se explica y ofrece ver la propia actividad, que carga sus eventos', async () => {
       await open('tenant_admin', '/auditoria', null);
       http.expectOne(page(0)).flush(null, { status: 403, statusText: 'Forbidden' });
       await settle();
-      expect(root().querySelector('.audit-notice.warn')?.textContent).toContain('Tu rol no puede consultar estos eventos');
-      expect(root().querySelector('app-data-table .state.error')?.textContent).toContain('No tienes permiso para ver este registro de auditoría');
+      expect(root().querySelector('.audit-notice.warn')?.textContent).toContain(
+        'Tu rol no puede consultar estos eventos'
+      );
+      expect(root().querySelector('app-data-table .state.error')?.textContent).toContain(
+        'No tienes permiso para ver este registro de auditoría'
+      );
 
       button('Ver mi actividad').click();
       await settle();
@@ -448,7 +522,9 @@ describe('AuditListComponent', () => {
       await open('tenant_admin', '/auditoria?accion=eliminacion', null);
       http.expectOne(page(0)).flush(null, { status: 500, statusText: 'Server Error' });
       await settle();
-      const retry = (Array.from(root().querySelectorAll('app-data-table button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === 'Reintentar')!;
+      const retry = (Array.from(root().querySelectorAll('app-data-table button')) as HTMLButtonElement[]).find(
+        (b) => b.textContent?.trim() === 'Reintentar'
+      )!;
       expect(url()).toContain('accion=eliminacion');
       retry.click();
       http.expectOne(page(0)).flush(gatewayAuditPage(AUDIT_FIXTURE_LOGS));
@@ -489,7 +565,11 @@ describe('AuditListComponent', () => {
     });
 
     it('con 50 eventos y páginas de 20 exporta los 50', async () => {
-      await open('tenant_admin', '/auditoria', Array.from({ length: 50 }, (_, i) => auditLog({ description: `Evento ${i}` })));
+      await open(
+        'tenant_admin',
+        '/auditoria',
+        Array.from({ length: 50 }, (_, i) => auditLog({ description: `Evento ${i}` }))
+      );
       button('Exportar CSV').click();
       const text = await blobs[0].text();
       expect(text.split('\r\n').filter(Boolean).length).toBe(51);
@@ -503,9 +583,13 @@ describe('AuditListComponent', () => {
 
   describe('seguridad y accesibilidad', () => {
     it('muestra como texto lo que trae el gateway, sin interpretarlo como HTML', async () => {
-      await open('tenant_admin', '/auditoria', [auditLog({ actorEmail: '<img src=x onerror=alert(1)><b>negrita</b>@x.com' })]);
+      await open('tenant_admin', '/auditoria', [
+        auditLog({ actorEmail: '<img src=x onerror=alert(1)><b>negrita</b>@x.com' }),
+      ]);
       expect(root().querySelector('app-data-table img')).toBeNull();
-      expect(Array.from(root().querySelectorAll('app-data-table b')).some((b) => b.textContent === 'negrita')).toBeFalse();
+      expect(
+        Array.from(root().querySelectorAll('app-data-table b')).some((b) => b.textContent === 'negrita')
+      ).toBeFalse();
       expect(cards()[0].textContent).toContain('<img src=x onerror=alert(1)>');
     });
 
@@ -529,7 +613,9 @@ describe('AuditListComponent', () => {
       await open('tenant_admin');
       expect(root().querySelector('[role=group][aria-labelledby=audit-range-label]')).not.toBeNull();
       expect(root().querySelector('mat-select')?.closest('mat-form-field')?.textContent).toContain('Tipo de acción');
-      expect(root().querySelector('app-data-table input[type=search]')?.getAttribute('aria-label')).toBe('Buscar por acción o persona');
+      expect(root().querySelector('app-data-table input[type=search]')?.getAttribute('aria-label')).toBe(
+        'Buscar por acción o persona'
+      );
     });
   });
 

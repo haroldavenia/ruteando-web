@@ -10,7 +10,8 @@ const fixtureRoute = toPlannedJourney(plan.response.body as unknown as Journey).
 
 const stop = (sequence: number, lat: number | null, lng = -74): DomainWaypoint =>
   ({ sequence, stopType: 'service', packageId: null, position: lat === null ? null : { lat, lng } }) as DomainWaypoint;
-const route = (over: Partial<DomainRoute>): DomainRoute => ({ routeIndex: 0, name: 'R', geometry: [], waypoints: [], ...over }) as DomainRoute;
+const route = (over: Partial<DomainRoute>): DomainRoute =>
+  ({ routeIndex: 0, name: 'R', geometry: [], waypoints: [], ...over }) as DomainRoute;
 
 describe('route-geometry', () => {
   describe('routeLine', () => {
@@ -36,12 +37,28 @@ describe('route-geometry', () => {
     });
 
     it('descarta puntos no válidos de la geometría', () => {
-      const line = routeLine(route({ geometry: [{ lat: 4.6, lng: -74 }, { lat: 95, lng: -74 }, { lat: 4.7, lng: -74 }] }))!;
+      const line = routeLine(
+        route({
+          geometry: [
+            { lat: 4.6, lng: -74 },
+            { lat: 95, lng: -74 },
+            { lat: 4.7, lng: -74 },
+          ],
+        })
+      )!;
       expect(line.coordinates.length).toBe(2);
     });
 
     it('si tras descartar quedan menos de dos puntos usa las paradas', () => {
-      const line = routeLine(route({ geometry: [{ lat: 4.6, lng: -74 }, { lat: 95, lng: -74 }], waypoints: [stop(1, 4.6), stop(2, 4.7)] }))!;
+      const line = routeLine(
+        route({
+          geometry: [
+            { lat: 4.6, lng: -74 },
+            { lat: 95, lng: -74 },
+          ],
+          waypoints: [stop(1, 4.6), stop(2, 4.7)],
+        })
+      )!;
       expect(line.dashed).toBeTrue();
     });
   });
@@ -60,7 +77,13 @@ describe('route-geometry', () => {
 
   describe('lonLatBounds', () => {
     it('devuelve la caja de las coordenadas', () => {
-      expect(lonLatBounds([[-74.1, 4.6], [-74.0, 4.8], [-74.2, 4.7]])).toEqual([-74.2, 4.6, -74.0, 4.8]);
+      expect(
+        lonLatBounds([
+          [-74.1, 4.6],
+          [-74.0, 4.8],
+          [-74.2, 4.7],
+        ])
+      ).toEqual([-74.2, 4.6, -74.0, 4.8]);
     });
 
     it('un solo punto da una caja de tamaño nulo', () => {

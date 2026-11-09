@@ -95,7 +95,7 @@ describe('VerifyEmailComponent', () => {
     it('retira el token de la URL sin añadir una entrada al historial', () => {
       expect(navigateSpy).toHaveBeenCalledWith(
         [],
-        jasmine.objectContaining({ queryParams: { token: null }, replaceUrl: true }),
+        jasmine.objectContaining({ queryParams: { token: null }, replaceUrl: true })
       );
       controller.expectOne(VERIFY).flush(verifyFx.response.body);
     });
@@ -139,7 +139,9 @@ describe('VerifyEmailComponent', () => {
       respondWith(req, fx(resendFx));
       harness.detectChanges();
 
-      expect(root.querySelector('[role="status"]')?.textContent).toContain('Si el correo existe, recibirás instrucciones de verificación');
+      expect(root.querySelector('[role="status"]')?.textContent).toContain(
+        'Si el correo existe, recibirás instrucciones de verificación'
+      );
     });
 
     it('con el correo vacío no envía el reenvío', () => {
@@ -167,7 +169,9 @@ describe('VerifyEmailComponent', () => {
     controller.expectOne(VERIFY).flush(null, { status: 503, statusText: 'x' });
     harness.detectChanges();
 
-    expect((harness.routeNativeElement as HTMLElement).querySelector('[role="alert"]')?.textContent).toContain('El servicio no está disponible');
+    expect((harness.routeNativeElement as HTMLElement).querySelector('[role="alert"]')?.textContent).toContain(
+      'El servicio no está disponible'
+    );
   });
 
   it('en el servidor (SSR) no consume el token: no llama al gateway', async () => {

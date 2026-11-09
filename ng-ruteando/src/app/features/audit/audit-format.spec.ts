@@ -1,4 +1,11 @@
-import { formatClock, formatDayKey, formatLongDateTime, formatLongDayKey, formatNumber, formatUtc } from './audit-format';
+import {
+  formatClock,
+  formatDayKey,
+  formatLongDateTime,
+  formatLongDayKey,
+  formatNumber,
+  formatUtc,
+} from './audit-format';
 
 describe('audit-format', () => {
   it('formatLongDateTime pone la fecha larga y la hora, y da «—» si no es una fecha', () => {

@@ -52,7 +52,11 @@ test('el servidor en modo mock arranca el simulado y responde por /gateway, sin 
   }
   assert.equal(response.status, 200);
   assert.ok((await response.json()).accessToken);
-  assert.equal((await login(server.base, 'demo1234')).status, 401, 'con MOCK_GATEWAY_PASSWORD la contraseña por defecto no sirve');
+  assert.equal(
+    (await login(server.base, 'demo1234')).status,
+    401,
+    'con MOCK_GATEWAY_PASSWORD la contraseña por defecto no sirve'
+  );
 
   const log = server.log();
   assert.match(log, /MODO MOCK/);

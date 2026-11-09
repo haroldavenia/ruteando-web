@@ -75,9 +75,13 @@ describe('AuthService', () => {
     });
 
     it('con credenciales incorrectas no guarda sesión y devuelve el error genérico', async () => {
-      const result = new Promise<unknown>((resolve) => service.login('persona@example.invalid', PASSWORD).subscribe({ error: resolve }));
+      const result = new Promise<unknown>((resolve) =>
+        service.login('persona@example.invalid', PASSWORD).subscribe({ error: resolve })
+      );
 
-      controller.expectOne(LOGIN_URL).flush({ message: 'bad credentials' }, { status: 401, statusText: 'Unauthorized' });
+      controller
+        .expectOne(LOGIN_URL)
+        .flush({ message: 'bad credentials' }, { status: 401, statusText: 'Unauthorized' });
 
       const error = (await result) as ApiError;
       expect(error.status).toBe(401);
@@ -96,13 +100,19 @@ describe('AuthService', () => {
       const stored = [localStorage, sessionStorage].flatMap((s) => Object.keys(s).map((k) => `${k}=${s.getItem(k)}`));
       expect(stored.join('|')).not.toContain(PASSWORD);
       expect(JSON.stringify(currentUser.user())).not.toContain(PASSWORD);
-      const ownStrings = Object.values(service as unknown as Record<string, unknown>).filter((v) => typeof v === 'string');
+      const ownStrings = Object.values(service as unknown as Record<string, unknown>).filter(
+        (v) => typeof v === 'string'
+      );
       expect(ownStrings).not.toContain(PASSWORD);
       // Tampoco tras un login fallido
-      const failed = new Promise<unknown>((resolve) => service.login('otra@example.invalid', PASSWORD).subscribe({ error: resolve }));
+      const failed = new Promise<unknown>((resolve) =>
+        service.login('otra@example.invalid', PASSWORD).subscribe({ error: resolve })
+      );
       controller.expectOne(LOGIN_URL).flush(null, { status: 401, statusText: 'x' });
       await failed;
-      expect([localStorage, sessionStorage].flatMap((s) => Object.keys(s).map((k) => s.getItem(k))).join('|')).not.toContain(PASSWORD);
+      expect(
+        [localStorage, sessionStorage].flatMap((s) => Object.keys(s).map((k) => s.getItem(k))).join('|')
+      ).not.toContain(PASSWORD);
     });
   });
 

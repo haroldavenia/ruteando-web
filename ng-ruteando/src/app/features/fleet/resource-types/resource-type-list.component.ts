@@ -22,14 +22,26 @@ const IN_USE = t('No se puede eliminar: hay vehículos de este tipo');
 
 @Component({
   selector: 'app-resource-type-list',
-  imports: [DataTableComponent, FleetTabsComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
+  imports: [
+    DataTableComponent,
+    FleetTabsComponent,
+    PageHeaderComponent,
+    FormResultComponent,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    ActionTitleDirective,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-page-header [title]="'Tipos de vehículo' | t" [subtitle]="state.countText('tipo', 'tipos')">
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/flota/tipos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo tipo' | t }}</a>
+      <a mat-flat-button class="primary-action" routerLink="/flota/tipos/nuevo"
+        ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo tipo' | t }}</a
+      >
     </app-page-header>
     <app-fleet-tabs />
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
@@ -45,13 +57,22 @@ const IN_USE = t('No se puede eliminar: hay vehículos de este tipo');
         <a mat-icon-button [routerLink]="['/flota/tipos', row.id]" [attr.aria-label]="('Editar tipo ' | t) + row.name">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar tipo ' | t) + row.name">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="remove(row)"
+          [attr.aria-label]="('Eliminar tipo ' | t) + row.name"
+        >
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
       <ng-template #selectionActions let-rows let-clear="clear">
-        <button mat-button type="button" (click)="actions.removeMany(rows, clear)"><mat-icon aria-hidden="true">delete</mat-icon>{{ 'Eliminar' | t }}</button>
-        <button mat-button type="button" (click)="actions.exportRows(rows)"><mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}</button>
+        <button mat-button type="button" (click)="actions.removeMany(rows, clear)">
+          <mat-icon aria-hidden="true">delete</mat-icon>{{ 'Eliminar' | t }}
+        </button>
+        <button mat-button type="button" (click)="actions.exportRows(rows)">
+          <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}
+        </button>
       </ng-template>
       <a empty-action mat-stroked-button routerLink="/flota/tipos/nuevo">{{ 'Crear el primer tipo' | t }}</a>
     </app-data-table>

@@ -1,5 +1,12 @@
 import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +26,13 @@ import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
 import { PolygonEditorComponent } from '../../shared/map/polygon-editor.component';
-import { isValidPolygon, polygonIssueMessage, ringFromVertices, validatePolygon, verticesFromRing } from '../../shared/map/polygon-geometry';
+import {
+  isValidPolygon,
+  polygonIssueMessage,
+  ringFromVertices,
+  validatePolygon,
+  verticesFromRing,
+} from '../../shared/map/polygon-geometry';
 import { ROUTE_COLORS, ROUTE_COLOR_NAMES } from '../../shared/map/route-colors';
 
 import { t } from '../../core/i18n/i18n';
@@ -40,7 +53,8 @@ function codeValidator(control: AbstractControl): ValidationErrors | null {
   return value.length > MAX_CODE_LENGTH ? { tooLong: true } : null;
 }
 
-const nameValidator = (control: AbstractControl): ValidationErrors | null => (String(control.value ?? '').trim() === '' ? { required: true } : null);
+const nameValidator = (control: AbstractControl): ValidationErrors | null =>
+  String(control.value ?? '').trim() === '' ? { required: true } : null;
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
   required: t('Este campo es obligatorio'),
@@ -59,7 +73,21 @@ export function buildZoneUpdateBody(record: Zone, edited: Partial<ZoneInput>): P
 
 @Component({
   selector: 'app-zone-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, SkeletonComponent, FocusFirstInvalidDirective, FormActionsComponent, FormHeadComponent, FormResultComponent, MatIconModule, PolygonEditorComponent, TranslatePipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    SkeletonComponent,
+    FocusFirstInvalidDirective,
+    FormActionsComponent,
+    FormHeadComponent,
+    FormResultComponent,
+    MatIconModule,
+    PolygonEditorComponent,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './zone-form.component.html',
   styleUrl: './zone-form.component.scss',
@@ -150,7 +178,7 @@ export class ZoneFormComponent implements HasUnsavedChanges {
         void notify(this.injector, this.id === null ? t('Zona creada') : t('Zona guardada'));
         void this.router.navigateByUrl('/zonas');
       },
-      { 409: DUPLICATE_CODE },
+      { 409: DUPLICATE_CODE }
     );
   }
 }

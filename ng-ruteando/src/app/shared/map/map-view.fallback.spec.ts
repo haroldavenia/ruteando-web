@@ -7,7 +7,6 @@ import { MAP_CONFIG } from './map-config';
 import { MapViewComponent } from './map-view.component';
 import { OPENLAYERS_LOADER } from './openlayers';
 
-
 describe('MapViewComponent: servidor y fallos', () => {
   const wait = () => new Promise((resolve) => setTimeout(resolve, 150));
 

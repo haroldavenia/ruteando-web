@@ -85,7 +85,9 @@ export class PolygonEditorComponent {
   private fitted = false;
 
   protected readonly issues = computed(() => validatePolygon(this.vertices()));
-  protected readonly valid = computed(() => this.vertices().length >= 3 && this.issues().every((i) => i.kind === 'unchecked'));
+  protected readonly valid = computed(
+    () => this.vertices().length >= 3 && this.issues().every((i) => i.kind === 'unchecked')
+  );
   protected readonly summary = computed(() => {
     const vertices = this.vertices();
     const blocking = this.issues().filter((i) => i.kind !== 'unchecked');
@@ -95,8 +97,14 @@ export class PolygonEditorComponent {
     if (blocking.length > 0) {
       return t('{0} vértices. {1}.', [vertices.length, blocking.map(polygonIssueMessage).join('. ')]);
     }
-    const warning = this.issues().some((i) => i.kind === 'unchecked') ? ` ${polygonIssueMessage({ kind: 'unchecked' })}.` : '';
-    return t('Polígono válido: {0} vértices, unos {1} km² (aproximado).{2}', [vertices.length, AREA.format(areaKm2(vertices)), warning]);
+    const warning = this.issues().some((i) => i.kind === 'unchecked')
+      ? ` ${polygonIssueMessage({ kind: 'unchecked' })}.`
+      : '';
+    return t('Polígono válido: {0} vértices, unos {1} km² (aproximado).{2}', [
+      vertices.length,
+      AREA.format(areaKm2(vertices)),
+      warning,
+    ]);
   });
 
   constructor() {
@@ -177,7 +185,12 @@ export class PolygonEditorComponent {
     }
     this.dialog
       .open(ConfirmDialogComponent, {
-        data: { title: t('Borrar el polígono'), message: t('¿Quitar los {0} vértices del polígono?', [this.vertices().length]), confirmLabel: t('Borrar'), cancelLabel: t('Conservar') },
+        data: {
+          title: t('Borrar el polígono'),
+          message: t('¿Quitar los {0} vértices del polígono?', [this.vertices().length]),
+          confirmLabel: t('Borrar'),
+          cancelLabel: t('Conservar'),
+        },
       })
       .afterClosed()
       .subscribe((confirmed) => {
@@ -212,18 +225,27 @@ export class PolygonEditorComponent {
     const { tilesUrl, attribution, center, zoom } = this.config;
     this.palette = readMapPalette(this.theme.scheme(), this.document);
     // `app-tiles`: en el tema oscuro las teselas se oscurecen con un filtro de la hoja global (el polígono no se toca)
-    const tiles = new ol.TileLayer({ className: 'app-tiles', source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
+    const tiles = new ol.TileLayer({
+      className: 'app-tiles',
+      source: new ol.XYZ({ url: tilesUrl, attributions: attribution }),
+    });
     tiles.getSource()?.on('tileloaderror', () => this.failed.set(true));
     tiles.getSource()?.on('tileloadend', () => this.failed.set(false));
 
     this.source = new ol.VectorSource();
-    this.layer = new ol.VectorLayer({ source: this.source, style: (feature) => this.style(feature.getGeometry()?.getType()) });
+    this.layer = new ol.VectorLayer({
+      source: this.source,
+      style: (feature) => this.style(feature.getGeometry()?.getType()),
+    });
     const start = [center.lng, center.lat];
     const map = new ol.Map({
       target: this.host().nativeElement,
       layers: [tiles, this.layer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') } }),
+      controls: ol.defaultControls({
+        attributionOptions: { collapsible: false },
+        zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') },
+      }),
     });
     this.modify = new ol.Modify({ source: this.source });
     this.modify.on('modifyend', () => this.readFromMap());
@@ -243,7 +265,11 @@ export class PolygonEditorComponent {
     if (vertices.length > 0) {
       const coords = vertices.map((v) => ol.fromLonLat([v.lng, v.lat]));
       const geometry: Geometry =
-        vertices.length >= 3 ? new ol.Polygon([[...coords, coords[0]]]) : vertices.length === 2 ? new ol.LineString(coords) : new ol.Point(coords[0]);
+        vertices.length >= 3
+          ? new ol.Polygon([[...coords, coords[0]]])
+          : vertices.length === 2
+            ? new ol.LineString(coords)
+            : new ol.Point(coords[0]);
       this.source.addFeature(new ol.Feature(geometry));
       if (!this.fitted) {
         this.fitted = true;
@@ -266,9 +292,16 @@ export class PolygonEditorComponent {
       return;
     }
     const positions = (
-      geometry instanceof ol.Polygon ? geometry.getCoordinates()[0] : geometry instanceof ol.LineString ? geometry.getCoordinates() : geometry instanceof ol.Point ? [geometry.getCoordinates()] : []
+      geometry instanceof ol.Polygon
+        ? geometry.getCoordinates()[0]
+        : geometry instanceof ol.LineString
+          ? geometry.getCoordinates()
+          : geometry instanceof ol.Point
+            ? [geometry.getCoordinates()]
+            : []
     ).map((c) => ol.toLonLat(c));
-    const vertices = geometry instanceof ol.Polygon ? verticesFromRing(positions) : verticesFromRing([...positions, positions[0]]);
+    const vertices =
+      geometry instanceof ol.Polygon ? verticesFromRing(positions) : verticesFromRing([...positions, positions[0]]);
     this.fromMap = vertices;
     this.vertices.set(vertices);
   }
@@ -280,7 +313,15 @@ export class PolygonEditorComponent {
     const problem = !this.valid() && this.vertices().length >= 3;
     const stroke = problem ? palette.danger : base;
     if (type === 'Point') {
-      return [new ol.Style({ image: new ol.CircleStyle({ radius: 7, fill: new ol.Fill({ color: stroke }), stroke: new ol.Stroke({ color: palette.halo, width: 2 }) }) })];
+      return [
+        new ol.Style({
+          image: new ol.CircleStyle({
+            radius: 7,
+            fill: new ol.Fill({ color: stroke }),
+            stroke: new ol.Stroke({ color: palette.halo, width: 2 }),
+          }),
+        }),
+      ];
     }
     return [
       new ol.Style({ stroke: new ol.Stroke({ color: palette.halo, width: 7 }) }),

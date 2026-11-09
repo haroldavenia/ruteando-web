@@ -36,19 +36,123 @@ export interface ImportColumn {
 
 /** Columnas del archivo. La cabecera exportada por la propia aplicación (`ID_GUIA`, `LONGITUD`...) se reconoce. */
 export const IMPORT_COLUMNS: readonly ImportColumn[] = [
-  { key: 'guideNumber', header: 'ID_GUIA', aliases: ['idguia', 'guia', 'numeroguia', 'numerodeguia', 'guidenumber', 'guide'], required: false, description: t('Número de guía; debe ser único en tu empresa'), fallback: t('sin guía'), example: 'G-1001' },
-  { key: 'name', header: 'NOMBRE', aliases: ['nombre', 'name'], required: false, description: t('Nombre o referencia del paquete'), fallback: t('la guía o, si no hay, la dirección'), example: t('Paquete de Ana') },
-  { key: 'serviceType', header: 'SERVICIO', aliases: ['servicio', 'tiposervicio', 'tipodeservicio', 'servicetype'], required: false, description: t('Entrega, Recogida o Mixto'), fallback: t('Entrega'), example: t('Entrega') },
-  { key: 'address', header: 'DIRECCION', aliases: ['direccion', 'address'], required: true, description: t('Dirección del servicio'), fallback: '—', example: t('Carrera 7 # 71-21') },
-  { key: 'city', header: 'CIUDAD', aliases: ['ciudad', 'city'], required: false, description: t('Ciudad'), fallback: t('vacío'), example: t('Bogotá') },
-  { key: 'country', header: 'PAIS', aliases: ['pais', 'country'], required: false, description: t('País'), fallback: t('vacío'), example: t('Colombia') },
-  { key: 'postalCode', header: 'CODIGO_POSTAL', aliases: ['codigopostal', 'cp', 'postalcode', 'zipcode'], required: false, description: t('Código postal'), fallback: t('vacío'), example: '110231' },
-  { key: 'longitude', header: 'LONGITUD', aliases: ['longitud', 'lon', 'lng', 'longitude'], required: true, description: 'Longitud entre -180 y 180 (punto o coma decimal)', fallback: '—', example: '-74.07728' },
-  { key: 'latitude', header: 'LATITUD', aliases: ['latitud', 'lat', 'latitude'], required: true, description: 'Latitud entre -90 y 90 (punto o coma decimal)', fallback: '—', example: '4.60872' },
-  { key: 'weight', header: 'PESO', aliases: ['peso', 'weight'], required: false, description: t('Peso, número mayor o igual que 0'), fallback: '0', example: '2.5' },
-  { key: 'volume', header: 'VOLUMEN', aliases: ['volumen', 'volume'], required: false, description: t('Volumen, número mayor o igual que 0'), fallback: '0', example: '0.3' },
-  { key: 'pieceNumber', header: 'PIEZAS', aliases: ['piezas', 'numeropiezas', 'numerodepiezas', 'piecenumber', 'pieces'], required: false, description: t('Número de piezas, entero de 1 o más'), fallback: '1', example: '1' },
-  { key: 'observation', header: 'OBSERVACION', aliases: ['observacion', 'observaciones', 'observation', 'notas'], required: false, description: t('Observaciones'), fallback: t('vacío'), example: t('Llamar al llegar') },
+  {
+    key: 'guideNumber',
+    header: 'ID_GUIA',
+    aliases: ['idguia', 'guia', 'numeroguia', 'numerodeguia', 'guidenumber', 'guide'],
+    required: false,
+    description: t('Número de guía; debe ser único en tu empresa'),
+    fallback: t('sin guía'),
+    example: 'G-1001',
+  },
+  {
+    key: 'name',
+    header: 'NOMBRE',
+    aliases: ['nombre', 'name'],
+    required: false,
+    description: t('Nombre o referencia del paquete'),
+    fallback: t('la guía o, si no hay, la dirección'),
+    example: t('Paquete de Ana'),
+  },
+  {
+    key: 'serviceType',
+    header: 'SERVICIO',
+    aliases: ['servicio', 'tiposervicio', 'tipodeservicio', 'servicetype'],
+    required: false,
+    description: t('Entrega, Recogida o Mixto'),
+    fallback: t('Entrega'),
+    example: t('Entrega'),
+  },
+  {
+    key: 'address',
+    header: 'DIRECCION',
+    aliases: ['direccion', 'address'],
+    required: true,
+    description: t('Dirección del servicio'),
+    fallback: '—',
+    example: t('Carrera 7 # 71-21'),
+  },
+  {
+    key: 'city',
+    header: 'CIUDAD',
+    aliases: ['ciudad', 'city'],
+    required: false,
+    description: t('Ciudad'),
+    fallback: t('vacío'),
+    example: t('Bogotá'),
+  },
+  {
+    key: 'country',
+    header: 'PAIS',
+    aliases: ['pais', 'country'],
+    required: false,
+    description: t('País'),
+    fallback: t('vacío'),
+    example: t('Colombia'),
+  },
+  {
+    key: 'postalCode',
+    header: 'CODIGO_POSTAL',
+    aliases: ['codigopostal', 'cp', 'postalcode', 'zipcode'],
+    required: false,
+    description: t('Código postal'),
+    fallback: t('vacío'),
+    example: '110231',
+  },
+  {
+    key: 'longitude',
+    header: 'LONGITUD',
+    aliases: ['longitud', 'lon', 'lng', 'longitude'],
+    required: true,
+    description: 'Longitud entre -180 y 180 (punto o coma decimal)',
+    fallback: '—',
+    example: '-74.07728',
+  },
+  {
+    key: 'latitude',
+    header: 'LATITUD',
+    aliases: ['latitud', 'lat', 'latitude'],
+    required: true,
+    description: 'Latitud entre -90 y 90 (punto o coma decimal)',
+    fallback: '—',
+    example: '4.60872',
+  },
+  {
+    key: 'weight',
+    header: 'PESO',
+    aliases: ['peso', 'weight'],
+    required: false,
+    description: t('Peso, número mayor o igual que 0'),
+    fallback: '0',
+    example: '2.5',
+  },
+  {
+    key: 'volume',
+    header: 'VOLUMEN',
+    aliases: ['volumen', 'volume'],
+    required: false,
+    description: t('Volumen, número mayor o igual que 0'),
+    fallback: '0',
+    example: '0.3',
+  },
+  {
+    key: 'pieceNumber',
+    header: 'PIEZAS',
+    aliases: ['piezas', 'numeropiezas', 'numerodepiezas', 'piecenumber', 'pieces'],
+    required: false,
+    description: t('Número de piezas, entero de 1 o más'),
+    fallback: '1',
+    example: '1',
+  },
+  {
+    key: 'observation',
+    header: 'OBSERVACION',
+    aliases: ['observacion', 'observaciones', 'observation', 'notas'],
+    required: false,
+    description: t('Observaciones'),
+    fallback: t('vacío'),
+    example: t('Llamar al llegar'),
+  },
 ];
 
 export interface RowError {
@@ -114,7 +218,9 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
   const ignoredColumns: string[] = [];
   header.forEach((cell, index) => {
     const normalized = normalizeHeader(cell);
-    const column = IMPORT_COLUMNS.find((c) => normalizeHeader(c.header) === normalized || c.aliases.includes(normalized));
+    const column = IMPORT_COLUMNS.find(
+      (c) => normalizeHeader(c.header) === normalized || c.aliases.includes(normalized)
+    );
     if (column && !columnIndex.has(column.key)) {
       columnIndex.set(column.key, index);
     } else if (cell !== '') {
@@ -123,7 +229,14 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
   });
 
   const missingColumns = IMPORT_COLUMNS.filter((c) => c.required && !columnIndex.has(c.key)).map((c) => c.header);
-  const result: ValidationResult = { header, totalRows: dataRows.length, valid: [], errors: [], ignoredColumns, missingColumns };
+  const result: ValidationResult = {
+    header,
+    totalRows: dataRows.length,
+    valid: [],
+    errors: [],
+    ignoredColumns,
+    missingColumns,
+  };
   if (missingColumns.length > 0) {
     return result;
   }
@@ -239,7 +352,7 @@ export function packageTemplateCsv(): string {
   return toCsv(
     IMPORT_COLUMNS.map((c) => c.header),
     // Los ejemplos numéricos van como números: un texto que empieza por «-» se protegería como fórmula
-    [IMPORT_COLUMNS.map((c) => (NUMERIC.has(c.key) ? Number(c.example) : c.example))],
+    [IMPORT_COLUMNS.map((c) => (NUMERIC.has(c.key) ? Number(c.example) : c.example))]
   );
 }
 
@@ -257,6 +370,6 @@ export interface ReportEntry {
 export function importErrorsCsv(entries: readonly ReportEntry[]): string {
   return toCsv(
     ['LINEA', 'CAMPO', 'MOTIVO', t('FILA ORIGINAL')],
-    entries.map((entry) => [entry.line, entry.field, entry.message, (entry.original ?? []).join(' | ')]),
+    entries.map((entry) => [entry.line, entry.field, entry.message, (entry.original ?? []).join(' | ')])
   );
 }

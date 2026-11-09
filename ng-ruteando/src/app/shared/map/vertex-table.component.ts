@@ -14,11 +14,20 @@ type VertexGroup = FormGroup<{ lat: FormControl<number | null>; lng: FormControl
 
 const group = (point?: LatLng): VertexGroup =>
   new FormGroup({
-    lat: new FormControl<number | null>(point?.lat ?? null, [Validators.required, Validators.min(-90), Validators.max(90)]),
-    lng: new FormControl<number | null>(point?.lng ?? null, [Validators.required, Validators.min(-180), Validators.max(180)]),
+    lat: new FormControl<number | null>(point?.lat ?? null, [
+      Validators.required,
+      Validators.min(-90),
+      Validators.max(90),
+    ]),
+    lng: new FormControl<number | null>(point?.lng ?? null, [
+      Validators.required,
+      Validators.min(-180),
+      Validators.max(180),
+    ]),
   });
 
-const same = (a: readonly LatLng[], b: readonly LatLng[]): boolean => a.length === b.length && a.every((p, i) => p.lat === b[i].lat && p.lng === b[i].lng);
+const same = (a: readonly LatLng[], b: readonly LatLng[]): boolean =>
+  a.length === b.length && a.every((p, i) => p.lat === b[i].lat && p.lng === b[i].lng);
 
 /**
  * Los vértices de un polígono en una tabla con latitud y longitud editables: es la alternativa completa
@@ -53,7 +62,9 @@ export class VertexTableComponent {
 
   /** Puntos de las filas, o `null` en la posición de una fila vacía o fuera de rango. */
   private validPoints(): LatLng[] {
-    return this.rows.controls.flatMap((row) => (row.valid ? [{ lat: row.controls.lat.value as number, lng: row.controls.lng.value as number }] : []));
+    return this.rows.controls.flatMap((row) =>
+      row.valid ? [{ lat: row.controls.lat.value as number, lng: row.controls.lng.value as number }] : []
+    );
   }
 
   private publish(): void {
@@ -70,7 +81,13 @@ export class VertexTableComponent {
     const first = current[0];
     const last = current[current.length - 1];
     // El vértice nuevo nace a medio camino entre el último y el primero, para que se vea y siga siendo válido
-    const point = first && last ? { lat: (first.lat + last.lat) / 2 + (current.length === 1 ? 0.001 : 0), lng: (first.lng + last.lng) / 2 + (current.length === 1 ? 0.001 : 0) } : undefined;
+    const point =
+      first && last
+        ? {
+            lat: (first.lat + last.lat) / 2 + (current.length === 1 ? 0.001 : 0),
+            lng: (first.lng + last.lng) / 2 + (current.length === 1 ? 0.001 : 0),
+          }
+        : undefined;
     this.rows.push(group(point));
   }
 

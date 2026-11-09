@@ -21,7 +21,7 @@ export class AuditViewState extends ListState<AuditLog> {
   constructor(
     private readonly store: AuditStore,
     filters: Signal<AuditFilters>,
-    now: () => number = Date.now,
+    now: () => number = Date.now
   ) {
     super(() => EMPTY);
     effect(() => {

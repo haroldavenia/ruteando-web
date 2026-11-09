@@ -163,7 +163,9 @@ export class DataTableComponent<T> {
    * enlazar se comporta como un estado interno.
    */
   readonly filter = model('');
-  protected readonly density = signal<Density>(readPref(DENSITY_KEY, ['comfortable', 'compact'], 'comfortable', this.browser));
+  protected readonly density = signal<Density>(
+    readPref(DENSITY_KEY, ['comfortable', 'compact'], 'comfortable', this.browser)
+  );
   private readonly preferredView = signal<View>(readPref(VIEW_KEY, ['table', 'cards'], 'cards', this.browser));
   /** Vista efectiva: sin plantilla de tarjetas solo hay tabla. */
   protected readonly view = computed<View>(() => (this.card() ? this.preferredView() : 'table'));
@@ -175,7 +177,9 @@ export class DataTableComponent<T> {
   private readonly selected = signal<ReadonlySet<string>>(new Set());
 
   /** Columna que no se recorta al desplazar la tabla en horizontal. */
-  protected readonly stickyId = computed(() => (this.columns().find((c) => c.primary) ?? this.columns()[0])?.id ?? null);
+  protected readonly stickyId = computed(
+    () => (this.columns().find((c) => c.primary) ?? this.columns()[0])?.id ?? null
+  );
 
   /** Filas de esqueleto mientras carga: la tabla ya tiene su forma. */
   protected readonly skeletonRows = [0, 1, 2, 3, 4];
@@ -217,7 +221,9 @@ export class DataTableComponent<T> {
     return this.filtered().slice(start, start + size);
   });
 
-  protected readonly pageIndex = computed(() => (this.clientSide() ? Math.min(this.clientPage(), this.lastPage()) : this.state().page()));
+  protected readonly pageIndex = computed(() =>
+    this.clientSide() ? Math.min(this.clientPage(), this.lastPage()) : this.state().page()
+  );
   protected readonly pageSize = computed(() => (this.clientSide() ? this.clientSize() : this.state().size()));
   protected readonly length = computed(() => (this.clientSide() ? this.filtered().length : this.state().total()));
   private readonly lastPage = computed(() => Math.max(0, Math.ceil(this.filtered().length / this.clientSize()) - 1));
@@ -239,7 +245,12 @@ export class DataTableComponent<T> {
       { key: null, label: t('Todos'), count: rows.length, on: chosen === null },
       ...facet.options
         .filter((option) => (counts.get(option.key) ?? 0) > 0 || option.key === chosen)
-        .map((option) => ({ key: option.key as string | null, label: option.label, count: counts.get(option.key) ?? 0, on: chosen === option.key })),
+        .map((option) => ({
+          key: option.key as string | null,
+          label: option.label,
+          count: counts.get(option.key) ?? 0,
+          on: chosen === option.key,
+        })),
     ];
   });
 
@@ -254,19 +265,32 @@ export class DataTableComponent<T> {
     }
     const loaded = state.rows().length;
     if (!this.clientSide()) {
-      return this.filter().trim() ? t('{0} de {1} filas de esta página', [this.filtered().length, loaded]) : t('Mostrando {0} de {1}', [loaded, state.total()]);
+      return this.filter().trim()
+        ? t('{0} de {1} filas de esta página', [this.filtered().length, loaded])
+        : t('Mostrando {0} de {1}', [loaded, state.total()]);
     }
     const filtering = this.filter().trim() !== '' || this.facetKey() !== null;
-    const more = state.total() > loaded ? t('Se muestran los primeros {0} {1} de {2}', [loaded, this.entityPlural(), state.total()]) : '';
+    const more =
+      state.total() > loaded
+        ? t('Se muestran los primeros {0} {1} de {2}', [loaded, this.entityPlural(), state.total()])
+        : '';
     return [filtering ? t('{0} de {1}', [this.filtered().length, loaded]) : '', more].filter(Boolean).join(' · ');
   });
 
   protected readonly selectedRows = computed(() => {
     const selected = this.selected();
-    return selected.size === 0 ? [] : this.state().rows().filter((row) => selected.has(this.rowKey()(row)));
+    return selected.size === 0
+      ? []
+      : this.state()
+          .rows()
+          .filter((row) => selected.has(this.rowKey()(row)));
   });
-  protected readonly allVisibleSelected = computed(() => this.visibleRows().length > 0 && this.visibleRows().every((row) => this.isSelected(row)));
-  protected readonly someVisibleSelected = computed(() => !this.allVisibleSelected() && this.visibleRows().some((row) => this.isSelected(row)));
+  protected readonly allVisibleSelected = computed(
+    () => this.visibleRows().length > 0 && this.visibleRows().every((row) => this.isSelected(row))
+  );
+  protected readonly someVisibleSelected = computed(
+    () => !this.allVisibleSelected() && this.visibleRows().some((row) => this.isSelected(row))
+  );
 
   protected pageChanged(event: PageEvent): void {
     if (this.clientSide()) {

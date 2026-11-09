@@ -43,9 +43,9 @@ function securityHeaders(env) {
     'Cross-Origin-Opener-Policy': 'same-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
   };
-  return function(req, res, next) {
+  return function (req, res, next) {
     res.removeHeader('X-Powered-By');
-    Object.keys(fixed).forEach(function(name) {
+    Object.keys(fixed).forEach(function (name) {
       res.setHeader(name, fixed[name]);
     });
     if (mode === 'enforce') {

@@ -25,14 +25,18 @@ describe('LocationFieldsComponent', () => {
   let fixture: ComponentFixture<HostComponent>;
   const root = () => fixture.nativeElement as HTMLElement;
   const input = (label: string) =>
-    Array.from(root().querySelectorAll('mat-form-field')).find((f) => f.querySelector('mat-label')?.textContent === label)!.querySelector('input') as HTMLInputElement;
+    Array.from(root().querySelectorAll('mat-form-field'))
+      .find((f) => f.querySelector('mat-label')?.textContent === label)!
+      .querySelector('input') as HTMLInputElement;
   const type = (label: string, value: string) => {
     const el = input(label);
     el.value = value;
     el.dispatchEvent(new Event('input'));
     fixture.detectChanges();
   };
-  const mapView = () => fixture.debugElement.query((d) => d.componentInstance instanceof MapViewComponent).componentInstance as MapViewComponent;
+  const mapView = () =>
+    fixture.debugElement.query((d) => d.componentInstance instanceof MapViewComponent)
+      .componentInstance as MapViewComponent;
   const markerLatLng = (): [number, number] | null => {
     const layer = mapView().olMap()!.getLayers().item(1) as VectorLayer<VectorSource>;
     const geometry = layer.getSource()!.getFeatures()[0].getGeometry() as Point | undefined;
@@ -47,7 +51,10 @@ describe('LocationFieldsComponent', () => {
   };
 
   async function create(group?: LocationGroup, extra: unknown[] = []): Promise<void> {
-    TestBed.configureTestingModule({ imports: [HostComponent], providers: [{ provide: MAP_CONFIG, useValue: TEST_MAP_CONFIG }, ...(extra as [])] });
+    TestBed.configureTestingModule({
+      imports: [HostComponent],
+      providers: [{ provide: MAP_CONFIG, useValue: TEST_MAP_CONFIG }, ...(extra as [])],
+    });
     fixture = TestBed.createComponent(HostComponent);
     if (group) {
       fixture.componentInstance.location = group;
@@ -72,7 +79,9 @@ describe('LocationFieldsComponent', () => {
       await create();
       const coordinates = root().querySelector('.coordinates') as HTMLElement;
       const map = root().querySelector('app-map-view') as HTMLElement;
-      const [lat, lng] = Array.from(coordinates.querySelectorAll('mat-form-field')).map((f) => f.getBoundingClientRect());
+      const [lat, lng] = Array.from(coordinates.querySelectorAll('mat-form-field')).map((f) =>
+        f.getBoundingClientRect()
+      );
 
       expect(map.getBoundingClientRect().left).toBeGreaterThanOrEqual(coordinates.getBoundingClientRect().right);
       expect(lng.top).toBeGreaterThanOrEqual(lat.bottom - 1);
@@ -84,7 +93,9 @@ describe('LocationFieldsComponent', () => {
       }
       await create();
 
-      expect(root().querySelector('app-map-view')!.getBoundingClientRect().top).toBeGreaterThanOrEqual(root().querySelector('.coordinates')!.getBoundingClientRect().bottom);
+      expect(root().querySelector('app-map-view')!.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        root().querySelector('.coordinates')!.getBoundingClientRect().bottom
+      );
     });
   });
 
@@ -99,7 +110,9 @@ describe('LocationFieldsComponent', () => {
 
   it('hacer clic en el mapa rellena los campos y marca el grupo como modificado', async () => {
     await create();
-    mapView().olMap()!.dispatchEvent({ type: 'click', coordinate: fromLonLat([-75.5, 6.25]) } as never);
+    mapView()
+      .olMap()!
+      .dispatchEvent({ type: 'click', coordinate: fromLonLat([-75.5, 6.25]) } as never);
     fixture.detectChanges();
 
     expect(fixture.componentInstance.location.value).toEqual({ lat: 6.25, lng: -75.5 });

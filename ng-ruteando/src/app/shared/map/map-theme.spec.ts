@@ -66,7 +66,9 @@ describe('hoja de los mapas (OpenLayers)', () => {
       for (const [ol, token] of pairs) {
         expect(style.getPropertyValue(ol)).withContext(ol).toBe(style.getPropertyValue(token));
       }
-      expect(style.getPropertyValue('--ol-partial-background-color')).toContain(style.getPropertyValue('--mat-sys-surface'));
+      expect(style.getPropertyValue('--ol-partial-background-color')).toContain(
+        style.getPropertyValue('--mat-sys-surface')
+      );
     });
 
     it('los enlaces de la atribución se distinguen con subrayado y no solo con el color', () => {

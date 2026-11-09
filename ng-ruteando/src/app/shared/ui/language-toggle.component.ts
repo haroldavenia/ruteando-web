@@ -34,18 +34,32 @@ const OPTIONS: readonly LanguageOption[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (variant() === 'menu') {
-      <button class="pill" type="button" [matMenuTriggerFor]="menu" [attr.aria-label]="'Idioma' | t" [attr.title]="'Idioma' | t">
+      <button
+        class="pill"
+        type="button"
+        [matMenuTriggerFor]="menu"
+        [attr.aria-label]="'Idioma' | t"
+        [attr.title]="'Idioma' | t"
+      >
         <mat-icon aria-hidden="true">language</mat-icon>
         <span>{{ options[index()].code }}</span>
         <mat-icon class="caret" aria-hidden="true">expand_more</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
         @for (option of options; track option.value) {
-          <button mat-menu-item type="button" role="menuitemradio" [attr.aria-checked]="option.value === language.current" (click)="choose(option.value)">
+          <button
+            mat-menu-item
+            type="button"
+            role="menuitemradio"
+            [attr.aria-checked]="option.value === language.current"
+            (click)="choose(option.value)"
+          >
             <span class="row">
               <span class="code">{{ option.code }}</span>
               <span class="name">{{ option.name }}</span>
-              <mat-icon class="check" aria-hidden="true" [class.off]="option.value !== language.current">check</mat-icon>
+              <mat-icon class="check" aria-hidden="true" [class.off]="option.value !== language.current"
+                >check</mat-icon
+              >
             </span>
           </button>
         }
@@ -64,7 +78,9 @@ const OPTIONS: readonly LanguageOption[] = [
               [attr.aria-label]="option.name"
               [attr.title]="option.name"
               (click)="choose(option.value)"
-            >{{ option.code }}</button>
+            >
+              {{ option.code }}
+            </button>
           }
         </div>
       </div>
@@ -203,7 +219,12 @@ export class LanguageToggleComponent {
 
   /** Flechas: pasan al idioma siguiente o anterior (patrón de los grupos de opciones). */
   protected onKey(event: KeyboardEvent): void {
-    const step = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0;
+    const step =
+      event.key === 'ArrowRight' || event.key === 'ArrowDown'
+        ? 1
+        : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+          ? -1
+          : 0;
     if (step === 0) {
       return;
     }

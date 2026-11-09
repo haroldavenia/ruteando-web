@@ -8,13 +8,17 @@ import { ThemeToggleComponent } from './theme-toggle.component';
 describe('ThemeToggleComponent', () => {
   let fixture: ComponentFixture<ThemeToggleComponent>;
   const root = document.documentElement;
-  const toggles = () => Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-button-toggle')) as HTMLElement[];
+  const toggles = () =>
+    Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-button-toggle')) as HTMLElement[];
   const buttons = () => toggles().map((toggle) => toggle.querySelector('button') as HTMLButtonElement);
 
   beforeEach(async () => {
     localStorage.removeItem(THEME_STORAGE_KEY);
     root.removeAttribute('data-theme');
-    await TestBed.configureTestingModule({ imports: [ThemeToggleComponent], providers: [provideNoopAnimations()] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [ThemeToggleComponent],
+      providers: [provideNoopAnimations()],
+    }).compileComponents();
     fixture = TestBed.createComponent(ThemeToggleComponent);
     fixture.detectChanges();
   });
@@ -27,21 +31,43 @@ describe('ThemeToggleComponent', () => {
   it('es un grupo con nombre en español y tres botones de icono, cada uno con su nombre accesible', () => {
     const group = (fixture.nativeElement as HTMLElement).querySelector('mat-button-toggle-group')!;
     expect(group.getAttribute('aria-label')).toBe('Tema de color');
-    expect(buttons().map((button) => button.getAttribute('aria-label'))).toEqual(['Tema del sistema', 'Tema claro', 'Tema oscuro']);
-    expect(toggles().map((toggle) => toggle.querySelector('mat-icon')?.textContent?.trim())).toEqual(['brightness_auto', 'light_mode', 'dark_mode']);
-    expect(toggles().every((toggle) => toggle.querySelector('mat-icon')?.getAttribute('aria-hidden') === 'true')).toBeTrue();
+    expect(buttons().map((button) => button.getAttribute('aria-label'))).toEqual([
+      'Tema del sistema',
+      'Tema claro',
+      'Tema oscuro',
+    ]);
+    expect(toggles().map((toggle) => toggle.querySelector('mat-icon')?.textContent?.trim())).toEqual([
+      'brightness_auto',
+      'light_mode',
+      'dark_mode',
+    ]);
+    expect(
+      toggles().every((toggle) => toggle.querySelector('mat-icon')?.getAttribute('aria-hidden') === 'true')
+    ).toBeTrue();
   });
 
   it('cada botón de icono lleva título con su nombre, para saber qué hace al pasar el cursor', () => {
-    const toggles = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-button-toggle')) as HTMLElement[];
+    const toggles = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('mat-button-toggle')
+    ) as HTMLElement[];
 
-    expect(toggles.map((toggle) => toggle.getAttribute('title'))).toEqual(['Tema del sistema', 'Tema claro', 'Tema oscuro']);
-    expect(toggles.map((toggle) => toggle.getAttribute('title'))).toEqual(buttons().map((button) => button.getAttribute('aria-label')));
+    expect(toggles.map((toggle) => toggle.getAttribute('title'))).toEqual([
+      'Tema del sistema',
+      'Tema claro',
+      'Tema oscuro',
+    ]);
+    expect(toggles.map((toggle) => toggle.getAttribute('title'))).toEqual(
+      buttons().map((button) => button.getAttribute('aria-label'))
+    );
   });
 
   it('arranca con «Sistema» elegido y lo anuncia como elegido (radio)', () => {
     expect(buttons().map((button) => button.getAttribute('aria-checked'))).toEqual(['true', 'false', 'false']);
-    expect(toggles().map((toggle) => toggle.classList.contains('mat-button-toggle-checked'))).toEqual([true, false, false]);
+    expect(toggles().map((toggle) => toggle.classList.contains('mat-button-toggle-checked'))).toEqual([
+      true,
+      false,
+      false,
+    ]);
   });
 
   it('al elegir Oscuro cambia el tema de la aplicación, lo recuerda y lo marca como el elegido', () => {
@@ -69,7 +95,10 @@ describe('ThemeToggleComponent', () => {
   it('con una elección guardada arranca con ella marcada', async () => {
     localStorage.setItem(THEME_STORAGE_KEY, 'light');
     TestBed.resetTestingModule();
-    await TestBed.configureTestingModule({ imports: [ThemeToggleComponent], providers: [provideNoopAnimations()] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [ThemeToggleComponent],
+      providers: [provideNoopAnimations()],
+    }).compileComponents();
     fixture = TestBed.createComponent(ThemeToggleComponent);
     fixture.detectChanges();
     expect(buttons().map((button) => button.getAttribute('aria-checked'))).toEqual(['false', 'true', 'false']);
@@ -79,7 +108,10 @@ describe('ThemeToggleComponent', () => {
     document.body.appendChild(fixture.nativeElement);
     const heights = buttons().map((button) => button.getBoundingClientRect().height);
     expect(heights.every((height) => height >= 36)).toBeTrue();
-    expect(getComputedStyle((fixture.nativeElement as HTMLElement).querySelector('mat-button-toggle-group')!).borderTopLeftRadius).toBe('999px');
+    expect(
+      getComputedStyle((fixture.nativeElement as HTMLElement).querySelector('mat-button-toggle-group')!)
+        .borderTopLeftRadius
+    ).toBe('999px');
     (fixture.nativeElement as HTMLElement).remove();
   });
 });

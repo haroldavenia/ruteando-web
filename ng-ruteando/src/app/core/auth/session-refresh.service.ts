@@ -53,7 +53,7 @@ export class SessionRefreshService {
       }),
       tap((session) => this.refreshed$.next(session)),
       finalize(() => (this.inFlight = null)),
-      shareReplay({ bufferSize: 1, refCount: false }),
+      shareReplay({ bufferSize: 1, refCount: false })
     );
     return this.inFlight;
   }

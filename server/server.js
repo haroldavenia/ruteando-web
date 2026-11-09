@@ -15,7 +15,9 @@ var securityHeaders = require('./security-headers').securityHeaders;
 gatewayProxy.loadEnvFile(); // carga ../.env (si existe) antes de leer la configuración
 
 // Directorio con la compilación de navegador de ng-ruteando (se puede cambiar con WEB_DIST)
-var WEB_DIST = path.resolve(process.env.WEB_DIST || path.join(__dirname, '..', 'ng-ruteando', 'dist', 'ng-ruteando', 'browser'));
+var WEB_DIST = path.resolve(
+  process.env.WEB_DIST || path.join(__dirname, '..', 'ng-ruteando', 'dist', 'ng-ruteando', 'browser')
+);
 
 var app = express();
 
@@ -31,7 +33,7 @@ app.use(compression());
 app.use('/gateway', gatewayProxy.createGatewayProxy());
 
 // /api y /auth no son rutas del cliente: una URL de API mal escrita no debe devolver la página de la aplicación
-app.use(['/api', '/auth'], function(req, res) {
+app.use(['/api', '/auth'], function (req, res) {
   res.status(404).send({ message: 'Not found' });
 });
 
@@ -62,7 +64,7 @@ function cacheHeaders(res, file) {
 // redirect: false -> el prerender deja carpetas como acceso/ y `GET /acceso` no debe redirigir a `/acceso/`
 app.use(express.static(WEB_DIST, { index: false, redirect: false, setHeaders: cacheHeaders }));
 
-app.get('*', function(req, res) {
+app.get('*', function (req, res) {
   // Ficheros inexistentes (con extensión) y peticiones que no piden HTML no son rutas del cliente
   if (path.extname(req.path) || !req.accepts('html')) {
     return res.status(404).send({ message: 'Not found' });
@@ -78,6 +80,6 @@ if (!webEntryFile()) {
   console.log(('Frontend sin compilar en ' + WEB_DIST + '. Ejecuta `pnpm run build:web`.').yellow);
 }
 
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));
 });

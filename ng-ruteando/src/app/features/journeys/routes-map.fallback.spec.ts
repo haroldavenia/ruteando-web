@@ -29,10 +29,13 @@ function create(routes: readonly DomainRoute[], providers: unknown[] = []) {
 describe('RoutesMapComponent: servidor, fallos y vacío', () => {
   it('en el servidor deja solo el hueco del mapa: no carga OpenLayers ni falla', async () => {
     const loader = jasmine.createSpy('loader').and.rejectWith(new Error('no debería llamarse'));
-    const fixture = create([route], [
-      { provide: PLATFORM_ID, useValue: 'server' },
-      { provide: OPENLAYERS_LOADER, useValue: loader },
-    ]);
+    const fixture = create(
+      [route],
+      [
+        { provide: PLATFORM_ID, useValue: 'server' },
+        { provide: OPENLAYERS_LOADER, useValue: loader },
+      ]
+    );
     await wait();
     fixture.detectChanges();
 
@@ -47,7 +50,10 @@ describe('RoutesMapComponent: servidor, fallos y vacío', () => {
   });
 
   it('si OpenLayers no se puede cargar avisa y la leyenda sigue funcionando', async () => {
-    const fixture = create([route], [{ provide: OPENLAYERS_LOADER, useValue: () => Promise.reject(new Error('sin red')) }]);
+    const fixture = create(
+      [route],
+      [{ provide: OPENLAYERS_LOADER, useValue: () => Promise.reject(new Error('sin red')) }]
+    );
     await wait();
     fixture.detectChanges();
 
@@ -74,7 +80,11 @@ describe('RoutesMapComponent: servidor, fallos y vacío', () => {
   });
 
   it('con rutas que no tienen geometría ni paradas con posición también avisa', async () => {
-    const empty = { ...route, geometry: [], waypoints: route.waypoints.map((w) => ({ ...w, position: null })) } as DomainRoute;
+    const empty = {
+      ...route,
+      geometry: [],
+      waypoints: route.waypoints.map((w) => ({ ...w, position: null })),
+    } as DomainRoute;
     const fixture = create([empty]);
     await wait();
     fixture.detectChanges();

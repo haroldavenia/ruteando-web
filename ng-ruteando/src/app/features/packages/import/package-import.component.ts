@@ -66,12 +66,25 @@ export class PackageImportComponent implements HasUnsavedChanges {
     return labels.map((label, index) => {
       const number = index + 1;
       const finished = this.phase() === 'done' && number === 4;
-      return { number, label, state: number < current || finished ? ('done' as const) : number === current ? ('current' as const) : ('todo' as const) };
+      return {
+        number,
+        label,
+        state:
+          number < current || finished
+            ? ('done' as const)
+            : number === current
+              ? ('current' as const)
+              : ('todo' as const),
+      };
     });
   });
 
-  protected readonly shownErrors = computed<RowError[]>(() => (this.validation()?.errors ?? []).slice(0, MAX_ERRORS_SHOWN));
-  protected readonly hiddenErrors = computed(() => Math.max(0, (this.validation()?.errors.length ?? 0) - MAX_ERRORS_SHOWN));
+  protected readonly shownErrors = computed<RowError[]>(() =>
+    (this.validation()?.errors ?? []).slice(0, MAX_ERRORS_SHOWN)
+  );
+  protected readonly hiddenErrors = computed(() =>
+    Math.max(0, (this.validation()?.errors.length ?? 0) - MAX_ERRORS_SHOWN)
+  );
   protected readonly preview = computed<ImportRow[]>(() => (this.validation()?.valid ?? []).slice(0, PREVIEW_ROWS));
   protected readonly validCount = computed(() => this.validation()?.valid.length ?? 0);
   protected readonly invalidRows = computed(() => new Set((this.validation()?.errors ?? []).map((e) => e.line)).size);
@@ -84,7 +97,12 @@ export class PackageImportComponent implements HasUnsavedChanges {
   protected readonly failedRows = computed(() => this.results().filter((r) => r.status === 'failed'));
   protected readonly summaryText = computed(() => {
     const c = this.counts();
-    return t('Importación terminada: {0} creados, {1} ya existían, {2} fallidos y {3} sin procesar.', [c.created, c.existed, c.failed, c.skipped]);
+    return t('Importación terminada: {0} creados, {1} ya existían, {2} fallidos y {3} sin procesar.', [
+      c.created,
+      c.existed,
+      c.failed,
+      c.skipped,
+    ]);
   });
   protected readonly reportEntries = computed<ReportEntry[]>(() => [
     ...(this.validation()?.errors ?? []).map((e) => ({ ...e, original: this.originalOf(e.line) })),
@@ -107,7 +125,9 @@ export class PackageImportComponent implements HasUnsavedChanges {
   leaveDialog(): { title: string; message: string; confirmLabel: string; cancelLabel: string } {
     return {
       title: t('¿Salir de la importación?'),
-      message: t('Hay una importación en curso. Si sales ahora se detendrá: los paquetes ya creados se conservan y el resto no se creará.'),
+      message: t(
+        'Hay una importación en curso. Si sales ahora se detendrá: los paquetes ya creados se conservan y el resto no se creará.'
+      ),
       confirmLabel: t('Salir'),
       cancelLabel: t('Seguir importando'),
     };
@@ -155,7 +175,9 @@ export class PackageImportComponent implements HasUnsavedChanges {
     }
     const table = parseCsv(text, { maxRows: MAX_DATA_ROWS });
     if (table.truncated) {
-      return this.reject(t('El archivo tiene más de {0} filas de datos. Divídelo en varios archivos.', [MAX_DATA_ROWS]));
+      return this.reject(
+        t('El archivo tiene más de {0} filas de datos. Divídelo en varios archivos.', [MAX_DATA_ROWS])
+      );
     }
     if (table.rows.length < 2) {
       return this.reject(t('El archivo no tiene filas de datos: solo la cabecera o nada.'));
@@ -163,11 +185,19 @@ export class PackageImportComponent implements HasUnsavedChanges {
     const result = validateRows(table);
     table.rows.slice(1).forEach((record, i) => this.rawRows.set(table.lines[i + 1], record));
     if (result.missingColumns.length > 0) {
-      return this.reject(t('Faltan columnas obligatorias: {0}. Descarga la plantilla para ver el formato.', [result.missingColumns.join(', ')]));
+      return this.reject(
+        t('Faltan columnas obligatorias: {0}. Descarga la plantilla para ver el formato.', [
+          result.missingColumns.join(', '),
+        ])
+      );
     }
     const warnings: string[] = [];
     if (text.includes('�')) {
-      warnings.push(t('Hay caracteres ilegibles (�): el archivo probablemente no está en UTF-8. Vuelve a guardarlo con esa codificación para conservar las tildes.'));
+      warnings.push(
+        t(
+          'Hay caracteres ilegibles (�): el archivo probablemente no está en UTF-8. Vuelve a guardarlo con esa codificación para conservar las tildes.'
+        )
+      );
     }
     if (table.unterminatedQuote) {
       warnings.push(t('Hay una comilla sin cerrar: las últimas filas pueden haberse leído mal. Revisa el archivo.'));

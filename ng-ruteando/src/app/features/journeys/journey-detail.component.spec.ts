@@ -26,11 +26,21 @@ describe('JourneyDetailComponent', () => {
   const text = () => root().textContent!.replace(/\s+/g, ' ');
   /** Pares etiqueta → valor del resumen. */
   const summary = (): Record<string, string> =>
-    Object.fromEntries(Array.from(root().querySelectorAll('dl.summary > div')).map((d) => [d.querySelector('dt')!.textContent!.trim(), d.querySelector('dd')!.textContent!.trim()]));
+    Object.fromEntries(
+      Array.from(root().querySelectorAll('dl.summary > div')).map((d) => [
+        d.querySelector('dt')!.textContent!.trim(),
+        d.querySelector('dd')!.textContent!.trim(),
+      ])
+    );
   const cells = (row: Element) => Array.from(row.querySelectorAll('td, th')).map((c) => c.textContent!.trim());
   /** Pares nombre → valor de las cifras de una tarjeta de ruta. */
   const figures = (route: Element): Record<string, string> =>
-    Object.fromEntries(Array.from(route.querySelectorAll('dl.figures > div')).map((d) => [d.querySelector('dt')!.textContent!.trim(), d.querySelector('dd')!.textContent!.trim()]));
+    Object.fromEntries(
+      Array.from(route.querySelectorAll('dl.figures > div')).map((d) => [
+        d.querySelector('dt')!.textContent!.trim(),
+        d.querySelector('dd')!.textContent!.trim(),
+      ])
+    );
 
   function setup(id: string, body?: unknown, error?: { status: number }): void {
     TestBed.configureTestingModule({
@@ -71,7 +81,7 @@ describe('JourneyDetailComponent', () => {
         'Tiempo mínimo': '8 min',
         'Tiempo medio': '8 min',
         'Tiempo máximo': '8 min',
-      }),
+      })
     );
   });
 
@@ -86,8 +96,19 @@ describe('JourneyDetailComponent', () => {
 
     expect(route.querySelector('h3')?.textContent?.trim()).toBe('Postman route');
     expect(route.querySelector('.vehicle')?.textContent?.trim()).toBe('Postman resource');
-    expect(figures(route)).toEqual({ Paradas: '0', Distancia: '1,0 km', 'Duración': '10 min', Peso: '—', Volumen: '—', Inicio: '—', Fin: '—' });
-    expect(Array.from(route.querySelectorAll('.actions > *')).map((a) => a.textContent?.trim())).toEqual(['Ver en el mapa', 'Ver ruta']);
+    expect(figures(route)).toEqual({
+      Paradas: '0',
+      Distancia: '1,0 km',
+      'Duración': '10 min',
+      Peso: '—',
+      Volumen: '—',
+      Inicio: '—',
+      Fin: '—',
+    });
+    expect(Array.from(route.querySelectorAll('.actions > *')).map((a) => a.textContent?.trim())).toEqual([
+      'Ver en el mapa',
+      'Ver ruta',
+    ]);
   });
 
   it('las paradas se abren y se cierran, en orden y con el tipo en español', () => {
@@ -119,7 +140,14 @@ describe('JourneyDetailComponent', () => {
     fixture.detectChanges();
     const row = root().querySelector('li.route .stops tbody tr') as HTMLElement;
 
-    expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual([null, 'Tipo', 'Latitud / longitud', 'Llegada', 'Salida', null]);
+    expect(Array.from(row.querySelectorAll('td')).map((td) => td.getAttribute('data-label'))).toEqual([
+      null,
+      'Tipo',
+      'Latitud / longitud',
+      'Llegada',
+      'Salida',
+      null,
+    ]);
     expect(row.querySelector('td')?.classList).toContain('primary-cell');
 
     root().style.display = 'block';
@@ -146,7 +174,9 @@ describe('JourneyDetailComponent', () => {
 
   it('el botón de paradas nombra la ruta', () => {
     setup(listed.id, fx(get).response.body);
-    expect(root().querySelector('li.route button[aria-expanded]')?.getAttribute('aria-label')).toBe('Ver las paradas de Postman route');
+    expect(root().querySelector('li.route button[aria-expanded]')?.getAttribute('aria-label')).toBe(
+      'Ver las paradas de Postman route'
+    );
   });
 
   it('una jornada sin rutas lo explica', () => {
@@ -219,7 +249,9 @@ describe('JourneyDetailComponent', () => {
       await waitForMap();
       (root().querySelector('li.route button[aria-expanded]') as HTMLButtonElement).click();
       fixture.detectChanges();
-      const stopButton = root().querySelector('li.route .stops button[aria-label^="Ver la parada 1"]') as HTMLButtonElement;
+      const stopButton = root().querySelector(
+        'li.route .stops button[aria-label^="Ver la parada 1"]'
+      ) as HTMLButtonElement;
       expect(stopButton.getAttribute('aria-label')).toBe('Ver la parada 1 de Capture vehicle en el mapa');
       stopButton.focus();
       stopButton.click();
@@ -240,7 +272,9 @@ describe('JourneyDetailComponent', () => {
       await waitForMap();
       (root().querySelector('li.route .actions button[aria-label^="Ver la ruta"]') as HTMLButtonElement).click();
       fixture.detectChanges();
-      (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Ver todas'))!.click();
+      (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.includes('Ver todas'))!
+        .click();
       fixture.detectChanges();
       expect(root().querySelector('li.route')?.classList.contains('focused')).toBeFalse();
     });
@@ -275,7 +309,9 @@ describe('JourneyDetailComponent', () => {
     it('sin dato de uso la barra queda vacía', () => {
       setup(listed.id, fx(get).response.body);
 
-      expect(Array.from(root().querySelectorAll('li.route .bar i')).map((i) => (i as HTMLElement).style.width)).toEqual(['0%', '0%']);
+      expect(Array.from(root().querySelectorAll('li.route .bar i')).map((i) => (i as HTMLElement).style.width)).toEqual(
+        ['0%', '0%']
+      );
     });
 
     it('con rutas el mapa y la lista van en una vista dividida, con el mapa fijo; sin rutas no hay vista dividida', () => {
@@ -283,7 +319,9 @@ describe('JourneyDetailComponent', () => {
       const split = root().querySelector('.split-view') as HTMLElement;
 
       expect(split.querySelector(':scope > section.sticky')?.getAttribute('aria-labelledby')).toBe('map-title');
-      expect(split.querySelector(':scope > section:not(.sticky)')?.getAttribute('aria-labelledby')).toBe('routes-title');
+      expect(split.querySelector(':scope > section:not(.sticky)')?.getAttribute('aria-labelledby')).toBe(
+        'routes-title'
+      );
       fixture.destroy();
       TestBed.resetTestingModule();
 
@@ -314,7 +352,8 @@ describe('JourneyDetailComponent', () => {
   });
 
   describe('presentación', () => {
-    const ownStyles = () => ((JourneyDetailComponent as unknown as { ɵcmp: { styles?: string[] } }).ɵcmp.styles ?? []).join('\n');
+    const ownStyles = () =>
+      ((JourneyDetailComponent as unknown as { ɵcmp: { styles?: string[] } }).ɵcmp.styles ?? []).join('\n');
 
     it('el resumen, el mapa, las rutas y los paquetes no planificables van en tarjetas', () => {
       setup(planned.id, { ...(fx(plan).response.body as object), invalidPackageIds: ['p1'] });

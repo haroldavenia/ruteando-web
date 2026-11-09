@@ -30,7 +30,8 @@ const FORMS: [string, Type<unknown>, boolean][] = [
   ['planificar jornada', JourneyFormComponent, false],
 ];
 
-const ownStyles = (component: Type<unknown>): string => ((component as unknown as { ɵcmp: { styles?: string[] } }).ɵcmp.styles ?? []).join('\n');
+const ownStyles = (component: Type<unknown>): string =>
+  ((component as unknown as { ɵcmp: { styles?: string[] } }).ɵcmp.styles ?? []).join('\n');
 
 describe('formularios en tarjeta', () => {
   const mounted: HTMLElement[] = [];
@@ -82,7 +83,9 @@ describe('formularios en tarjeta', () => {
 
       it('el botón de enviar es la acción principal de la pantalla y es el único con el degradado de la marca', () => {
         const root = mount(component);
-        const flat = Array.from(root.querySelectorAll('form button.mdc-button--unelevated, form a.mdc-button--unelevated'));
+        const flat = Array.from(
+          root.querySelectorAll('form button.mdc-button--unelevated, form a.mdc-button--unelevated')
+        );
         const primary = Array.from(root.querySelectorAll('form .primary-action'));
 
         expect(primary.length).toBe(1);

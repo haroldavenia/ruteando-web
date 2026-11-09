@@ -5,7 +5,14 @@ import { RouterLink } from '@angular/router';
 
 import { DomainRoute } from '../../core/api/models';
 import { ThemeService } from '../../core/theme/theme.service';
-import { formatCount, formatDateTime, formatDistance, formatDuration, formatLatLng, formatPercent } from '../../shared/format';
+import {
+  formatCount,
+  formatDateTime,
+  formatDistance,
+  formatDuration,
+  formatLatLng,
+  formatPercent,
+} from '../../shared/format';
 
 import { routeColorFor } from '../../shared/map/route-colors';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';

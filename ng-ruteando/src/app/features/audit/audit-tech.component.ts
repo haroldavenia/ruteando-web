@@ -1,5 +1,13 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, ViewEncapsulation, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  ViewEncapsulation,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -31,7 +39,9 @@ export class AuditTechComponent {
   readonly open = input(false);
 
   protected readonly utc = computed(() => formatUtc(this.log().createdAt));
-  protected readonly changesJson = computed(() => (this.log().changes ? JSON.stringify(this.log().changes, null, 2) : ''));
+  protected readonly changesJson = computed(() =>
+    this.log().changes ? JSON.stringify(this.log().changes, null, 2) : ''
+  );
 
   protected copy(text: string, what: string): Promise<void> {
     return copyToClipboard(this.document, this.injector, text, what);

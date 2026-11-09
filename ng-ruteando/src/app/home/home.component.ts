@@ -69,7 +69,9 @@ export class HomeComponent {
     return `${salute}, ${this.name()}`;
   });
   /** «viernes 30 de octubre» (se muestra en mayúsculas con estilos). */
-  protected readonly today = new Intl.DateTimeFormat(locale(), { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()).replace(',', '');
+  protected readonly today = new Intl.DateTimeFormat(locale(), { weekday: 'long', day: 'numeric', month: 'long' })
+    .format(new Date())
+    .replace(',', '');
   /** Quien puede abrir `/jornadas` y `/paquetes` (administradores y agentes) ve las acciones principales. */
   protected readonly canOperate = computed(() => {
     const role = this.currentUser.role();
@@ -113,7 +115,11 @@ export class HomeComponent {
     if (this.status() === 'ready') {
       const running = this.journeys().filter((journey) => journey.status === 'in_progress').length;
       if (running > 0) {
-        parts.push(running === 1 ? t('1 de las últimas jornadas está en curso') : t('{0} de las últimas jornadas están en curso', [running]));
+        parts.push(
+          running === 1
+            ? t('1 de las últimas jornadas está en curso')
+            : t('{0} de las últimas jornadas están en curso', [running])
+        );
       }
     }
     const figures = this.figures();
@@ -121,8 +127,12 @@ export class HomeComponent {
       const one = figures.pending === 1;
       parts.push(
         figures.exact
-          ? one ? t('hay 1 paquete esperando ruta') : t('hay {0} paquetes esperando ruta', [figures.pending])
-          : one ? t('hay 1 paquete esperando ruta entre los más recientes') : t('hay {0} paquetes esperando ruta entre los más recientes', [figures.pending]),
+          ? one
+            ? t('hay 1 paquete esperando ruta')
+            : t('hay {0} paquetes esperando ruta', [figures.pending])
+          : one
+            ? t('hay 1 paquete esperando ruta entre los más recientes')
+            : t('hay {0} paquetes esperando ruta entre los más recientes', [figures.pending])
       );
     }
     if (parts.length === 0) {

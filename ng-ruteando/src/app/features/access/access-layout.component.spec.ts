@@ -16,7 +16,9 @@ describe('AccessLayoutComponent', () => {
           {
             path: 'acceso',
             component: AccessLayoutComponent,
-            children: [{ path: '', loadComponent: () => import('./forbidden.component').then((m) => m.ForbiddenComponent) }],
+            children: [
+              { path: '', loadComponent: () => import('./forbidden.component').then((m) => m.ForbiddenComponent) },
+            ],
           },
         ]),
       ],
@@ -40,7 +42,9 @@ describe('AccessLayoutComponent', () => {
           {
             path: 'acceso',
             component: AccessLayoutComponent,
-            children: [{ path: '', loadComponent: () => import('./login/login.component').then((m) => m.LoginComponent) }],
+            children: [
+              { path: '', loadComponent: () => import('./login/login.component').then((m) => m.LoginComponent) },
+            ],
           },
         ]),
         provideNoopAnimations(),
@@ -53,13 +57,18 @@ describe('AccessLayoutComponent', () => {
     const fields = Array.from(document.querySelectorAll('app-access-layout mat-form-field'));
     expect(fields.length).toBeGreaterThan(0);
     expect(fields.every((field) => field.classList.contains('mat-form-field-appearance-outline'))).toBeTrue();
-    const shape = getComputedStyle(document.querySelector('app-access-layout main')!).getPropertyValue('--mat-form-field-outlined-container-shape');
+    const shape = getComputedStyle(document.querySelector('app-access-layout main')!).getPropertyValue(
+      '--mat-form-field-outlined-container-shape'
+    );
     expect(shape.trim()).toBe('12px');
   });
 
   describe('aspecto', () => {
     let harness: RouterTestingHarness;
-    const css = () => Array.from(document.querySelectorAll('style')).map((s) => s.textContent ?? '').join('\n');
+    const css = () =>
+      Array.from(document.querySelectorAll('style'))
+        .map((s) => s.textContent ?? '')
+        .join('\n');
 
     beforeEach(async () => {
       TestBed.configureTestingModule({
@@ -68,7 +77,9 @@ describe('AccessLayoutComponent', () => {
             {
               path: 'acceso',
               component: AccessLayoutComponent,
-              children: [{ path: '', loadComponent: () => import('./forbidden.component').then((m) => m.ForbiddenComponent) }],
+              children: [
+                { path: '', loadComponent: () => import('./forbidden.component').then((m) => m.ForbiddenComponent) },
+              ],
             },
           ]),
         ],
@@ -105,7 +116,9 @@ describe('AccessLayoutComponent', () => {
     });
 
     it('el desenfoque de la tarjeta solo se aplica si hay soporte y no se pide más contraste ni colores forzados', () => {
-      expect(css()).toMatch(/@supports [^{]*backdrop-filter: blur\(1px\)[^{]*\{[\s\S]*forced-colors: none[\s\S]*prefers-contrast: no-preference[\s\S]*backdrop-filter: blur/);
+      expect(css()).toMatch(
+        /@supports [^{]*backdrop-filter: blur\(1px\)[^{]*\{[\s\S]*forced-colors: none[\s\S]*prefers-contrast: no-preference[\s\S]*backdrop-filter: blur/
+      );
       const panel = document.querySelector('app-access-layout .panel') as HTMLElement;
       // La base es opaca: el color de fondo de la tarjeta no es transparente sin las condiciones anteriores
       expect(css()).toMatch(/\.panel(\[[^\]]*\])?\s*\{[^}]*background: var\(--mat-sys-surface\)/);
@@ -116,7 +129,7 @@ describe('AccessLayoutComponent', () => {
       const art = document.querySelector('app-access-layout .art')!;
       expect(art.querySelector('app-route-backdrop')).not.toBeNull();
       const pitch = art.querySelector('app-access-pitch')!;
-      expect(pitch.querySelector('.title')?.textContent).toBe('Planifica y sigue tus rutas.');
+      expect(pitch.querySelector('.title')?.textContent?.trim()).toBe('Planifica y sigue tus rutas.');
       expect(Array.from(pitch.querySelectorAll('li')).map((li) => li.textContent?.trim())).toEqual([
         'routeRutas y paradas en un solo mapa',
         'task_altSeguimiento de cada visita',

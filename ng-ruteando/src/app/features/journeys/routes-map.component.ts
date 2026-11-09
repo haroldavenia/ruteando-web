@@ -102,11 +102,15 @@ export class RoutesMapComponent {
     this.routes().map((route) => ({
       routeIndex: route.routeIndex,
       name: route.name,
-      vehicle: route.resource ? (route.resource.plate ? `${route.resource.name} (${route.resource.plate})` : route.resource.name) : '—',
+      vehicle: route.resource
+        ? route.resource.plate
+          ? `${route.resource.name} (${route.resource.plate})`
+          : route.resource.name
+        : '—',
       distance: formatDistance(route.distanceTraveled),
       color: routeColorFor(route.routeIndex, this.theme.scheme()),
       dashed: routeLine(route)?.dashed ?? false,
-    })),
+    }))
   );
 
   /** `true` si no hay nada que dibujar: sin rutas, o ninguna con línea ni paradas con posición. */
@@ -196,7 +200,8 @@ export class RoutesMapComponent {
     effect(() => {
       if (this.selectedStop() && isPlatformBrowser(this.platformId)) {
         const active = document.activeElement as HTMLElement | null;
-        this.opener = active && active !== document.body && !this.host().nativeElement.contains(active) ? active : this.opener;
+        this.opener =
+          active && active !== document.body && !this.host().nativeElement.contains(active) ? active : this.opener;
       }
     });
   }
@@ -232,19 +237,32 @@ export class RoutesMapComponent {
 
     this.palette = readMapPalette(this.theme.scheme(), this.document);
     // `app-tiles`: en el tema oscuro las teselas se oscurecen con un filtro de la hoja global (rutas y paradas no se tocan)
-    const tiles = new ol.TileLayer({ className: 'app-tiles', source: new ol.XYZ({ url: tilesUrl, attributions: attribution }) });
+    const tiles = new ol.TileLayer({
+      className: 'app-tiles',
+      source: new ol.XYZ({ url: tilesUrl, attributions: attribution }),
+    });
     tiles.getSource()?.on('tileloaderror', () => this.failed.set(true));
     tiles.getSource()?.on('tileloadend', () => this.failed.set(false));
 
-    this.routeLayer = new ol.VectorLayer({ source: new ol.VectorSource(), style: (feature) => this.routeStyle(feature) });
-    this.stopLayer = new ol.VectorLayer({ source: new ol.VectorSource(), style: (feature) => this.stopStyle(feature), zIndex: 10 });
+    this.routeLayer = new ol.VectorLayer({
+      source: new ol.VectorSource(),
+      style: (feature) => this.routeStyle(feature),
+    });
+    this.stopLayer = new ol.VectorLayer({
+      source: new ol.VectorSource(),
+      style: (feature) => this.stopStyle(feature),
+      zIndex: 10,
+    });
 
     const start = toOlCoordinate(center) ?? [0, 0];
     const map = new ol.Map({
       target: this.host().nativeElement,
       layers: [tiles, this.routeLayer, this.stopLayer],
       view: new ol.View({ center: ol.fromLonLat(start), zoom }),
-      controls: ol.defaultControls({ attributionOptions: { collapsible: false }, zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') } }),
+      controls: ol.defaultControls({
+        attributionOptions: { collapsible: false },
+        zoomOptions: { zoomInTipLabel: t('Acercar el mapa'), zoomOutTipLabel: t('Alejar el mapa') },
+      }),
     });
 
     map.on('click', (event) => {
@@ -287,7 +305,11 @@ export class RoutesMapComponent {
       }
       for (const stop of routeStops(route)) {
         const feature = new ol.Feature(new ol.Point(ol.fromLonLat(stop.coordinate)));
-        feature.setProperties({ routeIndex: route.routeIndex, sequence: stop.waypoint.sequence, stopType: stop.waypoint.stopType });
+        feature.setProperties({
+          routeIndex: route.routeIndex,
+          sequence: stop.waypoint.sequence,
+          stopType: stop.waypoint.stopType,
+        });
         stops.addFeature(feature);
       }
     }
@@ -302,7 +324,9 @@ export class RoutesMapComponent {
     }
     this.fitted = routeIndex;
     const chosen = routeIndex === null ? this.routes() : this.routes().filter((r) => r.routeIndex === routeIndex);
-    const bounds = lonLatBounds(routeCoordinates(chosen)) ?? (routeIndex !== null ? lonLatBounds(routeCoordinates(this.routes())) : null);
+    const bounds =
+      lonLatBounds(routeCoordinates(chosen)) ??
+      (routeIndex !== null ? lonLatBounds(routeCoordinates(this.routes())) : null);
     if (!bounds) {
       return;
     }
@@ -338,7 +362,13 @@ export class RoutesMapComponent {
     const color = dim ? toRgba(base, 0.35) : base;
     const dash = feature.get('dashed') ? [10, 8] : undefined;
     return [
-      new ol.Style({ stroke: new ol.Stroke({ color: dim ? toRgba(palette.halo, 0.5) : palette.halo, width: width + 3, lineDash: dash }) }),
+      new ol.Style({
+        stroke: new ol.Stroke({
+          color: dim ? toRgba(palette.halo, 0.5) : palette.halo,
+          width: width + 3,
+          lineDash: dash,
+        }),
+      }),
       new ol.Style({ stroke: new ol.Stroke({ color, width, lineDash: dash }) }),
     ];
   }
@@ -361,14 +391,25 @@ export class RoutesMapComponent {
 
     const styles: InstanceType<OpenLayers['Style']>[] = [];
     if (isPicked) {
-      styles.push(new ol.Style({ image: new ol.CircleStyle({ radius: 22, fill: new ol.Fill({ color: toRgba(palette.ink, 0.12) }), stroke: new ol.Stroke({ color: palette.ink, width: 3 }) }) }));
+      styles.push(
+        new ol.Style({
+          image: new ol.CircleStyle({
+            radius: 22,
+            fill: new ol.Fill({ color: toRgba(palette.ink, 0.12) }),
+            stroke: new ol.Stroke({ color: palette.ink, width: 3 }),
+          }),
+        })
+      );
     }
     styles.push(
       new ol.Style({
         image: new ol.CircleStyle({
           radius: depot ? 13 : 14,
           fill: new ol.Fill({ color: depot ? palette.halo : dim ? toRgba(color, 0.45) : color }),
-          stroke: new ol.Stroke({ color: depot ? (dim ? toRgba(color, 0.45) : color) : palette.halo, width: depot ? 4 : 2 }),
+          stroke: new ol.Stroke({
+            color: depot ? (dim ? toRgba(color, 0.45) : color) : palette.halo,
+            width: depot ? 4 : 2,
+          }),
         }),
         text: new ol.TextStyle({
           text: label,
@@ -376,7 +417,7 @@ export class RoutesMapComponent {
           fill: new ol.Fill({ color: depot ? palette.ink : numberColor }),
           stroke: depot || dark ? undefined : new ol.Stroke({ color: 'rgba(0, 0, 0, 0.45)', width: 2 }),
         }),
-      }),
+      })
     );
     return styles;
   }

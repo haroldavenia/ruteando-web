@@ -12,7 +12,10 @@ const KEY = 'ruteando-audit-panel';
 describe('ActivityPanelComponent', () => {
   let fixture: ComponentFixture<ActivityPanelComponent>;
   const root = () => fixture.nativeElement as HTMLElement;
-  const kpis = () => Array.from(root().querySelectorAll('.kpi')).map((el) => `${el.querySelector('.num')?.textContent?.trim()} ${el.querySelector('.lbl')?.textContent?.trim()}`);
+  const kpis = () =>
+    Array.from(root().querySelectorAll('.kpi')).map(
+      (el) => `${el.querySelector('.num')?.textContent?.trim()} ${el.querySelector('.lbl')?.textContent?.trim()}`
+    );
   const bars = () => Array.from(root().querySelectorAll('button.audit-bar')) as HTMLButtonElement[];
   const legend = () => Array.from(root().querySelectorAll('button.audit-legend-item')) as HTMLButtonElement[];
 
@@ -107,14 +110,22 @@ describe('ActivityPanelComponent', () => {
       let picked!: PickedDays;
       fixture.componentInstance.dayPicked.subscribe((days) => (picked = days));
       bars()[6].click();
-      fixture.componentRef.setInput('filters', { ...EMPTY_FILTERS, range: 'personalizado', from: picked.from, to: picked.to });
+      fixture.componentRef.setInput('filters', {
+        ...EMPTY_FILTERS,
+        range: 'personalizado',
+        from: picked.from,
+        to: picked.to,
+      });
       fixture.detectChanges();
       expect(bars().filter((bar) => bar.getAttribute('aria-pressed') === 'true').length).toBe(1);
     });
 
     it('con pocas barras pone el número encima y con muchas lo deja en el título', () => {
       setup(week(), { ...EMPTY_FILTERS, range: '7d' });
-      expect(Array.from(root().querySelectorAll('.audit-value')).map((el) => el.textContent?.trim())).toEqual(['1', '2']);
+      expect(Array.from(root().querySelectorAll('.audit-value')).map((el) => el.textContent?.trim())).toEqual([
+        '1',
+        '2',
+      ]);
       fixture.componentRef.setInput('filters', { ...EMPTY_FILTERS, range: '30d' });
       fixture.detectChanges();
       expect(root().querySelectorAll('.audit-value').length).toBe(0);
@@ -168,7 +179,11 @@ describe('ActivityPanelComponent', () => {
 
     it('el tipo filtrado queda marcado', () => {
       setup(AUDIT_FIXTURE_LOGS, { ...EMPTY_FILTERS, kind: 'estado' });
-      expect(legend().filter((el) => el.getAttribute('aria-pressed') === 'true').map((el) => el.textContent)).toEqual([jasmine.stringContaining('Cambio de estado')]);
+      expect(
+        legend()
+          .filter((el) => el.getAttribute('aria-pressed') === 'true')
+          .map((el) => el.textContent)
+      ).toEqual([jasmine.stringContaining('Cambio de estado')]);
     });
 
     it('la barra apilada se describe con texto y no depende del color: cada tipo tiene su nombre y su glifo', () => {

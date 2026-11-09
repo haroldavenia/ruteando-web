@@ -22,11 +22,7 @@ export const NO_FILTERS: VisitFilters = { status: '', text: '' };
 
 /** Minúsculas y sin acentos, para comparar texto escrito a mano. */
 export function normalizeText(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .trim();
+  return value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 }
 
 /** Estado que se usa para filtrar: el del paquete, `unavailable` si no se pudo leer o `null` mientras carga. */

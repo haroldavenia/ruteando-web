@@ -6,7 +6,9 @@
       <p class="greeting">{{ summary() }}</p>
       @if (canOperate()) {
         <div class="hero-actions">
-          <a mat-flat-button routerLink="/jornadas/nueva"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Planificar jornada' | t }}</a>
+          <a mat-flat-button routerLink="/jornadas/nueva"
+            ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Planificar jornada' | t }}</a
+          >
           <a mat-stroked-button routerLink="/paquetes/importar">{{ 'Importar paquetes' | t }}</a>
         </div>
       }
@@ -35,7 +37,9 @@
               <p class="summary">{{ figuresSummary(f) }}</p>
               <ul class="legend">
                 <li><span class="dot pending" aria-hidden="true"></span>{{ '{0} pendientes' | t: [f.pending] }}</li>
-                <li><span class="dot unattended" aria-hidden="true"></span>{{ '{0} sin atender' | t: [f.unattended] }}</li>
+                <li>
+                  <span class="dot unattended" aria-hidden="true"></span>{{ '{0} sin atender' | t: [f.unattended] }}
+                </li>
               </ul>
             }
           }
@@ -54,7 +58,9 @@
     <section class="card" aria-labelledby="journeys-title">
       <div class="card-head">
         <h2 id="journeys-title">{{ 'Últimas jornadas' | t }}</h2>
-        <a mat-stroked-button routerLink="/jornadas" [attr.aria-label]="'Ver todas las jornadas' | t">{{ 'Ver todas' | t }}</a>
+        <a mat-stroked-button routerLink="/jornadas" [attr.aria-label]="'Ver todas las jornadas' | t">{{
+          'Ver todas' | t
+        }}</a>
       </div>
       @switch (status()) {
         @case ('loading') {
@@ -90,11 +96,17 @@
         <ul class="kpis" [attr.aria-label]="'Paquetes por atender' | t">
           <li class="card kpi">
             <span class="ico"><mat-icon aria-hidden="true">schedule</mat-icon></span>
-            <span class="kpi-text"><span class="num">{{ f.pending }}</span><span class="lbl">{{ 'Pendientes de ruta' | t }}</span></span>
+            <span class="kpi-text"
+              ><span class="num">{{ f.pending }}</span
+              ><span class="lbl">{{ 'Pendientes de ruta' | t }}</span></span
+            >
           </li>
           <li class="card kpi warn">
             <span class="ico"><mat-icon aria-hidden="true">warning</mat-icon></span>
-            <span class="kpi-text"><span class="num">{{ f.unattended }}</span><span class="lbl">{{ 'Sin atender' | t }}</span></span>
+            <span class="kpi-text"
+              ><span class="num">{{ f.unattended }}</span
+              ><span class="lbl">{{ 'Sin atender' | t }}</span></span
+            >
           </li>
         </ul>
       }

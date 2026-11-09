@@ -6,9 +6,18 @@ import { ImportRow } from './package-rows';
 const row = (line: number, guide?: string): ImportRow => ({
   line,
   original: [String(line)],
-  input: { name: `P${line}`, serviceType: 'delivery', address: `Calle ${line}`, location: { type: 'Point', coordinates: [-74, 4.6] }, weight: 0, volume: 0, ...(guide ? { guideNumber: guide } : {}) },
+  input: {
+    name: `P${line}`,
+    serviceType: 'delivery',
+    address: `Calle ${line}`,
+    location: { type: 'Point', coordinates: [-74, 4.6] },
+    weight: 0,
+    volume: 0,
+    ...(guide ? { guideNumber: guide } : {}),
+  },
 });
-const rows = (n: number, withGuide = false): ImportRow[] => Array.from({ length: n }, (_, i) => row(i + 2, withGuide ? `G-${i}` : undefined));
+const rows = (n: number, withGuide = false): ImportRow[] =>
+  Array.from({ length: n }, (_, i) => row(i + 2, withGuide ? `G-${i}` : undefined));
 const http = (status: number, message = `HTTP ${status}`) => Object.assign(new Error(message), { status });
 const immediate = () => Promise.resolve();
 const tick = () => new Promise<void>((resolve) => setTimeout(resolve));
@@ -49,7 +58,7 @@ describe('runImport', () => {
         await tick();
         active--;
       },
-      { concurrency: 2 },
+      { concurrency: 2 }
     );
     expect(peak).toBe(2);
   });
@@ -101,7 +110,7 @@ describe('runImport', () => {
             throw http(429);
           }
         },
-        { sleep: async (ms) => void waits.push(ms) },
+        { sleep: async (ms) => void waits.push(ms) }
       );
       expect(statuses(results)).toEqual(['created']);
       expect(calls).toBe(3);
@@ -116,7 +125,7 @@ describe('runImport', () => {
           calls++;
           throw http(503, 'Servicio no disponible');
         },
-        { sleep: immediate },
+        { sleep: immediate }
       );
       expect(calls).toBe(3);
       expect(results[0]).toEqual(jasmine.objectContaining({ status: 'failed', message: 'Servicio no disponible' }));
@@ -147,7 +156,7 @@ describe('runImport', () => {
             activeLater--;
           }
         },
-        { sleep: immediate },
+        { sleep: immediate }
       );
       expect(peakLater).toBeGreaterThan(0);
       expect(peakLater).toBeLessThanOrEqual(2);
@@ -163,7 +172,7 @@ describe('runImport', () => {
             throw http(429);
           }
         },
-        { sleep: immediate, maxAttempts: 10 },
+        { sleep: immediate, maxAttempts: 10 }
       );
       expect(statuses(results)).toEqual(['created', 'created', 'created']);
     });
@@ -182,7 +191,7 @@ describe('runImport', () => {
           }
           await tick();
         },
-        { isCancelled: () => cancelled },
+        { isCancelled: () => cancelled }
       );
       const created = results.filter((r) => r.status === 'created').length;
       const skipped = results.filter((r) => r.status === 'skipped');

@@ -13,7 +13,14 @@ import { RouteVisitsStore, VISITS_CONCURRENCY } from './route-visits.store';
 const stop = (sequence: number, packageId: string | null): DomainWaypoint =>
   ({ sequence, stopType: packageId ? 'delivery' : 'depot', packageId, position: null }) as DomainWaypoint;
 
-const pkg = (id: string, status = 'pending') => ({ id, name: `Paquete ${id}`, guideNumber: null, address: `Calle ${id}`, standardizedAddress: null, status });
+const pkg = (id: string, status = 'pending') => ({
+  id,
+  name: `Paquete ${id}`,
+  guideNumber: null,
+  address: `Calle ${id}`,
+  standardizedAddress: null,
+  status,
+});
 
 describe('RouteVisitsStore', () => {
   let store: RouteVisitsStore;

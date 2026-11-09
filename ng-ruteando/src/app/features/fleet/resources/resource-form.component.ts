@@ -1,6 +1,13 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Injector, inject, signal } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,7 +29,15 @@ import { FormHeadComponent } from '../../../shared/form/form-head.component';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { notify } from '../../../shared/form/notify';
 
-import { fromUtcIso, localDateOf, minutesToSeconds, secondsToMinutes, shiftErrors, toUtcIso, todayLocalDate } from '../../../shared/time/shift-time';
+import {
+  fromUtcIso,
+  localDateOf,
+  minutesToSeconds,
+  secondsToMinutes,
+  shiftErrors,
+  toUtcIso,
+  todayLocalDate,
+} from '../../../shared/time/shift-time';
 import { readHandoff, toHandoffState } from '../type-handoff';
 
 import { t } from '../../../core/i18n/i18n';
@@ -54,7 +69,8 @@ interface VehicleDraft {
 }
 
 const isText = (value: unknown): value is string => typeof value === 'string';
-const isNumberOrNull = (value: unknown): value is number | null => value === null || (typeof value === 'number' && Number.isFinite(value));
+const isNumberOrNull = (value: unknown): value is number | null =>
+  value === null || (typeof value === 'number' && Number.isFinite(value));
 
 /** Lee un borrador que llegó en el estado de la navegación; si le falta algo o no es del tipo esperado, se ignora. */
 function asVehicleDraft(value: unknown): VehicleDraft | null {
@@ -63,12 +79,20 @@ function asVehicleDraft(value: unknown): VehicleDraft | null {
   }
   const d = value as Record<keyof VehicleDraft, unknown>;
   const ok =
-    isText(d.name) && isText(d.licensePlate) && isText(d.resourceTypeId) && isText(d.depotId) && isText(d.shiftStart) && isText(d.anchorDate) &&
-    isNumberOrNull(d.shiftDurationMin) && isNumberOrNull(d.breakDurationMin) && isNumberOrNull(d.quantity);
+    isText(d.name) &&
+    isText(d.licensePlate) &&
+    isText(d.resourceTypeId) &&
+    isText(d.depotId) &&
+    isText(d.shiftStart) &&
+    isText(d.anchorDate) &&
+    isNumberOrNull(d.shiftDurationMin) &&
+    isNumberOrNull(d.breakDurationMin) &&
+    isNumberOrNull(d.quantity);
   return ok ? (d as unknown as VehicleDraft) : null;
 }
 
-type FieldName = 'name' | 'resourceTypeId' | 'depotId' | 'shiftStart' | 'shiftDurationMin' | 'breakDurationMin' | 'quantity';
+type FieldName =
+  'name' | 'resourceTypeId' | 'depotId' | 'shiftStart' | 'shiftDurationMin' | 'breakDurationMin' | 'quantity';
 
 function shiftDurationValidator(control: AbstractControl): ValidationErrors | null {
   const errors = shiftErrors(Number(control.value), 0).filter((e) => e !== 'breakNegative');
@@ -81,7 +105,21 @@ function breakValidator(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-resource-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, FormActionsComponent, FormHeadComponent, MatIconModule, TranslatePipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    SkeletonComponent,
+    FocusFirstInvalidDirective,
+    FormResultComponent,
+    FormActionsComponent,
+    FormHeadComponent,
+    MatIconModule,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './resource-form.component.html',
   styleUrl: './resource-form.component.scss',
@@ -92,7 +130,9 @@ export class ResourceFormComponent implements HasUnsavedChanges {
   private readonly injector = inject(Injector);
   private readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id');
   /** El borrador (y el tipo recién creado) con que se vuelve de `Crear tipo`, si se vuelve de ahí. */
-  private readonly handoff = readHandoff(this.router.currentNavigation()?.extras.state ?? inject(DOCUMENT).defaultView?.history.state);
+  private readonly handoff = readHandoff(
+    this.router.currentNavigation()?.extras.state ?? inject(DOCUMENT).defaultView?.history.state
+  );
 
   protected readonly isNew = this.id === null;
   protected readonly submit = new SubmitState();
@@ -117,7 +157,9 @@ export class ResourceFormComponent implements HasUnsavedChanges {
     resourceTypeId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     depotId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     shiftStart: new FormControl('08:00', { nonNullable: true, validators: [Validators.required] }),
-    shiftDurationMin: new FormControl<number | null>(480, { validators: [Validators.required, shiftDurationValidator] }),
+    shiftDurationMin: new FormControl<number | null>(480, {
+      validators: [Validators.required, shiftDurationValidator],
+    }),
     breakDurationMin: new FormControl<number | null>(60, { validators: [Validators.required, breakValidator] }),
     quantity: new FormControl<number | null>(1, { validators: [Validators.required, Validators.min(1)] }),
   });
@@ -176,7 +218,10 @@ export class ResourceFormComponent implements HasUnsavedChanges {
     this.leaving.set(true);
     const draft: VehicleDraft = { ...this.form.getRawValue(), anchorDate: this.anchorDate };
     void this.router
-      .navigate(['/flota/tipos/nuevo'], { queryParams: { volver: this.router.url.split('?')[0] }, state: toHandoffState({ draft }) })
+      .navigate(['/flota/tipos/nuevo'], {
+        queryParams: { volver: this.router.url.split('?')[0] },
+        state: toHandoffState({ draft }),
+      })
       // Si la navegación no llega a producirse, el aviso de cambios sin guardar vuelve a proteger lo escrito
       .then((navigated) => {
         if (!navigated) {
@@ -225,7 +270,11 @@ export class ResourceFormComponent implements HasUnsavedChanges {
     const current = this.loader.record();
     const request$ =
       this.id === null
-        ? this.api.create({ ...base, ...(plate ? { licensePlate: plate } : {}), ...(quantity !== 1 ? { quantity } : {}) })
+        ? this.api.create({
+            ...base,
+            ...(plate ? { licensePlate: plate } : {}),
+            ...(quantity !== 1 ? { quantity } : {}),
+          })
         : this.api.update(this.id, {
             ...base,
             licensePlate: plate || null,
@@ -241,7 +290,7 @@ export class ResourceFormComponent implements HasUnsavedChanges {
         void notify(this.injector, this.id === null ? t('Vehículo creado') : t('Vehículo guardado'));
         void this.router.navigateByUrl('/flota/vehiculos');
       },
-      { 409: DUPLICATE_PLATE },
+      { 409: DUPLICATE_PLATE }
     );
   }
 }

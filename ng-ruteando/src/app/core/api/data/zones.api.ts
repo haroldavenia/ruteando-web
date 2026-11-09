@@ -19,28 +19,32 @@ export class ZonesApi {
   }
 
   list(): Observable<Zone[]> {
-    return this.tenant.withTenant((tenantId) => this.http.get<Zone[]>(this.baseUrl, { params: this.tenantParams(tenantId) }));
+    return this.tenant.withTenant((tenantId) =>
+      this.http.get<Zone[]>(this.baseUrl, { params: this.tenantParams(tenantId) })
+    );
   }
 
   get(id: string): Observable<Zone> {
     return this.tenant.withTenant((tenantId) =>
-      this.http.get<Zone>(`${this.baseUrl}/${encodeURIComponent(id)}`, { params: this.tenantParams(tenantId) }),
+      this.http.get<Zone>(`${this.baseUrl}/${encodeURIComponent(id)}`, { params: this.tenantParams(tenantId) })
     );
   }
 
   create(input: ZoneInput): Observable<Zone> {
-    return this.tenant.withTenant((tenantId) => this.http.post<Zone>(this.baseUrl, input, { params: this.tenantParams(tenantId) }));
+    return this.tenant.withTenant((tenantId) =>
+      this.http.post<Zone>(this.baseUrl, input, { params: this.tenantParams(tenantId) })
+    );
   }
 
   update(id: string, input: Partial<ZoneInput>): Observable<Zone> {
     return this.tenant.withTenant((tenantId) =>
-      this.http.put<Zone>(`${this.baseUrl}/${encodeURIComponent(id)}`, input, { params: this.tenantParams(tenantId) }),
+      this.http.put<Zone>(`${this.baseUrl}/${encodeURIComponent(id)}`, input, { params: this.tenantParams(tenantId) })
     );
   }
 
   remove(id: string): Observable<void> {
     return this.tenant.withTenant((tenantId) =>
-      this.http.delete<void>(`${this.baseUrl}/${encodeURIComponent(id)}`, { params: this.tenantParams(tenantId) }),
+      this.http.delete<void>(`${this.baseUrl}/${encodeURIComponent(id)}`, { params: this.tenantParams(tenantId) })
     );
   }
 

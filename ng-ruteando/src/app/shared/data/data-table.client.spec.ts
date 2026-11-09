@@ -47,16 +47,26 @@ function packs(n: number): Pack[] {
   imports: [DataTableComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-data-table [state]="state" [columns]="columns" [facet]="facet" [selectable]="selectable" entityPlural="paquetes" searchPlaceholder="Buscar por referencia o nombre">
+    <app-data-table
+      [state]="state"
+      [columns]="columns"
+      [facet]="facet"
+      [selectable]="selectable"
+      entityPlural="paquetes"
+      searchPlaceholder="Buscar por referencia o nombre"
+    >
       <ng-template #selectionActions let-rows let-clear="clear">
         <button type="button" class="act" (click)="acted = rows.length; clear()">Actuar</button>
       </ng-template>
-      <ng-template #card let-row><article class="tarjeta">{{ row.name }}</article></ng-template>
+      <ng-template #card let-row
+        ><article class="tarjeta">{{ row.name }}</article></ng-template
+      >
     </app-data-table>
   `,
 })
 class HostComponent {
-  fetch: (p: PageParams) => Observable<Page<Pack>> = () => of({ content: [], page: 0, size: 100, totalElements: 0, totalPages: 0 });
+  fetch: (p: PageParams) => Observable<Page<Pack>> = () =>
+    of({ content: [], page: 0, size: 100, totalElements: 0, totalPages: 0 });
   readonly state = new FullListState<Pack>((p) => this.fetch(p));
   columns = COLUMNS;
   facet: DataFacet<Pack> | null = FACET;
@@ -73,15 +83,27 @@ describe('DataTableComponent con todo el listado en el cliente', () => {
   const rows = () => all('tbody tr.mat-mdc-row');
 
   /** Cuántos de los `n` paquetes tienen ese estado (los datos de `packs`). */
-  const countOf = (n: number, status: Pack['status'], text = ''): number => packs(n).filter((p) => p.status === status && `${p.name} ${p.ref}`.toLowerCase().includes(text)).length;
+  const countOf = (n: number, status: Pack['status'], text = ''): number =>
+    packs(n).filter((p) => p.status === status && `${p.name} ${p.ref}`.toLowerCase().includes(text)).length;
 
-  async function render(total = 50, configure?: (h: HostComponent) => void, view: 'table' | 'cards' = 'table'): Promise<void> {
+  async function render(
+    total = 50,
+    configure?: (h: HostComponent) => void,
+    view: 'table' | 'cards' = 'table'
+  ): Promise<void> {
     localStorage.removeItem('ruteando-density');
     localStorage.setItem('ruteando-list-view', view);
     fixture = TestBed.createComponent(HostComponent);
     host = fixture.componentInstance;
     const data = packs(total);
-    host.fetch = ({ page = 0, size = 20 }) => of({ content: data.slice(page * size, page * size + size), page, size, totalElements: total, totalPages: Math.ceil(total / size) });
+    host.fetch = ({ page = 0, size = 20 }) =>
+      of({
+        content: data.slice(page * size, page * size + size),
+        page,
+        size,
+        totalElements: total,
+        totalPages: Math.ceil(total / size),
+      });
     configure?.(host);
     host.state.load();
     fixture.detectChanges();
@@ -96,9 +118,15 @@ describe('DataTableComponent con todo el listado en el cliente', () => {
     fixture.detectChanges();
   }
 
-  const chip = (label: string) => all<HTMLButtonElement>('.chips .chip').find((c) => c.textContent?.trim().startsWith(label))!;
+  const chip = (label: string) =>
+    all<HTMLButtonElement>('.chips .chip').find((c) => c.textContent?.trim().startsWith(label))!;
 
-  beforeEach(() => TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations(), provideRouter([]), OUTLINED_FIELDS_PROVIDER] }));
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      imports: [HostComponent],
+      providers: [provideNoopAnimations(), provideRouter([]), OUTLINED_FIELDS_PROVIDER],
+    })
+  );
 
   describe('búsqueda y paginación', () => {
     it('busca en todos los registros, no solo en la página que se ve', async () => {
@@ -155,7 +183,12 @@ describe('DataTableComponent con todo el listado en el cliente', () => {
       await render(50);
       const chips = all('.chips .chip').map((c) => c.textContent?.replace(/\s+/g, ' ').trim());
 
-      expect(chips).toEqual(['Todos 50', `Pendiente ${countOf(50, 'pending')}`, `Atendido ${countOf(50, 'attended')}`, `Cancelado ${countOf(50, 'cancelled')}`]);
+      expect(chips).toEqual([
+        'Todos 50',
+        `Pendiente ${countOf(50, 'pending')}`,
+        `Atendido ${countOf(50, 'attended')}`,
+        `Cancelado ${countOf(50, 'cancelled')}`,
+      ]);
       expect(q('.chips')?.getAttribute('aria-label')).toBe('Estado');
     });
 
@@ -175,7 +208,12 @@ describe('DataTableComponent con todo el listado en el cliente', () => {
       search('cliente 1');
       const counts = all('.chips .chip b').map((b) => b.textContent);
 
-      expect(counts).toEqual(['11', ...(['pending', 'attended', 'cancelled'] as const).map((s) => String(countOf(50, s, 'cliente 1')))].filter((c) => c !== '0'));
+      expect(counts).toEqual(
+        [
+          '11',
+          ...(['pending', 'attended', 'cancelled'] as const).map((s) => String(countOf(50, s, 'cliente 1'))),
+        ].filter((c) => c !== '0')
+      );
       chip('Pendiente').click();
       fixture.detectChanges();
       expect(rows().length).toBe(countOf(50, 'pending', 'cliente 1'));
@@ -188,7 +226,9 @@ describe('DataTableComponent con todo el listado en el cliente', () => {
       fixture.detectChanges();
       search('zzz');
 
-      (all<HTMLButtonElement>('button').find((b) => b.textContent?.includes('Limpiar búsqueda')) as HTMLButtonElement).click();
+      (
+        all<HTMLButtonElement>('button').find((b) => b.textContent?.includes('Limpiar búsqueda')) as HTMLButtonElement
+      ).click();
       fixture.detectChanges();
 
       expect(chip('Todos').getAttribute('aria-pressed')).toBe('true');

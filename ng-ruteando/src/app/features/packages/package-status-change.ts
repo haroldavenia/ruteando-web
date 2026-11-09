@@ -14,7 +14,7 @@ export function changePackageStatus(
   api: PackagesApi,
   dialog: MatDialog,
   target: { id: string; label: string },
-  status: string,
+  status: string
 ): Observable<Package> {
   const confirmed$ =
     status === 'cancelled'

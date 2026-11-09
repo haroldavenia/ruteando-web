@@ -20,12 +20,15 @@ const SCREENS: [string, Type<unknown>][] = [
 ];
 
 /** Estilos propios que Angular tiene registrados para un componente. */
-const ownStyles = (component: Type<unknown>): string => ((component as unknown as { ɵcmp: { styles?: string[] } }).ɵcmp.styles ?? []).join('\n');
+const ownStyles = (component: Type<unknown>): string =>
+  ((component as unknown as { ɵcmp: { styles?: string[] } }).ɵcmp.styles ?? []).join('\n');
 
 describe('aspecto común de las pantallas de acceso', () => {
   it('ninguna pantalla declara estilos propios de título, formulario ni enlaces', () => {
     for (const [name, component] of SCREENS) {
-      expect(ownStyles(component)).withContext(name).not.toMatch(/h1|form|\.links|\.alt|\.field|\.actions/);
+      expect(ownStyles(component))
+        .withContext(name)
+        .not.toMatch(/h1|form|\.links|\.alt|\.field|\.actions/);
     }
   });
 
@@ -36,7 +39,11 @@ describe('aspecto común de las pantallas de acceso', () => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
         imports: [component],
-        providers: [provideRouter([]), provideNoopAnimations(), { provide: AuthService, useValue: { resendVerification: () => undefined } }],
+        providers: [
+          provideRouter([]),
+          provideNoopAnimations(),
+          { provide: AuthService, useValue: { resendVerification: () => undefined } },
+        ],
       });
       const fixture = TestBed.createComponent(component);
       const wrapper = document.createElement('div');
@@ -130,7 +137,9 @@ describe('aspecto común de las pantallas de acceso', () => {
 
     it('los campos de correo y contraseña llevan su icono a la izquierda', () => {
       const { root } = mount(LoginComponent);
-      const icons = Array.from(root.querySelectorAll('mat-form-field mat-icon[matPrefix]')).map((icon) => icon.textContent?.trim());
+      const icons = Array.from(root.querySelectorAll('mat-form-field mat-icon[matPrefix]')).map((icon) =>
+        icon.textContent?.trim()
+      );
       expect(icons).toEqual(['mail', 'lock']);
     });
 
@@ -147,7 +156,9 @@ describe('aspecto común de las pantallas de acceso', () => {
     }
 
     it('en «crear cuenta» el nombre y los apellidos comparten fila y el resto de campos ocupan el ancho', () => {
-      const fields = Array.from(mount(RegisterComponent).root.querySelectorAll('.field-grid mat-form-field')) as HTMLElement[];
+      const fields = Array.from(
+        mount(RegisterComponent).root.querySelectorAll('.field-grid mat-form-field')
+      ) as HTMLElement[];
       const [first, last, company, email] = fields.map((field) => field.getBoundingClientRect());
       expect(fields.length).toBe(4);
       expect(Math.round(first.top)).toBe(Math.round(last.top));

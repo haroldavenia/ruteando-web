@@ -24,7 +24,7 @@ export function typesToCsv(types: readonly ResourceType[]): string {
     types.map((type) => {
       const { weight, volume } = decodeCapacity(type);
       return [type.name, type.category, profileLabel(type.osrmProfile), weight, cubicMetres(volume), type.gasMileage];
-    }),
+    })
   );
 }
 
@@ -39,7 +39,7 @@ export function vehiclesToCsv(vehicles: readonly Resource[]): string {
       vehicle.assignedUser?.email,
       vehicle.quantity,
       state(vehicle.active),
-    ]),
+    ])
   );
 }
 
@@ -54,6 +54,6 @@ export function driversToCsv(drivers: readonly User[]): string {
       driver.identifierType ? identifierLabel(driver.identifierType) : '',
       driver.identifierValue,
       state(driver.active),
-    ]),
+    ])
   );
 }

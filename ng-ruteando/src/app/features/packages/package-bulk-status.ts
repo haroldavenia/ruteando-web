@@ -23,7 +23,7 @@ export function changeStatusOfMany(
   api: Pick<PackagesApi, 'setStatus'>,
   dialog: Pick<MatDialog, 'open'>,
   targets: readonly { id: string; label: string }[],
-  status: string,
+  status: string
 ): Observable<BulkStatusResult> {
   const confirmed$ =
     status === 'cancelled'
@@ -31,7 +31,10 @@ export function changeStatusOfMany(
           .open(ConfirmDialogComponent, {
             data: {
               title: t('Cancelar paquetes'),
-              message: targets.length === 1 ? t('¿Cancelar el paquete «{0}»?', [targets[0].label]) : t('¿Cancelar los {0} paquetes elegidos?', [targets.length]),
+              message:
+                targets.length === 1
+                  ? t('¿Cancelar el paquete «{0}»?', [targets[0].label])
+                  : t('¿Cancelar los {0} paquetes elegidos?', [targets.length]),
               confirmLabel: targets.length === 1 ? t('Cancelar paquete') : t('Cancelar paquetes'),
               cancelLabel: t('Volver'),
             },
@@ -47,16 +50,16 @@ export function changeStatusOfMany(
           (target) =>
             api.setStatus(target.id, status).pipe(
               map(() => null),
-              catchError((err: unknown) => of({ label: target.label, message: messageFor(err) })),
+              catchError((err: unknown) => of({ label: target.label, message: messageFor(err) }))
             ),
-          BULK_STATUS_CONCURRENCY,
+          BULK_STATUS_CONCURRENCY
         ),
         toArray(),
         map((results) => {
           const failed = results.filter((r): r is { label: string; message: string } => r !== null);
           return { changed: results.length - failed.length, failed };
-        }),
-      ),
-    ),
+        })
+      )
+    )
   );
 }

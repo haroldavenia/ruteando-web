@@ -48,7 +48,14 @@ describe('safeReturnUrl', () => {
   });
 
   describe('no vuelve a las pantallas de acceso (da /)', () => {
-    for (const input of ['/acceso', '/acceso/registro', '/acceso?x=1', '/acceso#a', '/a/../acceso', '/journeys/../acceso/recuperar']) {
+    for (const input of [
+      '/acceso',
+      '/acceso/registro',
+      '/acceso?x=1',
+      '/acceso#a',
+      '/a/../acceso',
+      '/journeys/../acceso/recuperar',
+    ]) {
       it(input, () => expect(safeReturnUrl(input)).toBe('/'));
     }
   });

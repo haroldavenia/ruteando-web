@@ -10,7 +10,9 @@
           (click)="toggle(route)"
           [attr.aria-expanded]="isOpen(route)"
           [attr.aria-controls]="'stops-' + route.routeIndex"
-          [attr.aria-label]="(isOpen(route) ? 'Ocultar las paradas de {0}' : 'Ver las paradas de {0}') | t: [route.name]"
+          [attr.aria-label]="
+            (isOpen(route) ? 'Ocultar las paradas de {0}' : 'Ver las paradas de {0}') | t: [route.name]
+          "
         >
           <mat-icon aria-hidden="true">{{ isOpen(route) ? 'expand_less' : 'expand_more' }}</mat-icon>
         </button>
@@ -18,26 +20,57 @@
       <p class="vehicle">{{ vehicle(route) }}</p>
 
       <dl class="figures">
-        <div><dt>{{ 'Paradas' | t }}</dt><dd>{{ stops(route) }}</dd></div>
-        <div><dt>{{ 'Distancia' | t }}</dt><dd>{{ distance(route.distanceTraveled) }}</dd></div>
-        <div><dt>{{ 'Duración' | t }}</dt><dd>{{ duration(route.duration) }}</dd></div>
+        <div>
+          <dt>{{ 'Paradas' | t }}</dt>
+          <dd>{{ stops(route) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'Distancia' | t }}</dt>
+          <dd>{{ distance(route.distanceTraveled) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'Duración' | t }}</dt>
+          <dd>{{ duration(route.duration) }}</dd>
+        </div>
         <div>
           <dt>{{ 'Peso' | t }}</dt>
-          <dd>{{ percent(route.weightUsagePercent) }}<span class="bar" aria-hidden="true"><i [style.width.%]="level(route.weightUsagePercent)"></i></span></dd>
+          <dd>
+            {{ percent(route.weightUsagePercent)
+            }}<span class="bar" aria-hidden="true"><i [style.width.%]="level(route.weightUsagePercent)"></i></span>
+          </dd>
         </div>
         <div>
           <dt>{{ 'Volumen' | t }}</dt>
-          <dd>{{ percent(route.volumeUsagePercent) }}<span class="bar" aria-hidden="true"><i [style.width.%]="level(route.volumeUsagePercent)"></i></span></dd>
+          <dd>
+            {{ percent(route.volumeUsagePercent)
+            }}<span class="bar" aria-hidden="true"><i [style.width.%]="level(route.volumeUsagePercent)"></i></span>
+          </dd>
         </div>
-        <div><dt>{{ 'Inicio||hora' | t }}</dt><dd>{{ dateTime(route.startRouteUtc) }}</dd></div>
-        <div><dt>{{ 'Fin' | t }}</dt><dd>{{ dateTime(route.finishRouteUtc) }}</dd></div>
+        <div>
+          <dt>{{ 'Inicio||hora' | t }}</dt>
+          <dd>{{ dateTime(route.startRouteUtc) }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'Fin' | t }}</dt>
+          <dd>{{ dateTime(route.finishRouteUtc) }}</dd>
+        </div>
       </dl>
 
       <div class="actions">
-        <button mat-stroked-button type="button" (click)="routeFocus.emit(route.routeIndex)" [attr.aria-label]="('Ver la ruta ' | t) + route.name + (' en el mapa' | t)">
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="routeFocus.emit(route.routeIndex)"
+          [attr.aria-label]="('Ver la ruta ' | t) + route.name + (' en el mapa' | t)"
+        >
           {{ 'Ver en el mapa' | t }}
         </button>
-        <a mat-stroked-button [routerLink]="['/jornadas', journeyId(), 'rutas', route.routeIndex]" [attr.aria-label]="('Ver la ruta ' | t) + route.name">{{ 'Ver ruta' | t }}</a>
+        <a
+          mat-stroked-button
+          [routerLink]="['/jornadas', journeyId(), 'rutas', route.routeIndex]"
+          [attr.aria-label]="('Ver la ruta ' | t) + route.name"
+          >{{ 'Ver ruta' | t }}</a
+        >
       </div>
 
       @if (isOpen(route)) {
@@ -47,7 +80,11 @@
           } @else {
             <div class="scroll stack-scope">
               <table class="grid stack-table" role="table">
-                <caption class="visually-hidden">{{ 'Paradas de {0}' | t: [route.name] }}</caption>
+                <caption class="visually-hidden">
+                  {{
+                    'Paradas de {0}' | t: [route.name]
+                  }}
+                </caption>
                 <thead role="rowgroup">
                   <tr role="row">
                     <th scope="col" role="columnheader">{{ 'Orden' | t }}</th>
@@ -55,7 +92,9 @@
                     <th scope="col" role="columnheader">{{ 'Latitud / longitud' | t }}</th>
                     <th scope="col" role="columnheader">{{ 'Llegada' | t }}</th>
                     <th scope="col" role="columnheader">{{ 'Salida' | t }}</th>
-                    <th scope="col" role="columnheader"><span class="visually-hidden">{{ 'Mapa' | t }}</span></th>
+                    <th scope="col" role="columnheader">
+                      <span class="visually-hidden">{{ 'Mapa' | t }}</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody role="rowgroup">

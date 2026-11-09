@@ -37,7 +37,13 @@ describe('csv', () => {
 
   describe('toCsv', () => {
     it('empieza por el BOM, usa ; y \\r\\n y termina con salto de línea', () => {
-      const csv = toCsv(['A', 'B'], [['x', 1], ['y', null]]);
+      const csv = toCsv(
+        ['A', 'B'],
+        [
+          ['x', 1],
+          ['y', null],
+        ]
+      );
       expect(csv.charCodeAt(0)).toBe(0xfeff);
       expect(csv.slice(1)).toBe('A;B\r\nx;1\r\ny;\r\n');
     });
@@ -75,13 +81,21 @@ describe('csv', () => {
   describe('parseCsv', () => {
     it('lee un archivo sencillo con ; y devuelve el separador y las líneas', () => {
       const result = parseCsv('A;B\n1;2\n3;4\n');
-      expect(result.rows).toEqual([['A', 'B'], ['1', '2'], ['3', '4']]);
+      expect(result.rows).toEqual([
+        ['A', 'B'],
+        ['1', '2'],
+        ['3', '4'],
+      ]);
       expect(result.lines).toEqual([1, 2, 3]);
       expect(result.delimiter).toBe(';');
       expect(result.truncated).toBeFalse();
     });
 
-    for (const [name, delimiter] of [['coma', ','], ['punto y coma', ';'], ['tabulación', '\t']] as const) {
+    for (const [name, delimiter] of [
+      ['coma', ','],
+      ['punto y coma', ';'],
+      ['tabulación', '\t'],
+    ] as const) {
       it(`detecta el separador: ${name}`, () => {
         const result = parseCsv(`A${delimiter}B${delimiter}C\n1${delimiter}2${delimiter}3`);
         expect(result.delimiter).toBe(delimiter);
@@ -99,7 +113,11 @@ describe('csv', () => {
 
     it('quita el BOM, acepta CRLF, LF y CR y ignora las líneas vacías', () => {
       const result = parseCsv('﻿A;B\r\n\r\n1;2\r3;4\n\n');
-      expect(result.rows).toEqual([['A', 'B'], ['1', '2'], ['3', '4']]);
+      expect(result.rows).toEqual([
+        ['A', 'B'],
+        ['1', '2'],
+        ['3', '4'],
+      ]);
     });
 
     it('lee comillas con separadores, saltos de línea y comillas escapadas dentro', () => {
@@ -159,10 +177,23 @@ describe('csv', () => {
     });
 
     describe('ida y vuelta con toCsv', () => {
-      const textos = ['simple', 'con;punto y coma', 'con "comillas"', 'dos\nlíneas', '=FÓRMULA', 'ñandú, tilde', 'a\r\nb'];
+      const textos = [
+        'simple',
+        'con;punto y coma',
+        'con "comillas"',
+        'dos\nlíneas',
+        '=FÓRMULA',
+        'ñandú, tilde',
+        'a\r\nb',
+      ];
       it('lo que se escribe se lee igual (salvo el apóstrofo de las fórmulas)', () => {
-        const csv = toCsv(['COL'], textos.map((t) => [t]));
-        const leido = parseCsv(csv).rows.slice(1).map((r) => r[0]);
+        const csv = toCsv(
+          ['COL'],
+          textos.map((t) => [t])
+        );
+        const leido = parseCsv(csv)
+          .rows.slice(1)
+          .map((r) => r[0]);
         expect(leido).toEqual(textos.map((t) => (t.startsWith('=') ? `'${t}` : t)));
       });
     });

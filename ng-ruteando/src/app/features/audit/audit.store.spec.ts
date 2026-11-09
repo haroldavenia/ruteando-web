@@ -51,7 +51,9 @@ describe('AuditStore y AuditViewState', () => {
       http.expectOne('/gateway/audit-logs/me?page=0&size=100').flush(gatewayAuditPage([auditLog()]));
       expect(store.events().length).toBe(1);
       store.open('todas', 'abc123');
-      http.expectOne('/gateway/audit-logs/admin?page=0&size=100&tenantId=abc123').flush(gatewayAuditPage([auditLog(), auditLog()]));
+      http
+        .expectOne('/gateway/audit-logs/admin?page=0&size=100&tenantId=abc123')
+        .flush(gatewayAuditPage([auditLog(), auditLog()]));
       expect(store.events().length).toBe(2);
       store.open('empresa', '');
       http.expectOne(page(0)).flush(gatewayAuditPage([]));

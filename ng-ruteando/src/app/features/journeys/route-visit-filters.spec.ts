@@ -19,7 +19,10 @@ const visit = (sequence: number, status: string | null, name = 'Paquete', addres
   stop: stop(sequence, `p${sequence}`),
   packageId: `p${sequence}`,
   state: status === null ? 'unavailable' : 'ready',
-  pkg: status === null ? null : ({ id: `p${sequence}`, name, address, guideNumber: null, standardizedAddress: null, status } as Package),
+  pkg:
+    status === null
+      ? null
+      : ({ id: `p${sequence}`, name, address, guideNumber: null, standardizedAddress: null, status } as Package),
 });
 
 describe('route-visit-filters', () => {
@@ -40,7 +43,11 @@ describe('route-visit-filters', () => {
   });
 
   describe('filterVisits', () => {
-    const visits = [visit(1, 'pending', 'Café Ñandú', 'Calle Mayor'), visit(2, 'attended', 'Tienda', 'Avenida Sur'), visit(3, null)];
+    const visits = [
+      visit(1, 'pending', 'Café Ñandú', 'Calle Mayor'),
+      visit(2, 'attended', 'Tienda', 'Avenida Sur'),
+      visit(3, null),
+    ];
 
     it('sin filtros devuelve todo', () => {
       expect(filterVisits(visits, NO_FILTERS)).toEqual(visits);

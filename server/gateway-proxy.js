@@ -43,14 +43,16 @@ function createGatewayProxy(env) {
   const timeoutMs = Number(source.GATEWAY_TIMEOUT_MS) || DEFAULT_TIMEOUT_MS;
 
   if (config.invalid) {
-    console.log(('Proxy del gateway desactivado: GATEWAY_MODE debe ser "real" o "mock" (recibido "' + config.mode + '").').yellow);
+    console.log(
+      ('Proxy del gateway desactivado: GATEWAY_MODE debe ser "real" o "mock" (recibido "' + config.mode + '").').yellow
+    );
     return function gatewayInvalidMode(req, res) {
       sendJson(res, 503, 'El gateway no está configurado en el servidor.');
     };
   }
   if (config.mode === 'mock') {
     console.log(MOCK_WARNING.yellow);
-    startMockGateway().catch(function(err) {
+    startMockGateway().catch(function (err) {
       console.log(('No se pudo arrancar el gateway falso: ' + err.message).yellow);
     });
   }
@@ -69,28 +71,28 @@ function createGatewayProxy(env) {
     target: target,
     changeOrigin: true,
     // Montado con app.use('/gateway', ...) Express ya recorta el prefijo de req.url; si no, se quita aquí
-    pathRewrite: function(requestPath) {
+    pathRewrite: function (requestPath) {
       return '/api/v1' + requestPath.replace(/^\/gateway(?=\/|\?|$)/, '');
     },
     on: {
-      proxyReq: function(proxyReq, req) {
+      proxyReq: function (proxyReq, req) {
         // La clave del cliente nunca se reenvía: se sustituye por la del servidor
         proxyReq.setHeader('X-Api-Key', apiKey);
         // La llamada al gateway es de servidor a servidor: el Origin del navegador activaría su filtro CORS (403)
         proxyReq.removeHeader('origin');
-        proxyReq.setTimeout(timeoutMs, function() {
+        proxyReq.setTimeout(timeoutMs, function () {
           req.gatewayTimedOut = true;
           proxyReq.destroy(new Error('Gateway timeout'));
         });
       },
-      error: function(err, req, res) {
+      error: function (err, req, res) {
         // Mensajes genéricos: no incluyen la dirección del gateway ni la clave
         if (req.gatewayTimedOut) {
           return sendJson(res, 504, 'El gateway tardó demasiado en responder.');
         }
         sendJson(res, 502, 'El gateway no está disponible.');
-      }
-    }
+      },
+    },
   });
 }
 

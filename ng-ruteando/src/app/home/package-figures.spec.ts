@@ -7,7 +7,9 @@ const page = (statuses: string[], totalElements = statuses.length) => ({ content
 
 describe('packageFigures', () => {
   it('cuenta atendidos, pendientes y sin atender, y da el porcentaje de atendidos', () => {
-    const figures = packageFigures(page(['attended', 'attended', 'attended', 'pending', 'unattended', 'cancelled', 'returned', 'pending']));
+    const figures = packageFigures(
+      page(['attended', 'attended', 'attended', 'pending', 'unattended', 'cancelled', 'returned', 'pending'])
+    );
     expect(figures.sample).toBe(8);
     expect(figures.attended).toBe(3);
     expect(figures.pending).toBe(2);

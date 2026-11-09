@@ -121,7 +121,9 @@ export class AuditListComponent {
   protected readonly intro = computed(() =>
     this.scope() === 'mia'
       ? t('Aquí ves lo que has hecho en la aplicación y cuándo. Pulsa el ojo de un evento para ver todo su detalle.')
-      : t('Aquí se registra lo que ocurre en la cuenta: qué se hizo, quién lo hizo y cuándo. Usa los filtros para encontrar algo y pulsa el ojo de un evento para ver todo su detalle.'),
+      : t(
+          'Aquí se registra lo que ocurre en la cuenta: qué se hizo, quién lo hizo y cuándo. Usa los filtros para encontrar algo y pulsa el ojo de un evento para ver todo su detalle.'
+        )
   );
 
   /** Lo que se escribe en el campo de búsqueda de la tabla, que se pasa a la dirección con un pequeño retraso. */
@@ -136,10 +138,19 @@ export class AuditListComponent {
   private readonly tableReady = signal(false);
 
   /** Lo que dejan la búsqueda y el chip de la tabla además de los filtros: de aquí salen el resumen y la exportación. */
-  protected readonly visibleRows = computed(() => (this.tableReady() ? this.table()?.filtered() : undefined) ?? this.state.rows());
+  protected readonly visibleRows = computed(
+    () => (this.tableReady() ? this.table()?.filtered() : undefined) ?? this.state.rows()
+  );
 
   protected readonly people = computed(() =>
-    [...new Set(this.store.events().map((log) => log.actorEmail?.trim()).filter((email): email is string => !!email))].sort((a, b) => a.localeCompare(b)),
+    [
+      ...new Set(
+        this.store
+          .events()
+          .map((log) => log.actorEmail?.trim())
+          .filter((email): email is string => !!email)
+      ),
+    ].sort((a, b) => a.localeCompare(b))
   );
   protected readonly hasUnidentified = computed(() => this.store.events().some((log) => !log.actorEmail?.trim()));
   protected readonly entityFilterLabel = computed(() => {
@@ -173,23 +184,42 @@ export class AuditListComponent {
     if (!this.store.source.truncated()) {
       return null;
     }
-    return t('Se muestran los {0} eventos más recientes de {1}', [formatNumber(this.store.source.rows().length), formatNumber(this.store.source.total())]);
+    return t('Se muestran los {0} eventos más recientes de {1}', [
+      formatNumber(this.store.source.rows().length),
+      formatNumber(this.store.source.total()),
+    ]);
   });
 
-  protected readonly forbidden = computed(() => this.state.status() === 'error' && this.store.errorStatus() === 403 && this.scope() !== 'mia');
+  protected readonly forbidden = computed(
+    () => this.state.status() === 'error' && this.store.errorStatus() === 403 && this.scope() !== 'mia'
+  );
 
   protected readonly facet = computed<DataFacet<AuditLog>>(() => {
-    const types = [...new Set(this.store.events().map((log) => log.entityType))].sort((a, b) => auditEntityLabel(a).localeCompare(auditEntityLabel(b)));
-    return { label: t('Tipo de entidad'), of: (log) => log.entityType, options: types.map((key) => ({ key, label: auditEntityLabel(key) })) };
+    const types = [...new Set(this.store.events().map((log) => log.entityType))].sort((a, b) =>
+      auditEntityLabel(a).localeCompare(auditEntityLabel(b))
+    );
+    return {
+      label: t('Tipo de entidad'),
+      of: (log) => log.entityType,
+      options: types.map((key) => ({ key, label: auditEntityLabel(key) })),
+    };
   });
 
   protected readonly columns = computed<DataColumn<AuditLog>[]>(() => {
     // Solo lo esencial: qué se hizo, quién y cuándo. Todo lo demás (a qué afectó, qué cambió, claves e identificadores) está en la modal
     return [
-      { id: 'action', header: t('Acción'), cell: (log) => auditActionLabel(log.action), tone: (log) => auditKindTone(auditKind(log.action)), primary: true },
+      {
+        id: 'action',
+        header: t('Acción'),
+        cell: (log) => auditActionLabel(log.action),
+        tone: (log) => auditKindTone(auditKind(log.action)),
+        primary: true,
+      },
       { id: 'actor', header: t('Quién'), cell: (log) => this.actorText(log) },
       { id: 'when', header: t('Cuándo'), cell: (log) => formatDateTime(log.createdAt), kind: 'muted' },
-      ...(this.technical() ? [{ id: 'key', header: t('Clave'), cell: (log: AuditLog) => log.action, kind: 'id' as const }] : []),
+      ...(this.technical()
+        ? [{ id: 'key', header: t('Clave'), cell: (log: AuditLog) => log.action, kind: 'id' as const }]
+        : []),
     ];
   });
 
@@ -242,7 +272,12 @@ export class AuditListComponent {
     if (next.scope === resolveScope(this.role(), null)) {
       next.scope = null;
     }
-    void this.router.navigate([], { relativeTo: this.route, queryParams: toQueryParams(next), queryParamsHandling: 'merge', replaceUrl });
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: toQueryParams(next),
+      queryParamsHandling: 'merge',
+      replaceUrl,
+    });
   }
 
   protected changeFilters(change: Partial<AuditFilters>): void {
@@ -339,7 +374,12 @@ export class AuditListComponent {
     const log = this.store.events().find((event) => event.id === id) ?? null;
     const ref = this.dialog.open<AuditDetailDialogComponent, AuditDetailData, AuditDetailResult>(Dialog, {
       // Para la línea de tiempo «Más de esta entidad»: los eventos que ya se trajeron de la misma entidad
-      data: { id, log, related: (current) => this.store.events().filter((event) => event.entityId === current.entityId && event.id !== current.id) },
+      data: {
+        id,
+        log,
+        related: (current) =>
+          this.store.events().filter((event) => event.entityId === current.entityId && event.id !== current.id),
+      },
       width: '760px',
       maxWidth: 'calc(100vw - 16px)',
       maxHeight: 'calc(100dvh - 16px)',
@@ -351,7 +391,11 @@ export class AuditListComponent {
     ref.afterClosed().subscribe((result) => this.detailClosed(ref, id, result));
   }
 
-  private detailClosed(ref: MatDialogRef<AuditDetailDialogComponent, AuditDetailResult>, id: string, result: AuditDetailResult | undefined): void {
+  private detailClosed(
+    ref: MatDialogRef<AuditDetailDialogComponent, AuditDetailResult>,
+    id: string,
+    result: AuditDetailResult | undefined
+  ): void {
     if (this.detail === ref) {
       this.detail = null;
       this.detailId = null;

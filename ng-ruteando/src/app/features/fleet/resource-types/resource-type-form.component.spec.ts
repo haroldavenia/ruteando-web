@@ -32,13 +32,20 @@ describe('ResourceTypeFormComponent', () => {
         provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap(id ? { id } : {}), queryParamMap: convertToParamMap(options.volver ? { volver: options.volver } : {}) } },
+          useValue: {
+            snapshot: {
+              paramMap: convertToParamMap(id ? { id } : {}),
+              queryParamMap: convertToParamMap(options.volver ? { volver: options.volver } : {}),
+            },
+          },
         },
       ],
     });
     http = TestBed.inject(HttpTestingController);
     if (options.state) {
-      spyOn(TestBed.inject(Router), 'currentNavigation').and.returnValue({ extras: { state: options.state } } as unknown as Navigation);
+      spyOn(TestBed.inject(Router), 'currentNavigation').and.returnValue({
+        extras: { state: options.state },
+      } as unknown as Navigation);
     }
     fixture = TestBed.createComponent(ResourceTypeFormComponent);
     fixture.detectChanges();
@@ -79,7 +86,9 @@ describe('ResourceTypeFormComponent', () => {
 
       const req = http.expectOne((r) => r.method === 'POST' && r.url === '/gateway/resource-types');
       expectSameContract(req, fx);
-      expect((fixture.nativeElement as HTMLElement).querySelector('button[type="submit"]')?.hasAttribute('disabled')).toBeTrue();
+      expect(
+        (fixture.nativeElement as HTMLElement).querySelector('button[type="submit"]')?.hasAttribute('disabled')
+      ).toBeTrue();
       respondWith(req, fx);
       expect(navigate).toHaveBeenCalledWith('/flota/tipos', { state: undefined });
     });
@@ -123,7 +132,9 @@ describe('ResourceTypeFormComponent', () => {
 
     it('con un id inexistente (404) muestra que el registro ya no existe y enlaza al listado', () => {
       setup('no-existe');
-      http.expectOne('/gateway/resource-types/no-existe').flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
+      http
+        .expectOne('/gateway/resource-types/no-existe')
+        .flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
 
       expect(root().textContent).toContain('El registro ya no existe');
@@ -229,7 +240,11 @@ describe('ResourceTypeFormComponent', () => {
       type('maxWeight', '480');
       type('maxVolume', '900');
       submit();
-      expect((post().request.body as Record<string, unknown>)['restriction']).toEqual({ minWeight: 20, maxWeight: 480, maxVolume: 900 });
+      expect((post().request.body as Record<string, unknown>)['restriction']).toEqual({
+        minWeight: 20,
+        maxWeight: 480,
+        maxVolume: 900,
+      });
     });
   });
 
@@ -279,7 +294,9 @@ describe('ResourceTypeFormComponent', () => {
 
     it('un tipo con capacidad en medidas se abre en modo medidas', () => {
       setup(record.id);
-      http.expectOne(`/gateway/resource-types/${record.id}`).flush({ ...loaded, capacity: { weight: 1_000, volume: 24 }, measure: { width: 2, height: 3, depth: 4 } });
+      http
+        .expectOne(`/gateway/resource-types/${record.id}`)
+        .flush({ ...loaded, capacity: { weight: 1_000, volume: 24 }, measure: { width: 2, height: 3, depth: 4 } });
       fixture.detectChanges();
       expect(input('width').value).toBe('2');
       expect(input('volume')).toBeNull();
@@ -309,7 +326,9 @@ describe('ResourceTypeFormComponent', () => {
       const navigate = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
       fillAndSubmit();
       http.expectOne((r) => r.method === 'POST').flush({ id: 'nuevo-tipo' });
-      expect(navigate).toHaveBeenCalledWith('/flota/vehiculos/nuevo', { state: toHandoffState({ draft, createdTypeId: 'nuevo-tipo' }) });
+      expect(navigate).toHaveBeenCalledWith('/flota/vehiculos/nuevo', {
+        state: toHandoffState({ draft, createdTypeId: 'nuevo-tipo' }),
+      });
     });
 
     it('cancelar y la flecha de vuelta llevan al formulario de vehículo', () => {

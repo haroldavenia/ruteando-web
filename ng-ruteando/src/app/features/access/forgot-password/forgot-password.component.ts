@@ -56,7 +56,9 @@ const NEUTRAL_MESSAGE = t('Si el correo existe, recibirás instrucciones para re
         <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Enviar enlace' | t }}</button>
       </form>
     }
-    <p class="alt"><a routerLink="/acceso">{{ 'Volver a iniciar sesión' | t }}</a></p>
+    <p class="alt">
+      <a routerLink="/acceso">{{ 'Volver a iniciar sesión' | t }}</a>
+    </p>
   `,
 })
 export class ForgotPasswordComponent {

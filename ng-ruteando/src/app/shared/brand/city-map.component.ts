@@ -16,17 +16,37 @@ const ROUTES: readonly MapRoute[] = [
   {
     color: routeColorThemed(0),
     points: '110,250 170,170 260,120 350,150 400,230 300,280 110,250',
-    stops: [[170, 170], [260, 120], [350, 150], [400, 230], [300, 280]],
+    stops: [
+      [170, 170],
+      [260, 120],
+      [350, 150],
+      [400, 230],
+      [300, 280],
+    ],
   },
   {
     color: routeColorThemed(1),
     points: '110,250 140,335 250,365 365,350 470,320 330,305 110,250',
-    stops: [[140, 335], [250, 365], [365, 350], [470, 320], [330, 305]],
+    stops: [
+      [140, 335],
+      [250, 365],
+      [365, 350],
+      [470, 320],
+      [330, 305],
+    ],
   },
   {
     color: routeColorThemed(2),
     points: '110,250 120,150 150,70 280,45 430,60 520,110 555,195 470,205',
-    stops: [[120, 150], [150, 70], [280, 45], [430, 60], [520, 110], [555, 195], [470, 205]],
+    stops: [
+      [120, 150],
+      [150, 70],
+      [280, 45],
+      [430, 60],
+      [520, 110],
+      [555, 195],
+      [470, 205],
+    ],
   },
 ];
 
@@ -133,7 +153,10 @@ const ROUTES: readonly MapRoute[] = [
       stroke-width: 4;
     }
     text {
-      font: 800 8.5px Manrope, Roboto, sans-serif;
+      font:
+        800 8.5px Manrope,
+        Roboto,
+        sans-serif;
       text-anchor: middle;
       dominant-baseline: central;
       fill: light-dark(#ffffff, #1d1b1e);

@@ -39,7 +39,9 @@ const ITEMS: Item[] = [
 class HostComponent {
   selectable = true;
   readonly columns: DataColumn<Item>[] = [{ id: 'name', header: 'Nombre', cell: (i) => i.name }];
-  readonly state = new FullListState<Item>(() => of({ content: ITEMS, page: 0, size: 100, totalElements: ITEMS.length, totalPages: 1 }));
+  readonly state = new FullListState<Item>(() =>
+    of({ content: ITEMS, page: 0, size: 100, totalElements: ITEMS.length, totalPages: 1 })
+  );
 }
 
 /** El contexto de la plantilla `#card`: cada tarjeta sabe si su tabla es elegible, si está elegida y cómo elegirla. */
@@ -60,7 +62,10 @@ describe('DataTableComponent: tarjetas con selección', () => {
   beforeEach(() => {
     // La vista (tarjetas o tabla) se recuerda: se parte siempre de la de tarjetas
     localStorage.removeItem('ruteando-list-view');
-    TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations(), provideRouter([]), OUTLINED_FIELDS_PROVIDER] });
+    TestBed.configureTestingModule({
+      imports: [HostComponent],
+      providers: [provideNoopAnimations(), provideRouter([]), OUTLINED_FIELDS_PROVIDER],
+    });
   });
 
   afterEach(() => localStorage.removeItem('ruteando-list-view'));

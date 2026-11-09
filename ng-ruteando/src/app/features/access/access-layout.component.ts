@@ -20,7 +20,16 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
  */
 @Component({
   selector: 'app-access-layout',
-  imports: [RouterOutlet, BrandComponent, RouteBackdropComponent, LanguageToggleComponent, ThemeToggleComponent, AccessPitchComponent, AccessStepsComponent, TranslatePipe],
+  imports: [
+    RouterOutlet,
+    BrandComponent,
+    RouteBackdropComponent,
+    LanguageToggleComponent,
+    ThemeToggleComponent,
+    AccessPitchComponent,
+    AccessStepsComponent,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './access-layout.component.html',
   styleUrl: './access-layout.component.scss',

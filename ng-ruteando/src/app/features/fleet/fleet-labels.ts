@@ -49,7 +49,9 @@ export function capacitySummary(type: CapacitySource): string {
   if (parts.length > 0) {
     return parts.join(' · ');
   }
-  const unreadable = [type.capacity, type.measure, type.restriction].some((part) => part !== null && Object.keys(part).length > 0);
+  const unreadable = [type.capacity, type.measure, type.restriction].some(
+    (part) => part !== null && Object.keys(part).length > 0
+  );
   return unreadable ? t('Definida') : t('Sin capacidad');
 }
 

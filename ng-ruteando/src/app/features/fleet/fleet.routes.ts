@@ -10,17 +10,20 @@ export const FLEET_ROUTES: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        loadComponent: () => import('./resource-types/resource-type-list.component').then((m) => m.ResourceTypeListComponent),
+        loadComponent: () =>
+          import('./resource-types/resource-type-list.component').then((m) => m.ResourceTypeListComponent),
       },
       {
         path: 'nuevo',
         canDeactivate: [unsavedChangesGuard],
-        loadComponent: () => import('./resource-types/resource-type-form.component').then((m) => m.ResourceTypeFormComponent),
+        loadComponent: () =>
+          import('./resource-types/resource-type-form.component').then((m) => m.ResourceTypeFormComponent),
       },
       {
         path: ':id',
         canDeactivate: [unsavedChangesGuard],
-        loadComponent: () => import('./resource-types/resource-type-form.component').then((m) => m.ResourceTypeFormComponent),
+        loadComponent: () =>
+          import('./resource-types/resource-type-form.component').then((m) => m.ResourceTypeFormComponent),
       },
     ],
   },

@@ -49,14 +49,18 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
         autocomplete="current-password"
         [messages]="{ required: ('Introduce tu contraseña' | t) }"
       />
-      <div class="forgot"><a routerLink="/acceso/recuperar">{{ '¿Olvidaste tu contraseña?' | t }}</a></div>
+      <div class="forgot">
+        <a routerLink="/acceso/recuperar">{{ '¿Olvidaste tu contraseña?' | t }}</a>
+      </div>
       <app-form-result [error]="error()" />
       @if (loading()) {
         <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Iniciando sesión' | t" />
       }
       <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Iniciar sesión' | t }}</button>
     </form>
-    <p class="alt">{{ '¿No tienes cuenta?' | t }} <a routerLink="/acceso/registro">{{ 'Crear cuenta' | t }}</a></p>
+    <p class="alt">
+      {{ '¿No tienes cuenta?' | t }} <a routerLink="/acceso/registro">{{ 'Crear cuenta' | t }}</a>
+    </p>
   `,
 })
 export class LoginComponent {
@@ -100,7 +104,9 @@ export class LoginComponent {
           // Credenciales rechazadas: se vacía la contraseña y recibe el foco (el correo se conserva)
           // resetForm también borra «enviado»: sin él, el campo vacío saldría en rojo
           this.formDirective()?.resetForm({ email, password: '' });
-          setTimeout(() => this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="current-password"]')?.focus());
+          setTimeout(() =>
+            this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="current-password"]')?.focus()
+          );
         }
       },
     });

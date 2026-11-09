@@ -43,9 +43,15 @@ export class LanguageService {
       return;
     }
     setTimeout(() => {
-      const fade = typeof document !== 'undefined' ? document.body.animate?.([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_MS, fill: 'forwards' }) : undefined;
+      const fade =
+        typeof document !== 'undefined'
+          ? document.body.animate?.([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_MS, fill: 'forwards' })
+          : undefined;
       if (fade) {
-        fade.finished.then(() => this.reload(), () => this.reload());
+        fade.finished.then(
+          () => this.reload(),
+          () => this.reload()
+        );
       } else {
         this.reload();
       }

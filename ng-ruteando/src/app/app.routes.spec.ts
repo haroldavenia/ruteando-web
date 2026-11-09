@@ -63,7 +63,9 @@ describe('rutas de la aplicación', () => {
       currentUser.set(makeUser({ role }));
       await harness.navigateByUrl('/');
       harness.detectChanges();
-      const links = Array.from(document.querySelectorAll('app-nav-rail a.rail-item')).map((a) => a.getAttribute('href'));
+      const links = Array.from(document.querySelectorAll('app-nav-rail a.rail-item')).map((a) =>
+        a.getAttribute('href')
+      );
       expect(links).toContain(link);
     });
   }

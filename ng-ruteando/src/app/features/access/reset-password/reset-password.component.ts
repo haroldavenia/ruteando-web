@@ -1,5 +1,15 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, Injector, PLATFORM_ID, afterNextRender, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Injector,
+  PLATFORM_ID,
+  afterNextRender,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,7 +53,9 @@ const FORM_ERROR_CODES = ['PASSWORD_POLICY_VIOLATION', 'VALIDATION_ERROR'];
         <span class="state-icon bad"><mat-icon aria-hidden="true">link_off</mat-icon></span>
         <h1>{{ 'Restablecer contraseña' | t }}</h1>
         <app-form-result [error]="invalidMessage" />
-        <p class="alt"><a routerLink="/acceso/recuperar">{{ 'Solicitar un enlace nuevo' | t }}</a></p>
+        <p class="alt">
+          <a routerLink="/acceso/recuperar">{{ 'Solicitar un enlace nuevo' | t }}</a>
+        </p>
       </div>
     } @else {
       <h1>{{ 'Restablecer contraseña' | t }}</h1>
@@ -97,7 +109,12 @@ export class ResetPasswordComponent {
     afterNextRender(() => {
       if (this.isBrowser) {
         // Fuera del historial y de la barra de direcciones
-        void this.router.navigate([], { relativeTo: this.route, queryParams: { token: null }, queryParamsHandling: 'merge', replaceUrl: true });
+        void this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: { token: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
       }
     });
   }
@@ -110,7 +127,9 @@ export class ResetPasswordComponent {
     this.error.set(null);
     this.auth.resetPassword(this.token, this.form.getRawValue().password).subscribe({
       next: () => {
-        void this.router.navigateByUrl('/acceso').then(() => notify(this.injector, t('Contraseña actualizada, ya puedes iniciar sesión')));
+        void this.router
+          .navigateByUrl('/acceso')
+          .then(() => notify(this.injector, t('Contraseña actualizada, ya puedes iniciar sesión')));
       },
       error: (error: ApiError) => {
         this.loading.set(false);
@@ -123,7 +142,9 @@ export class ResetPasswordComponent {
         this.error.set(error.message);
         if (blamesForm) {
           // El enlace sigue siendo válido: con las contraseñas vacías, el foco vuelve a la nueva para reintentar
-          setTimeout(() => this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="new-password"]')?.focus());
+          setTimeout(() =>
+            this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="new-password"]')?.focus()
+          );
         }
       },
     });

@@ -20,7 +20,11 @@ export interface SearchOption {
 
 /** Texto sin mayúsculas ni tildes, para buscar «vehiculos» y encontrar «Vehículos». */
 function plain(text: string): string {
-  return text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+  return text
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .trim();
 }
 
 /**
@@ -47,9 +51,17 @@ function plain(text: string): string {
         [matAutocomplete]="results"
         [matAutocompleteConnectedTo]="origin"
       />
-      <span class="hint" aria-hidden="true"><kbd>{{ 'Ctrl' | t }}</kbd><kbd>{{ 'K' | t }}</kbd></span>
+      <span class="hint" aria-hidden="true"
+        ><kbd>{{ 'Ctrl' | t }}</kbd
+        ><kbd>{{ 'K' | t }}</kbd></span
+      >
     </div>
-    <mat-autocomplete #results="matAutocomplete" autoActiveFirstOption [displayWith]="noDisplay" (optionSelected)="go($event.option.value)">
+    <mat-autocomplete
+      #results="matAutocomplete"
+      autoActiveFirstOption
+      [displayWith]="noDisplay"
+      (optionSelected)="go($event.option.value)"
+    >
       @for (group of groups(); track group.label) {
         <mat-optgroup [label]="group.label">
           @for (option of group.options; track option.link) {
@@ -82,7 +94,11 @@ export class GlobalSearchComponent {
       .flatMap((item) => item.children ?? [item])
       .filter((item): item is NavItem & { link: string } => !!item.link)
       .map(({ label, icon, link }) => ({ label, icon, link }));
-    const actions: SearchOption[] = quickActionsFor(this.currentUser.role()).map(({ label, icon, link }) => ({ label, icon, link }));
+    const actions: SearchOption[] = quickActionsFor(this.currentUser.role()).map(({ label, icon, link }) => ({
+      label,
+      icon,
+      link,
+    }));
     const text = plain(typeof this.query() === 'string' ? this.query() : '');
     const matches = (options: SearchOption[]) => options.filter((option) => plain(option.label).includes(text));
     return [

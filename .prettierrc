@@ -9,7 +9,7 @@
   "bracketSameLine": false,
   "arrowParens": "always",
   "endOfLine": "auto",
-  "quoteProps": "as-needed",
+  "quoteProps": "preserve",
   "proseWrap": "preserve",
   "overrides": [
     {

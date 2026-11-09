@@ -16,7 +16,13 @@ import { AuditLog } from '../../core/api/models';
 import { CurrentUser } from '../../core/auth/current-user';
 import { UserRole } from '../../core/auth/session.model';
 
-import { AuditDetailData, AuditDetailDialogComponent, AuditDetailResult, DIRECT_FORBIDDEN, EVENT_GONE } from './audit-detail-dialog.component';
+import {
+  AuditDetailData,
+  AuditDetailDialogComponent,
+  AuditDetailResult,
+  DIRECT_FORBIDDEN,
+  EVENT_GONE,
+} from './audit-detail-dialog.component';
 
 import one from '../../../testing/fixtures/gateway/get__audit-logs__id.json';
 
@@ -26,9 +32,19 @@ describe('AuditDetailDialogComponent', () => {
   let overlay: HTMLElement;
   const root = () => overlay.querySelector('app-audit-detail-dialog') as HTMLElement;
   const text = () => root().textContent?.replace(/\s+/g, ' ') ?? '';
-  const fact = (label: string) => (Array.from(root().querySelectorAll('.audit-facts dt')).find((dt) => dt.textContent?.trim() === label)?.nextElementSibling?.textContent ?? '').replace(/ +/g, ' ').trim();
-  const link = (label: string) => (Array.from(root().querySelectorAll('a')) as HTMLAnchorElement[]).find((a) => a.textContent?.includes(label));
-  const action = (label: string) => (Array.from(root().querySelectorAll('mat-dialog-actions button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(label));
+  const fact = (label: string) =>
+    (
+      Array.from(root().querySelectorAll('.audit-facts dt')).find((dt) => dt.textContent?.trim() === label)
+        ?.nextElementSibling?.textContent ?? ''
+    )
+      .replace(/ +/g, ' ')
+      .trim();
+  const link = (label: string) =>
+    (Array.from(root().querySelectorAll('a')) as HTMLAnchorElement[]).find((a) => a.textContent?.includes(label));
+  const action = (label: string) =>
+    (Array.from(root().querySelectorAll('mat-dialog-actions button')) as HTMLButtonElement[]).find((b) =>
+      b.textContent?.includes(label)
+    );
   const settle = async () => {
     TestBed.tick();
     await new Promise((resolve) => setTimeout(resolve, 20));
@@ -53,7 +69,11 @@ describe('AuditDetailDialogComponent', () => {
       changes: { before: { status: 'pending' }, after: { status: 'attended' } },
       ipAddress: '172.18.0.1',
     });
-  const withLog = (log: AuditLog, related?: AuditDetailData['related']): AuditDetailData => ({ id: log.id, log, related });
+  const withLog = (log: AuditLog, related?: AuditDetailData['related']): AuditDetailData => ({
+    id: log.id,
+    log,
+    related,
+  });
 
   beforeEach(() => {
     localStorage.removeItem('ruteando-audit-tech');
@@ -89,7 +109,9 @@ describe('AuditDetailDialogComponent', () => {
 
     it('dice la frase, quién, cuándo y sobre qué', async () => {
       await open(withLog(changed()));
-      expect(root().querySelector('.audit-quote')?.textContent).toContain('Status de paquete cambiado: pending -> attended');
+      expect(root().querySelector('.audit-quote')?.textContent).toContain(
+        'Status de paquete cambiado: pending -> attended'
+      );
       expect(fact('Quién')).toContain('ana@example.com');
       expect(fact('Quién')).toContain('Administrador');
       expect(fact('Cuándo')).toContain('octubre de 2026');
@@ -98,12 +120,30 @@ describe('AuditDetailDialogComponent', () => {
     });
 
     it('no repite la frase si dice lo mismo que el título', async () => {
-      await open(withLog(auditLog({ id: 'e2', action: 'invitation.created', entityType: 'invitation', description: 'invitation.created' })));
+      await open(
+        withLog(
+          auditLog({
+            id: 'e2',
+            action: 'invitation.created',
+            entityType: 'invitation',
+            description: 'invitation.created',
+          })
+        )
+      );
       expect(root().querySelector('.audit-quote')).toBeNull();
     });
 
     it('abrevia los identificadores largos de la frase', async () => {
-      await open(withLog(auditLog({ id: 'e3', action: 'resource.assign.driver', entityType: 'resource', description: 'Driver 6acb99b1a2fa810fb39fb5a9 asignado' })));
+      await open(
+        withLog(
+          auditLog({
+            id: 'e3',
+            action: 'resource.assign.driver',
+            entityType: 'resource',
+            description: 'Driver 6acb99b1a2fa810fb39fb5a9 asignado',
+          })
+        )
+      );
       expect(root().querySelector('.audit-quote')?.textContent).toContain('Driver #9fb5a9 asignado');
     });
 
@@ -126,7 +166,12 @@ describe('AuditDetailDialogComponent', () => {
     });
 
     it('cada tipo de acción tiene su tono', async () => {
-      for (const [action, expected] of [['journey.delete', 'danger'], ['place.create', 'success'], ['place.update', 'info'], ['notification.push_registered', 'neutral']] as const) {
+      for (const [action, expected] of [
+        ['journey.delete', 'danger'],
+        ['place.create', 'success'],
+        ['place.update', 'info'],
+        ['notification.push_registered', 'neutral'],
+      ] as const) {
         await open(withLog(auditLog({ id: action, action, entityType: 'place' })));
         expect(root().getAttribute('data-tone')).withContext(action).toBe(expected);
         ref.close();
@@ -154,8 +199,20 @@ describe('AuditDetailDialogComponent', () => {
 
   describe('más de esta entidad', () => {
     const others = () => [
-      auditLog({ id: 'o1', action: 'package.create', entityType: 'package', entityId: 'pkg1', actorEmail: 'luis@x.com' }),
-      auditLog({ id: 'o2', action: 'package.status.change', entityType: 'package', entityId: 'pkg1', actorEmail: null }),
+      auditLog({
+        id: 'o1',
+        action: 'package.create',
+        entityType: 'package',
+        entityId: 'pkg1',
+        actorEmail: 'luis@x.com',
+      }),
+      auditLog({
+        id: 'o2',
+        action: 'package.status.change',
+        entityType: 'package',
+        entityId: 'pkg1',
+        actorEmail: null,
+      }),
     ];
     const items = () => Array.from(root().querySelectorAll('.audit-timeline-item')) as HTMLButtonElement[];
 
@@ -171,10 +228,12 @@ describe('AuditDetailDialogComponent', () => {
 
     it('recibe el evento abierto para elegir cuáles mostrar', async () => {
       const seen: AuditLog[] = [];
-      await open(withLog(changed(), (log) => {
-        seen.push(log);
-        return [];
-      }));
+      await open(
+        withLog(changed(), (log) => {
+          seen.push(log);
+          return [];
+        })
+      );
       expect(seen[0].id).toBe('e1');
     });
 
@@ -216,11 +275,18 @@ describe('AuditDetailDialogComponent', () => {
       expect(row.textContent).toContain('Cambió');
       expect(row.querySelector('.audit-old')?.textContent).toBe('Pendiente');
       expect(row.querySelector('.audit-new')?.textContent).toBe('Atendido');
-      expect(Array.from(row.querySelectorAll('small')).map((el) => el.textContent?.trim())).toEqual(['Antes', 'Después']);
+      expect(Array.from(row.querySelectorAll('small')).map((el) => el.textContent?.trim())).toEqual([
+        'Antes',
+        'Después',
+      ]);
     });
 
     it('los valores vacíos se leen «(vacío)»', async () => {
-      await open(withLog(auditLog({ id: 'e4', changes: { before: { driverId: '' }, after: { driverId: '6acb99b1a2fa810fb39fb5a9' } } })));
+      await open(
+        withLog(
+          auditLog({ id: 'e4', changes: { before: { driverId: '' }, after: { driverId: '6acb99b1a2fa810fb39fb5a9' } } })
+        )
+      );
       const before = root().querySelector('.audit-flow .audit-before') as HTMLElement;
       expect(before.textContent).toContain('(vacío)');
       expect(before.classList).toContain('is-empty');
@@ -228,7 +294,16 @@ describe('AuditDetailDialogComponent', () => {
     });
 
     it('antes y después idénticos: lo dice y no resalta nada', async () => {
-      await open(withLog(auditLog({ id: 'e5', action: 'settings.update', entityType: 'settings', changes: { before: { name: 'A' }, after: { name: 'A' } } })));
+      await open(
+        withLog(
+          auditLog({
+            id: 'e5',
+            action: 'settings.update',
+            entityType: 'settings',
+            changes: { before: { name: 'A' }, after: { name: 'A' } },
+          })
+        )
+      );
       expect(text()).toContain('El evento no registra cambios de valores');
       expect(root().querySelector('.audit-changes li.changed')).toBeNull();
       expect(root().querySelectorAll('.audit-changes li').length).toBe(1);
@@ -276,7 +351,10 @@ describe('AuditDetailDialogComponent', () => {
     });
 
     it('el agente solo recibe enlaces a lo que puede abrir', async () => {
-      await open(withLog(auditLog({ id: 'e11', action: 'place.update', entityType: 'place', entityId: 'lug1' })), 'agent');
+      await open(
+        withLog(auditLog({ id: 'e11', action: 'place.update', entityType: 'place', entityId: 'lug1' })),
+        'agent'
+      );
       expect(link('Abrir lugar')).toBeUndefined();
       ref.close();
       await open(withLog(changed()), 'agent');
@@ -331,7 +409,9 @@ describe('AuditDetailDialogComponent', () => {
 
     it('un fallo del gateway no enseña su cuerpo', async () => {
       await open({ id: 'x', log: null });
-      http.expectOne('/gateway/audit-logs/x').flush({ secreto: 'detalle interno' }, { status: 500, statusText: 'Server Error' });
+      http
+        .expectOne('/gateway/audit-logs/x')
+        .flush({ secreto: 'detalle interno' }, { status: 500, statusText: 'Server Error' });
       await settle();
       expect(text()).not.toContain('detalle interno');
       expect(root().querySelector('[role=alert]')).not.toBeNull();
@@ -405,9 +485,12 @@ describe('AuditDetailDialogComponent', () => {
             id: 'xss',
             description: '<img src=x onerror=alert(1)> y <b>negrita</b>',
             actorEmail: '"><script>alert(2)</script>@x.com',
-            changes: { before: { nombre: '<script>alert(3)</script>' }, after: { nombre: '<iframe src=javascript:alert(4)>' } },
-          }),
-        ),
+            changes: {
+              before: { nombre: '<script>alert(3)</script>' },
+              after: { nombre: '<iframe src=javascript:alert(4)>' },
+            },
+          })
+        )
       );
       expect(root().querySelector('img, script, iframe')).toBeNull();
       expect(Array.from(root().querySelectorAll('b')).some((b) => b.textContent === 'negrita')).toBeFalse();
@@ -430,7 +513,10 @@ describe('AuditDetailDialogComponent', () => {
       ref.close();
       await settle();
       await open(withLog(changed(), () => [auditLog({ id: 'o9', entityId: 'pkg1' })]));
-      expect(Array.from(root().querySelectorAll('h3')).map((h) => h.textContent?.trim())).toEqual(['Qué cambió', 'Más de esta entidad']);
+      expect(Array.from(root().querySelectorAll('h3')).map((h) => h.textContent?.trim())).toEqual([
+        'Qué cambió',
+        'Más de esta entidad',
+      ]);
     });
   });
 });

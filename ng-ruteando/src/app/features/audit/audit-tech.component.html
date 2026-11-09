@@ -2,28 +2,52 @@
   <summary><mat-icon aria-hidden="true">code</mat-icon>{{ 'Datos técnicos' | t }}</summary>
   <dl class="audit-tech-grid">
     <dt>{{ 'Acción (clave)' | t }}</dt>
-    <dd><code>{{ log().action }}</code></dd>
+    <dd>
+      <code>{{ log().action }}</code>
+    </dd>
     <dt>{{ 'Tipo de entidad (clave)' | t }}</dt>
-    <dd><code>{{ log().entityType }}</code></dd>
+    <dd>
+      <code>{{ log().entityType }}</code>
+    </dd>
     <dt>{{ 'Identificador del evento' | t }}</dt>
     <dd>
       <code>{{ log().id }}</code>
-      <button mat-icon-button type="button" (click)="copy(log().id, 'Identificador')" [attr.aria-label]="'Copiar el identificador del evento' | t"><mat-icon aria-hidden="true">content_copy</mat-icon></button>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="copy(log().id, 'Identificador')"
+        [attr.aria-label]="'Copiar el identificador del evento' | t"
+      >
+        <mat-icon aria-hidden="true">content_copy</mat-icon>
+      </button>
     </dd>
     <dt>{{ 'Identificador de la entidad' | t }}</dt>
     <dd>
       <code>{{ log().entityId }}</code>
-      <button mat-icon-button type="button" (click)="copy(log().entityId, 'Identificador')" [attr.aria-label]="'Copiar el identificador de la entidad' | t"><mat-icon aria-hidden="true">content_copy</mat-icon></button>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="copy(log().entityId, 'Identificador')"
+        [attr.aria-label]="'Copiar el identificador de la entidad' | t"
+      >
+        <mat-icon aria-hidden="true">content_copy</mat-icon>
+      </button>
     </dd>
     <dt>{{ 'Instante (UTC)' | t }}</dt>
-    <dd><code>{{ utc() }}</code></dd>
+    <dd>
+      <code>{{ utc() }}</code>
+    </dd>
     <dt>{{ 'Rol (tal como lo envía el gateway)' | t }}</dt>
-    <dd><code>{{ log().actorRole ?? '—' }}</code></dd>
+    <dd>
+      <code>{{ log().actorRole ?? '—' }}</code>
+    </dd>
     <dt>{{ 'Descripción original' | t }}</dt>
     <dd>{{ log().description || '—' }}</dd>
     @if (changesJson()) {
       <dt>{{ 'Cambios (JSON)' | t }}</dt>
-      <dd><pre class="audit-json"><code>{{ changesJson() }}</code></pre></dd>
+      <dd>
+        <pre class="audit-json"><code>{{ changesJson() }}</code></pre>
+      </dd>
     }
   </dl>
 </details>

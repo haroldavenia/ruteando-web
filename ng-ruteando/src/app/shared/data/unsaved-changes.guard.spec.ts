@@ -15,7 +15,9 @@ describe('unsavedChangesGuard', () => {
   let overlay: HTMLElement;
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const button = (text: string) =>
-    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideNoopAnimations()] });
@@ -26,7 +28,7 @@ describe('unsavedChangesGuard', () => {
   function run(dirty: boolean): Observable<boolean> {
     const component: HasUnsavedChanges = { hasUnsavedChanges: () => dirty };
     const result = runInInjectionContext(TestBed.inject(Injector), () =>
-      unsavedChangesGuard(component, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot, {} as RouterStateSnapshot),
+      unsavedChangesGuard(component, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot, {} as RouterStateSnapshot)
     );
     return result as Observable<boolean>;
   }
@@ -52,12 +54,23 @@ describe('unsavedChangesGuard', () => {
   it('una pantalla puede poner sus propios textos al diálogo', async () => {
     const component: HasUnsavedChanges = {
       hasUnsavedChanges: () => true,
-      leaveDialog: () => ({ title: '¿Salir de la importación?', confirmLabel: 'Salir', cancelLabel: 'Seguir importando' }),
+      leaveDialog: () => ({
+        title: '¿Salir de la importación?',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Seguir importando',
+      }),
     };
     const results: boolean[] = [];
-    (runInInjectionContext(TestBed.inject(Injector), () =>
-      unsavedChangesGuard(component, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot, {} as RouterStateSnapshot),
-    ) as Observable<boolean>).subscribe((v) => results.push(v));
+    (
+      runInInjectionContext(TestBed.inject(Injector), () =>
+        unsavedChangesGuard(
+          component,
+          {} as ActivatedRouteSnapshot,
+          {} as RouterStateSnapshot,
+          {} as RouterStateSnapshot
+        )
+      ) as Observable<boolean>
+    ).subscribe((v) => results.push(v));
     TestBed.inject(ApplicationRef).tick();
     await wait();
 
@@ -102,11 +115,19 @@ describe('SubmitState', () => {
 
   it('en error muestra el texto de la pantalla para ese estado o el del error', () => {
     const state = new SubmitState();
-    state.submit(throwError(() => new ApiError({ status: 409, message: 'genérico' })), () => undefined, { 409: 'Ya existe' });
+    state.submit(
+      throwError(() => new ApiError({ status: 409, message: 'genérico' })),
+      () => undefined,
+      { 409: 'Ya existe' }
+    );
     expect(state.error()).toBe('Ya existe');
     expect(state.submitting()).toBeFalse();
 
-    state.submit(throwError(() => new ApiError({ status: 500, message: 'caído' })), () => undefined, { 409: 'Ya existe' });
+    state.submit(
+      throwError(() => new ApiError({ status: 500, message: 'caído' })),
+      () => undefined,
+      { 409: 'Ya existe' }
+    );
     expect(state.error()).toBe('caído');
   });
 });

@@ -124,5 +124,7 @@ export class SkeletonComponent {
   /** Piezas a dibujar; por defecto las de la variante. */
   readonly count = input<number | undefined>(undefined);
 
-  protected readonly items = computed(() => Array.from({ length: this.count() ?? DEFAULT_COUNT[this.variant()] }, (_, i) => i));
+  protected readonly items = computed(() =>
+    Array.from({ length: this.count() ?? DEFAULT_COUNT[this.variant()] }, (_, i) => i)
+  );
 }

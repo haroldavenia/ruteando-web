@@ -21,7 +21,10 @@ export function csvCell(value: string | number | null | undefined): string {
 }
 
 /** CSV con cabecera, separador `;`, fin de línea `\r\n` y BOM al inicio (Excel lo abre en UTF-8). */
-export function toCsv(header: readonly string[], rows: readonly (readonly (string | number | null | undefined)[])[]): string {
+export function toCsv(
+  header: readonly string[],
+  rows: readonly (readonly (string | number | null | undefined)[])[]
+): string {
   return BOM + [header, ...rows].map((row) => row.map(csvCell).join(SEPARATOR)).join(EOL) + EOL;
 }
 

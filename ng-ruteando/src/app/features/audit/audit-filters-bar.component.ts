@@ -6,7 +6,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-
 import { AuditFilters, AuditRange, NO_PERSON, addDays, dayKey, hasActiveFilters, startOfDay } from './audit-filters';
 import { AUDIT_KINDS, AuditKind, auditKindLabel, shortId } from './audit-labels';
 
@@ -30,7 +29,15 @@ const ALL = 'todos';
  */
 @Component({
   selector: 'app-audit-filters',
-  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSlideToggleModule, TranslatePipe],
+  imports: [
+    MatButtonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   templateUrl: './audit-filters-bar.component.html',
@@ -63,7 +70,9 @@ export class AuditFiltersBarComponent {
   protected readonly rangeError = signal<string | null>(null);
 
   protected readonly showCustom = computed(() => this.customOpen() || this.filters().range === 'personalizado');
-  protected readonly rangeChoice = computed<AuditRange>(() => (this.showCustom() ? 'personalizado' : this.filters().range));
+  protected readonly rangeChoice = computed<AuditRange>(() =>
+    this.showCustom() ? 'personalizado' : this.filters().range
+  );
   protected readonly active = computed(() => hasActiveFilters(this.filters()));
   protected readonly entityShort = computed(() => shortId(this.filters().entityId ?? ''));
 
@@ -89,11 +98,15 @@ export class AuditFiltersBarComponent {
     const from = edge === 'from' ? value || null : filters.from;
     const to = edge === 'to' ? value || null : filters.to;
     if (from && to && from > to) {
-      this.rangeError.set(edge === 'from' ? t('El inicio no puede ser posterior al fin') : t('El fin no puede ser anterior al inicio'));
+      this.rangeError.set(
+        edge === 'from' ? t('El inicio no puede ser posterior al fin') : t('El fin no puede ser anterior al inicio')
+      );
       return;
     }
     this.rangeError.set(null);
-    this.filtersChange.emit(from || to ? { range: 'personalizado', from, to } : { range: 'todo', from: null, to: null });
+    this.filtersChange.emit(
+      from || to ? { range: 'personalizado', from, to } : { range: 'todo', from: null, to: null }
+    );
   }
 
   protected pickKind(value: string): void {

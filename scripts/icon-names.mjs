@@ -16,8 +16,14 @@ const indexFile = join(root, 'src/index.html');
 const CATALOG_URL = 'https://fonts.google.com/metadata/icons?key=material_symbols&incomplete=true';
 const WORD = /^[a-z][a-z0-9_]*$/;
 
-const walk = (dir) => readdirSync(dir).flatMap((name) => { const path = join(dir, name); return statSync(path).isDirectory() ? walk(path) : [path]; });
-const files = walk(join(root, 'src/app')).filter((f) => /\.(ts|html)$/.test(f) && !/\.spec\.ts$/.test(f) && !f.includes(`${sep}i18n${sep}`));
+const walk = (dir) =>
+  readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    return statSync(path).isDirectory() ? walk(path) : [path];
+  });
+const files = walk(join(root, 'src/app')).filter(
+  (f) => /\.(ts|html)$/.test(f) && !/\.spec\.ts$/.test(f) && !f.includes(`${sep}i18n${sep}`)
+);
 const sources = files.map((f) => readFileSync(f, 'utf8'));
 
 /** Palabras que aparecen junto a un icono (`status === 'ready' ? …`, `icon: 'name'`) pero no son iconos. */
@@ -35,7 +41,8 @@ function declared() {
     }
     for (const m of src.matchAll(/fontIcon="([a-z0-9_]+)"/g)) add(m[1]);
     for (const m of src.matchAll(/\b(?:icon|[a-z]*Icon|glyph)\s*:\s*'([a-z][a-z0-9_]*)'/g)) add(m[1]);
-    for (const m of src.matchAll(/\[icon\]="([^"]*)"/g)) for (const q of m[1].matchAll(/'([a-z][a-z0-9_]*)'/g)) add(q[1]);
+    for (const m of src.matchAll(/\[icon\]="([^"]*)"/g))
+      for (const q of m[1].matchAll(/'([a-z][a-z0-9_]*)'/g)) add(q[1]);
   }
   return found;
 }
@@ -60,12 +67,17 @@ const urlIcons = () => {
 if (process.argv.includes('--update')) {
   const raw = (await fetch(CATALOG_URL).then((r) => r.text())).replace(/^\)\]\}'\s*/, '');
   const catalog = new Set(JSON.parse(raw).icons.map((i) => i.name));
-  const names = [...new Set([...declared(), ...[...candidates()].filter((w) => catalog.has(w))])].filter((n) => catalog.has(n)).sort();
+  const names = [...new Set([...declared(), ...[...candidates()].filter((w) => catalog.has(w))])]
+    .filter((n) => catalog.has(n))
+    .sort();
   let html = readFileSync(indexFile, 'utf8');
   const list = names.join(',');
   html = /icon_names=[a-z0-9_,]+/.test(html)
     ? html.replace(/icon_names=[a-z0-9_,]+/, `icon_names=${list}`)
-    : html.replace('Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,350,0,0', `Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,350,0,0&icon_names=${list}`);
+    : html.replace(
+        'Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,350,0,0',
+        `Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,350,0,0&icon_names=${list}`
+      );
   writeFileSync(indexFile, html);
   console.log(`${names.length} iconos en index.html`);
   process.exit(0);
@@ -73,13 +85,17 @@ if (process.argv.includes('--update')) {
 
 const inUrl = urlIcons();
 if (!inUrl) {
-  console.error('index.html no tiene icon_names=: la fuente de iconos se descargaría completa (~740 KiB). Ejecuta: node scripts/icon-names.mjs --update');
+  console.error(
+    'index.html no tiene icon_names=: la fuente de iconos se descargaría completa (~740 KiB). Ejecuta: node scripts/icon-names.mjs --update'
+  );
   process.exit(1);
 }
 const missing = [...declared()].filter((n) => !inUrl.has(n)).sort();
 console.log(`${inUrl.size} iconos en index.html; el código declara ${declared().size}`);
 if (missing.length) {
-  console.error(`Faltan en index.html (se verían como texto): ${missing.join(', ')}\nEjecuta: node scripts/icon-names.mjs --update`);
+  console.error(
+    `Faltan en index.html (se verían como texto): ${missing.join(', ')}\nEjecuta: node scripts/icon-names.mjs --update`
+  );
   process.exit(1);
 }
 console.log('Iconos al día.');

@@ -17,17 +17,31 @@ import settings from '../../../testing/fixtures/gateway/get__settings.json';
 
 const fx = (f: unknown) => f as Fixture;
 const planBody = fx(plan).request.body as { settingsId: string; packageIds: string[]; name: string };
-const pkg = (id: string, n: number) => ({ ...(fx(packages).response.body as { content: object[] }).content[0], id, name: `P${n}`, guideNumber: `G-${n}` });
-const page = (content: object[], total = content.length) => ({ content, page: 0, size: 20, totalElements: total, totalPages: 1 });
-const settingsPage = (id = planBody.settingsId) => page([{ ...(fx(settings).response.body as { content: object[] }).content[0], id, description: 'Capture settings' }]);
+const pkg = (id: string, n: number) => ({
+  ...(fx(packages).response.body as { content: object[] }).content[0],
+  id,
+  name: `P${n}`,
+  guideNumber: `G-${n}`,
+});
+const page = (content: object[], total = content.length) => ({
+  content,
+  page: 0,
+  size: 20,
+  totalElements: total,
+  totalPages: 1,
+});
+const settingsPage = (id = planBody.settingsId) =>
+  page([{ ...(fx(settings).response.body as { content: object[] }).content[0], id, description: 'Capture settings' }]);
 
 describe('JourneyFormComponent', () => {
   let fixture: ComponentFixture<JourneyFormComponent>;
   let http: HttpTestingController;
   const root = () => fixture.nativeElement as HTMLElement;
   const form = () => (fixture.componentInstance as unknown as { form: FormGroup }).form;
-  const checkbox = (label: string) => root().querySelector(`input[type="checkbox"][aria-label="${label}"]`) as HTMLInputElement;
-  const button = (text: string) => (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
+  const checkbox = (label: string) =>
+    root().querySelector(`input[type="checkbox"][aria-label="${label}"]`) as HTMLInputElement;
+  const button = (text: string) =>
+    (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text))!;
 
   function setup(data: { settings?: object; packages?: object } = {}): void {
     TestBed.configureTestingModule({
@@ -46,7 +60,9 @@ describe('JourneyFormComponent', () => {
     const settingsReq = http.expectOne((r) => r.url === '/gateway/settings');
     expect(settingsReq.request.params.get('size')).toBe('200');
     settingsReq.flush(data.settings ?? settingsPage());
-    http.expectOne((r) => r.url === '/gateway/packages' && r.params.get('size') === '20').flush(data.packages ?? page([pkg(planBody.packageIds[0], 1), pkg(planBody.packageIds[1], 2)]));
+    http
+      .expectOne((r) => r.url === '/gateway/packages' && r.params.get('size') === '20')
+      .flush(data.packages ?? page([pkg(planBody.packageIds[0], 1), pkg(planBody.packageIds[1], 2)]));
     fixture.detectChanges();
   }
 
@@ -61,12 +77,17 @@ describe('JourneyFormComponent', () => {
     (root().querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
     fixture.detectChanges();
   };
-  const planRequest = (): TestRequest => http.expectOne((r) => r.method === 'POST' && r.url === '/gateway/journeys/plan');
+  const planRequest = (): TestRequest =>
+    http.expectOne((r) => r.method === 'POST' && r.url === '/gateway/journeys/plan');
 
   afterEach(() => http.verify());
 
   describe('presentación', () => {
-    const review = () => Array.from(root().querySelectorAll('aside.summary .review > div')).map((row) => [row.querySelector('dt')?.textContent?.trim(), row.querySelector('dd')?.textContent?.trim()]);
+    const review = () =>
+      Array.from(root().querySelectorAll('aside.summary .review > div')).map((row) => [
+        row.querySelector('dt')?.textContent?.trim(),
+        row.querySelector('dd')?.textContent?.trim(),
+      ]);
 
     it('la cabecera ofrece volver a las jornadas sobre el título', () => {
       setup();
@@ -195,8 +216,12 @@ describe('JourneyFormComponent', () => {
       fill();
       submit();
       planRequest().flush(
-        { error: 'Bad Request', message: 'For input string: "6acb99b48275a26dbdf8fcf6"', path: '/api/v1/journeys/plan' },
-        { status: 400, statusText: 'Bad Request' },
+        {
+          error: 'Bad Request',
+          message: 'For input string: "6acb99b48275a26dbdf8fcf6"',
+          path: '/api/v1/journeys/plan',
+        },
+        { status: 400, statusText: 'Bad Request' }
       );
       fixture.detectChanges();
       const alert = root().querySelector('[role="alert"]')!.textContent!;
@@ -220,7 +245,9 @@ describe('JourneyFormComponent', () => {
         submit();
         planRequest().flush({ message: 'timeout' }, { status, statusText: 'x' });
         fixture.detectChanges();
-        expect(root().querySelector('[role="alert"]')?.textContent).toContain('La planificación tardó demasiado o el servicio no respondió');
+        expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+          'La planificación tardó demasiado o el servicio no respondió'
+        );
       });
     }
 

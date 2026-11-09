@@ -24,7 +24,9 @@ describe('PackageImportComponent', () => {
   const root = () => fixture.nativeElement as HTMLElement;
   const text = () => root().textContent!.replace(/\s+/g, ' ');
   const resultSummary = () => root().querySelector('section[aria-labelledby="result-title"] .summary')?.textContent;
-  const button = (label: string) => (Array.from(root().querySelectorAll('button, a')) as HTMLElement[]).find((b) => b.textContent?.includes(label)) as HTMLButtonElement | undefined;
+  const button = (label: string) =>
+    (Array.from(root().querySelectorAll('button, a')) as HTMLElement[]).find((b) => b.textContent?.includes(label)) as
+      HTMLButtonElement | undefined;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -78,11 +80,12 @@ describe('PackageImportComponent', () => {
   const created = (req: TestRequest) => respondWith(req, create as unknown as Fixture);
 
   describe('presentación', () => {
-    const steps = () => Array.from(root().querySelectorAll('ol.steps li')).map((li) => ({
-      text: li.textContent?.replace(/\s+/g, ' ').trim(),
-      current: li.getAttribute('aria-current') === 'step',
-      done: li.classList.contains('done'),
-    }));
+    const steps = () =>
+      Array.from(root().querySelectorAll('ol.steps li')).map((li) => ({
+        text: li.textContent?.replace(/\s+/g, ' ').trim(),
+        current: li.getAttribute('aria-current') === 'step',
+        done: li.classList.contains('done'),
+      }));
     const three = csvOf('G-1;Calle 1;-74.07728;4.60872', 'G-2;Calle 2;-74;4.6', 'G-3;Calle 3;-74;4.6');
 
     it('la cabecera ofrece volver a los paquetes sobre el título', () => {
@@ -103,7 +106,12 @@ describe('PackageImportComponent', () => {
     it('el paso actual sigue a la fase: tras leer el archivo es «Revisa y confirma», con los dos anteriores hechos', async () => {
       await choose(three);
 
-      expect(steps().map((s) => [s.current, s.done])).toEqual([[false, true], [false, true], [true, false], [false, false]]);
+      expect(steps().map((s) => [s.current, s.done])).toEqual([
+        [false, true],
+        [false, true],
+        [true, false],
+        [false, false],
+      ]);
     });
 
     it('durante la importación el actual es «Importa» y al terminar los cuatro están hechos', async () => {
@@ -138,7 +146,9 @@ describe('PackageImportComponent', () => {
       const tables = Array.from(root().querySelectorAll('table'));
 
       expect(tables.every((t) => t.classList.contains('stack-table') && t.closest('.stack-scope') !== null)).toBeTrue();
-      expect(tables.every((t) => Array.from(t.querySelectorAll('tbody td')).every((td) => td.hasAttribute('data-label')))).toBeTrue();
+      expect(
+        tables.every((t) => Array.from(t.querySelectorAll('tbody td')).every((td) => td.hasAttribute('data-label')))
+      ).toBeTrue();
     });
 
     it('el resultado muestra cada cifra en su tarjeta', async () => {
@@ -148,7 +158,9 @@ describe('PackageImportComponent', () => {
       await serve(created);
       const cards = Array.from(root().querySelectorAll('.counts > div'));
 
-      expect(cards.map((c) => [c.querySelector('dt')?.textContent?.trim(), c.querySelector('dd')?.textContent?.trim()])).toEqual([
+      expect(
+        cards.map((c) => [c.querySelector('dt')?.textContent?.trim(), c.querySelector('dd')?.textContent?.trim()])
+      ).toEqual([
         ['Creados', '3'],
         ['Ya existían', '0'],
         ['Fallidos', '0'],
@@ -212,7 +224,9 @@ describe('PackageImportComponent', () => {
 
     it('sin las columnas obligatorias dice cuáles faltan y no muestra la vista previa', async () => {
       await choose('NOMBRE;DIRECCION\nAna;Calle 1');
-      expect(root().querySelector('[role="alert"]')?.textContent).toContain('Faltan columnas obligatorias: LONGITUD, LATITUD');
+      expect(root().querySelector('[role="alert"]')?.textContent).toContain(
+        'Faltan columnas obligatorias: LONGITUD, LATITUD'
+      );
       expect(root().querySelector('#preview-title')).toBeNull();
     });
 
@@ -284,7 +298,9 @@ describe('PackageImportComponent', () => {
     it('la tabla de muestra tiene como máximo 20 filas', async () => {
       const lines = Array.from({ length: 30 }, (_, i) => `G${i};Calle ${i};-74;4.6`);
       await choose(csvOf(...lines));
-      const sample = Array.from(root().querySelectorAll('table')).find((t) => t.querySelector('caption')?.textContent?.includes('Primeras'))!;
+      const sample = Array.from(root().querySelectorAll('table')).find((t) =>
+        t.querySelector('caption')?.textContent?.includes('Primeras')
+      )!;
       expect(sample.querySelectorAll('tbody tr').length).toBe(20);
       expect(text()).toContain('30 válidas');
       expect(button('Importar 30 paquetes')).toBeDefined();
@@ -376,7 +392,9 @@ describe('PackageImportComponent', () => {
         }
       });
       expect(resultSummary()).toContain('1 creados, 1 ya existían, 1 fallidos y 0 sin procesar');
-      const failed = Array.from(root().querySelectorAll('table')).find((t) => t.querySelector('caption')?.textContent?.includes('fallaron'))!;
+      const failed = Array.from(root().querySelectorAll('table')).find((t) =>
+        t.querySelector('caption')?.textContent?.includes('fallaron')
+      )!;
       expect(failed.querySelectorAll('tbody tr').length).toBe(1);
       expect(failed.textContent).toContain('El servicio no está disponible');
     });
@@ -432,7 +450,9 @@ describe('PackageImportComponent', () => {
       });
       button('Descargar informe de errores')!.click();
       expect(download).toBe('errores-importacion.csv');
-      const content = new TextDecoder('utf-8', { ignoreBOM: true }).decode(await (blob as unknown as Blob).arrayBuffer());
+      const content = new TextDecoder('utf-8', { ignoreBOM: true }).decode(
+        await (blob as unknown as Blob).arrayBuffer()
+      );
       expect(content.charCodeAt(0)).toBe(0xfeff);
       const rows = parseCsv(content).rows;
       expect(rows[0]).toEqual(['LINEA', 'CAMPO', 'MOTIVO', 'FILA ORIGINAL']);

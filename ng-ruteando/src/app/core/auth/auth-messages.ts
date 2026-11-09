@@ -18,7 +18,11 @@ export const ACCOUNT_LOCKED_MESSAGE = t('La cuenta está bloqueada temporalmente
  * esa petición; el código del gateway (`INVALID_TOKEN`, `PASSWORD_POLICY_VIOLATION`...) manda sobre el estado.
  */
 export const loginErrors = (): HttpContext =>
-  withErrorMessage({ 401: t('Correo o contraseña incorrectos'), 423: ACCOUNT_LOCKED_MESSAGE, 429: TOO_MANY_ATTEMPTS_MESSAGE });
+  withErrorMessage({
+    401: t('Correo o contraseña incorrectos'),
+    423: ACCOUNT_LOCKED_MESSAGE,
+    429: TOO_MANY_ATTEMPTS_MESSAGE,
+  });
 
 export const registerErrors = (): HttpContext =>
   withErrorMessage({

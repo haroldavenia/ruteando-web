@@ -54,8 +54,18 @@ export class ActivityBarsComponent {
     const day = formatLongDayKey(top.from);
     const peak = formatNumber(top.count);
     return weekly
-      ? t('{0} en {1}; la semana con más actividad fue la semana del {2}, con {3}.', [events, buckets.length === 1 ? t('1 semana') : t('{0} semanas', [buckets.length]), day, peak])
-      : t('{0} en {1}; el día con más actividad fue el {2}, con {3}.', [events, buckets.length === 1 ? t('1 día') : t('{0} días', [buckets.length]), day, peak]);
+      ? t('{0} en {1}; la semana con más actividad fue la semana del {2}, con {3}.', [
+          events,
+          buckets.length === 1 ? t('1 semana') : t('{0} semanas', [buckets.length]),
+          day,
+          peak,
+        ])
+      : t('{0} en {1}; el día con más actividad fue el {2}, con {3}.', [
+          events,
+          buckets.length === 1 ? t('1 día') : t('{0} días', [buckets.length]),
+          day,
+          peak,
+        ]);
   });
 
   protected height(bucket: ActivityBucket): number {
@@ -63,7 +73,9 @@ export class ActivityBarsComponent {
   }
 
   protected label(bucket: ActivityBucket): string {
-    return bucket.weekly ? t('Semana del {0} al {1}', [formatDayKey(bucket.from), formatDayKey(bucket.to)]) : formatLongDayKey(bucket.from);
+    return bucket.weekly
+      ? t('Semana del {0} al {1}', [formatDayKey(bucket.from), formatDayKey(bucket.to)])
+      : formatLongDayKey(bucket.from);
   }
 
   protected title(bucket: ActivityBucket): string {

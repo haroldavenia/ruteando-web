@@ -31,7 +31,9 @@ export const PHONE_PATTERN = /^\+?[0-9 ()-]{7,20}$/;
 
 const FIELD_ERRORS: Readonly<Record<string, string>> = {
   required: t('Este campo es obligatorio'),
-  pattern: t('Escribe un teléfono válido: de 7 a 20 caracteres con dígitos, espacios, paréntesis o guiones, y un + inicial opcional'),
+  pattern: t(
+    'Escribe un teléfono válido: de 7 a 20 caracteres con dígitos, espacios, paréntesis o guiones, y un + inicial opcional'
+  ),
 };
 
 @Component({
@@ -54,7 +56,11 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-form-head [title]="isNew ? ('Nuevo lugar' | t) : ('Editar lugar' | t)" [backLabel]="'Lugares' | t" backLink="/lugares" />
+    <app-form-head
+      [title]="isNew ? ('Nuevo lugar' | t) : ('Editar lugar' | t)"
+      [backLabel]="'Lugares' | t"
+      backLink="/lugares"
+    />
     @switch (loader.status()) {
       @case ('loading') {
         <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
@@ -107,7 +113,9 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
           <app-form-result [error]="submit.error()" />
           <app-form-actions [dirty]="hasUnsavedChanges()">
             <a mat-button routerLink="/lugares">{{ 'Cancelar' | t }}</a>
-            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
+            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
+              {{ 'Guardar' | t }}
+            </button>
           </app-form-actions>
         </form>
       }
@@ -183,7 +191,12 @@ export class PlaceFormComponent implements HasUnsavedChanges {
 
     const request$ =
       this.id === null
-        ? this.api.create({ ...base, ...(address ? { address } : {}), ...(phone ? { phoneNumber: phone } : {}), ...(contact ? { contactName: contact } : {}) })
+        ? this.api.create({
+            ...base,
+            ...(address ? { address } : {}),
+            ...(phone ? { phoneNumber: phone } : {}),
+            ...(contact ? { contactName: contact } : {}),
+          })
         : // `zoneId` no se edita aquí: se reenvía para que la actualización no lo borre
           this.api.update(this.id, {
             ...base,

@@ -9,8 +9,10 @@ const path = require('node:path');
 const zlib = require('node:zlib');
 const { startServer } = require('./helpers');
 
-const BIG_JS = '/* texto repetido */\n' + 'export const linea = "ruteando planifica rutas, flota y jornadas";\n'.repeat(600);
-const BIG_HTML = '<!doctype html><html><body><app-root>' + '<p>ruteando-prueba</p>'.repeat(300) + '</app-root></body></html>';
+const BIG_JS =
+  '/* texto repetido */\n' + 'export const linea = "ruteando planifica rutas, flota y jornadas";\n'.repeat(600);
+const BIG_HTML =
+  '<!doctype html><html><body><app-root>' + '<p>ruteando-prueba</p>'.repeat(300) + '</app-root></body></html>';
 
 let tmpDir;
 let server;
@@ -19,7 +21,10 @@ before(async () => {
   tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ruteando-compresion-'));
   fs.writeFileSync(path.join(tmpDir, 'index.csr.html'), BIG_HTML);
   fs.writeFileSync(path.join(tmpDir, 'main-7FRZEZGX.js'), BIG_JS);
-  fs.writeFileSync(path.join(tmpDir, 'icono.svg'), '<svg xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0L10 10"/>'.repeat(200) + '</svg>');
+  fs.writeFileSync(
+    path.join(tmpDir, 'icono.svg'),
+    '<svg xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0L10 10"/>'.repeat(200) + '</svg>'
+  );
   fs.writeFileSync(path.join(tmpDir, 'fuente.woff2'), Buffer.alloc(4000, 7)); // ya está comprimida: no se vuelve a comprimir
   fs.writeFileSync(path.join(tmpDir, 'pequeno.js'), 'console.log(1);');
   server = await startServer({ webDist: tmpDir });

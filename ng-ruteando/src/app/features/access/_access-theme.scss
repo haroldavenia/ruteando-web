@@ -6,11 +6,13 @@
 .access-theme {
   // Botones de 48px (las esquinas de 12px de botones y campos son las de toda la aplicación, en `styles.scss`), con los tokens
   // oficiales de Material (nada de tocar sus clases internas)
-  @include mat.button-overrides((
-    filled-container-height: 48px,
-    outlined-container-height: 48px,
-    text-container-height: 48px,
-  ));
+  @include mat.button-overrides(
+    (
+      filled-container-height: 48px,
+      outlined-container-height: 48px,
+      text-container-height: 48px,
+    )
+  );
 
   :where(h1) {
     margin: 0 0 20px;

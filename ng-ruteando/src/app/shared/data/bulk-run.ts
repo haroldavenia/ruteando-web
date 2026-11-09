@@ -37,7 +37,11 @@ export interface BulkOptions {
 /**
  * Hace una operación por cada registro, de a `BULK_CONCURRENCY`. Un fallo no detiene a los demás: se cuenta en `failed` con su motivo.
  */
-export function runBulk(targets: readonly BulkTarget[], operation: (id: string) => Observable<unknown>, options: BulkOptions = {}): Observable<BulkResult> {
+export function runBulk(
+  targets: readonly BulkTarget[],
+  operation: (id: string) => Observable<unknown>,
+  options: BulkOptions = {}
+): Observable<BulkResult> {
   return from(targets).pipe(
     mergeMap(
       (target) =>
@@ -45,13 +49,18 @@ export function runBulk(targets: readonly BulkTarget[], operation: (id: string) 
           map((): BulkFailure | null => null),
           catchError((err: unknown) => {
             const done = err instanceof ApiError && (options.doneOnStatus ?? []).includes(err.status);
-            return of<BulkFailure | null>(done ? null : { label: target.label, message: messageFor(err, options.byStatus) });
-          }),
+            return of<BulkFailure | null>(
+              done ? null : { label: target.label, message: messageFor(err, options.byStatus) }
+            );
+          })
         ),
-      BULK_CONCURRENCY,
+      BULK_CONCURRENCY
     ),
     toArray(),
-    map((results) => ({ done: results.filter((r) => r === null).length, failed: results.filter((r): r is BulkFailure => r !== null) })),
+    map((results) => ({
+      done: results.filter((r) => r === null).length,
+      failed: results.filter((r): r is BulkFailure => r !== null),
+    }))
   );
 }
 
@@ -71,7 +80,9 @@ export function deleteMany(dialog: Pick<MatDialog, 'open'>, options: BulkDeleteO
     .open(ConfirmDialogComponent, {
       data: {
         title: one ? t('Eliminar {0}', [singular]) : t('Eliminar {0}', [plural]),
-        message: one ? t('¿Eliminar {0} «{1}»? Esta acción no se puede deshacer.', [singular, targets[0].label]) : t('¿Eliminar los {0} {1} elegidos? Esta acción no se puede deshacer.', [targets.length, plural]),
+        message: one
+          ? t('¿Eliminar {0} «{1}»? Esta acción no se puede deshacer.', [singular, targets[0].label])
+          : t('¿Eliminar los {0} {1} elegidos? Esta acción no se puede deshacer.', [targets.length, plural]),
         confirmLabel: t('Eliminar'),
         destructive: true,
       },
@@ -79,13 +90,22 @@ export function deleteMany(dialog: Pick<MatDialog, 'open'>, options: BulkDeleteO
     .afterClosed()
     .pipe(
       switchMap((confirmed) =>
-        confirmed === true ? runBulk(targets, options.remove, { byStatus: options.byStatus, doneOnStatus: options.doneOnStatus ?? [404] }) : EMPTY,
-      ),
+        confirmed === true
+          ? runBulk(targets, options.remove, {
+              byStatus: options.byStatus,
+              doneOnStatus: options.doneOnStatus ?? [404],
+            })
+          : EMPTY
+      )
     );
 }
 
 /** Los avisos de lo ocurrido: «Se eliminaron 3 de 4 vehículos» y, aparte, cuáles no y por qué. */
-export function bulkDeleteMessages(result: BulkResult, singular: string, plural: string): { success: string | null; error: string | null } {
+export function bulkDeleteMessages(
+  result: BulkResult,
+  singular: string,
+  plural: string
+): { success: string | null; error: string | null } {
   const total = result.done + result.failed.length;
   const success =
     result.done === 0
@@ -98,6 +118,9 @@ export function bulkDeleteMessages(result: BulkResult, singular: string, plural:
   const error =
     result.failed.length === 0
       ? null
-      : t('No se pudo eliminar {0}: {1}', [result.failed.length === 1 ? `1 ${singular}` : `${result.failed.length} ${plural}`, result.failed.map((f) => `«${f.label}» (${f.message})`).join('; ')]);
+      : t('No se pudo eliminar {0}: {1}', [
+          result.failed.length === 1 ? `1 ${singular}` : `${result.failed.length} ${plural}`,
+          result.failed.map((f) => `«${f.label}» (${f.message})`).join('; '),
+        ]);
   return { success, error };
 }

@@ -35,7 +35,9 @@ describe('passwordPolicy', () => {
     expect(check('Ruteando#2026abcdef')).toEqual({ policy: { symbol: true } });
     expect(check('Ruteando_2026abcdef')).toEqual({ policy: { symbol: true } });
     for (const symbol of '@$!%*?&') {
-      expect(check(`Ruteando${symbol}2026abcdef`)).withContext(symbol).toBeNull();
+      expect(check(`Ruteando${symbol}2026abcdef`))
+        .withContext(symbol)
+        .toBeNull();
     }
   });
 

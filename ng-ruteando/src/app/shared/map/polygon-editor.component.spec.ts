@@ -40,15 +40,21 @@ describe('PolygonEditorComponent', () => {
   let fixture: ComponentFixture<HostComponent>;
   let overlay: HTMLElement;
   const root = () => fixture.nativeElement as HTMLElement;
-  const editor = () => fixture.debugElement.query((d) => d.componentInstance instanceof PolygonEditorComponent).componentInstance as PolygonEditorComponent;
+  const editor = () =>
+    fixture.debugElement.query((d) => d.componentInstance instanceof PolygonEditorComponent)
+      .componentInstance as PolygonEditorComponent;
   const map = () => editor().olMap()!;
   const source = () => (map().getLayers().item(1) as VectorLayer<VectorSource>).getSource()!;
-  const button = (text: string) => (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text));
+  const button = (text: string) =>
+    (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes(text));
   const wait = (ms = 40) => new Promise((resolve) => setTimeout(resolve, ms));
   const summary = () => root().querySelector('.summary')?.textContent?.trim();
 
   async function create(vertices: LatLng[] = []): Promise<void> {
-    TestBed.configureTestingModule({ imports: [HostComponent], providers: [provideNoopAnimations(), { provide: MAP_CONFIG, useValue: TEST_MAP_CONFIG }] });
+    TestBed.configureTestingModule({
+      imports: [HostComponent],
+      providers: [provideNoopAnimations(), { provide: MAP_CONFIG, useValue: TEST_MAP_CONFIG }],
+    });
     overlay = TestBed.inject(OverlayContainer).getContainerElement();
     fixture = TestBed.createComponent(HostComponent);
     fixture.componentInstance.vertices.set(vertices);
@@ -60,7 +66,11 @@ describe('PolygonEditorComponent', () => {
     expect(editor().olMap()).withContext('el mapa debería haberse creado').not.toBeNull();
     fixture.detectChanges();
   }
-  const interaction = <T>(type: new (...args: never[]) => T): T | undefined => map().getInteractions().getArray().find((i) => i instanceof type) as T | undefined;
+  const interaction = <T>(type: new (...args: never[]) => T): T | undefined =>
+    map()
+      .getInteractions()
+      .getArray()
+      .find((i) => i instanceof type) as T | undefined;
 
   // Sin elección propia el tema sería el del sistema operativo de quien ejecuta las pruebas: estas dan por hecho el claro
   beforeEach(() => localStorage.setItem(THEME_STORAGE_KEY, 'light'));
@@ -157,7 +167,9 @@ describe('PolygonEditorComponent', () => {
       await create(SQUARE);
       button('Dibujar polígono')!.click();
       fixture.detectChanges();
-      root().querySelector('app-polygon-editor')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      root()
+        .querySelector('app-polygon-editor')!
+        .dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
       fixture.detectChanges();
       expect(interaction(Draw)).toBeUndefined();
       expect(fixture.componentInstance.vertices()).toEqual(SQUARE);
@@ -180,19 +192,29 @@ describe('PolygonEditorComponent', () => {
       const ring = geometry.getCoordinates();
       ring[0][1] = fromLonLat([-73.95, 4.5]);
       geometry.setCoordinates(ring);
-      interaction(Modify)!.dispatchEvent({ type: 'modifyend', features: source().getFeaturesCollection(), mapBrowserEvent: {} } as never);
+      interaction(Modify)!.dispatchEvent({
+        type: 'modifyend',
+        features: source().getFeaturesCollection(),
+        mapBrowserEvent: {},
+      } as never);
       fixture.detectChanges();
 
       const vertices = fixture.componentInstance.vertices();
       expect(vertices.length).toBe(4);
       expect(vertices[1].lng).toBeCloseTo(-73.95, 5);
-      expect((root().querySelector('input[aria-label="Longitud del vértice 2"]') as HTMLInputElement).value).toContain('-73.95');
+      expect((root().querySelector('input[aria-label="Longitud del vértice 2"]') as HTMLInputElement).value).toContain(
+        '-73.95'
+      );
     });
 
     it('no reconstruye la geometría mientras arrastra (mantiene la misma instancia)', async () => {
       await create(SQUARE);
       const before = source().getFeatures()[0];
-      interaction(Modify)!.dispatchEvent({ type: 'modifyend', features: source().getFeaturesCollection(), mapBrowserEvent: {} } as never);
+      interaction(Modify)!.dispatchEvent({
+        type: 'modifyend',
+        features: source().getFeaturesCollection(),
+        mapBrowserEvent: {},
+      } as never);
       fixture.detectChanges();
       expect(source().getFeatures()[0]).toBe(before);
     });
@@ -207,7 +229,9 @@ describe('PolygonEditorComponent', () => {
       expect(overlay.textContent).toContain('¿Quitar los 4 vértices del polígono?');
       expect(fixture.componentInstance.vertices().length).toBe(4);
 
-      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === 'Borrar')!.click();
+      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.trim() === 'Borrar')!
+        .click();
       await wait();
       fixture.detectChanges();
       expect(fixture.componentInstance.vertices()).toEqual([]);
@@ -219,7 +243,9 @@ describe('PolygonEditorComponent', () => {
       button('Borrar polígono')!.click();
       TestBed.inject(ApplicationRef).tick();
       await wait();
-      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === 'Conservar')!.click();
+      (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[])
+        .find((b) => b.textContent?.trim() === 'Conservar')!
+        .click();
       await wait();
       expect(fixture.componentInstance.vertices().length).toBe(4);
     });
@@ -247,7 +273,12 @@ describe('PolygonEditorComponent', () => {
     });
 
     it('una pajarita indica entre qué lados se cruza y se marca como problema', async () => {
-      await create([{ lat: 0, lng: 0 }, { lat: 1, lng: 1 }, { lat: 1, lng: 0 }, { lat: 0, lng: 1 }]);
+      await create([
+        { lat: 0, lng: 0 },
+        { lat: 1, lng: 1 },
+        { lat: 1, lng: 0 },
+        { lat: 0, lng: 1 },
+      ]);
       expect(summary()).toContain('Los lados 1 y 3 se cruzan');
       expect(root().querySelector('.summary')?.classList.contains('problem')).toBeTrue();
     });
@@ -262,13 +293,22 @@ describe('PolygonEditorComponent', () => {
       fixture.componentInstance.color.set('#0072B2');
       fixture.detectChanges();
       const layer = map().getLayers().item(1) as VectorLayer<VectorSource>;
-      const styles = layer.getStyleFunction()!(source().getFeatures()[0], 1) as unknown as { getStroke(): { getColor(): string; getLineDash(): number[] | null } }[];
+      const styles = layer.getStyleFunction()!(source().getFeatures()[0], 1) as unknown as {
+        getStroke(): { getColor(): string; getLineDash(): number[] | null };
+      }[];
       expect(styles.at(-1)!.getStroke().getColor()).toBe('#0072B2');
       expect(styles.at(-1)!.getStroke().getLineDash()).toBeNull();
 
-      fixture.componentInstance.vertices.set([{ lat: 0, lng: 0 }, { lat: 1, lng: 1 }, { lat: 1, lng: 0 }, { lat: 0, lng: 1 }]);
+      fixture.componentInstance.vertices.set([
+        { lat: 0, lng: 0 },
+        { lat: 1, lng: 1 },
+        { lat: 1, lng: 0 },
+        { lat: 0, lng: 1 },
+      ]);
       fixture.detectChanges();
-      const bad = layer.getStyleFunction()!(source().getFeatures()[0], 1) as unknown as { getStroke(): { getColor(): string; getLineDash(): number[] | null } }[];
+      const bad = layer.getStyleFunction()!(source().getFeatures()[0], 1) as unknown as {
+        getStroke(): { getColor(): string; getLineDash(): number[] | null };
+      }[];
       // El rojo de un polígono no válido es el error del tema (antes, un rojo fijo en el código)
       const probe = document.createElement('span');
       probe.style.backgroundColor = 'var(--mat-sys-error)';
@@ -311,7 +351,12 @@ describe('PolygonEditorComponent', () => {
         await create(SQUARE);
         expect(toHex(styles().at(-1)!.getStroke().getColor())).toBe(token('--mat-sys-primary'));
 
-        fixture.componentInstance.vertices.set([{ lat: 0, lng: 0 }, { lat: 1, lng: 1 }, { lat: 1, lng: 0 }, { lat: 0, lng: 1 }]);
+        fixture.componentInstance.vertices.set([
+          { lat: 0, lng: 0 },
+          { lat: 1, lng: 1 },
+          { lat: 1, lng: 0 },
+          { lat: 0, lng: 1 },
+        ]);
         fixture.detectChanges();
         expect(styles().at(-1)!.getStroke().getColor()).toBe(token('--mat-sys-error'));
       });
@@ -345,7 +390,9 @@ describe('PolygonEditorComponent', () => {
         const order = ['.toolbar', '.map', '.summary', 'app-vertex-table'].map((s) => root().querySelector(s)!);
 
         for (let i = 0; i < order.length - 1; i++) {
-          expect(order[i].compareDocumentPosition(order[i + 1]) & Node.DOCUMENT_POSITION_FOLLOWING).withContext(String(i)).toBeTruthy();
+          expect(order[i].compareDocumentPosition(order[i + 1]) & Node.DOCUMENT_POSITION_FOLLOWING)
+            .withContext(String(i))
+            .toBeTruthy();
         }
       });
 

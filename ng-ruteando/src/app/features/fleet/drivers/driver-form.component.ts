@@ -1,5 +1,13 @@
 import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -48,10 +56,29 @@ function documentValidator(missing: 'type' | 'value'): ValidatorFn {
 
 @Component({
   selector: 'app-driver-form',
-  imports: [ReactiveFormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, SkeletonComponent, FocusFirstInvalidDirective, FormResultComponent, PasswordFieldComponent, FormActionsComponent, FormHeadComponent, MatIconModule, TranslatePipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    SkeletonComponent,
+    FocusFirstInvalidDirective,
+    FormResultComponent,
+    PasswordFieldComponent,
+    FormActionsComponent,
+    FormHeadComponent,
+    MatIconModule,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-form-head [title]="isNew ? ('Nuevo conductor' | t) : ('Editar conductor' | t)" [backLabel]="'Conductores' | t" backLink="/flota/conductores" />
+    <app-form-head
+      [title]="isNew ? ('Nuevo conductor' | t) : ('Editar conductor' | t)"
+      [backLabel]="'Conductores' | t"
+      backLink="/flota/conductores"
+    />
     @switch (loader.status()) {
       @case ('loading') {
         <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
@@ -106,14 +133,26 @@ function documentValidator(missing: 'type' | 'value'): ValidatorFn {
           @if (isNew) {
             <section class="form-section">
               <h2><mat-icon aria-hidden="true" fontIcon="lock" />{{ 'Acceso' | t }}</h2>
-              <app-password-field [control]="form.controls.password" [label]="'Contraseña inicial' | t" autocomplete="new-password" [messages]="{ required: ('Introduce una contraseña inicial' | t) }" />
-              <app-password-field [control]="form.controls.repeatPassword" [label]="'Repetir contraseña' | t" autocomplete="new-password" [messages]="{ required: ('Repite la contraseña inicial' | t) }" />
+              <app-password-field
+                [control]="form.controls.password"
+                [label]="'Contraseña inicial' | t"
+                autocomplete="new-password"
+                [messages]="{ required: ('Introduce una contraseña inicial' | t) }"
+              />
+              <app-password-field
+                [control]="form.controls.repeatPassword"
+                [label]="'Repetir contraseña' | t"
+                autocomplete="new-password"
+                [messages]="{ required: ('Repite la contraseña inicial' | t) }"
+              />
             </section>
           }
           <app-form-result [error]="submit.error()" />
           <app-form-actions [dirty]="hasUnsavedChanges()">
             <a mat-button routerLink="/flota/conductores">{{ 'Cancelar' | t }}</a>
-            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">{{ 'Guardar' | t }}</button>
+            <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
+              {{ 'Guardar' | t }}
+            </button>
           </app-form-actions>
         </form>
       }
@@ -139,7 +178,10 @@ export class DriverFormComponent implements HasUnsavedChanges {
     const keys = this.masters.activeValues('IdentifierType').map((value) => value.key);
     const all = keys.length > 0 ? keys : IDENTIFIER_KEYS;
     const stored = this.storedType();
-    return (stored && !all.includes(stored) ? [...all, stored] : all).map((key) => ({ key, label: identifierLabel(key) }));
+    return (stored && !all.includes(stored) ? [...all, stored] : all).map((key) => ({
+      key,
+      label: identifierLabel(key),
+    }));
   });
 
   protected readonly form = new FormGroup({
@@ -150,8 +192,14 @@ export class DriverFormComponent implements HasUnsavedChanges {
     identifierType: new FormControl('', { nonNullable: true, validators: [documentValidator('type')] }),
     identifierValue: new FormControl('', { nonNullable: true, validators: [documentValidator('value')] }),
     // Solo se piden en el alta: en la edición los controles no se usan ni se envían
-    password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)] }),
-    repeatPassword: new FormControl('', { nonNullable: true, validators: [Validators.required, matchesSibling('password')] }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)],
+    }),
+    repeatPassword: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, matchesSibling('password')],
+    }),
   });
 
   constructor() {
@@ -163,8 +211,12 @@ export class DriverFormComponent implements HasUnsavedChanges {
       revalidateOnPasswordChange(this.form, 'password', 'repeatPassword');
     }
     // El tipo y el número se exigen el uno al otro: al cambiar uno se revalida el otro
-    this.form.controls.identifierType.valueChanges.subscribe(() => this.form.controls.identifierValue.updateValueAndValidity({ emitEvent: false }));
-    this.form.controls.identifierValue.valueChanges.subscribe(() => this.form.controls.identifierType.updateValueAndValidity({ emitEvent: false }));
+    this.form.controls.identifierType.valueChanges.subscribe(() =>
+      this.form.controls.identifierValue.updateValueAndValidity({ emitEvent: false })
+    );
+    this.form.controls.identifierValue.valueChanges.subscribe(() =>
+      this.form.controls.identifierType.updateValueAndValidity({ emitEvent: false })
+    );
     this.loader.load((user) => {
       this.storedType.set(user.identifierType ?? '');
       this.form.reset({
@@ -194,7 +246,13 @@ export class DriverFormComponent implements HasUnsavedChanges {
     }
     const { firstName, lastName, email, phone, password, identifierType, identifierValue } = this.form.getRawValue();
     const document = { identifierType: identifierType.trim() || null, identifierValue: identifierValue.trim() || null };
-    const person = { firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim(), role: 'driver' as const, phone: phone.trim() || null };
+    const person = {
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      role: 'driver' as const,
+      phone: phone.trim() || null,
+    };
     // Al editar se envía el documento que muestra el formulario (el del conductor si no se tocó, así guardar no lo borra); en el alta, solo si se escribió
     const request$ =
       this.id === null
@@ -208,7 +266,7 @@ export class DriverFormComponent implements HasUnsavedChanges {
         void notify(this.injector, this.id === null ? t('Conductor creado') : t('Conductor guardado'));
         void this.router.navigateByUrl('/flota/conductores');
       },
-      { 409: DUPLICATE_EMAIL },
+      { 409: DUPLICATE_EMAIL }
     );
   }
 }

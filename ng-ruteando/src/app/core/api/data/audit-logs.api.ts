@@ -40,7 +40,13 @@ export class AuditLogsApi {
 
   private page(url: string, params: HttpParams): Observable<Page<AuditLog>> {
     return this.http.get<AuditLogPage>(url, { params }).pipe(
-      map(({ number, content, size, totalElements, totalPages }) => ({ content, page: number, size, totalElements, totalPages })),
+      map(({ number, content, size, totalElements, totalPages }) => ({
+        content,
+        page: number,
+        size,
+        totalElements,
+        totalPages,
+      }))
     );
   }
 }

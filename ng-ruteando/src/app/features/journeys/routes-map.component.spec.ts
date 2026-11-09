@@ -43,7 +43,7 @@ describe('RoutesMapComponent', () => {
   const layer = (n: number) => map().getLayers().item(n) as VectorLayer<VectorSource>;
   const lines = () => layer(1).getSource()!.getFeatures() as Feature<LineString>[];
   const stops = () => layer(2).getSource()!.getFeatures() as Feature<Geometry>[];
-  const styleOf = (l: VectorLayer<VectorSource>, f: Feature) => (l.getStyleFunction()!(f, 1) as Style[]);
+  const styleOf = (l: VectorLayer<VectorSource>, f: Feature) => l.getStyleFunction()!(f, 1) as Style[];
   const lineStyle = (f: Feature) => styleOf(layer(1), f);
   const legendButtons = () => Array.from(root().querySelectorAll('.legend .item')) as HTMLButtonElement[];
 
@@ -87,7 +87,11 @@ describe('RoutesMapComponent', () => {
       probe.remove();
       return color;
     };
-    const imageOf = (f: Feature) => styleOf(layer(2), f).at(-1)!.getImage() as unknown as { getFill(): { getColor(): string }; getStroke(): { getColor(): string } };
+    const imageOf = (f: Feature) =>
+      styleOf(layer(2), f).at(-1)!.getImage() as unknown as {
+        getFill(): { getColor(): string };
+        getStroke(): { getColor(): string };
+      };
 
     afterEach(() => {
       localStorage.removeItem(THEME_STORAGE_KEY);
@@ -111,10 +115,26 @@ describe('RoutesMapComponent', () => {
       const service = stops().find((s) => s.get('stopType') === 'service')!;
       const depot = stops().find((s) => s.get('stopType') === 'depot')!;
 
-      expect(imageOf(service as Feature).getFill().getColor()).toBe(ROUTE_COLORS_DARK[0]);
-      expect(imageOf(service as Feature).getStroke().getColor()).toBe(token('--mat-sys-surface'));
-      expect(imageOf(depot as Feature).getFill().getColor()).toBe(token('--mat-sys-surface'));
-      const number = styleOf(layer(2), service as Feature).at(-1)!.getText()!.getFill()!.getColor();
+      expect(
+        imageOf(service as Feature)
+          .getFill()
+          .getColor()
+      ).toBe(ROUTE_COLORS_DARK[0]);
+      expect(
+        imageOf(service as Feature)
+          .getStroke()
+          .getColor()
+      ).toBe(token('--mat-sys-surface'));
+      expect(
+        imageOf(depot as Feature)
+          .getFill()
+          .getColor()
+      ).toBe(token('--mat-sys-surface'));
+      const number = styleOf(layer(2), service as Feature)
+        .at(-1)!
+        .getText()!
+        .getFill()!
+        .getColor();
       expect(number).toBe('#000000');
     });
 
@@ -156,7 +176,12 @@ describe('RoutesMapComponent', () => {
     it('dibuja todas las paradas con posición, con número de ruta y de orden, y los depósitos con «D»', async () => {
       await create([base]);
       expect(stops().length).toBe(base.waypoints.length);
-      const texts = stops().map((s) => styleOf(layer(2), s as Feature).at(-1)!.getText()!.getText());
+      const texts = stops().map((s) =>
+        styleOf(layer(2), s as Feature)
+          .at(-1)!
+          .getText()!
+          .getText()
+      );
       expect(texts).toContain('D');
       expect(texts).toContain('1·1');
       expect(texts.filter((t) => t === 'D').length).toBe(base.waypoints.filter((w) => w.stopType === 'depot').length);
@@ -166,7 +191,8 @@ describe('RoutesMapComponent', () => {
       await create([base]);
       const depot = stops().find((s) => s.get('stopType') === 'depot')!;
       const service = stops().find((s) => s.get('stopType') === 'service')!;
-      const fill = (f: Feature) => styleOf(layer(2), f).at(-1)!.getImage() as unknown as { getFill(): { getColor(): string } };
+      const fill = (f: Feature) =>
+        styleOf(layer(2), f).at(-1)!.getImage() as unknown as { getFill(): { getColor(): string } };
       expect(fill(depot).getFill().getColor()).toBe('#ffffff');
       expect(fill(service).getFill().getColor()).toBe(routeColor(0));
     });
@@ -176,7 +202,9 @@ describe('RoutesMapComponent', () => {
       const extent = map().getView().calculateExtent(map().getSize());
       for (const stop of stops()) {
         const [x, y] = (stop.getGeometry() as unknown as { getCoordinates(): number[] }).getCoordinates();
-        expect(x >= extent[0] && x <= extent[2] && y >= extent[1] && y <= extent[3]).withContext(`${stop.get('sequence')}`).toBeTrue();
+        expect(x >= extent[0] && x <= extent[2] && y >= extent[1] && y <= extent[3])
+          .withContext(`${stop.get('sequence')}`)
+          .toBeTrue();
       }
     });
 
@@ -188,7 +216,10 @@ describe('RoutesMapComponent', () => {
     });
 
     it('una parada sin posición válida se omite sin afectar al resto', async () => {
-      const broken = { ...base, waypoints: base.waypoints.map((w, i) => (i === 1 ? { ...w, position: null } : w)) } as DomainRoute;
+      const broken = {
+        ...base,
+        waypoints: base.waypoints.map((w, i) => (i === 1 ? { ...w, position: null } : w)),
+      } as DomainRoute;
       await create([broken]);
       expect(stops().length).toBe(base.waypoints.length - 1);
       expect(lines().length).toBe(1);
@@ -260,7 +291,10 @@ describe('RoutesMapComponent', () => {
 
     it('«Ver todas» solo aparece con una ruta elegida y la quita', async () => {
       await create([shifted(0, 'Norte', 0)]);
-      const showAll = () => (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Ver todas'));
+      const showAll = () =>
+        (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) =>
+          b.textContent?.includes('Ver todas')
+        );
       expect(showAll()).toBeUndefined();
       legendButtons()[0].click();
       fixture.detectChanges();
@@ -274,7 +308,11 @@ describe('RoutesMapComponent', () => {
     it('una ruta elegida desde fuera (la tabla) se resalta igual', async () => {
       await create([shifted(0, 'Norte', 0), shifted(1, 'Sur', -0.05)], { selectedRoute: 0 });
       expect(legendButtons()[0].getAttribute('aria-pressed')).toBe('true');
-      expect(lineStyle(lines().find((l) => l.get('routeIndex') === 0)!)[1].getStroke()!.getWidth()).toBe(6);
+      expect(
+        lineStyle(lines().find((l) => l.get('routeIndex') === 0)!)[1]
+          .getStroke()!
+          .getWidth()
+      ).toBe(6);
     });
 
     it('la leyenda es operable con teclado: son botones nativos', async () => {
@@ -288,10 +326,17 @@ describe('RoutesMapComponent', () => {
   describe('ficha de parada', () => {
     const pixelOf = (routeIndex: number, sequence: number) => {
       const stop = stops().find((s) => s.get('routeIndex') === routeIndex && s.get('sequence') === sequence)!;
-      return map().getPixelFromCoordinate((stop.getGeometry() as unknown as { getCoordinates(): number[] }).getCoordinates());
+      return map().getPixelFromCoordinate(
+        (stop.getGeometry() as unknown as { getCoordinates(): number[] }).getCoordinates()
+      );
     };
-    const clickAt = (pixel: number[]) => map().dispatchEvent({ type: 'click', pixel, coordinate: map().getCoordinateFromPixel(pixel) } as never);
-    const fieldValues = () => Array.from(root().querySelectorAll('.card dl > div')).map((d) => [d.querySelector('dt')!.textContent!.trim(), d.querySelector('dd')!.textContent!.trim()]);
+    const clickAt = (pixel: number[]) =>
+      map().dispatchEvent({ type: 'click', pixel, coordinate: map().getCoordinateFromPixel(pixel) } as never);
+    const fieldValues = () =>
+      Array.from(root().querySelectorAll('.card dl > div')).map((d) => [
+        d.querySelector('dt')!.textContent!.trim(),
+        d.querySelector('dd')!.textContent!.trim(),
+      ]);
 
     it('un clic sobre una parada muestra su ficha con ruta, orden, tipo, llegada y salida', async () => {
       await create([shifted(0, 'Norte', 0), shifted(1, 'Sur', -0.05)]);

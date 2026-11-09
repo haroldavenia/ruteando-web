@@ -24,7 +24,12 @@ describe('ResourceFormComponent', () => {
   let fixture: ComponentFixture<ResourceFormComponent>;
   let http: HttpTestingController;
   const root = () => fixture.nativeElement as HTMLElement;
-  const control = (name: string) => (fixture.componentInstance as unknown as { form: { controls: Record<string, { setValue(v: unknown): void; value: unknown }> } }).form.controls[name];
+  const control = (name: string) =>
+    (
+      fixture.componentInstance as unknown as {
+        form: { controls: Record<string, { setValue(v: unknown): void; value: unknown }> };
+      }
+    ).form.controls[name];
 
   function setup(id: string | null, load: { types?: unknown; places?: unknown; state?: unknown } = {}): void {
     TestBed.configureTestingModule({
@@ -40,7 +45,9 @@ describe('ResourceFormComponent', () => {
     });
     http = TestBed.inject(HttpTestingController);
     if (load.state) {
-      spyOn(TestBed.inject(Router), 'currentNavigation').and.returnValue({ extras: { state: load.state } } as unknown as Navigation);
+      spyOn(TestBed.inject(Router), 'currentNavigation').and.returnValue({
+        extras: { state: load.state },
+      } as unknown as Navigation);
     }
     fixture = TestBed.createComponent(ResourceFormComponent);
     fixture.detectChanges();
@@ -146,13 +153,21 @@ describe('ResourceFormComponent', () => {
     });
 
     it('sin tipos explica que hay que crear uno y enlaza a /flota/tipos', () => {
-      setup(null, { types: { response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } } } });
+      setup(null, {
+        types: {
+          response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } },
+        },
+      });
       expect(root().textContent).toContain('Todavía no hay tipos de vehículo');
       expect(root().querySelector('a[href="/flota/tipos"]')).not.toBeNull();
     });
 
     it('sin lugares explica que hace falta un depósito y enlaza a /lugares/nuevo', () => {
-      setup(null, { places: { response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } } } });
+      setup(null, {
+        places: {
+          response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } },
+        },
+      });
       expect(root().textContent).toContain('Todavía no hay lugares que usar como depósito');
       expect(root().querySelector('a[href="/lugares/nuevo"]')).not.toBeNull();
     });
@@ -188,7 +203,11 @@ describe('ResourceFormComponent', () => {
       expect(root().querySelector('a[href="/flota/vehiculos"]')).not.toBeNull();
     });
     it('al guardar reenvía los tipos de paquete y las zonas permitidas que el formulario no toca', () => {
-      const record = { ...(fx(get).response.body as { id: string }), allowedPackageTypes: ['delivery'], allowedZoneIds: ['zona-1', 'zona-2'] };
+      const record = {
+        ...(fx(get).response.body as { id: string }),
+        allowedPackageTypes: ['delivery'],
+        allowedZoneIds: ['zona-1', 'zona-2'],
+      };
       setup(record.id);
       http.expectOne(`/gateway/resources/${record.id}`).flush(record);
       fixture.detectChanges();
@@ -203,7 +222,9 @@ describe('ResourceFormComponent', () => {
     it('si el vehículo no tiene restricciones envía null, no las omite', () => {
       const record = fx(get).response.body as { id: string };
       setup(record.id);
-      http.expectOne(`/gateway/resources/${record.id}`).flush({ ...record, allowedPackageTypes: null, allowedZoneIds: null });
+      http
+        .expectOne(`/gateway/resources/${record.id}`)
+        .flush({ ...record, allowedPackageTypes: null, allowedZoneIds: null });
       fixture.detectChanges();
 
       submit();
@@ -239,7 +260,9 @@ describe('ResourceFormComponent', () => {
       const [commands, extras] = navigate.calls.mostRecent().args;
       expect(commands).toEqual(['/flota/tipos/nuevo']);
       expect(extras?.queryParams).toEqual({ volver: '/' });
-      const handoff = (extras?.state as Record<string, { draft: { name: string; anchorDate: string } }>)['fleetTypeHandoff'];
+      const handoff = (extras?.state as Record<string, { draft: { name: string; anchorDate: string } }>)[
+        'fleetTypeHandoff'
+      ];
       expect(handoff.draft.name).toBe('Furgón de prueba');
       expect(handoff.draft.anchorDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(fixture.componentInstance.hasUnsavedChanges()).toBeFalse();

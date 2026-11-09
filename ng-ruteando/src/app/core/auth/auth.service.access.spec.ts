@@ -28,7 +28,8 @@ import validationFx from '../../../testing/fixtures/gateway-errors/post__auth__l
 const fx = (f: unknown) => f as unknown as Fixture;
 const INVALID_LINK = 'El enlace no es válido o ha caducado';
 const REVIEW_DATA = 'Revisa los datos e inténtalo de nuevo';
-const POLICY_REJECTED = 'La contraseña no cumple la política. Mínimo 16 caracteres, con mayúscula, minúscula, número y un símbolo (@$!%*?&)';
+const POLICY_REJECTED =
+  'La contraseña no cumple la política. Mínimo 16 caracteres, con mayúscula, minúscula, número y un símbolo (@$!%*?&)';
 const flushError = (req: TestRequest, f: unknown) =>
   req.flush(fx(f).response.body as object, { status: fx(f).response.status, statusText: 'Error' });
 
@@ -64,10 +65,15 @@ describe('AuthService: operaciones de acceso', () => {
     controller.verify();
   });
 
-  const fail = <T>(source: { subscribe: (o: { next: () => void; error: (e: unknown) => void }) => unknown }): Promise<ApiError> =>
-    new Promise((resolve, reject) => source.subscribe({ next: () => reject(new Error('se esperaba un error')), error: (e) => resolve(e as ApiError) }));
-  const ok = <T>(source: { subscribe: (o: { next: (v: T) => void; error: (e: unknown) => void }) => unknown }): Promise<T> =>
-    new Promise((resolve, reject) => source.subscribe({ next: resolve, error: reject }));
+  const fail = <T>(source: {
+    subscribe: (o: { next: () => void; error: (e: unknown) => void }) => unknown;
+  }): Promise<ApiError> =>
+    new Promise((resolve, reject) =>
+      source.subscribe({ next: () => reject(new Error('se esperaba un error')), error: (e) => resolve(e as ApiError) })
+    );
+  const ok = <T>(source: {
+    subscribe: (o: { next: (v: T) => void; error: (e: unknown) => void }) => unknown;
+  }): Promise<T> => new Promise((resolve, reject) => source.subscribe({ next: resolve, error: reject }));
 
   describe('mensajes del login', () => {
     it('401: "Correo o contraseña incorrectos", no el de sesión caducada', async () => {
@@ -106,7 +112,13 @@ describe('AuthService: operaciones de acceso', () => {
       const req = controller.expectOne('/gateway/auth/register');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(registerFx.request.body);
-      expect(Object.keys(req.request.body).sort()).toEqual(['email', 'firstName', 'lastName', 'password', 'tenantName']);
+      expect(Object.keys(req.request.body).sort()).toEqual([
+        'email',
+        'firstName',
+        'lastName',
+        'password',
+        'tenantName',
+      ]);
       respondWith(req, fx(registerFx));
 
       const response = await result;
@@ -118,7 +130,9 @@ describe('AuthService: operaciones de acceso', () => {
 
     it('409: "Ya existe una cuenta con ese correo"', async () => {
       const result = fail(service.register(input));
-      controller.expectOne('/gateway/auth/register').flush({ error: 'CONFLICT', message: 'exists' }, { status: 409, statusText: 'x' });
+      controller
+        .expectOne('/gateway/auth/register')
+        .flush({ error: 'CONFLICT', message: 'exists' }, { status: 409, statusText: 'x' });
 
       const error = await result;
       expect(error.message).toBe('Ya existe una cuenta con ese correo');
@@ -179,7 +193,9 @@ describe('AuthService: operaciones de acceso', () => {
 
     it('con un token rechazado no guarda sesión y da el mensaje de enlace no válido', async () => {
       const result = fail(service.verifyEmail('MALO'));
-      controller.expectOne('/gateway/auth/verify-email').flush({ error: 'BAD_REQUEST' }, { status: 400, statusText: 'x' });
+      controller
+        .expectOne('/gateway/auth/verify-email')
+        .flush({ error: 'BAD_REQUEST' }, { status: 400, statusText: 'x' });
 
       expect((await result).message).toBe(INVALID_LINK);
       expect(tokens.get()).toBe('');

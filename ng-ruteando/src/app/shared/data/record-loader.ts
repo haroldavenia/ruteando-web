@@ -21,7 +21,7 @@ export class RecordLoader<T> {
 
   constructor(
     private readonly id: string | null,
-    private readonly fetch: (id: string) => Observable<T>,
+    private readonly fetch: (id: string) => Observable<T>
   ) {}
 
   /** `onLoaded` recibe el registro para rellenar el formulario. */

@@ -2,7 +2,11 @@
 
 <ol class="steps" [attr.aria-label]="'Pasos de la importación' | t">
   @for (step of steps(); track step.number) {
-    <li [class.done]="step.state === 'done'" [class.current]="step.state === 'current'" [attr.aria-current]="step.state === 'current' ? 'step' : null">
+    <li
+      [class.done]="step.state === 'done'"
+      [class.current]="step.state === 'current'"
+      [attr.aria-current]="step.state === 'current' ? 'step' : null"
+    >
       <span class="num" aria-hidden="true">
         @if (step.state === 'done') {
           <mat-icon fontIcon="check" />
@@ -18,15 +22,27 @@
 <section class="card" aria-labelledby="guide-title">
   <h2 id="guide-title">{{ '1. Prepara el archivo' | t }}</h2>
   <p>
-    {{ 'El archivo debe ser un CSV en UTF-8 con una fila por paquete.' | t }} <strong>{{ 'La aplicación no calcula la ubicación a partir de la dirección:' | t }}</strong>
+    {{ 'El archivo debe ser un CSV en UTF-8 con una fila por paquete.' | t }}
+    <strong>{{ 'La aplicación no calcula la ubicación a partir de la dirección:' | t }}</strong>
     {{ 'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.' | t: [maxRows] }}
   </p>
-  <button mat-stroked-button type="button" (click)="downloadTemplate()"><mat-icon aria-hidden="true">download</mat-icon>{{ 'Descargar plantilla' | t }}</button>
+  <button mat-stroked-button type="button" (click)="downloadTemplate()">
+    <mat-icon aria-hidden="true">download</mat-icon>{{ 'Descargar plantilla' | t }}
+  </button>
   <div class="scroll stack-scope">
     <table class="grid stack-table" role="table">
-      <caption>{{ 'Columnas del archivo' | t }}</caption>
+      <caption>
+        {{
+          'Columnas del archivo' | t
+        }}
+      </caption>
       <thead role="rowgroup">
-        <tr role="row"><th scope="col" role="columnheader">{{ 'Columna' | t }}</th><th scope="col" role="columnheader">{{ 'Obligatoria' | t }}</th><th scope="col" role="columnheader">{{ 'Qué lleva' | t }}</th><th scope="col" role="columnheader">{{ 'Si falta' | t }}</th></tr>
+        <tr role="row">
+          <th scope="col" role="columnheader">{{ 'Columna' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Obligatoria' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Qué lleva' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Si falta' | t }}</th>
+        </tr>
       </thead>
       <tbody role="rowgroup">
         @for (column of columns; track column.key) {
@@ -63,7 +79,9 @@
     <p class="error" role="alert">{{ message }}</p>
   }
   @if (phase() === 'preview' || phase() === 'importing' || phase() === 'done') {
-    <button mat-button type="button" (click)="clearFile(file)" [disabled]="phase() === 'importing'">{{ 'Quitar archivo' | t }}</button>
+    <button mat-button type="button" (click)="clearFile(file)" [disabled]="phase() === 'importing'">
+      {{ 'Quitar archivo' | t }}
+    </button>
   }
 </section>
 
@@ -80,13 +98,25 @@
     @if (result.errors.length > 0) {
       <div class="scroll stack-scope">
         <table class="grid stack-table" role="table">
-          <caption>{{ 'Filas rechazadas (no se importarán)' | t }}</caption>
+          <caption>
+            {{
+              'Filas rechazadas (no se importarán)' | t
+            }}
+          </caption>
           <thead role="rowgroup">
-            <tr role="row"><th scope="col" role="columnheader">{{ 'Línea' | t }}</th><th scope="col" role="columnheader">{{ 'Campo' | t }}</th><th scope="col" role="columnheader">{{ 'Motivo' | t }}</th></tr>
+            <tr role="row">
+              <th scope="col" role="columnheader">{{ 'Línea' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Campo' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Motivo' | t }}</th>
+            </tr>
           </thead>
           <tbody role="rowgroup">
             @for (error of shownErrors(); track $index) {
-              <tr role="row"><td role="cell" [attr.data-label]="'Línea' | t">{{ error.line }}</td><td role="cell" [attr.data-label]="'Campo' | t">{{ error.field }}</td><td role="cell" [attr.data-label]="'Motivo' | t">{{ error.message }}</td></tr>
+              <tr role="row">
+                <td role="cell" [attr.data-label]="'Línea' | t">{{ error.line }}</td>
+                <td role="cell" [attr.data-label]="'Campo' | t">{{ error.field }}</td>
+                <td role="cell" [attr.data-label]="'Motivo' | t">{{ error.message }}</td>
+              </tr>
             }
           </tbody>
         </table>
@@ -99,11 +129,20 @@
     @if (preview().length > 0) {
       <div class="scroll stack-scope">
         <table class="grid stack-table" role="table">
-          <caption>{{ 'Primeras {0} filas válidas' | t: [previewLimit] }}</caption>
+          <caption>
+            {{
+              'Primeras {0} filas válidas' | t: [previewLimit]
+            }}
+          </caption>
           <thead role="rowgroup">
             <tr role="row">
-              <th scope="col" role="columnheader">{{ 'Línea' | t }}</th><th scope="col" role="columnheader">{{ 'Guía' | t }}</th><th scope="col" role="columnheader">{{ 'Nombre' | t }}</th><th scope="col" role="columnheader">{{ 'Dirección' | t }}</th>
-              <th scope="col" role="columnheader">{{ 'Latitud / longitud' | t }}</th><th scope="col" role="columnheader">{{ 'Peso' | t }}</th><th scope="col" role="columnheader">{{ 'Volumen' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Línea' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Guía' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Nombre' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Dirección' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Latitud / longitud' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Peso' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Volumen' | t }}</th>
             </tr>
           </thead>
           <tbody role="rowgroup">
@@ -128,9 +167,13 @@
         <p class="error" role="alert">{{ 'Ninguna fila es válida: corrige el archivo y vuelve a elegirlo.' | t }}</p>
       }
       <div class="actions">
-        <button mat-flat-button class="primary-action" type="button" (click)="start()" [disabled]="validCount() === 0">{{ 'Importar {0} paquetes' | t: [validCount()] }}</button>
+        <button mat-flat-button class="primary-action" type="button" (click)="start()" [disabled]="validCount() === 0">
+          {{ 'Importar {0} paquetes' | t: [validCount()] }}
+        </button>
         @if (result.errors.length > 0) {
-          <button mat-stroked-button type="button" (click)="downloadReport()">{{ 'Descargar informe de errores' | t }}</button>
+          <button mat-stroked-button type="button" (click)="downloadReport()">
+            {{ 'Descargar informe de errores' | t }}
+          </button>
         }
       </div>
     }
@@ -140,7 +183,11 @@
 @if (phase() === 'importing') {
   <section class="card" aria-labelledby="progress-title">
     <h2 id="progress-title">{{ 'Importando' | t }}</h2>
-    <mat-progress-bar mode="determinate" [value]="progress().total ? (progress().done / progress().total) * 100 : 0" [attr.aria-label]="'Progreso de la importación' | t" />
+    <mat-progress-bar
+      mode="determinate"
+      [value]="progress().total ? (progress().done / progress().total) * 100 : 0"
+      [attr.aria-label]="'Progreso de la importación' | t"
+    />
     <p role="status" aria-live="polite">{{ 'Importando… {0} de {1}' | t: [progress().done, progress().total] }}</p>
     <button mat-stroked-button type="button" (click)="cancel()" [disabled]="cancelling()">
       {{ cancelling() ? ('Cancelando…' | t) : ('Cancelar importación' | t) }}
@@ -153,21 +200,45 @@
     <h2 id="result-title">{{ 'Resultado' | t }}</h2>
     <p class="summary" role="status" aria-live="polite">{{ summaryText() }}</p>
     <dl class="counts">
-      <div><dt>{{ 'Creados' | t }}</dt><dd>{{ counts().created }}</dd></div>
-      <div><dt>{{ 'Ya existían' | t }}</dt><dd>{{ counts().existed }}</dd></div>
-      <div><dt>{{ 'Fallidos' | t }}</dt><dd>{{ counts().failed }}</dd></div>
-      <div><dt>{{ 'Sin procesar' | t }}</dt><dd>{{ counts().skipped }}</dd></div>
+      <div>
+        <dt>{{ 'Creados' | t }}</dt>
+        <dd>{{ counts().created }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Ya existían' | t }}</dt>
+        <dd>{{ counts().existed }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Fallidos' | t }}</dt>
+        <dd>{{ counts().failed }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Sin procesar' | t }}</dt>
+        <dd>{{ counts().skipped }}</dd>
+      </div>
     </dl>
     @if (failedRows().length > 0) {
       <div class="scroll stack-scope">
         <table class="grid stack-table" role="table">
-          <caption>{{ 'Filas que fallaron' | t }}</caption>
+          <caption>
+            {{
+              'Filas que fallaron' | t
+            }}
+          </caption>
           <thead role="rowgroup">
-            <tr role="row"><th scope="col" role="columnheader">{{ 'Línea' | t }}</th><th scope="col" role="columnheader">{{ 'Dirección' | t }}</th><th scope="col" role="columnheader">{{ 'Motivo' | t }}</th></tr>
+            <tr role="row">
+              <th scope="col" role="columnheader">{{ 'Línea' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Dirección' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Motivo' | t }}</th>
+            </tr>
           </thead>
           <tbody role="rowgroup">
             @for (item of failedRows(); track item.row.line) {
-              <tr role="row"><td role="cell" [attr.data-label]="'Línea' | t">{{ item.row.line }}</td><td role="cell" [attr.data-label]="'Dirección' | t">{{ item.row.input.address }}</td><td role="cell" [attr.data-label]="'Motivo' | t">{{ item.message }}</td></tr>
+              <tr role="row">
+                <td role="cell" [attr.data-label]="'Línea' | t">{{ item.row.line }}</td>
+                <td role="cell" [attr.data-label]="'Dirección' | t">{{ item.row.input.address }}</td>
+                <td role="cell" [attr.data-label]="'Motivo' | t">{{ item.message }}</td>
+              </tr>
             }
           </tbody>
         </table>
@@ -181,7 +252,9 @@
         <button mat-stroked-button type="button" (click)="retryFailed()">{{ 'Reintentar las fallidas' | t }}</button>
       }
       @if (reportEntries().length > 0) {
-        <button mat-stroked-button type="button" (click)="downloadReport()">{{ 'Descargar informe de errores' | t }}</button>
+        <button mat-stroked-button type="button" (click)="downloadReport()">
+          {{ 'Descargar informe de errores' | t }}
+        </button>
       }
     </div>
   </section>

@@ -22,7 +22,10 @@ describe('MapViewComponent', () => {
   let emitted: LatLng[];
 
   async function create(inputs: { point?: LatLng | null; selectable?: boolean } = {}): Promise<void> {
-    TestBed.configureTestingModule({ imports: [MapViewComponent], providers: [{ provide: MAP_CONFIG, useValue: TEST_MAP_CONFIG }] });
+    TestBed.configureTestingModule({
+      imports: [MapViewComponent],
+      providers: [{ provide: MAP_CONFIG, useValue: TEST_MAP_CONFIG }],
+    });
     fixture = TestBed.createComponent(MapViewComponent);
     for (const [name, value] of Object.entries(inputs)) {
       fixture.componentRef.setInput(name, value);
@@ -45,7 +48,8 @@ describe('MapViewComponent', () => {
     const geometry = layer.getSource()!.getFeatures()[0].getGeometry() as Point | undefined;
     return geometry ? (toLonLat(geometry.getCoordinates()) as [number, number]) : null;
   };
-  const click = (lat: number, lng: number) => map().dispatchEvent({ type: 'click', coordinate: fromLonLat([lng, lat]) } as never);
+  const click = (lat: number, lng: number) =>
+    map().dispatchEvent({ type: 'click', coordinate: fromLonLat([lng, lat]) } as never);
 
   // Sin elección propia el tema sería el del sistema operativo de quien ejecuta las pruebas: estas dan por hecho el claro
   beforeEach(() => localStorage.setItem(THEME_STORAGE_KEY, 'light'));
@@ -121,7 +125,9 @@ describe('MapViewComponent', () => {
 
   it('los botones de zoom llevan título en español, no el «Zoom in» de OpenLayers', async () => {
     await create();
-    const titles = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.ol-zoom button')).map((b) => b.getAttribute('title'));
+    const titles = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.ol-zoom button')).map((b) =>
+      b.getAttribute('title')
+    );
 
     expect(titles).toEqual(['Acercar el mapa', 'Alejar el mapa']);
   });
@@ -160,7 +166,10 @@ describe('MapViewComponent', () => {
 
   it('el arrastre del marcador emite el nuevo punto', async () => {
     await create({ selectable: true, point: { lat: 4.6, lng: -74.1 } });
-    const translate = map().getInteractions().getArray().find((i) => i instanceof Translate) as Translate;
+    const translate = map()
+      .getInteractions()
+      .getArray()
+      .find((i) => i instanceof Translate) as Translate;
     const layer = map().getLayers().item(1) as VectorLayer<VectorSource>;
     (layer.getSource()!.getFeatures()[0].getGeometry() as Point).setCoordinates(fromLonLat([-74.2, 4.7]));
     translate.dispatchEvent({ type: 'translateend' } as never);
@@ -210,7 +219,10 @@ describe('MapViewComponent', () => {
 
   it('lleva la longitud a -180..180 si el mapa dio la vuelta al mundo', async () => {
     await create({ selectable: true });
-    map().dispatchEvent({ type: 'click', coordinate: [fromLonLat([-74, 4])[0] + 40075016.68, fromLonLat([-74, 4])[1]] } as never);
+    map().dispatchEvent({
+      type: 'click',
+      coordinate: [fromLonLat([-74, 4])[0] + 40075016.68, fromLonLat([-74, 4])[1]],
+    } as never);
     expect(emitted[0].lng).toBeCloseTo(-74, 4);
   });
 
@@ -218,7 +230,9 @@ describe('MapViewComponent', () => {
     await create();
     fixture.componentRef.setInput('ariaLabel', 'Mapa para elegir la ubicación');
     fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).querySelector('[role="region"]')?.getAttribute('aria-label')).toBe('Mapa para elegir la ubicación');
+    expect((fixture.nativeElement as HTMLElement).querySelector('[role="region"]')?.getAttribute('aria-label')).toBe(
+      'Mapa para elegir la ubicación'
+    );
   });
 
   it('el contenedor del mapa tiene borde suave y esquinas redondeadas del sistema de interfaz', async () => {

@@ -62,7 +62,9 @@ describe('RouteBackdropComponent', () => {
   });
 
   it('la animación es de entrada y se desactiva con movimiento reducido', async () => {
-    const css = Array.from(document.querySelectorAll('style')).map((s) => s.textContent ?? '').join('\n');
+    const css = Array.from(document.querySelectorAll('style'))
+      .map((s) => s.textContent ?? '')
+      .join('\n');
     expect(css).toMatch(/@media \(prefers-reduced-motion: no-preference\)[\s\S]*animation: draw/);
     // Sin la media query la ruta queda completa: el desplazamiento del trazo no está animado por defecto
     const route = root().querySelector('.route') as SVGElement;
@@ -100,7 +102,9 @@ describe('RouteBackdropComponent', () => {
 
     it('cada ruta pide el par claro y oscuro de su color (`light-dark()`)', () => {
       const groups = Array.from(root().querySelectorAll('svg > g[style]'));
-      expect(groups.every((g) => /--c:\s*light-dark\(#[0-9A-F]{6}, #[0-9A-F]{6}\)/i.test(g.getAttribute('style') ?? ''))).toBeTrue();
+      expect(
+        groups.every((g) => /--c:\s*light-dark\(#[0-9A-F]{6}, #[0-9A-F]{6}\)/i.test(g.getAttribute('style') ?? ''))
+      ).toBeTrue();
     });
 
     it('en oscuro las rutas usan tonos distintos, más luminosos, que en claro', () => {

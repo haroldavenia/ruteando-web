@@ -59,7 +59,10 @@ describe('audit-diff', () => {
     });
 
     it('antes y después idénticos no son un cambio, y vacío contra null tampoco', () => {
-      const rows = diffChanges({ before: { name: 'A', driverId: '', quantity: 1 }, after: { name: 'A', driverId: null, quantity: 1 } });
+      const rows = diffChanges({
+        before: { name: 'A', driverId: '', quantity: 1 },
+        after: { name: 'A', driverId: null, quantity: 1 },
+      });
       expect(rows.every((row) => !row.changed)).toBeTrue();
       expect(hasValueChanges({ before: { name: 'A' }, after: { name: 'A' } })).toBeFalse();
     });

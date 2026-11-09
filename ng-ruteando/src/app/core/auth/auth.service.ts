@@ -72,7 +72,7 @@ export class AuthService {
     return this.http.post<MessageResponse>(
       `${this.baseUrl}/auth/reset-password`,
       { token, newPassword },
-      { context: linkErrors() },
+      { context: linkErrors() }
     );
   }
 
@@ -93,14 +93,14 @@ export class AuthService {
     const notified$: Observable<void> = refreshToken
       ? this.http.post<MessageResponse>(`${this.baseUrl}/auth/logout`, { refreshToken }).pipe(
           map(() => undefined),
-          catchError(() => of(undefined)),
+          catchError(() => of(undefined))
         )
       : of(undefined);
     return notified$.pipe(
       tap(() => {
         this.endSession();
         void this.router.navigate(['/acceso']);
-      }),
+      })
     );
   }
 
@@ -150,7 +150,7 @@ export class AuthService {
       setTimeout(() => {
         this.refreshTimer = null;
         this.zone.run(() => this.refresher.refresh().subscribe({ error: () => this.refresher.expireSession() }));
-      }, delay),
+      }, delay)
     );
   }
 

@@ -34,7 +34,10 @@ export interface EntityTarget {
  * Dónde se abre la entidad que tocó un evento: solo si tiene pantalla, la persona puede abrirla y la acción no la eliminó.
  * Los usuarios, invitaciones, empresas y notificaciones no tienen pantalla propia.
  */
-export function entityTarget(log: Pick<AuditLog, 'action' | 'entityType' | 'entityId'>, role: UserRole | null): EntityTarget | null {
+export function entityTarget(
+  log: Pick<AuditLog, 'action' | 'entityType' | 'entityId'>,
+  role: UserRole | null
+): EntityTarget | null {
   const target = TARGETS[log.entityType];
   if (!target || !log.entityId || isDeletion(log.action) || role === null || !target.roles.includes(role)) {
     return null;

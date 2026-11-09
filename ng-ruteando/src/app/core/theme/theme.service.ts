@@ -39,7 +39,9 @@ export class ThemeService {
     if (this.browser) {
       this.apply(this.preference());
       this.followSystem();
-      effect(() => this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[this.scheme()]));
+      effect(() =>
+        this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[this.scheme()])
+      );
     }
   }
 

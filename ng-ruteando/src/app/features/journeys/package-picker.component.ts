@@ -27,8 +27,12 @@ const PENDING = 'pending';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="toolbar">
-      <button mat-stroked-button type="button" (click)="selectAllPending()" [disabled]="loadingAll()">{{ 'Seleccionar todos los pendientes' | t }}</button>
-      <button mat-button type="button" (click)="clear()" [disabled]="selectedIds().length === 0">{{ 'Quitar la selección' | t }}</button>
+      <button mat-stroked-button type="button" (click)="selectAllPending()" [disabled]="loadingAll()">
+        {{ 'Seleccionar todos los pendientes' | t }}
+      </button>
+      <button mat-button type="button" (click)="clear()" [disabled]="selectedIds().length === 0">
+        {{ 'Quitar la selección' | t }}
+      </button>
       <span class="total" role="status">{{ totalText() }}</span>
     </div>
     @if (loadingAll()) {
@@ -38,7 +42,12 @@ const PENDING = 'pending';
     @if (error()) {
       <p class="error" role="alert">{{ error() }}</p>
     }
-    <app-data-table [state]="state" [columns]="columns" [entityPlural]="'paquetes' | t" [emptyMessage]="'Todavía no hay paquetes' | t">
+    <app-data-table
+      [state]="state"
+      [columns]="columns"
+      [entityPlural]="'paquetes' | t"
+      [emptyMessage]="'Todavía no hay paquetes' | t"
+    >
       <ng-template #rowActions let-row>
         <mat-checkbox
           [checked]="isSelected(row.id)"
@@ -83,7 +92,11 @@ export class PackagePickerComponent {
   private readonly selectedSet = computed(() => new Set(this.selectedIds()));
   protected readonly totalText = computed(() => {
     const total = this.selectedIds().length;
-    return total === 0 ? t('Ningún paquete seleccionado') : total === 1 ? t('1 paquete seleccionado') : t('{0} paquetes seleccionados', [total]);
+    return total === 0
+      ? t('Ningún paquete seleccionado')
+      : total === 1
+        ? t('1 paquete seleccionado')
+        : t('{0} paquetes seleccionados', [total]);
   });
 
   protected readonly columns: DataColumn<Package>[] = [
@@ -129,7 +142,7 @@ export class PackagePickerComponent {
     this.fetchSubscription?.unsubscribe();
     this.fetchSubscription = fetchAllPackages(
       (page, size) => this.api.list({ page, size }),
-      ({ loaded, total }) => this.progress.set(t('{0} de {1}', [loaded, total])),
+      ({ loaded, total }) => this.progress.set(t('{0} de {1}', [loaded, total]))
     ).subscribe({
       next: (items) => {
         const next = new Set(this.selectedSet());

@@ -10,11 +10,14 @@ export const PT: Readonly<Record<string, string>> = {
   'El enlace no es válido o ha caducado': 'O link não é válido ou expirou',
   'Revisa los datos e inténtalo de nuevo': 'Verifique os dados e tente novamente',
   'La contraseña no cumple la política. {0}': 'A senha não atende à política. {0}',
-  'Demasiados intentos. Espera unos minutos e inténtalo de nuevo': 'Muitas tentativas. Aguarde alguns minutos e tente novamente',
-  'La cuenta está bloqueada temporalmente. Inténtalo más tarde': 'A conta está temporariamente bloqueada. Tente novamente mais tarde',
+  'Demasiados intentos. Espera unos minutos e inténtalo de nuevo':
+    'Muitas tentativas. Aguarde alguns minutos e tente novamente',
+  'La cuenta está bloqueada temporalmente. Inténtalo más tarde':
+    'A conta está temporariamente bloqueada. Tente novamente mais tarde',
   'Correo o contraseña incorrectos': 'E-mail ou senha incorretos',
   'Ya existe una cuenta con ese correo': 'Já existe uma conta com esse e-mail',
-  'Mínimo {0} caracteres, con mayúscula, minúscula, número y un símbolo ({1})': 'Mínimo de {0} caracteres, com letra maiúscula, minúscula, número e um símbolo ({1})',
+  'Mínimo {0} caracteres, con mayúscula, minúscula, número y un símbolo ({1})':
+    'Mínimo de {0} caracteres, com letra maiúscula, minúscula, número e um símbolo ({1})',
   'Al menos {0} caracteres': 'Pelo menos {0} caracteres',
   'Una mayúscula': 'Uma letra maiúscula',
   'Una minúscula': 'Uma letra minúscula',
@@ -42,14 +45,17 @@ export const PT: Readonly<Record<string, string>> = {
   'Sin permiso': 'Sem permissão',
   'No tienes permiso para ver esta página.': 'Você não tem permissão para ver esta página.',
   'Tu rol es': 'Seu perfil é',
-  '. Si necesitas esta área, pídela a quien administra tu empresa.': '. Se precisar desta área, peça a quem administra sua empresa.',
+  '. Si necesitas esta área, pídela a quien administra tu empresa.':
+    '. Se precisar desta área, peça a quem administra sua empresa.',
   'Volver al inicio': 'Voltar ao início',
-  'Si el correo existe, recibirás instrucciones para restablecer tu contraseña': 'Se o e-mail existir, você receberá instruções para redefinir sua senha',
+  'Si el correo existe, recibirás instrucciones para restablecer tu contraseña':
+    'Se o e-mail existir, você receberá instruções para redefinir sua senha',
   'Introduce tu correo': 'Informe seu e-mail',
   'Introduce un correo válido': 'Informe um e-mail válido',
   'Revisa tu correo': 'Verifique seu e-mail',
   'Recuperar contraseña': 'Recuperar senha',
-  'Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.': 'Informe seu e-mail e enviaremos um link para escolher uma nova senha.',
+  'Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.':
+    'Informe seu e-mail e enviaremos um link para escolher uma nova senha.',
   'Correo electrónico': 'E-mail',
   'Enviando la solicitud': 'Enviando a solicitação',
   'Enviar enlace': 'Enviar link',
@@ -63,7 +69,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Iniciar sesión': 'Entrar',
   '¿No tienes cuenta?': 'Não tem uma conta?',
   'Crear cuenta': 'Criar conta',
-  'Si el correo existe, recibirás instrucciones de verificación': 'Se o e-mail existir, você receberá instruções de verificação',
+  'Si el correo existe, recibirás instrucciones de verificación':
+    'Se o e-mail existir, você receberá instruções de verificação',
   'Nombre||pila': 'Nome',
   'Introduce tu nombre': 'Informe seu nome',
   'Apellidos': 'Sobrenome',
@@ -102,7 +109,8 @@ export const PT: Readonly<Record<string, string>> = {
   '1 evento': '1 evento',
   '{0} eventos': '{0} eventos',
   'No hay eventos en este rango.': 'Não há eventos neste intervalo.',
-  '{0} en {1}; la semana con más actividad fue la semana del {2}, con {3}.': '{0} em {1}; a semana com mais atividade foi a semana de {2}, com {3}.',
+  '{0} en {1}; la semana con más actividad fue la semana del {2}, con {3}.':
+    '{0} em {1}; a semana com mais atividade foi a semana de {2}, com {3}.',
   '1 semana': '1 semana',
   '{0} semanas': '{0} semanas',
   '{0} en {1}; el día con más actividad fue el {2}, con {3}.': '{0} em {1}; o dia com mais atividade foi {2}, com {3}.',
@@ -123,18 +131,21 @@ export const PT: Readonly<Record<string, string>> = {
   'Por tipo de acción. ': 'Por tipo de ação. ',
   'Qué cambió': 'O que mudou',
   'Este evento no registra valores.': 'Este evento não registra valores.',
-  'El evento no registra cambios de valores. Estos son los valores que guardó:': 'O evento não registra mudanças de valores. Estes são os valores que ele salvou:',
+  'El evento no registra cambios de valores. Estos son los valores que guardó:':
+    'O evento não registra mudanças de valores. Estes são os valores que ele salvou:',
   'Cambió': 'Alterou',
   'Antes': 'Antes',
   'Después': 'Depois',
   '{0} copiado': '{0} copiado',
-  'No se pudo copiar automáticamente. Cópialo a mano: {0}': 'Não foi possível copiar automaticamente. Copie manualmente: {0}',
+  'No se pudo copiar automáticamente. Cópialo a mano: {0}':
+    'Não foi possível copiar automaticamente. Copie manualmente: {0}',
   'Auditoría': 'Auditoria',
   'Cargando el evento…': 'Carregando o evento…',
   'Esta entidad fue eliminada': 'Esta entidade foi excluída',
   'Ver eventos de esta entidad': 'Ver eventos desta entidade',
   'Copiar enlace': 'Copiar link',
-  'No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.': 'Você não tem permissão para abrir este evento diretamente. Abra-o pela lista da sua atividade.',
+  'No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.':
+    'Você não tem permissão para abrir este evento diretamente. Abra-o pela lista da sua atividade.',
   'Este evento ya no existe o no está disponible.': 'Este evento não existe mais ou não está disponível.',
   'Evento de auditoría': 'Evento de auditoria',
   'No se pudo abrir el evento': 'Não foi possível abrir o evento',
@@ -222,15 +233,18 @@ export const PT: Readonly<Record<string, string>> = {
   'Empresa (opcional)': 'Empresa (opcional)',
   'Identificador de la empresa; vacío = todas': 'Identificador da empresa; vazio = todas',
   'Aplicar': 'Aplicar',
-  'Tu rol no puede consultar estos eventos. Tu propia actividad sí está disponible.': 'Seu perfil não pode consultar estes eventos. Sua própria atividade está disponível.',
+  'Tu rol no puede consultar estos eventos. Tu propia actividad sí está disponible.':
+    'Seu perfil não pode consultar estes eventos. Sua própria atividade está disponível.',
   'Ver mi actividad': 'Ver minha atividade',
   'eventos': 'eventos',
   'Todavía no hay eventos de auditoría': 'Ainda não há eventos de auditoria',
   'Buscar por acción o persona': 'Buscar por ação ou pessoa',
   'Exportar selección': 'Exportar seleção',
   'Mi actividad': 'Minha atividade',
-  'Aquí ves lo que has hecho en la aplicación y cuándo. Pulsa el ojo de un evento para ver todo su detalle.': 'Aqui você vê o que fez no aplicativo e quando. Clique no olho de um evento para ver todos os detalhes.',
-  'Aquí se registra lo que ocurre en la cuenta: qué se hizo, quién lo hizo y cuándo. Usa los filtros para encontrar algo y pulsa el ojo de un evento para ver todo su detalle.': 'Aqui é registrado tudo o que acontece na conta: o que foi feito, quem fez e quando. Use os filtros para encontrar algo e clique no olho de um evento para ver todos os detalhes.',
+  'Aquí ves lo que has hecho en la aplicación y cuándo. Pulsa el ojo de un evento para ver todo su detalle.':
+    'Aqui você vê o que fez no aplicativo e quando. Clique no olho de um evento para ver todos os detalhes.',
+  'Aquí se registra lo que ocurre en la cuenta: qué se hizo, quién lo hizo y cuándo. Usa los filtros para encontrar algo y pulsa el ojo de un evento para ver todo su detalle.':
+    'Aqui é registrado tudo o que acontece na conta: o que foi feito, quem fez e quando. Use os filtros para encontrar algo e clique no olho de um evento para ver todos os detalhes.',
   '{0} de {1}': '{0} de {1}',
   '{0} · actualizado a las {1}': '{0} · atualizado às {1}',
   'Se muestran los {0} eventos más recientes de {1}': 'Mostrando os {0} eventos mais recentes de {1}',
@@ -275,7 +289,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Repite la contraseña inicial': 'Repita a senha inicial',
   'Cancelar': 'Cancelar',
   'Guardar': 'Salvar',
-  'No se puede eliminar: el conductor está asignado a un vehículo': 'Não é possível excluir: o motorista está atribuído a um veículo',
+  'No se puede eliminar: el conductor está asignado a un vehículo':
+    'Não é possível excluir: o motorista está atribuído a um veículo',
   'conductor': 'motorista',
   'conductores': 'motoristas',
   'Teléfono': 'Telefone',
@@ -324,7 +339,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Datos del tipo': 'Dados do tipo',
   'Consumo (opcional)': 'Consumo (opcional)',
   'Capacidad': 'Capacidade',
-  'Opcional. La planificación la usa cuando su configuración evalúa el peso y el volumen.': 'Opcional. O planejamento a usa quando a configuração avalia peso e volume.',
+  'Opcional. La planificación la usa cuando su configuración evalúa el peso y el volumen.':
+    'Opcional. O planejamento a usa quando a configuração avalia peso e volume.',
   'Peso que carga': 'Peso que carrega',
   'kg': 'kg',
   'Capacidad en': 'Capacidade em',
@@ -339,7 +355,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Volumen': 'Volume',
   'cm³': 'cm³',
   'Restricciones de carga': 'Restrições de carga',
-  'Opcional. Límites de carga que respeta el vehículo; no pueden superar su capacidad.': 'Opcional. Limites de carga que o veículo respeita; não podem superar sua capacidade.',
+  'Opcional. Límites de carga que respeta el vehículo; no pueden superar su capacidad.':
+    'Opcional. Limites de carga que o veículo respeita; não podem superar sua capacidade.',
   'Peso mínimo': 'Peso mínimo',
   'Peso máximo': 'Peso máximo',
   'Volumen mínimo': 'Volume mínimo',
@@ -481,8 +498,10 @@ export const PT: Readonly<Record<string, string>> = {
   'Todavía no hay paquetes': 'Ainda não há pacotes',
   'Seleccionar paquete ': 'Selecionar pacote ',
   'Seleccionar': 'Selecionar',
-  'La planificación tardó demasiado o el servicio no respondió; vuelve a intentarlo': 'O planejamento demorou demais ou o serviço não respondeu; tente novamente',
-  'La configuración o alguno de los paquetes ya no existe. Revisa la selección y vuelve a intentarlo.': 'A configuração ou algum dos pacotes não existe mais. Revise a seleção e tente novamente.',
+  'La planificación tardó demasiado o el servicio no respondió; vuelve a intentarlo':
+    'O planejamento demorou demais ou o serviço não respondeu; tente novamente',
+  'La configuración o alguno de los paquetes ya no existe. Revisa la selección y vuelve a intentarlo.':
+    'A configuração ou algum dos pacotes não existe mais. Revise a seleção e tente novamente.',
   'No se pudo planificar la jornada: {0}': 'Não foi possível planejar a jornada: {0}',
   'No se pudo planificar la jornada': 'Não foi possível planejar a jornada',
   'Ruta': 'Rota',
@@ -505,9 +524,12 @@ export const PT: Readonly<Record<string, string>> = {
   'Acciones': 'Ações',
   'Cambiar el estado de la visita ': 'Alterar o status da visita ',
   'La visita «{0}» ahora está {1}': 'A visita “{0}” agora está {1}',
-  'Mapa de las rutas de la jornada. Las mismas rutas y paradas están en las tablas de más abajo.': 'Mapa das rotas da jornada. As mesmas rotas e paradas estão nas tabelas abaixo.',
-  'No se pudo cargar el mapa. La leyenda y las tablas de rutas y paradas siguen disponibles.': 'Não foi possível carregar o mapa. A legenda e as tabelas de rotas e paradas continuam disponíveis.',
-  'No hay rutas con recorrido ni paradas con posición que dibujar.': 'Não há rotas com trajeto nem paradas com posição para desenhar.',
+  'Mapa de las rutas de la jornada. Las mismas rutas y paradas están en las tablas de más abajo.':
+    'Mapa das rotas da jornada. As mesmas rotas e paradas estão nas tabelas abaixo.',
+  'No se pudo cargar el mapa. La leyenda y las tablas de rutas y paradas siguen disponibles.':
+    'Não foi possível carregar o mapa. A legenda e as tabelas de rotas e paradas continuam disponíveis.',
+  'No hay rutas con recorrido ni paradas con posición que dibujar.':
+    'Não há rotas com trajeto nem paradas com posição para desenhar.',
   'Leyenda de las rutas': 'Legenda das rotas',
   'Ver todas': 'Ver todas',
   '{0} · Ruta {1}: {2}': '{0} · Rota {1}: {2}',
@@ -520,9 +542,12 @@ export const PT: Readonly<Record<string, string>> = {
   'Importar paquetes': 'Importar pacotes',
   'Pasos de la importación': 'Etapas da importação',
   '1. Prepara el archivo': '1. Prepare o arquivo',
-  'El archivo debe ser un CSV en UTF-8 con una fila por paquete.': 'O arquivo deve ser um CSV em UTF-8 com uma linha por pacote.',
-  'La aplicación no calcula la ubicación a partir de la dirección:': 'O aplicativo não calcula a localização a partir do endereço:',
-  'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.': 'cada linha precisa de longitude e latitude. Máximo de 2 MB e {0} linhas.',
+  'El archivo debe ser un CSV en UTF-8 con una fila por paquete.':
+    'O arquivo deve ser um CSV em UTF-8 com uma linha por pacote.',
+  'La aplicación no calcula la ubicación a partir de la dirección:':
+    'O aplicativo não calcula a localização a partir do endereço:',
+  'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.':
+    'cada linha precisa de longitude e latitude. Máximo de 2 MB e {0} linhas.',
   'Descargar plantilla': 'Baixar modelo',
   'Columnas del archivo': 'Colunas do arquivo',
   'Columna': 'Coluna',
@@ -541,9 +566,11 @@ export const PT: Readonly<Record<string, string>> = {
   'Línea': 'Linha',
   'Campo': 'Campo',
   'Motivo': 'Motivo',
-  '… y {0} errores más; están todos en el informe de errores.': '… e mais {0} erros; todos estão no relatório de erros.',
+  '… y {0} errores más; están todos en el informe de errores.':
+    '… e mais {0} erros; todos estão no relatório de erros.',
   'Primeras {0} filas válidas': 'Primeiras {0} linhas válidas',
-  'Ninguna fila es válida: corrige el archivo y vuelve a elegirlo.': 'Nenhuma linha é válida: corrija o arquivo e escolha-o novamente.',
+  'Ninguna fila es válida: corrige el archivo y vuelve a elegirlo.':
+    'Nenhuma linha é válida: corrija o arquivo e escolha-o novamente.',
   'Importar {0} paquetes': 'Importar {0} pacotes',
   'Descargar informe de errores': 'Baixar relatório de erros',
   'Importando': 'Importando',
@@ -563,20 +590,28 @@ export const PT: Readonly<Record<string, string>> = {
   'Elige el archivo': 'Escolha o arquivo',
   'Revisa y confirma': 'Revise e confirme',
   'Importa': 'Importe',
-  'Importación terminada: {0} creados, {1} ya existían, {2} fallidos y {3} sin procesar.': 'Importação concluída: {0} criados, {1} já existiam, {2} falharam e {3} não processados.',
+  'Importación terminada: {0} creados, {1} ya existían, {2} fallidos y {3} sin procesar.':
+    'Importação concluída: {0} criados, {1} já existiam, {2} falharam e {3} não processados.',
   '¿Salir de la importación?': 'Sair da importação?',
-  'Hay una importación en curso. Si sales ahora se detendrá: los paquetes ya creados se conservan y el resto no se creará.': 'Há uma importação em andamento. Se você sair agora, ela será interrompida: os pacotes já criados são mantidos e o restante não será criado.',
+  'Hay una importación en curso. Si sales ahora se detendrá: los paquetes ya creados se conservan y el resto no se creará.':
+    'Há uma importação em andamento. Se você sair agora, ela será interrompida: os pacotes já criados são mantidos e o restante não será criado.',
   'Salir': 'Sair',
   'Seguir importando': 'Continuar importando',
   'El archivo debe ser un CSV (extensión .csv).': 'O arquivo deve ser um CSV (extensão .csv).',
   'El archivo está vacío.': 'O arquivo está vazio.',
-  'El archivo supera los 2 MB. Divídelo en varios archivos más pequeños.': 'O arquivo ultrapassa 2 MB. Divida-o em vários arquivos menores.',
+  'El archivo supera los 2 MB. Divídelo en varios archivos más pequeños.':
+    'O arquivo ultrapassa 2 MB. Divida-o em vários arquivos menores.',
   'No se pudo leer el archivo.': 'Não foi possível ler o arquivo.',
-  'El archivo tiene más de {0} filas de datos. Divídelo en varios archivos.': 'O arquivo tem mais de {0} linhas de dados. Divida-o em vários arquivos.',
-  'El archivo no tiene filas de datos: solo la cabecera o nada.': 'O arquivo não tem linhas de dados: apenas o cabeçalho ou nada.',
-  'Faltan columnas obligatorias: {0}. Descarga la plantilla para ver el formato.': 'Faltam colunas obrigatórias: {0}. Baixe o modelo para ver o formato.',
-  'Hay caracteres ilegibles (�): el archivo probablemente no está en UTF-8. Vuelve a guardarlo con esa codificación para conservar las tildes.': 'Há caracteres ilegíveis (�): o arquivo provavelmente não está em UTF-8. Salve-o novamente com essa codificação para manter os acentos.',
-  'Hay una comilla sin cerrar: las últimas filas pueden haberse leído mal. Revisa el archivo.': 'Há uma aspa sem fechar: as últimas linhas podem ter sido lidas incorretamente. Verifique o arquivo.',
+  'El archivo tiene más de {0} filas de datos. Divídelo en varios archivos.':
+    'O arquivo tem mais de {0} linhas de dados. Divida-o em vários arquivos.',
+  'El archivo no tiene filas de datos: solo la cabecera o nada.':
+    'O arquivo não tem linhas de dados: apenas o cabeçalho ou nada.',
+  'Faltan columnas obligatorias: {0}. Descarga la plantilla para ver el formato.':
+    'Faltam colunas obrigatórias: {0}. Baixe o modelo para ver o formato.',
+  'Hay caracteres ilegibles (�): el archivo probablemente no está en UTF-8. Vuelve a guardarlo con esa codificación para conservar las tildes.':
+    'Há caracteres ilegíveis (�): o arquivo provavelmente não está em UTF-8. Salve-o novamente com essa codificação para manter os acentos.',
+  'Hay una comilla sin cerrar: las últimas filas pueden haberse leído mal. Revisa el archivo.':
+    'Há uma aspa sem fechar: as últimas linhas podem ter sido lidas incorretamente. Verifique o arquivo.',
   'Se ignoran las columnas: {0}.': 'Estas colunas são ignoradas: {0}.',
   'La importación se canceló antes de procesar esta fila': 'A importação foi cancelada antes de processar esta linha',
   'Número de guía; debe ser único en tu empresa': 'Número da guia; deve ser único na sua empresa',
@@ -600,9 +635,11 @@ export const PT: Readonly<Record<string, string>> = {
   'Llamar al llegar': 'Ligar ao chegar',
   'Supera los {0} caracteres': 'Excede {0} caracteres',
   'La dirección es obligatoria': 'O endereço é obrigatório',
-  'La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)': 'A longitude é obrigatória (o aplicativo não calcula localizações a partir de endereços)',
+  'La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)':
+    'A longitude é obrigatória (o aplicativo não calcula localizações a partir de endereços)',
   'La longitud debe ser un número entre -180 y 180': 'A longitude deve ser um número entre -180 e 180',
-  'La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)': 'A latitude é obrigatória (o aplicativo não calcula localizações a partir de endereços)',
+  'La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)':
+    'A latitude é obrigatória (o aplicativo não calcula localizações a partir de endereços)',
   'La latitud debe ser un número entre -90 y 90': 'A latitude deve ser um número entre -90 e 90',
   'El tipo de servicio debe ser Entrega, Recogida o Mixto': 'O tipo de serviço deve ser Entrega, Coleta ou Misto',
   '{0} debe ser un número mayor o igual que 0': '{0} deve ser um número maior ou igual a 0',
@@ -621,7 +658,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Número de guía (opcional)': 'Número da guia (opcional)',
   'Único en tu empresa': 'Único na sua empresa',
   'Tipo de servicio': 'Tipo de serviço',
-  'Se guarda como texto: no se calcula la ubicación a partir de ella': 'É salvo como texto: a localização não é calculada a partir dele',
+  'Se guarda como texto: no se calcula la ubicación a partir de ella':
+    'É salvo como texto: a localização não é calculada a partir dele',
   'Ciudad (opcional)': 'Cidade (opcional)',
   'País (opcional)': 'País (opcional)',
   'Código postal (opcional)': 'Código postal (opcional)',
@@ -644,7 +682,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Aproximada': 'Aproximada',
   'Manual': 'Manual',
   'No ubicada': 'Não localizada',
-  'No se puede eliminar: el paquete está incluido en una jornada': 'Não é possível excluir: o pacote está incluído em uma jornada',
+  'No se puede eliminar: el paquete está incluido en una jornada':
+    'Não é possível excluir: o pacote está incluído em uma jornada',
   'Actualizado': 'Atualizado',
   'El paquete «{0}» ahora está {1}': 'O pacote “{0}” agora está {1}',
   'El estado de 1 paquete ahora es «{0}»': 'O status de 1 pacote agora é “{0}”',
@@ -654,7 +693,8 @@ export const PT: Readonly<Record<string, string>> = {
   '1 paquete elegido': '1 pacote escolhido',
   '{0} paquetes elegidos': '{0} pacotes escolhidos',
   'Se exportaron {0} paquetes a {1}': '{0} pacotes foram exportados para {1}',
-  'No se pudo exportar: {0}. Puedes volver a intentarlo.': 'Não foi possível exportar: {0}. Você pode tentar novamente.',
+  'No se pudo exportar: {0}. Puedes volver a intentarlo.':
+    'Não foi possível exportar: {0}. Você pode tentar novamente.',
   'Importar CSV': 'Importar CSV',
   'Exportando… {0} de {1}': 'Exportando… {0} de {1}',
   'Buscar por guía, nombre o dirección': 'Buscar por guia, nome ou endereço',
@@ -664,7 +704,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Cambiar estado': 'Alterar status',
   'Crear el primer paquete': 'Criar o primeiro pacote',
   'Importar un CSV': 'Importar um CSV',
-  'Escribe un teléfono válido: de 7 a 20 caracteres con dígitos, espacios, paréntesis o guiones, y un + inicial opcional': 'Informe um telefone válido: de 7 a 20 caracteres com dígitos, espaços, parênteses ou hifens, e um + inicial opcional',
+  'Escribe un teléfono válido: de 7 a 20 caracteres con dígitos, espacios, paréntesis o guiones, y un + inicial opcional':
+    'Informe um telefone válido: de 7 a 20 caracteres com dígitos, espaços, parênteses ou hifens, e um + inicial opcional',
   'Lugar creado': 'Local criado',
   'Lugar guardado': 'Local salvo',
   'Nuevo lugar': 'Novo local',
@@ -676,7 +717,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Almacén': 'Armazém',
   'Tienda': 'Loja',
   'Oficina': 'Escritório',
-  'No se puede eliminar: el lugar se usa como depósito o en otros datos': 'Não é possível excluir: o local é usado como depósito ou em outros dados',
+  'No se puede eliminar: el lugar se usa como depósito o en otros datos':
+    'Não é possível excluir: o local é usado como depósito ou em outros dados',
   'Mapa de los lugares': 'Mapa dos locais',
   'Editar lugar ': 'Editar local ',
   'Editar': 'Editar',
@@ -685,8 +727,10 @@ export const PT: Readonly<Record<string, string>> = {
   'Todavía no hay lugares': 'Ainda não há locais',
   'Eliminar lugar ': 'Excluir local ',
   'Crear el primer lugar': 'Criar o primeiro local',
-  'Mapa de los lugares: un pin por lugar, con el color y la letra de su tipo': 'Mapa dos locais: um pino por local, com a cor e a letra do seu tipo',
-  'No se pudo cargar el mapa. Puedes seguir usando la lista.': 'Não foi possível carregar o mapa. Você pode continuar usando a lista.',
+  'Mapa de los lugares: un pin por lugar, con el color y la letra de su tipo':
+    'Mapa dos locais: um pino por local, com a cor e a letra do seu tipo',
+  'No se pudo cargar el mapa. Puedes seguir usando la lista.':
+    'Não foi possível carregar o mapa. Você pode continuar usando a lista.',
   'Tipos de lugar': 'Tipos de local',
   'Nueva configuración': 'Nova configuração',
   'Editar configuración': 'Editar configuração',
@@ -743,7 +787,8 @@ export const PT: Readonly<Record<string, string>> = {
   'volumen': 'volume',
   'zona del itinerario': 'zona do itinerário',
   ', evaluando {0}': ', avaliando {0}',
-  'No se puede eliminar: la configuración se usa en una jornada': 'Não é possível excluir: a configuração é usada em uma jornada',
+  'No se puede eliminar: la configuración se usa en una jornada':
+    'Não é possível excluir: a configuração é usada em uma jornada',
   'Topología': 'Topologia',
   'Restricción': 'Restrição',
   'Activa': 'Ativa',
@@ -763,11 +808,13 @@ export const PT: Readonly<Record<string, string>> = {
   'Ya existe una zona con ese código': 'Já existe uma zona com esse código',
   'El código no puede llevar espacios': 'O código não pode conter espaços',
   'El código admite como máximo {0} caracteres': 'O código aceita no máximo {0} caracteres',
-  'Dibuja el polígono de la zona en el mapa o escribe sus vértices': 'Desenhe o polígono da zona no mapa ou informe seus vértices',
+  'Dibuja el polígono de la zona en el mapa o escribe sus vértices':
+    'Desenhe o polígono da zona no mapa ou informe seus vértices',
   'Sin color': 'Sem cor',
   'Zona creada': 'Zona criada',
   'Zona guardada': 'Zona salva',
-  'No se puede eliminar: la zona se usa en lugares, paquetes o configuraciones': 'Não é possível excluir: a zona é usada em locais, pacotes ou configurações',
+  'No se puede eliminar: la zona se usa en lugares, paquetes o configuraciones':
+    'Não é possível excluir: a zona é usada em locais, pacotes ou configurações',
   'Vértices': 'Vértices',
   'zonas': 'zonas',
   'Todavía no hay zonas': 'Ainda não há zonas',
@@ -820,13 +867,15 @@ export const PT: Readonly<Record<string, string>> = {
   'Instalar aplicación': 'Instalar aplicativo',
   'Cerrar sesión': 'Sair',
   'Menú principal': 'Menu principal',
-  'Pulsa Compartir y luego «Añadir a pantalla de inicio»': 'Toque em Compartilhar e depois em “Adicionar à Tela de Início”',
+  'Pulsa Compartir y luego «Añadir a pantalla de inicio»':
+    'Toque em Compartilhar e depois em “Adicionar à Tela de Início”',
   'Entendido': 'Entendi',
   '¿Quieres cerrar la sesión?': 'Deseja sair da sessão?',
   'Ruteando': 'Ruteando',
   'Eliminar {0}': 'Excluir {0}',
   '¿Eliminar {0} «{1}»? Esta acción no se puede deshacer.': 'Excluir {0} “{1}”? Esta ação não pode ser desfeita.',
-  '¿Eliminar los {0} {1} elegidos? Esta acción no se puede deshacer.': 'Excluir os {0} {1} escolhidos? Esta ação não pode ser desfeita.',
+  '¿Eliminar los {0} {1} elegidos? Esta acción no se puede deshacer.':
+    'Excluir os {0} {1} escolhidos? Esta ação não pode ser desfeita.',
   'Se eliminó 1 {0}': '1 {0} foi excluído(a)',
   'Se eliminaron {0} {1}': '{0} {1} foram excluídos(as)',
   'Se eliminaron {0} de {1} {2}': '{0} de {1} {2} foram excluídos(as)',
@@ -862,7 +911,8 @@ export const PT: Readonly<Record<string, string>> = {
   'El registro ya no existe': 'O registro não existe mais',
   'Se eliminó {0} «{1}»': '{0} “{1}” foi excluído(a)',
   '¿Descartar los cambios?': 'Descartar as alterações?',
-  'Tienes cambios sin guardar. Si sales ahora se perderán.': 'Você tem alterações não salvas. Se sair agora, elas serão perdidas.',
+  'Tienes cambios sin guardar. Si sales ahora se perderán.':
+    'Você tem alterações não salvas. Se sair agora, elas serão perdidas.',
   'Descartar': 'Descartar',
   'Seguir editando': 'Continuar editando',
   'Usa al menos 8 caracteres': 'Use pelo menos 8 caracteres',
@@ -884,26 +934,34 @@ export const PT: Readonly<Record<string, string>> = {
   'La longitud debe estar entre -180 y 180': 'A longitude deve estar entre -180 e 180',
   'Latitud': 'Latitude',
   'Longitud': 'Longitude',
-  'Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos.': 'Mapa para escolher a localização. Você também pode informar a latitude e a longitude nos campos.',
-  'No se pudo cargar el mapa. Puedes seguir usando los campos de coordenadas.': 'Não foi possível carregar o mapa. Você pode continuar usando os campos de coordenadas.',
+  'Mapa para elegir la ubicación. También puedes escribir la latitud y la longitud en sus campos.':
+    'Mapa para escolher a localização. Você também pode informar a latitude e a longitude nos campos.',
+  'No se pudo cargar el mapa. Puedes seguir usando los campos de coordenadas.':
+    'Não foi possível carregar o mapa. Você pode continuar usando os campos de coordenadas.',
   'Herramientas del polígono': 'Ferramentas do polígono',
   'Dibujar polígono': 'Desenhar polígono',
   'Borrar polígono': 'Apagar polígono',
   'Terminar polígono': 'Concluir polígono',
-  'Haz clic en el mapa para añadir vértices; doble clic o «Terminar polígono» para cerrarlo. Escape cancela.': 'Clique no mapa para adicionar vértices; clique duas vezes ou em “Concluir polígono” para fechá-lo. Esc cancela.',
-  'Mapa para dibujar el polígono. También puedes escribir los vértices en la tabla de más abajo.': 'Mapa para desenhar o polígono. Você também pode informar os vértices na tabela abaixo.',
-  'No se pudo cargar el mapa. Puedes seguir escribiendo los vértices en la tabla.': 'Não foi possível carregar o mapa. Você pode continuar informando os vértices na tabela.',
+  'Haz clic en el mapa para añadir vértices; doble clic o «Terminar polígono» para cerrarlo. Escape cancela.':
+    'Clique no mapa para adicionar vértices; clique duas vezes ou em “Concluir polígono” para fechá-lo. Esc cancela.',
+  'Mapa para dibujar el polígono. También puedes escribir los vértices en la tabla de más abajo.':
+    'Mapa para desenhar o polígono. Você também pode informar os vértices na tabela abaixo.',
+  'No se pudo cargar el mapa. Puedes seguir escribiendo los vértices en la tabla.':
+    'Não foi possível carregar o mapa. Você pode continuar informando os vértices na tabela.',
   'Todavía no hay polígono.': 'Ainda não há polígono.',
   '{0} vértices. {1}.': '{0} vértices. {1}.',
-  'Polígono válido: {0} vértices, unos {1} km² (aproximado).{2}': 'Polígono válido: {0} vértices, cerca de {1} km² (aproximado).{2}',
+  'Polígono válido: {0} vértices, unos {1} km² (aproximado).{2}':
+    'Polígono válido: {0} vértices, cerca de {1} km² (aproximado).{2}',
   'Borrar el polígono': 'Apagar o polígono',
   '¿Quitar los {0} vértices del polígono?': 'Remover os {0} vértices do polígono?',
   'Borrar': 'Apagar',
   'Conservar': 'Manter',
   'Hacen falta al menos tres vértices distintos': 'São necessários pelo menos três vértices distintos',
-  'El polígono no encierra ninguna superficie: los vértices están alineados': 'O polígono não delimita nenhuma área: os vértices estão alinhados',
+  'El polígono no encierra ninguna superficie: los vértices están alineados':
+    'O polígono não delimita nenhuma área: os vértices estão alinhados',
   'Los lados {0} y {1} se cruzan': 'Os lados {0} e {1} se cruzam',
-  'Hay más de {0} vértices: no se comprueba si algún lado se cruza': 'Há mais de {0} vértices: não é verificado se algum lado se cruza',
+  'Hay más de {0} vértices: no se comprueba si algún lado se cruza':
+    'Há mais de {0} vértices: não é verificado se algum lado se cruza',
   'Azul': 'Azul',
   'Bermellón': 'Vermelhão',
   'Verde': 'Verde',
@@ -918,7 +976,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Latitud del vértice ': 'Latitude do vértice ',
   'Longitud del vértice ': 'Longitude do vértice ',
   'Quitar el vértice ': 'Remover o vértice ',
-  'Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.': 'Ainda não há vértices. Adicione pelo menos três ou desenhe o polígono no mapa.',
+  'Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.':
+    'Ainda não há vértices. Adicione pelo menos três ou desenhe o polígono no mapa.',
   'Añadir vértice': 'Adicionar vértice',
   'Obligatorio': 'Obrigatório',
   'Entre -90 y 90': 'Entre -90 e 90',

@@ -42,7 +42,11 @@
 } @else if (rows().length > 0) {
   <div class="scroll stack-scope">
     <table class="grid stack-table" role="table">
-      <caption class="visually-hidden">{{ 'Paradas y visitas de la ruta' | t }}</caption>
+      <caption class="visually-hidden">
+        {{
+          'Paradas y visitas de la ruta' | t
+        }}
+      </caption>
       <thead role="rowgroup">
         <tr role="row">
           <th scope="col" role="columnheader">{{ 'Orden' | t }}</th>
@@ -51,13 +55,19 @@
           <th scope="col" role="columnheader">{{ 'Llegada' | t }}</th>
           <th scope="col" role="columnheader">{{ 'Salida' | t }}</th>
           <th scope="col" role="columnheader">{{ 'Estado' | t }}</th>
-          <th scope="col" role="columnheader"><span class="visually-hidden">{{ 'Acciones' | t }}</span></th>
+          <th scope="col" role="columnheader">
+            <span class="visually-hidden">{{ 'Acciones' | t }}</span>
+          </th>
         </tr>
       </thead>
       <tbody role="rowgroup">
         @for (row of rows(); track row.stop.sequence) {
           <tr role="row">
-            <td role="cell" class="primary-cell"><span class="seq" [style.--route-color]="color()" [style.--seq-text]="seqText()">{{ row.stop.sequence }}</span></td>
+            <td role="cell" class="primary-cell">
+              <span class="seq" [style.--route-color]="color()" [style.--seq-text]="seqText()">{{
+                row.stop.sequence
+              }}</span>
+            </td>
             <td role="cell" [attr.data-label]="'Tipo' | t">{{ stopType(row.stop.stopType) }}</td>
             <td role="cell" [attr.data-label]="'Paquete' | t">
               @if (row.visit; as visit) {

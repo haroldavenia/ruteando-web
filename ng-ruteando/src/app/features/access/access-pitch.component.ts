@@ -13,11 +13,23 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'pitch-card' },
   template: `
-    <p class="title">{{ 'Planifica y sigue tus' | t }} <span class="accent">{{ 'rutas' | t }}</span>.</p>
+    <p class="title">
+      {{ 'Planifica y sigue tus' | t }} <span class="accent">{{ 'rutas' | t }}</span
+      >.
+    </p>
     <ul>
-      <li><span class="icon"><mat-icon aria-hidden="true">route</mat-icon></span>{{ 'Rutas y paradas en un solo mapa' | t }}</li>
-      <li><span class="icon"><mat-icon aria-hidden="true">task_alt</mat-icon></span>{{ 'Seguimiento de cada visita' | t }}</li>
-      <li><span class="icon"><mat-icon aria-hidden="true">local_shipping</mat-icon></span>{{ 'Flota, lugares y zonas a mano' | t }}</li>
+      <li>
+        <span class="icon"><mat-icon aria-hidden="true">route</mat-icon></span
+        >{{ 'Rutas y paradas en un solo mapa' | t }}
+      </li>
+      <li>
+        <span class="icon"><mat-icon aria-hidden="true">task_alt</mat-icon></span
+        >{{ 'Seguimiento de cada visita' | t }}
+      </li>
+      <li>
+        <span class="icon"><mat-icon aria-hidden="true">local_shipping</mat-icon></span
+        >{{ 'Flota, lugares y zonas a mano' | t }}
+      </li>
     </ul>
   `,
   styles: `

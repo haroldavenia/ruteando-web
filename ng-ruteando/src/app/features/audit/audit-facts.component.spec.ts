@@ -39,7 +39,9 @@ describe('AuditFactsComponent', () => {
     for (const node of nodes) {
       const range = document.createRange();
       range.selectNodeContents(node);
-      expect(range.getClientRects().length).withContext(node.textContent ?? '').toBe(1);
+      expect(range.getClientRects().length)
+        .withContext(node.textContent ?? '')
+        .toBe(1);
     }
     // Y el correo entero sí ocupa más de una línea: la prueba mide una caja en la que no cabe
     const all = document.createRange();

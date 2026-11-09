@@ -59,7 +59,18 @@ describe('GlobalSearchComponent', () => {
   });
 
   it('sin escribir ofrece todas las pantallas del rol y las acciones', () => {
-    expect(labels('Ir a')).toEqual(['Inicio', 'Vehículos', 'Tipos de vehículo', 'Conductores', 'Lugares', 'Zonas', 'Paquetes', 'Jornadas', 'Configuraciones', 'Auditoría']);
+    expect(labels('Ir a')).toEqual([
+      'Inicio',
+      'Vehículos',
+      'Tipos de vehículo',
+      'Conductores',
+      'Lugares',
+      'Zonas',
+      'Paquetes',
+      'Jornadas',
+      'Configuraciones',
+      'Auditoría',
+    ]);
     expect(labels('Acciones')).toEqual(['Planificar jornada', 'Nuevo paquete', 'Importar paquetes']);
   });
 
@@ -95,7 +106,9 @@ describe('GlobalSearchComponent', () => {
   it('al abrir el campo se despliega la lista, agrupada en «Ir a» y «Acciones»', async () => {
     await openList();
 
-    expect(Array.from(panel().querySelectorAll('mat-optgroup .mat-mdc-optgroup-label')).map((el) => el.textContent?.trim())).toEqual(['Ir a', 'Acciones']);
+    expect(
+      Array.from(panel().querySelectorAll('mat-optgroup .mat-mdc-optgroup-label')).map((el) => el.textContent?.trim())
+    ).toEqual(['Ir a', 'Acciones']);
     expect(panel().querySelectorAll('mat-option').length).toBe(13);
   });
 

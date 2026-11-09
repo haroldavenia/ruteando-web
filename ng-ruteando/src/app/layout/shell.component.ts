@@ -83,9 +83,9 @@ export class ShellComponent {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map(() => this.router.url),
-      startWith(this.router.url),
+      startWith(this.router.url)
     ),
-    { initialValue: this.router.url },
+    { initialValue: this.router.url }
   );
 
   /** Nombre de la persona con sesión, o su correo si no tiene nombre. */
@@ -118,15 +118,15 @@ export class ShellComponent {
       return t('Sin permiso');
     }
     const flat = this.items().flatMap((item) => item.children ?? [item]);
-    const match = flat.find((item) => item.link === '/' ? url === '/' : url === item.link || url.startsWith(`${item.link}/`));
+    const match = flat.find((item) =>
+      item.link === '/' ? url === '/' : url === item.link || url.startsWith(`${item.link}/`)
+    );
     return match?.label ?? '';
   });
 
   constructor() {
     afterNextRender(() => {
-      const sub = this.breakpoints
-        .observe('(min-width: 960px)')
-        .subscribe((state) => this.isWide.set(state.matches));
+      const sub = this.breakpoints.observe('(min-width: 960px)').subscribe((state) => this.isWide.set(state.matches));
       this.destroyRef.onDestroy(() => sub.unsubscribe());
     });
   }

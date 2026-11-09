@@ -48,6 +48,6 @@ export class AuditRelatedComponent {
         relative: formatRelativeTime(log.createdAt),
         exact: formatDateTime(log.createdAt),
       };
-    }),
+    })
   );
 }

@@ -35,13 +35,18 @@ export const DEFAULT_SERVICE_TYPES = Object.keys(SERVICE_TYPE_LABELS);
 /** Estados activos del gateway real; son los que se ofrecen mientras no cargue el catálogo. */
 export const DEFAULT_PACKAGE_STATUSES = ['pending', 'attended', 'unattended', 'cancelled'];
 
-const label = (labels: Readonly<Record<string, string>>, key: string | null): string => (key === null ? '' : (labels[key] ?? key));
+const label = (labels: Readonly<Record<string, string>>, key: string | null): string =>
+  key === null ? '' : (labels[key] ?? key);
 
 export const serviceTypeLabel = (key: string | null): string => label(SERVICE_TYPE_LABELS, key);
 export const packageStatusLabel = (key: string | null): string => label(PACKAGE_STATUS_LABELS, key);
 export const geocodingStatusLabel = (key: string | null): string => label(GEOCODING_STATUS_LABELS, key);
 
-const COORDINATE = new Intl.NumberFormat(locale(), { minimumFractionDigits: 5, maximumFractionDigits: 5, useGrouping: false });
+const COORDINATE = new Intl.NumberFormat(locale(), {
+  minimumFractionDigits: 5,
+  maximumFractionDigits: 5,
+  useGrouping: false,
+});
 
 /** `latitud / longitud` con cinco decimales, o vacío si la ubicación no es válida. */
 export function formatPackageLocation(item: Pick<Package, 'location'>): string {

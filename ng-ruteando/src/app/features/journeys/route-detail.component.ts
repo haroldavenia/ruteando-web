@@ -21,7 +21,16 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
  */
 @Component({
   selector: 'app-route-detail',
-  imports: [RouterLink, MatButtonModule, FormHeadComponent, FormResultComponent, RoutesMapComponent, RouteVisitsComponent, SkeletonComponent, TranslatePipe],
+  imports: [
+    RouterLink,
+    MatButtonModule,
+    FormHeadComponent,
+    FormResultComponent,
+    RoutesMapComponent,
+    RouteVisitsComponent,
+    SkeletonComponent,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-detail.component.html',
 })
@@ -31,13 +40,17 @@ export class RouteDetailComponent {
 
   protected readonly journeyId = this.params.get('id') as string;
   /** `null` si el parámetro no es un entero no negativo. */
-  private readonly routeIndex = /^\d+$/.test(this.params.get('routeIndex') ?? '') ? Number(this.params.get('routeIndex')) : null;
+  private readonly routeIndex = /^\d+$/.test(this.params.get('routeIndex') ?? '')
+    ? Number(this.params.get('routeIndex'))
+    : null;
 
   protected readonly loader = new RecordLoader<PlannedJourney>(this.journeyId, (id) => this.api.get(id));
 
   protected readonly route = computed<DomainRoute | null>(() => {
     const journey = this.loader.record();
-    return journey && this.routeIndex !== null ? (journey.routes.find((r) => r.routeIndex === this.routeIndex) ?? null) : null;
+    return journey && this.routeIndex !== null
+      ? (journey.routes.find((r) => r.routeIndex === this.routeIndex) ?? null)
+      : null;
   });
   /** La ruta como lista de una sola, estable mientras no cambie la jornada: el mapa no se redibuja. */
   protected readonly routes = computed(() => {

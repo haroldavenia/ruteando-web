@@ -26,7 +26,9 @@ describe('JourneyListComponent', () => {
   const wait = () => new Promise((resolve) => setTimeout(resolve, 40));
   const item = (fx(list).response.body as { content: { id: string; name: string }[] }).content[0];
   const overlayButton = (text: string) =>
-    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.trim() === text)!;
+    (Array.from(overlay.querySelectorAll('button')) as HTMLButtonElement[]).find(
+      (b) => b.textContent?.trim() === text
+    )!;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -51,7 +53,8 @@ describe('JourneyListComponent', () => {
     http.expectOne((r) => r.url === '/gateway/journeys').flush(body as object);
     fixture.detectChanges();
   };
-  const reloadAnswer = () => http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/journeys').flush(fx(list).response.body as object);
+  const reloadAnswer = () =>
+    http.expectOne((r) => r.method === 'GET' && r.url === '/gateway/journeys').flush(fx(list).response.body as object);
 
   it('las acciones de fila, que son solo un icono, llevan título con lo que hacen', () => {
     load();
@@ -81,7 +84,8 @@ describe('JourneyListComponent', () => {
       page: 0,
       size: 100,
     });
-    const chips = () => Array.from(root().querySelectorAll('.chips .chip')).map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
+    const chips = () =>
+      Array.from(root().querySelectorAll('.chips .chip')).map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
 
     it('ofrecen un chip por estado con su recuento y filtran todas las jornadas al elegirlos', () => {
       load(withStatuses(['in_progress', 'completed', 'completed', 'failed']));
@@ -90,7 +94,9 @@ describe('JourneyListComponent', () => {
       (Array.from(root().querySelectorAll('.chips .chip')) as HTMLButtonElement[])[2].click();
       fixture.detectChanges();
 
-      const names = Array.from(root().querySelectorAll('tbody tr.mat-mdc-row')).map((r) => r.querySelector('td a')!.textContent!.trim());
+      const names = Array.from(root().querySelectorAll('tbody tr.mat-mdc-row')).map((r) =>
+        r.querySelector('td a')!.textContent!.trim()
+      );
       expect(names).toEqual(['J1', 'J2']);
     });
 
@@ -98,7 +104,9 @@ describe('JourneyListComponent', () => {
       load(withStatuses(['planned', 'raro']));
 
       expect(chips()).toEqual(['Todos 2', 'Planificada 1', 'raro 1']);
-      expect((root().querySelector('input[type="search"]') as HTMLInputElement).placeholder).toBe('Buscar por nombre o configuración');
+      expect((root().querySelector('input[type="search"]') as HTMLInputElement).placeholder).toBe(
+        'Buscar por nombre o configuración'
+      );
     });
   });
 
@@ -120,7 +128,9 @@ describe('JourneyListComponent', () => {
     body.content[0].totalServices = 12;
     body.content[0].totalResources = 3;
     load(body);
-    const cells = Array.from(root().querySelector('tr.mat-mdc-row')!.querySelectorAll('td')).map((c) => c.textContent!.trim());
+    const cells = Array.from(root().querySelector('tr.mat-mdc-row')!.querySelectorAll('td')).map((c) =>
+      c.textContent!.trim()
+    );
     expect(cells[3]).toBe('12');
     expect(cells[4]).toBe('3');
   });
@@ -166,7 +176,10 @@ describe('JourneyListComponent', () => {
 
     it('borra tras confirmar y recarga', async () => {
       await confirm();
-      respondWith(http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/journeys/${item.id}`), fx(remove));
+      respondWith(
+        http.expectOne((r) => r.method === 'DELETE' && r.url === `/gateway/journeys/${item.id}`),
+        fx(remove)
+      );
       fixture.detectChanges();
       expect(root().textContent).toContain('Se eliminó jornada «Postman journey»');
       reloadAnswer();
@@ -174,7 +187,9 @@ describe('JourneyListComponent', () => {
 
     it('un error del gateway se muestra y la jornada permanece', async () => {
       await confirm();
-      http.expectOne((r) => r.method === 'DELETE').flush({ message: 'boom' }, { status: 500, statusText: 'Server Error' });
+      http
+        .expectOne((r) => r.method === 'DELETE')
+        .flush({ message: 'boom' }, { status: 500, statusText: 'Server Error' });
       fixture.detectChanges();
       expect(root().querySelector('[role="alert"]')?.textContent).toContain('El servicio no está disponible');
       expect(root().textContent).toContain('Postman journey');

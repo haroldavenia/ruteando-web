@@ -22,7 +22,10 @@ describe('PlacesApi.nearby', () => {
     const { api, controller } = setupApi(PlacesApi);
     const result = firstResult(api.nearby({ lat: 4.60872, lng: -74.07728 }, 5000));
 
-    const req = controller.expectOne({ method: 'GET', url: '/gateway/places/nearby?lon=-74.07728&lat=4.60872&maxDistance=5000' });
+    const req = controller.expectOne({
+      method: 'GET',
+      url: '/gateway/places/nearby?lon=-74.07728&lat=4.60872&maxDistance=5000',
+    });
     respondWith(req, nearby as unknown as Fixture);
 
     expect((await result).length).toBe(1);

@@ -16,17 +16,35 @@ const ROUTES: readonly BackdropRoute[] = [
   {
     color: routeColorThemed(0),
     points: '240,430 330,290 480,220 620,280 590,410 400,470 240,430',
-    stops: [[330, 290], [480, 220], [620, 280], [590, 410], [400, 470]],
+    stops: [
+      [330, 290],
+      [480, 220],
+      [620, 280],
+      [590, 410],
+      [400, 470],
+    ],
   },
   {
     color: routeColorThemed(1),
     points: '240,430 300,560 450,640 640,620 700,520 540,480 240,430',
-    stops: [[300, 560], [450, 640], [640, 620], [700, 520], [540, 480]],
+    stops: [
+      [300, 560],
+      [450, 640],
+      [640, 620],
+      [700, 520],
+      [540, 480],
+    ],
   },
   {
     color: routeColorThemed(2),
     points: '240,430 360,380 560,340 760,260 960,240 1020,360 880,400 700,430 240,430',
-    stops: [[560, 340], [760, 260], [960, 240], [1020, 360], [880, 400]],
+    stops: [
+      [560, 340],
+      [760, 260],
+      [960, 240],
+      [1020, 360],
+      [880, 400],
+    ],
   },
 ];
 
@@ -40,7 +58,11 @@ const ROUTES: readonly BackdropRoute[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'aria-hidden': 'true' },
   template: `
-    <svg viewBox="0 0 1200 800" [attr.preserveAspectRatio]="align() === 'start' ? 'xMinYMid slice' : 'xMidYMid slice'" focusable="false">
+    <svg
+      viewBox="0 0 1200 800"
+      [attr.preserveAspectRatio]="align() === 'start' ? 'xMinYMid slice' : 'xMidYMid slice'"
+      focusable="false"
+    >
       <polygon class="zone" points="780,130 1080,190 1130,430 940,560 740,420" />
       @for (route of routes; track route.color; let r = $index) {
         <g [style.--c]="route.color">
@@ -100,7 +122,9 @@ const ROUTES: readonly BackdropRoute[] = [
       stroke-width: 5;
     }
     text {
-      font: 700 11px Roboto, sans-serif;
+      font:
+        700 11px Roboto,
+        sans-serif;
       text-anchor: middle;
       dominant-baseline: central;
       /* Sobre el color de la ruta: blanco en claro y casi negro en oscuro, donde los tonos son más luminosos */

@@ -90,7 +90,10 @@ describe('ZonesApi (zonas del tenant)', () => {
   it('containing busca por longitud y latitud, sin tenantId', async () => {
     setup(false);
     const result = firstResult(api.containing({ lat: 4.60872, lng: -74.07728 }));
-    respondWith(controller.expectOne({ method: 'GET', url: '/gateway/zones/containing?longitude=-74.07728&latitude=4.60872' }), fx(zonesContaining));
+    respondWith(
+      controller.expectOne({ method: 'GET', url: '/gateway/zones/containing?longitude=-74.07728&latitude=4.60872' }),
+      fx(zonesContaining)
+    );
 
     expect((await result).length).toBe(1);
   });
@@ -135,7 +138,9 @@ describe('AssignedServicesApi', () => {
 
   it('removeMany borra varios con ?ids=a,b', async () => {
     const result = firstResult(api.removeMany(['a', 'b']));
-    const req = controller.expectOne((r) => r.method === 'DELETE' && r.url === '/gateway/assigned-services' && r.params.get('ids') === 'a,b');
+    const req = controller.expectOne(
+      (r) => r.method === 'DELETE' && r.url === '/gateway/assigned-services' && r.params.get('ids') === 'a,b'
+    );
     expect(req.request.method).toBe(assignedRemoveMany.request.method);
     respondWith(req, fx(assignedRemoveMany));
     await result;
@@ -143,7 +148,10 @@ describe('AssignedServicesApi', () => {
 
   it('summary acepta el 202 con []', async () => {
     const result = firstResult(api.summary());
-    respondWith(controller.expectOne({ method: 'GET', url: '/gateway/assigned-services/summary' }), fx(assignedSummary));
+    respondWith(
+      controller.expectOne({ method: 'GET', url: '/gateway/assigned-services/summary' }),
+      fx(assignedSummary)
+    );
 
     expect(await result).toEqual([]);
     expect(assignedSummary.response.status).toBe(202);
@@ -170,7 +178,10 @@ describe('operaciones específicas de recursos, paquetes y usuarios', () => {
     const { api, controller } = setupApi(PackagesApi);
     const result = firstResult(api.setStatus('p1', 'attended'));
 
-    respondWith(controller.expectOne({ method: 'PATCH', url: '/gateway/packages/p1/status/attended' }), fx(packageStatus));
+    respondWith(
+      controller.expectOne({ method: 'PATCH', url: '/gateway/packages/p1/status/attended' }),
+      fx(packageStatus)
+    );
     expect((await result).status).toBeTruthy();
     controller.verify();
   });

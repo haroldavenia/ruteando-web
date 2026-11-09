@@ -86,12 +86,17 @@ describe('ResetPasswordComponent', () => {
       await wait();
 
       expect(router.url).toBe('/acceso');
-      expect(snackOpen).toHaveBeenCalledOnceWith('Contraseña actualizada, ya puedes iniciar sesión', 'Cerrar', { duration: 6000 });
+      expect(snackOpen).toHaveBeenCalledOnceWith('Contraseña actualizada, ya puedes iniciar sesión', 'Cerrar', {
+        duration: 6000,
+      });
       expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
     });
 
     it('retira el token de la URL sin añadir una entrada al historial', () => {
-      expect(navigateSpy).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: { token: null }, replaceUrl: true }));
+      expect(navigateSpy).toHaveBeenCalledWith(
+        [],
+        jasmine.objectContaining({ queryParams: { token: null }, replaceUrl: true })
+      );
       expect(router.url).toBe('/acceso/restablecer');
     });
 
@@ -115,14 +120,22 @@ describe('ResetPasswordComponent', () => {
       submit();
       harness.detectChanges();
       expect(root.querySelector('mat-error')?.textContent).toContain('La contraseña no cumple los requisitos');
-      expect(Array.from(root.querySelectorAll('ul.requirements li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(['Al menos 16 caracteres', 'Una mayúscula', 'Un número', 'Un símbolo (@$!%*?&)']);
+      expect(
+        Array.from(root.querySelectorAll('ul.requirements li.failed')).map(
+          (li) => li.querySelector('span')?.textContent
+        )
+      ).toEqual(['Al menos 16 caracteres', 'Una mayúscula', 'Un número', 'Un símbolo (@$!%*?&)']);
 
       type(inputs()[0], 'abcdefghijklmnop1234');
       type(inputs()[1], 'abcdefghijklmnop1234');
       submit();
       harness.detectChanges();
       expect(root.querySelector('mat-error')?.textContent).toContain('La contraseña no cumple los requisitos');
-      expect(Array.from(root.querySelectorAll('ul.requirements li.failed')).map((li) => li.querySelector('span')?.textContent)).toEqual(['Una mayúscula', 'Un símbolo (@$!%*?&)']);
+      expect(
+        Array.from(root.querySelectorAll('ul.requirements li.failed')).map(
+          (li) => li.querySelector('span')?.textContent
+        )
+      ).toEqual(['Una mayúscula', 'Un símbolo (@$!%*?&)']);
       controller.expectNone(RESET);
     });
 
@@ -163,7 +176,9 @@ describe('ResetPasswordComponent', () => {
       expect(alert).toContain('Mínimo 16 caracteres');
       expect(alert).not.toContain('El enlace no es válido');
       expect(root.querySelector('form')).not.toBeNull();
-      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).not.toContain('/acceso/recuperar');
+      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).not.toContain(
+        '/acceso/recuperar'
+      );
       expect(inputs().map((i) => i.value)).toEqual(['', '']);
       expect(document.activeElement).toBe(inputs()[0]);
 

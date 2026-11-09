@@ -20,23 +20,50 @@ const IN_USE = t('No se puede eliminar: la configuración se usa en una jornada'
 
 @Component({
   selector: 'app-settings-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
+  imports: [
+    DataTableComponent,
+    PageHeaderComponent,
+    FormResultComponent,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    ActionTitleDirective,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-page-header [title]="'Configuraciones' | t" [subtitle]="state.countText('configuración', 'configuraciones')">
-      <a mat-flat-button class="primary-action" routerLink="/configuraciones/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva configuración' | t }}</a>
+      <a mat-flat-button class="primary-action" routerLink="/configuraciones/nuevo"
+        ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva configuración' | t }}</a
+      >
     </app-page-header>
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
-    <app-data-table [state]="state" [columns]="columns" [entityPlural]="'configuraciones' | t" [emptyMessage]="'Todavía no hay configuraciones' | t">
+    <app-data-table
+      [state]="state"
+      [columns]="columns"
+      [entityPlural]="'configuraciones' | t"
+      [emptyMessage]="'Todavía no hay configuraciones' | t"
+    >
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/configuraciones', row.id]" [attr.aria-label]="('Editar configuración ' | t) + row.description">
+        <a
+          mat-icon-button
+          [routerLink]="['/configuraciones', row.id]"
+          [attr.aria-label]="('Editar configuración ' | t) + row.description"
+        >
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar configuración ' | t) + row.description">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="remove(row)"
+          [attr.aria-label]="('Eliminar configuración ' | t) + row.description"
+        >
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/configuraciones/nuevo">{{ 'Crear la primera configuración' | t }}</a>
+      <a empty-action mat-stroked-button routerLink="/configuraciones/nuevo">{{
+        'Crear la primera configuración' | t
+      }}</a>
     </app-data-table>
   `,
 })

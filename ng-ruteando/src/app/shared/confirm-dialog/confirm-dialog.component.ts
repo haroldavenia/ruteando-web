@@ -33,8 +33,12 @@ export interface ConfirmDialogData {
       <p>{{ data.message }}</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button type="button" [mat-dialog-close]="false" cdkFocusInitial>{{ data.cancelLabel ?? ('Cancelar' | t) }}</button>
-      <button mat-flat-button type="button" [mat-dialog-close]="true" [class.destructive]="data.destructive === true">{{ data.confirmLabel }}</button>
+      <button mat-button type="button" [mat-dialog-close]="false" cdkFocusInitial>
+        {{ data.cancelLabel ?? ('Cancelar' | t) }}
+      </button>
+      <button mat-flat-button type="button" [mat-dialog-close]="true" [class.destructive]="data.destructive === true">
+        {{ data.confirmLabel }}
+      </button>
     </mat-dialog-actions>
   `,
 })

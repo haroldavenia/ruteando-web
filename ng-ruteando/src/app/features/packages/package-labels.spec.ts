@@ -45,7 +45,9 @@ describe('etiquetas de paquetes', () => {
   });
 
   it('formatea la ubicación con cinco decimales y deja vacía una inválida', () => {
-    expect(formatPackageLocation({ location: { type: 'Point', coordinates: [-74.07728, 4.60872] } })).toBe('4,60872 / -74,07728');
+    expect(formatPackageLocation({ location: { type: 'Point', coordinates: [-74.07728, 4.60872] } })).toBe(
+      '4,60872 / -74,07728'
+    );
     expect(formatPackageLocation({ location: { type: 'Point', coordinates: [300, 4] } })).toBe('');
   });
 });

@@ -21,19 +21,40 @@ export const ZONE_IN_USE = t('No se puede eliminar: la zona se usa en lugares, p
 
 @Component({
   selector: 'app-zone-list',
-  imports: [DataTableComponent, PageHeaderComponent, FormResultComponent, MatButtonModule, MatIconModule, RouterLink, ActionTitleDirective, TranslatePipe],
+  imports: [
+    DataTableComponent,
+    PageHeaderComponent,
+    FormResultComponent,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    ActionTitleDirective,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-page-header [title]="'Zonas' | t" [subtitle]="state.countText('zona', 'zonas')">
-      <a mat-flat-button class="primary-action" routerLink="/zonas/nueva"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva zona' | t }}</a>
+      <a mat-flat-button class="primary-action" routerLink="/zonas/nueva"
+        ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva zona' | t }}</a
+      >
     </app-page-header>
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
-    <app-data-table [state]="state" [columns]="columns" [entityPlural]="'zonas' | t" [emptyMessage]="'Todavía no hay zonas' | t">
+    <app-data-table
+      [state]="state"
+      [columns]="columns"
+      [entityPlural]="'zonas' | t"
+      [emptyMessage]="'Todavía no hay zonas' | t"
+    >
       <ng-template #rowActions let-row>
         <a mat-icon-button [routerLink]="['/zonas', row.id]" [attr.aria-label]="('Editar zona ' | t) + row.name">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar zona ' | t) + row.name">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="remove(row)"
+          [attr.aria-label]="('Eliminar zona ' | t) + row.name"
+        >
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
@@ -51,7 +72,11 @@ export class ZoneListComponent {
     { id: 'color', header: t('Color'), cell: (z) => colorName(z.color), swatch: (z) => z.color },
     { id: 'name', header: t('Nombre'), cell: (z) => z.name, kind: 'strong' },
     { id: 'code', header: t('Código'), cell: (z) => z.code },
-    { id: 'vertices', header: t('Vértices'), cell: (z) => String(verticesFromRing(z.boundary?.coordinates?.[0]).length) },
+    {
+      id: 'vertices',
+      header: t('Vértices'),
+      cell: (z) => String(verticesFromRing(z.boundary?.coordinates?.[0]).length),
+    },
     { id: 'active', header: t('Estado'), cell: (z) => (z.active ? t('Activa') : t('Inactiva')) },
   ];
 

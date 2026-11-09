@@ -20,15 +20,42 @@
       <section class="card" aria-labelledby="summary-title">
         <h2 id="summary-title">{{ 'Resumen' | t }}</h2>
         <dl class="summary stat-grid">
-          <div><dt>{{ 'Estado' | t }}</dt><dd><app-status-badge [label]="status(journey.status)" [tone]="tone(journey.status)" /></dd></div>
-          <div><dt>{{ 'Configuración' | t }}</dt><dd>{{ journey.settings?.name ?? '—' }}</dd></div>
-          <div><dt>{{ 'Servicios' | t }}</dt><dd>{{ count(journey.totalServices) }}</dd></div>
-          <div><dt>{{ 'Vehículos' | t }}</dt><dd>{{ count(journey.totalResources) }}</dd></div>
-          <div><dt>{{ 'Zonas' | t }}</dt><dd>{{ count(journey.totalZones) }}</dd></div>
-          <div><dt>{{ 'Tiempo mínimo' | t }}</dt><dd>{{ duration(journey.stats?.minTime) }}</dd></div>
-          <div><dt>{{ 'Tiempo medio' | t }}</dt><dd>{{ duration(journey.stats?.avgTime) }}</dd></div>
-          <div><dt>{{ 'Tiempo máximo' | t }}</dt><dd>{{ duration(journey.stats?.maxTime) }}</dd></div>
-          <div><dt>{{ 'Creada' | t }}</dt><dd>{{ dateTime(journey.createdAt) }}</dd></div>
+          <div>
+            <dt>{{ 'Estado' | t }}</dt>
+            <dd><app-status-badge [label]="status(journey.status)" [tone]="tone(journey.status)" /></dd>
+          </div>
+          <div>
+            <dt>{{ 'Configuración' | t }}</dt>
+            <dd>{{ journey.settings?.name ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Servicios' | t }}</dt>
+            <dd>{{ count(journey.totalServices) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Vehículos' | t }}</dt>
+            <dd>{{ count(journey.totalResources) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Zonas' | t }}</dt>
+            <dd>{{ count(journey.totalZones) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Tiempo mínimo' | t }}</dt>
+            <dd>{{ duration(journey.stats?.minTime) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Tiempo medio' | t }}</dt>
+            <dd>{{ duration(journey.stats?.avgTime) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Tiempo máximo' | t }}</dt>
+            <dd>{{ duration(journey.stats?.maxTime) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'Creada' | t }}</dt>
+            <dd>{{ dateTime(journey.createdAt) }}</dd>
+          </div>
         </dl>
       </section>
 
@@ -37,7 +64,11 @@
         @if (journey.routes.length > 0) {
           <section #mapSection class="card sticky" aria-labelledby="map-title">
             <h2 id="map-title">{{ 'Mapa de las rutas' | t }}</h2>
-            <app-routes-map [routes]="journey.routes" [(selectedRoute)]="selectedRoute" [(selectedStop)]="selectedStop" />
+            <app-routes-map
+              [routes]="journey.routes"
+              [(selectedRoute)]="selectedRoute"
+              [(selectedStop)]="selectedStop"
+            />
           </section>
         }
 
@@ -46,7 +77,13 @@
           @if (journey.routes.length === 0) {
             <p>{{ 'Esta jornada no tiene rutas.' | t }}</p>
           } @else {
-            <app-journey-routes [routes]="journey.routes" [journeyId]="journey.id" [selectedRoute]="selectedRoute()" (routeFocus)="focusRoute($event)" (stopFocus)="focusStop($event)" />
+            <app-journey-routes
+              [routes]="journey.routes"
+              [journeyId]="journey.id"
+              [selectedRoute]="selectedRoute()"
+              (routeFocus)="focusRoute($event)"
+              (stopFocus)="focusStop($event)"
+            />
           }
         </section>
       </div>
@@ -56,7 +93,9 @@
           <h2 id="invalid-title">{{ 'Paquetes que no se pudieron planificar' | t }}</h2>
           <ul>
             @for (packageId of journey.invalidPackageIds; track packageId) {
-              <li><a [routerLink]="['/paquetes', packageId]">{{ packageId }}</a></li>
+              <li>
+                <a [routerLink]="['/paquetes', packageId]">{{ packageId }}</a>
+              </li>
             }
           </ul>
         </section>

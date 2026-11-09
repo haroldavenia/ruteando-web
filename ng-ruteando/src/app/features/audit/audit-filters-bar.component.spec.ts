@@ -8,7 +8,10 @@ describe('AuditFiltersBarComponent', () => {
   let fixture: ComponentFixture<AuditFiltersBarComponent>;
   let emitted: Partial<AuditFilters>[];
   const root = () => fixture.nativeElement as HTMLElement;
-  const chip = (text: string) => (Array.from(root().querySelectorAll('button.audit-chip')) as HTMLButtonElement[]).find((b) => b.textContent?.trim().startsWith(text))!;
+  const chip = (text: string) =>
+    (Array.from(root().querySelectorAll('button.audit-chip')) as HTMLButtonElement[]).find((b) =>
+      b.textContent?.trim().startsWith(text)
+    )!;
   const switches = () => Array.from(root().querySelectorAll('button[role=switch]')) as HTMLButtonElement[];
 
   const setup = (filters: AuditFilters = EMPTY_FILTERS, inputs: Record<string, unknown> = {}) => {
@@ -26,7 +29,13 @@ describe('AuditFiltersBarComponent', () => {
 
   it('ofrece los rangos rápidos y el personalizado, con «Todo» marcado al empezar', () => {
     setup();
-    expect(Array.from(root().querySelectorAll('button.audit-chip')).map((b) => b.textContent?.trim())).toEqual(['24 horas', '7 días', '30 días', 'Todo', 'Personalizado']);
+    expect(Array.from(root().querySelectorAll('button.audit-chip')).map((b) => b.textContent?.trim())).toEqual([
+      '24 horas',
+      '7 días',
+      '30 días',
+      'Todo',
+      'Personalizado',
+    ]);
     expect(chip('Todo').getAttribute('aria-pressed')).toBe('true');
     expect(chip('7 días').getAttribute('aria-pressed')).toBe('false');
   });
@@ -116,7 +125,9 @@ describe('AuditFiltersBarComponent', () => {
 
     fixture.componentRef.setInput('filters', { ...EMPTY_FILTERS, kind: 'creacion' });
     fixture.detectChanges();
-    const clear = (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) => b.textContent?.includes('Limpiar filtros'))!;
+    const clear = (Array.from(root().querySelectorAll('button')) as HTMLButtonElement[]).find((b) =>
+      b.textContent?.includes('Limpiar filtros')
+    )!;
     clear.click();
     expect(cleared.length).toBe(1);
   });
@@ -139,7 +150,9 @@ describe('AuditFiltersBarComponent', () => {
 
   it('en «Mi actividad» no ofrece elegir una persona', () => {
     setup(EMPTY_FILTERS, { showPeople: false });
-    expect(Array.from(root().querySelectorAll('mat-form-field mat-label')).map((el) => el.textContent?.trim())).toEqual(['Tipo de acción']);
+    expect(Array.from(root().querySelectorAll('mat-form-field mat-label')).map((el) => el.textContent?.trim())).toEqual(
+      ['Tipo de acción']
+    );
   });
 
   it('el grupo de rangos tiene nombre y cada filtro su etiqueta', () => {

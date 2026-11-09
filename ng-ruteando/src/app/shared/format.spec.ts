@@ -1,4 +1,12 @@
-import { formatCount, formatDateTime, formatDistance, formatDuration, formatLatLng, formatPercent, formatRelativeTime } from './format';
+import {
+  formatCount,
+  formatDateTime,
+  formatDistance,
+  formatDuration,
+  formatLatLng,
+  formatPercent,
+  formatRelativeTime,
+} from './format';
 
 describe('format', () => {
   describe('formatRelativeTime', () => {

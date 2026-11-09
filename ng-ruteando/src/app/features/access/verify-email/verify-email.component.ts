@@ -1,5 +1,13 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, PLATFORM_ID, afterNextRender, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  PLATFORM_ID,
+  afterNextRender,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -62,7 +70,9 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
           </mat-form-field>
           <button mat-flat-button type="submit" [disabled]="resending()">{{ 'Reenviar verificación' | t }}</button>
         </form>
-        <p class="alt"><a routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a></p>
+        <p class="alt">
+          <a routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a>
+        </p>
       </div>
     }
   `,
@@ -105,7 +115,12 @@ export class VerifyEmailComponent {
     }
     this.started = true;
     // Fuera del historial y de la barra de direcciones, antes de cualquier otra cosa
-    void this.router.navigate([], { relativeTo: this.route, queryParams: { token: null }, queryParamsHandling: 'merge', replaceUrl: true });
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { token: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
 
     if (!this.token) {
       this.fail(INVALID_LINK_MESSAGE);

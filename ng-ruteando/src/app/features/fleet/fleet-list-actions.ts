@@ -37,7 +37,7 @@ export class FleetListActions<T extends { id: string }> {
 
   constructor(
     private readonly deleter: DeleteFlow,
-    private readonly config: FleetListConfig<T>,
+    private readonly config: FleetListConfig<T>
   ) {}
 
   removeMany(rows: readonly T[], clear: () => void): void {
@@ -67,6 +67,10 @@ export class FleetListActions<T extends { id: string }> {
     const fileName = csvFileName(this.config.fileBase);
     this.deleter.error.set(null);
     downloadCsv(fileName, this.config.csv(rows), this.platformId);
-    this.deleter.success.set(rows.length === 1 ? t('Se exportó 1 {0} a {1}', [singular, fileName]) : t('Se exportaron {0} {1} a {2}', [rows.length, plural, fileName]));
+    this.deleter.success.set(
+      rows.length === 1
+        ? t('Se exportó 1 {0} a {1}', [singular, fileName])
+        : t('Se exportaron {0} {1} a {2}', [rows.length, plural, fileName])
+    );
   }
 }

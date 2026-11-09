@@ -43,7 +43,9 @@ describe('paleta de los mapas', () => {
       };
       for (const color of [...ROUTE_COLORS, ...ROUTE_COLORS_DARK]) {
         const [hi, lo] = [luminance(color), luminance(readableOn(color))].sort((a, b) => b - a);
-        expect((hi + 0.05) / (lo + 0.05)).withContext(color).toBeGreaterThanOrEqual(4.5);
+        expect((hi + 0.05) / (lo + 0.05))
+          .withContext(color)
+          .toBeGreaterThanOrEqual(4.5);
       }
     });
 

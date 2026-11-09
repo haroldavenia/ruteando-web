@@ -42,16 +42,16 @@ services:
           pnpm install --frozen-lockfile
           echo "$$hash" > node_modules/.lock-hash
         fi
-    restart: "no"
+    restart: 'no'
 
   mock-gateway:
     <<: *dev
     command: node scripts/mock-gateway.mjs
     ports:
-      - "4010:4010"
+      - '4010:4010'
     healthcheck:
       # Cualquier respuesta HTTP (aunque sea 404) significa que está vivo
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4010/').then(() => process.exit(0), () => process.exit(1))"]
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:4010/').then(() => process.exit(0), () => process.exit(1))"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -62,7 +62,7 @@ services:
     environment:
       <<: *gateway
     ports:
-      - "4200:4200"
+      - '4200:4200'
     depends_on:
       deps:
         condition: service_completed_successfully
@@ -71,13 +71,13 @@ services:
 
   app:
     <<: *dev
-    profiles: ["prod-like"]
+    profiles: ['prod-like']
     command: sh -c "pnpm run build:web && pnpm start"
     environment:
       <<: *gateway
-      PORT: "3000"
+      PORT: '3000'
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       deps:
         condition: service_completed_successfully
@@ -90,7 +90,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: test
-    profiles: ["test"]
+    profiles: ['test']
     command: pnpm --filter ng-ruteando run test:ci
     depends_on:
       deps:

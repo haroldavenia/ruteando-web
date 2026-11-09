@@ -19,7 +19,7 @@ export class UpdateNotifier {
     this.swUpdate.versionUpdates
       .pipe(
         filter((event): event is VersionReadyEvent => event.type === 'VERSION_READY'),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe(() => void this.show());
   }

@@ -24,7 +24,6 @@ import { FleetListActions } from '../fleet-list-actions';
 
 import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
 
-
 import { t } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 @Component({
@@ -49,7 +48,9 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/flota/vehiculos/nuevo"><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo vehículo' | t }}</a>
+      <a mat-flat-button class="primary-action" routerLink="/flota/vehiculos/nuevo"
+        ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo vehículo' | t }}</a
+      >
     </app-page-header>
     <app-fleet-tabs />
     <app-form-result [error]="deleter.error()" [success]="deleter.success()" />
@@ -76,56 +77,116 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
           <div class="driver">
             @if (row.assignedUser) {
               <span class="avatar" aria-hidden="true">{{ initials(row) }}</span>
-              <span class="driver-name">{{ driverLabel(row) }}<small>{{ row.assignedUser.email }}</small></span>
+              <span class="driver-name"
+                >{{ driverLabel(row) }}<small>{{ row.assignedUser.email }}</small></span
+              >
               @if (!row.active) {
                 <app-status-badge [label]="'Inactivo' | t" tone="neutral" />
               }
             } @else {
               <span class="avatar none" aria-hidden="true"><mat-icon>person</mat-icon></span>
               <span class="driver-name none">{{ 'Sin conductor' | t }}</span>
-              <button mat-stroked-button type="button" (click)="assign(row)" [attr.aria-label]="('Asignar conductor al vehículo ' | t) + label(row)">{{ 'Asignar' | t }}</button>
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="assign(row)"
+                [attr.aria-label]="('Asignar conductor al vehículo ' | t) + label(row)"
+              >
+                {{ 'Asignar' | t }}
+              </button>
             }
           </div>
           <footer>
             @if (selectable) {
-              <mat-checkbox class="pick" [checked]="selected" (change)="toggle(row)" [aria-label]="('Elegir vehículo ' | t) + label(row)" [attr.title]="'Elegir' | t" />
+              <mat-checkbox
+                class="pick"
+                [checked]="selected"
+                (change)="toggle(row)"
+                [aria-label]="('Elegir vehículo ' | t) + label(row)"
+                [attr.title]="'Elegir' | t"
+              />
             }
-            <a mat-icon-button [routerLink]="['/flota/vehiculos', row.id]" [attr.aria-label]="('Editar vehículo ' | t) + label(row)">
+            <a
+              mat-icon-button
+              [routerLink]="['/flota/vehiculos', row.id]"
+              [attr.aria-label]="('Editar vehículo ' | t) + label(row)"
+            >
               <mat-icon aria-hidden="true">edit</mat-icon>
             </a>
             @if (row.assignedUser) {
-              <button mat-icon-button type="button" (click)="unassign(row)" [attr.aria-label]="('Retirar conductor del vehículo ' | t) + label(row)">
+              <button
+                mat-icon-button
+                type="button"
+                (click)="unassign(row)"
+                [attr.aria-label]="('Retirar conductor del vehículo ' | t) + label(row)"
+              >
                 <mat-icon aria-hidden="true">person_remove</mat-icon>
               </button>
-              <button mat-icon-button type="button" (click)="assign(row)" [attr.aria-label]="('Cambiar conductor del vehículo ' | t) + label(row)">
+              <button
+                mat-icon-button
+                type="button"
+                (click)="assign(row)"
+                [attr.aria-label]="('Cambiar conductor del vehículo ' | t) + label(row)"
+              >
                 <mat-icon aria-hidden="true">person_add</mat-icon>
               </button>
             }
-            <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar vehículo ' | t) + label(row)">
+            <button
+              mat-icon-button
+              type="button"
+              (click)="remove(row)"
+              [attr.aria-label]="('Eliminar vehículo ' | t) + label(row)"
+            >
               <mat-icon aria-hidden="true">delete</mat-icon>
             </button>
           </footer>
         </article>
       </ng-template>
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/flota/vehiculos', row.id]" [attr.aria-label]="('Editar vehículo ' | t) + label(row)">
+        <a
+          mat-icon-button
+          [routerLink]="['/flota/vehiculos', row.id]"
+          [attr.aria-label]="('Editar vehículo ' | t) + label(row)"
+        >
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
         @if (row.assignedUser) {
-          <button mat-icon-button type="button" (click)="unassign(row)" [attr.aria-label]="('Retirar conductor del vehículo ' | t) + label(row)">
+          <button
+            mat-icon-button
+            type="button"
+            (click)="unassign(row)"
+            [attr.aria-label]="('Retirar conductor del vehículo ' | t) + label(row)"
+          >
             <mat-icon aria-hidden="true">person_remove</mat-icon>
           </button>
         }
-        <button mat-icon-button type="button" (click)="assign(row)" [attr.aria-label]="(row.assignedUser ? ('Cambiar conductor del vehículo ' | t) : ('Asignar conductor al vehículo ' | t)) + label(row)">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="assign(row)"
+          [attr.aria-label]="
+            (row.assignedUser ? ('Cambiar conductor del vehículo ' | t) : ('Asignar conductor al vehículo ' | t)) +
+            label(row)
+          "
+        >
           <mat-icon aria-hidden="true">person_add</mat-icon>
         </button>
-        <button mat-icon-button type="button" (click)="remove(row)" [attr.aria-label]="('Eliminar vehículo ' | t) + label(row)">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="remove(row)"
+          [attr.aria-label]="('Eliminar vehículo ' | t) + label(row)"
+        >
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
       <ng-template #selectionActions let-rows let-clear="clear">
-        <button mat-button type="button" (click)="actions.removeMany(rows, clear)"><mat-icon aria-hidden="true">delete</mat-icon>{{ 'Eliminar' | t }}</button>
-        <button mat-button type="button" (click)="actions.exportRows(rows)"><mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}</button>
+        <button mat-button type="button" (click)="actions.removeMany(rows, clear)">
+          <mat-icon aria-hidden="true">delete</mat-icon>{{ 'Eliminar' | t }}
+        </button>
+        <button mat-button type="button" (click)="actions.exportRows(rows)">
+          <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}
+        </button>
       </ng-template>
       <a empty-action mat-stroked-button routerLink="/flota/vehiculos/nuevo">{{ 'Crear el primer vehículo' | t }}</a>
     </app-data-table>
@@ -152,7 +213,11 @@ export class ResourceListComponent {
     { id: 'name', header: t('Nombre'), cell: (r) => r.name, kind: 'strong' },
     { id: 'licensePlate', header: t('Matrícula'), cell: (r) => r.licensePlate ?? '', kind: 'id' },
     { id: 'type', header: t('Tipo'), cell: (r) => r.resourceType?.name ?? '', kind: 'muted' },
-    { id: 'driver', header: t('Conductor'), cell: (r) => (r.assignedUser ? `${driverName(r.assignedUser)} (${r.assignedUser.email})` : t('Sin conductor')) },
+    {
+      id: 'driver',
+      header: t('Conductor'),
+      cell: (r) => (r.assignedUser ? `${driverName(r.assignedUser)} (${r.assignedUser.email})` : t('Sin conductor')),
+    },
   ];
 
   constructor() {
@@ -194,17 +259,25 @@ export class ResourceListComponent {
   protected assign(row: Resource): void {
     this.reset();
     this.dialog
-      .open<AssignDriverDialogComponent, { vehicle: string; currentDriverId: string | null }, string>(AssignDriverDialogComponent, {
-        data: { vehicle: vehicleLabel(row), currentDriverId: row.driverId },
-      })
+      .open<AssignDriverDialogComponent, { vehicle: string; currentDriverId: string | null }, string>(
+        AssignDriverDialogComponent,
+        {
+          data: { vehicle: vehicleLabel(row), currentDriverId: row.driverId },
+        }
+      )
       .afterClosed()
       .pipe(
         filter((driverId): driverId is string => !!driverId),
-        switchMap((driverId) => this.api.assignDriver(row.id, driverId)),
+        switchMap((driverId) => this.api.assignDriver(row.id, driverId))
       )
       .subscribe({
         next: (updated) => {
-          this.deleter.success.set(t('Conductor asignado al vehículo «{0}»: {1}', [vehicleLabel(row), updated.assignedUser ? driverName(updated.assignedUser) : '']).replace(/: $/, ''));
+          this.deleter.success.set(
+            t('Conductor asignado al vehículo «{0}»: {1}', [
+              vehicleLabel(row),
+              updated.assignedUser ? driverName(updated.assignedUser) : '',
+            ]).replace(/: $/, '')
+          );
           this.state.reload();
         },
         error: (err: unknown) => this.deleter.error.set(messageFor(err)),
@@ -217,14 +290,17 @@ export class ResourceListComponent {
       .open(ConfirmDialogComponent, {
         data: {
           title: t('Retirar conductor'),
-          message: t('¿Retirar a {0} del vehículo «{1}»?', [row.assignedUser ? driverName(row.assignedUser) : 'el conductor', vehicleLabel(row)]),
+          message: t('¿Retirar a {0} del vehículo «{1}»?', [
+            row.assignedUser ? driverName(row.assignedUser) : 'el conductor',
+            vehicleLabel(row),
+          ]),
           confirmLabel: t('Retirar'),
         },
       })
       .afterClosed()
       .pipe(
         filter((confirmed) => confirmed === true),
-        switchMap(() => this.api.unassignDriver(row.id)),
+        switchMap(() => this.api.unassignDriver(row.id))
       )
       .subscribe({
         next: () => {

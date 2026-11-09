@@ -36,7 +36,17 @@ interface StopRow {
  */
 @Component({
   selector: 'app-route-visits',
-  imports: [MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatMenuModule, FormResultComponent, StatusBadgeComponent, ActionTitleDirective, TranslatePipe],
+  imports: [
+    MatButtonModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    FormResultComponent,
+    StatusBadgeComponent,
+    ActionTitleDirective,
+    TranslatePipe,
+  ],
   providers: [RouteVisitsStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './route-visits.component.html',

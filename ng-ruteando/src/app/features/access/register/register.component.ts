@@ -57,7 +57,9 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
         </p>
         <app-form-result [error]="resendError()" [success]="resendDone() ? resendMessage : null" />
         <div class="actions">
-          <button mat-stroked-button type="button" [disabled]="resending()" (click)="resend(sentTo)">{{ 'Reenviar correo' | t }}</button>
+          <button mat-stroked-button type="button" [disabled]="resending()" (click)="resend(sentTo)">
+            {{ 'Reenviar correo' | t }}
+          </button>
           <a mat-button routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a>
         </div>
       </div>
@@ -72,7 +74,12 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
               @if (field.icon) {
                 <mat-icon matPrefix aria-hidden="true">{{ field.icon }}</mat-icon>
               }
-              <input matInput [type]="field.type" [formControlName]="field.name" [attr.autocomplete]="field.autocomplete" />
+              <input
+                matInput
+                [type]="field.type"
+                [formControlName]="field.name"
+                [attr.autocomplete]="field.autocomplete"
+              />
               <mat-error>{{ textError(field) }}</mat-error>
             </mat-form-field>
           }
@@ -98,7 +105,9 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
         }
         <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Crear cuenta' | t }}</button>
       </form>
-      <p class="alt">{{ '¿Ya tienes cuenta?' | t }} <a routerLink="/acceso">{{ 'Iniciar sesión' | t }}</a></p>
+      <p class="alt">
+        {{ '¿Ya tienes cuenta?' | t }} <a routerLink="/acceso">{{ 'Iniciar sesión' | t }}</a>
+      </p>
     }
   `,
 })
@@ -107,10 +116,35 @@ export class RegisterComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected readonly textFields: readonly TextField[] = [
-    { name: 'firstName', label: t('Nombre||pila'), type: 'text', autocomplete: 'given-name', required: t('Introduce tu nombre') },
-    { name: 'lastName', label: t('Apellidos'), type: 'text', autocomplete: 'family-name', required: t('Introduce tus apellidos') },
-    { name: 'tenantName', label: t('Nombre de la empresa'), type: 'text', autocomplete: 'organization', required: t('Introduce el nombre de tu empresa') },
-    { name: 'email', label: t('Correo electrónico'), type: 'email', autocomplete: 'username', required: t('Introduce tu correo'), icon: 'mail' },
+    {
+      name: 'firstName',
+      label: t('Nombre||pila'),
+      type: 'text',
+      autocomplete: 'given-name',
+      required: t('Introduce tu nombre'),
+    },
+    {
+      name: 'lastName',
+      label: t('Apellidos'),
+      type: 'text',
+      autocomplete: 'family-name',
+      required: t('Introduce tus apellidos'),
+    },
+    {
+      name: 'tenantName',
+      label: t('Nombre de la empresa'),
+      type: 'text',
+      autocomplete: 'organization',
+      required: t('Introduce el nombre de tu empresa'),
+    },
+    {
+      name: 'email',
+      label: t('Correo electrónico'),
+      type: 'email',
+      autocomplete: 'username',
+      required: t('Introduce tu correo'),
+      icon: 'mail',
+    },
   ];
 
   protected readonly form = inject(FormBuilder).nonNullable.group({
@@ -159,7 +193,9 @@ export class RegisterComponent {
         this.error.set(error.message);
         if (error.code === 'PASSWORD_POLICY_VIOLATION') {
           // Las contraseñas se han vaciado: el foco vuelve a la primera para escribir otra
-          setTimeout(() => this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="new-password"]')?.focus());
+          setTimeout(() =>
+            this.host.nativeElement.querySelector<HTMLInputElement>('input[autocomplete="new-password"]')?.focus()
+          );
         }
       },
     });

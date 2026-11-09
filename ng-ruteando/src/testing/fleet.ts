@@ -26,7 +26,14 @@ export function resource(overrides: Partial<Resource> = {}): Resource {
 }
 
 export function driver(overrides: Partial<User> = {}): User {
-  return { ...REAL_DRIVER, id: nextId(), email: `conductor${counter}@example.com`, firstName: 'Conductor', lastName: `${counter}`, ...overrides };
+  return {
+    ...REAL_DRIVER,
+    id: nextId(),
+    email: `conductor${counter}@example.com`,
+    firstName: 'Conductor',
+    lastName: `${counter}`,
+    ...overrides,
+  };
 }
 
 /** Página como la entrega el gateway en `resource-types` y `resources` (con `page`). */

@@ -20,11 +20,15 @@ const missing = gateway.invalid
   : [!target && 'GATEWAY_URL', !apiKey && 'GATEWAY_API_KEY'].filter(Boolean);
 if (gateway.mode === 'mock') {
   console.warn(MOCK_WARNING);
-  startMockGateway().catch((err) => console.warn(`[proxy /gateway] No se pudo arrancar el gateway falso: ${err.message}`));
+  startMockGateway().catch((err) =>
+    console.warn(`[proxy /gateway] No se pudo arrancar el gateway falso: ${err.message}`)
+  );
 }
 
 if (missing.length) {
-  console.warn(`[proxy /gateway] Falta ${missing.join(' y ')} (ver .env.example): las peticiones a /gateway responderán 503.`);
+  console.warn(
+    `[proxy /gateway] Falta ${missing.join(' y ')} (ver .env.example): las peticiones a /gateway responderán 503.`
+  );
 }
 
 // Retraso artificial para ver los esqueletos de carga: GATEWAY_DELAY_MS=1500 retrasa cada petición 1,5 s; ausente, vacío,

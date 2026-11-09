@@ -43,11 +43,16 @@ function startFakeGateway() {
             contentType: req.headers['content-type'],
             length: body.length,
             sha: crypto.createHash('sha256').update(body).digest('hex'),
-          }),
+          })
         );
       } else {
         res.writeHead(200, { 'Content-Type': 'application/json' }).end(
-          JSON.stringify({ method: req.method, url: req.url, contentType: req.headers['content-type'], body: body.toString() }),
+          JSON.stringify({
+            method: req.method,
+            url: req.url,
+            contentType: req.headers['content-type'],
+            body: body.toString(),
+          })
         );
       }
     });
@@ -150,7 +155,9 @@ test('reenvía multipart íntegro, con su tipo de contenido y boundary', async (
   const boundary = '----ruteandoBoundary7MA4YWxkTrZu0gW';
   const file = Buffer.alloc(200000, 'a,b,c\n1,2,3\n');
   const body = Buffer.concat([
-    Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="paquetes.csv"\r\nContent-Type: text/csv\r\n\r\n`),
+    Buffer.from(
+      `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="paquetes.csv"\r\nContent-Type: text/csv\r\n\r\n`
+    ),
     file,
     Buffer.from(`\r\n--${boundary}--\r\n`),
   ]);

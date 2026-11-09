@@ -1,5 +1,12 @@
 import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -203,7 +210,7 @@ export class PackageFormComponent implements HasUnsavedChanges {
               country: optional.country || null,
               postalCode: optional.postalCode || null,
               observation: optional.observation || null,
-            }),
+            })
           );
 
     this.submit.submit(
@@ -213,7 +220,7 @@ export class PackageFormComponent implements HasUnsavedChanges {
         void notify(this.injector, this.id === null ? t('Paquete creado') : t('Paquete guardado'));
         void this.router.navigateByUrl('/paquetes');
       },
-      { 409: DUPLICATE_GUIDE },
+      { 409: DUPLICATE_GUIDE }
     );
   }
 }

@@ -4,7 +4,8 @@ import { ApiError } from '../../core/api/api-error';
 
 import { BULK_CONCURRENCY, BulkResult, BulkTarget, bulkDeleteMessages, deleteMany, runBulk } from './bulk-run';
 
-const targets = (n: number): BulkTarget[] => Array.from({ length: n }, (_, i) => ({ id: `id${i}`, label: `Registro ${i}` }));
+const targets = (n: number): BulkTarget[] =>
+  Array.from({ length: n }, (_, i) => ({ id: `id${i}`, label: `Registro ${i}` }));
 const apiError = (status: number, message = 'Error del gateway'): ApiError => new ApiError({ status, message });
 
 function collect<T>(source$: Observable<T>): { values: T[]; completed: () => boolean } {
@@ -26,7 +27,7 @@ describe('runBulk', () => {
       runBulk(targets(10), (id) => {
         calls.push(id);
         return ['id2', 'id5', 'id9'].includes(id) ? throwError(() => apiError(409, 'En uso')) : of(null);
-      }),
+      })
     );
     expect(calls.length).toBe(10);
     expect(values[0].done).toBe(7);
@@ -35,7 +36,11 @@ describe('runBulk', () => {
   });
 
   it('usa el texto por estado cuando se da', () => {
-    const { values } = collect(runBulk(targets(1), () => throwError(() => apiError(409, 'genérico')), { byStatus: { 409: 'El registro está en uso' } }));
+    const { values } = collect(
+      runBulk(targets(1), () => throwError(() => apiError(409, 'genérico')), {
+        byStatus: { 409: 'El registro está en uso' },
+      })
+    );
     expect(values[0].failed[0].message).toBe('El registro está en uso');
   });
 
@@ -45,7 +50,9 @@ describe('runBulk', () => {
   });
 
   it('los estados de doneOnStatus cuentan como hechos', () => {
-    const { values } = collect(runBulk(targets(2), (id) => (id === 'id0' ? throwError(() => apiError(404)) : of(null)), { doneOnStatus: [404] }));
+    const { values } = collect(
+      runBulk(targets(2), (id) => (id === 'id0' ? throwError(() => apiError(404)) : of(null)), { doneOnStatus: [404] })
+    );
     expect(values[0]).toEqual({ done: 2, failed: [] });
   });
 
@@ -75,8 +82,15 @@ describe('runBulk', () => {
 });
 
 describe('deleteMany', () => {
-  const dialogReturning = (confirmed: unknown) => ({ open: jasmine.createSpy('open').and.returnValue({ afterClosed: () => of(confirmed) }) });
-  const options = (remove: (id: string) => Observable<unknown>) => ({ singular: 'vehículo', plural: 'vehículos', targets: targets(4), remove });
+  const dialogReturning = (confirmed: unknown) => ({
+    open: jasmine.createSpy('open').and.returnValue({ afterClosed: () => of(confirmed) }),
+  });
+  const options = (remove: (id: string) => Observable<unknown>) => ({
+    singular: 'vehículo',
+    plural: 'vehículos',
+    targets: targets(4),
+    remove,
+  });
 
   it('si se cancela no llama al gateway y no emite nada', () => {
     const remove = jasmine.createSpy('remove').and.returnValue(of(null));
@@ -97,14 +111,24 @@ describe('deleteMany', () => {
 
   it('el diálogo nombra la cantidad y es destructivo', () => {
     const dialog = dialogReturning(true);
-    collect(deleteMany(dialog, options(() => of(null))));
+    collect(
+      deleteMany(
+        dialog,
+        options(() => of(null))
+      )
+    );
     const data = dialog.open.calls.mostRecent().args[1].data;
     expect(data.message).toContain('4 vehículos');
     expect(data.destructive).toBeTrue();
   });
 
   it('un 404 al borrar cuenta como hecho', () => {
-    const { values } = collect(deleteMany(dialogReturning(true), options((id) => (id === 'id1' ? throwError(() => apiError(404)) : of(null)))));
+    const { values } = collect(
+      deleteMany(
+        dialogReturning(true),
+        options((id) => (id === 'id1' ? throwError(() => apiError(404)) : of(null)))
+      )
+    );
     expect(values[0]).toEqual({ done: 4, failed: [] });
   });
 });
@@ -113,7 +137,10 @@ describe('bulkDeleteMessages', () => {
   const result = (done: number, failed: BulkResult['failed'] = []): BulkResult => ({ done, failed });
 
   it('uno solo', () => {
-    expect(bulkDeleteMessages(result(1), 'vehículo', 'vehículos')).toEqual({ success: 'Se eliminó 1 vehículo', error: null });
+    expect(bulkDeleteMessages(result(1), 'vehículo', 'vehículos')).toEqual({
+      success: 'Se eliminó 1 vehículo',
+      error: null,
+    });
   });
 
   it('todos', () => {
@@ -127,7 +154,14 @@ describe('bulkDeleteMessages', () => {
   });
 
   it('ninguno: solo el error', () => {
-    const messages = bulkDeleteMessages(result(0, [{ label: 'A', message: 'x' }, { label: 'B', message: 'y' }]), 'tipo', 'tipos');
+    const messages = bulkDeleteMessages(
+      result(0, [
+        { label: 'A', message: 'x' },
+        { label: 'B', message: 'y' },
+      ]),
+      'tipo',
+      'tipos'
+    );
     expect(messages.success).toBeNull();
     expect(messages.error).toBe('No se pudo eliminar 2 tipos: «A» (x); «B» (y)');
   });

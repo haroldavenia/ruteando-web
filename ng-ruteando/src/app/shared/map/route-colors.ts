@@ -4,10 +4,28 @@ import { t } from '../../core/i18n/i18n';
  * daltonismo y sin amarillo puro (poco contraste sobre el mapa). Con más rutas se repiten por orden;
  * lo que identifica una ruta no es solo el color, también su nombre y su número en las paradas.
  */
-export const ROUTE_COLORS: readonly string[] = ['#0072B2', '#D55E00', '#009E73', '#CC79A7', '#E69F00', '#56B4E9', '#882255', '#117733'];
+export const ROUTE_COLORS: readonly string[] = [
+  '#0072B2',
+  '#D55E00',
+  '#009E73',
+  '#CC79A7',
+  '#E69F00',
+  '#56B4E9',
+  '#882255',
+  '#117733',
+];
 
 /** Nombre en español de cada color de la paleta, en el mismo orden (para quien no distingue los tonos). */
-export const ROUTE_COLOR_NAMES: readonly string[] = [t('Azul'), t('Bermellón'), t('Verde'), t('Rosa'), t('Naranja'), t('Celeste'), t('Vino'), t('Verde oscuro')];
+export const ROUTE_COLOR_NAMES: readonly string[] = [
+  t('Azul'),
+  t('Bermellón'),
+  t('Verde'),
+  t('Rosa'),
+  t('Naranja'),
+  t('Celeste'),
+  t('Vino'),
+  t('Verde oscuro'),
+];
 
 /** Nombre del color si es de la paleta; si no, el propio valor. */
 export function colorName(hex: string | null): string {
@@ -22,7 +40,16 @@ export function colorName(hex: string | null): string {
  * Los mismos ocho tonos, más luminosos, para fondos oscuros: sobre la superficie oscura los originales se apagan.
  * Cada uno supera 3:1 frente a la superficie oscura (lo comprueba la prueba de contraste).
  */
-export const ROUTE_COLORS_DARK: readonly string[] = ['#4DB0F0', '#FF8A3D', '#2FD3A0', '#F29AC8', '#F5B93D', '#8FD0FF', '#E36BA0', '#6BD68A'];
+export const ROUTE_COLORS_DARK: readonly string[] = [
+  '#4DB0F0',
+  '#FF8A3D',
+  '#2FD3A0',
+  '#F29AC8',
+  '#F5B93D',
+  '#8FD0FF',
+  '#E36BA0',
+  '#6BD68A',
+];
 
 export function routeColor(routeIndex: number): string {
   const size = ROUTE_COLORS.length;

@@ -19,7 +19,7 @@ export class SubmitState {
     source: Observable<T>,
     onSuccess: (value: T) => void,
     byStatus: Readonly<Record<number, string>> = {},
-    format?: (error: unknown) => string | undefined,
+    format?: (error: unknown) => string | undefined
   ): void {
     if (this.submitting()) {
       return;
