@@ -52,15 +52,15 @@ La verificación SHALL ejecutar las pruebas y la compilación del frontend, las 
 - **THEN** hay una comprobación resumen llamada `ci` que solo está en verde si todas las demás lo están y que falla si alguna fue cancelada
 
 ### Requirement: Entorno reproducible
-La verificación SHALL usar la versión de Node del repositorio, instalar las dependencias exactas de los `package-lock.json` y no necesitar secretos ni acceso al gateway real.
+La verificación SHALL usar la versión de Node del repositorio, instalar las dependencias exactas del `pnpm-lock.yaml` y no necesitar secretos ni acceso al gateway real.
 
 #### Scenario: Versión de Node
 - **WHEN** se ejecuta la verificación
-- **THEN** usa la versión de Node de `ng-ruteando/.nvmrc` y `npm` 11
+- **THEN** usa la versión de Node de `ng-ruteando/.nvmrc` y la versión de pnpm del campo `packageManager`
 
 #### Scenario: Dependencias exactas
-- **WHEN** se instalan las dependencias de la raíz y del frontend
-- **THEN** se hace con `npm ci` y falla si un `package-lock.json` no coincide con su `package.json`
+- **WHEN** se instalan las dependencias de la raíz y del frontend (un solo workspace)
+- **THEN** se hace con `pnpm install --frozen-lockfile` y falla si `pnpm-lock.yaml` no coincide con los `package.json`
 
 #### Scenario: Sin secretos
 - **WHEN** se inspeccionan el flujo de trabajo y los pasos que ejecuta
@@ -86,10 +86,10 @@ El flujo de trabajo SHALL tener permisos de solo lectura sobre el contenido, SHA
 - **THEN** se corta por su tiempo máximo y la verificación falla
 
 ### Requirement: Dependencias vigiladas
-El repositorio SHALL revisar cada semana las actualizaciones de las dependencias de npm de la raíz y del frontend y de las acciones del flujo de trabajo.
+El repositorio SHALL revisar cada semana las actualizaciones de las dependencias de la raíz y del frontend (pnpm) y de las acciones del flujo de trabajo.
 
 #### Scenario: Actualizaciones semanales
-- **WHEN** hay una versión nueva de una dependencia de npm o de una acción
+- **WHEN** hay una versión nueva de una dependencia o de una acción
 - **THEN** se abre un pull request de actualización, agrupado por tipo cuando proceda y con un máximo de pull requests abiertos, que pasa por la misma verificación
 
 #### Scenario: Dependencias sin uso

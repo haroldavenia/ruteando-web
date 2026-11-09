@@ -9,7 +9,7 @@ Garantiza que el frontend `ng-ruteando` compile, arranque en navegador y con ren
 El proyecto `ng-ruteando` SHALL compilar en modo producción sin errores con `ng build`.
 
 #### Scenario: Build de producción correcto
-- **WHEN** se ejecuta `npx ng build` en `ng-ruteando/` tras `npm install`
+- **WHEN** se ejecuta `pnpm exec ng build` en `ng-ruteando/` tras `pnpm install`
 - **THEN** el comando termina con código 0 y genera `dist/ng-ruteando/browser` y `dist/ng-ruteando/server`
 
 #### Scenario: Presupuestos respetados
@@ -35,7 +35,7 @@ La aplicación SHALL mostrar la página de inicio con el título de la aplicaci�
 La aplicación SHALL poder servirse con SSR desde el servidor Node generado, sin acceder a APIs exclusivas del navegador durante el render.
 
 #### Scenario: Respuesta SSR
-- **WHEN** se ejecuta `npm run serve:ssr:ng-ruteando` tras compilar y se pide `/acceso`
+- **WHEN** se ejecuta `pnpm run serve:ssr:ng-ruteando` tras compilar y se pide `/acceso`
 - **THEN** la respuesta HTML contiene el formulario de inicio de sesión ya renderizado
 
 #### Scenario: Raíz sin sesión en el servidor

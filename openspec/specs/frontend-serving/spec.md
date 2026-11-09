@@ -9,7 +9,7 @@ Define cómo el servidor Express del repositorio publica la aplicación Angular 
 El servidor SHALL publicar la salida de navegador compilada de `ng-ruteando` como contenido estático.
 
 #### Scenario: Página principal
-- **WHEN** se ejecuta `npm start` en la raíz tras compilar el frontend y se pide `GET /`
+- **WHEN** se ejecuta `pnpm start` en la raíz tras compilar el frontend y se pide `GET /`
 - **THEN** la respuesta es 200 y contiene el HTML de la aplicación `ng-ruteando`
 
 #### Scenario: Recurso estático
@@ -31,7 +31,7 @@ El servidor SHALL responder con la página de la aplicación a cualquier ruta de
 El servidor SHALL indicar con claridad que falta la compilación del frontend en lugar de fallar de forma opaca.
 
 #### Scenario: Directorio de compilación inexistente
-- **WHEN** se ejecuta `npm start` sin haber compilado el frontend y se pide `GET /`
+- **WHEN** se ejecuta `pnpm start` sin haber compilado el frontend y se pide `GET /`
 - **THEN** el servidor arranca, escribe en el log el comando necesario para compilar y responde 503 con un mensaje que lo indica
 
 ### Requirement: Un solo frontend publicado
@@ -53,7 +53,7 @@ El servidor SHALL responder 404 en JSON a cualquier petición bajo `/api/*` o `/
 - **THEN** la respuesta es 404 con un cuerpo JSON de mensaje, sin esperar a ninguna base de datos
 
 #### Scenario: Sin base de datos
-- **WHEN** se ejecuta `npm start` sin MongoDB ni `MONGO_URI`
+- **WHEN** se ejecuta `pnpm start` sin MongoDB ni `MONGO_URI`
 - **THEN** el servidor arranca sin errores de conexión en el registro
 
 ### Requirement: Repositorio sin la aplicación anterior

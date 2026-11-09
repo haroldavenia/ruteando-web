@@ -4,27 +4,26 @@ Frontend Angular 21 de Ruteando (standalone, SCSS, Angular Material M3, SSR). Es
 
 ## Requisitos
 
-- Node `^20.19 || ^22.12 || >=24` (campo `engines`; `.nvmrc` = 22, usa `nvm use`). Con una versión fuera de rango, `npm install` avisa con `EBADENGINE`.
-- Si `npm install` desde cero falla con `Cannot read properties of null (reading 'edgesOut')`, usa npm 11 (`npx npm@11 install`); `npm ci` funciona con npm 10 y 11.
-- `npm ci` dentro de `ng-ruteando/` para instalar dependencias.
+- Node `^20.19 || ^22.12 || >=24` (campo `engines`; `.nvmrc` = 22, usa `nvm use`). Con una versión fuera de rango, pnpm avisa («Unsupported engine»).
+- pnpm 10 (la versión exacta está en `packageManager` del `package.json` de la raíz; `corepack enable`). El repositorio es un workspace con un solo `pnpm-lock.yaml` en la raíz: `pnpm install --frozen-lockfile` (desde la raíz o desde aquí) instala el frontend y el servidor.
 
 ## Comandos
 
 | Comando | Qué hace |
 |---|---|
-| `npm start` | Servidor de desarrollo en `http://localhost:4200/` con recarga automática |
-| `npm run build` | Compilación de producción en `dist/ng-ruteando/{browser,server}`; falla si se superan los presupuestos de tamaño |
-| `npm test` | Pruebas unitarias con Karma en modo interactivo (abre Chrome y vigila cambios) |
-| `npm run test:ci` | Pruebas unitarias en una sola ejecución con Chrome sin interfaz; termina con código distinto de 0 si alguna falla |
-| `npm run serve:ssr:ng-ruteando` | Servidor Node con renderizado en servidor en `http://localhost:4000/` (hay que compilar antes con `npm run build`); acepta peticiones del host `localhost` y los de la variable `NG_ALLOWED_HOSTS` (lista separada por comas) |
+| `pnpm start` | Servidor de desarrollo en `http://localhost:4200/` con recarga automática |
+| `pnpm run build` | Compilación de producción en `dist/ng-ruteando/{browser,server}`; falla si se superan los presupuestos de tamaño |
+| `pnpm test` | Pruebas unitarias con Karma en modo interactivo (abre Chrome y vigila cambios) |
+| `pnpm run test:ci` | Pruebas unitarias en una sola ejecución con Chrome sin interfaz; termina con código distinto de 0 si alguna falla |
+| `pnpm run serve:ssr:ng-ruteando` | Servidor Node con renderizado en servidor en `http://localhost:4000/` (hay que compilar antes con `pnpm run build`); acepta peticiones del host `localhost` y los de la variable `NG_ALLOWED_HOSTS` (lista separada por comas) |
 
 Las pruebas necesitan Chrome instalado (o la variable `CHROME_BIN` apuntando a un binario de Chrome/Chromium).
 
 ## Comprobar el SSR a mano
 
 ```
-npm run build
-npm run serve:ssr:ng-ruteando &
+pnpm run build
+pnpm run serve:ssr:ng-ruteando &
 curl -s http://localhost:4000/ | grep -o "Planificación de rutas"
 ```
 
@@ -46,10 +45,10 @@ Para arrancar con el gateway:
 ```
 cp ../.env.example ../.env     # en la raíz del repositorio; .env no se versiona
 # edita ../.env: GATEWAY_URL (sin /api/v1) y GATEWAY_API_KEY
-npm start
+pnpm start
 ```
 
-También se pueden pasar como variables de entorno (`GATEWAY_URL=... GATEWAY_API_KEY=... npm start`); lo definido en el entorno tiene prioridad sobre `.env`. Para apuntar a otro gateway cambia `GATEWAY_URL` y reinicia `ng serve`; no hace falta tocar el código. Si falta alguna variable, `ng serve` avisa con su nombre y `/gateway` responde 503.
+También se pueden pasar como variables de entorno (`GATEWAY_URL=... GATEWAY_API_KEY=... pnpm start`); lo definido en el entorno tiene prioridad sobre `.env`. Para apuntar a otro gateway cambia `GATEWAY_URL` y reinicia `ng serve`; no hace falta tocar el código. Si falta alguna variable, `ng serve` avisa con su nombre y `/gateway` responde 503.
 
 La clave es un secreto: no la escribas en los ficheros de entorno ni en el código.
 

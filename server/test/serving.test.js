@@ -128,8 +128,8 @@ test('el servidor arranca sin MongoDB y no lo menciona en el registro', () => {
 test('sin compilación: 503 con mensaje claro y aviso en el registro', async () => {
   const res = await fetch(withoutBuild.base + '/');
   assert.equal(res.status, 503);
-  assert.match((await res.json()).message, /npm run build:web/);
-  assert.match(withoutBuild.log(), /npm run build:web/);
+  assert.match((await res.json()).message, /pnpm run build:web/);
+  assert.match(withoutBuild.log(), /pnpm run build:web/);
 
   const api = await fetch(withoutBuild.base + '/api/me');
   assert.equal(api.status, 404, '/api responde 404 en JSON también sin compilación');

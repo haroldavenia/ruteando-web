@@ -1,6 +1,7 @@
 version: 2
 
 # Revisión semanal de dependencias. Los pull requests de Dependabot pasan por el mismo CI.
+# El ecosistema `npm` también cubre pnpm: Dependabot detecta pnpm-lock.yaml y pnpm-workspace.yaml (raíz y ng-ruteando).
 updates:
   - package-ecosystem: npm
     directory: /

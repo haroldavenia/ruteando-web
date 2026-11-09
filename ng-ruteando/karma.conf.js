@@ -27,7 +27,7 @@ module.exports = function (config) {
     reporters: ['progress', 'kjhtml'],
     browsers: ['Chrome'],
     customLaunchers: {
-      // Para CI y para `npm run test:ci`: sin interfaz y sin sandbox
+      // Para CI y para `pnpm run test:ci`: sin interfaz y sin sandbox
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
         flags: ['--no-sandbox', '--disable-gpu'],

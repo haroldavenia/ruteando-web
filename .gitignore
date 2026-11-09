@@ -4,3 +4,6 @@ cosas
 .idea/*
 .env
 .claude/settings.local.json
+
+# pnpm es el gestor de paquetes: un package-lock.json (npm install accidental) no se versiona
+package-lock.json

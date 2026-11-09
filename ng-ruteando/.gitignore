@@ -43,3 +43,5 @@ Thumbs.db
 
 # Local env overrides (never commit secrets)
 /src/environments/environment.local.ts
+
+pnpm-debug.log
