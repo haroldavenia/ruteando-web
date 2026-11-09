@@ -1,11 +1,11 @@
-import { Location } from '@angular/common';
-import { provideLocationMocks } from '@angular/common/testing';
 import { OverlayContainer } from '@angular/cdk/overlay';
+import { Location } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideLocationMocks } from '@angular/common/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { AUDIT_FIXTURE_LOGS, auditLog, gatewayAuditPage, localIso } from '../../../testing/audit';
@@ -16,7 +16,6 @@ import { errorInterceptor } from '../../core/api/error.interceptor';
 import { AuditLog } from '../../core/api/models';
 import { CurrentUser } from '../../core/auth/current-user';
 import { UserRole } from '../../core/auth/session.model';
-
 import { AuditListComponent } from './audit-list.component';
 
 const PREFS = ['ruteando-list-view', 'ruteando-density', 'ruteando-audit-tech', 'ruteando-audit-panel'];

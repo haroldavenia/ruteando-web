@@ -1,4 +1,4 @@
-import { Observable, map, of, switchMap } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { Journey } from '../../core/api/models';

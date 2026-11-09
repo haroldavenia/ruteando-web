@@ -1,15 +1,14 @@
 import { DomainWaypoint, Package } from '../../core/api/models';
-
 import {
-  NO_FILTERS,
-  RouteVisit,
   filterVisits,
   hasFilters,
+  NO_FILTERS,
   normalizeText,
   progressText,
+  RouteVisit,
   visitProgress,
-  visitStatus,
   visitsOf,
+  visitStatus,
 } from './route-visit-filters';
 
 const stop = (sequence: number, packageId: string | null): DomainWaypoint =>

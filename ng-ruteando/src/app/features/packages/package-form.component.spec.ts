@@ -3,19 +3,17 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
+import get from '../../../testing/fixtures/gateway/get__packages__id.json';
+import create from '../../../testing/fixtures/gateway/post__packages.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { Package } from '../../core/api/models';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-
-import { PackageFormComponent, buildUpdateBody } from './package-form.component';
-
-import create from '../../../testing/fixtures/gateway/post__packages.json';
-import get from '../../../testing/fixtures/gateway/get__packages__id.json';
+import { buildUpdateBody, PackageFormComponent } from './package-form.component';
 
 const fx = (f: unknown) => f as Fixture;
 

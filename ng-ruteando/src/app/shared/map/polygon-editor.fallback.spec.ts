@@ -4,7 +4,6 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { LatLng } from '../../core/geo/lat-lng';
-
 import { MAP_CONFIG } from './map-config';
 import { OPENLAYERS_LOADER } from './openlayers';
 import { PolygonEditorComponent } from './polygon-editor.component';

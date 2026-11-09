@@ -15,6 +15,7 @@ export function safeReturnUrl(raw: string | null | undefined): string {
   }
   // Espacios, caracteres de control y barras invertidas: el navegador los elimina o los convierte en `/`,
   // de modo que `/\t/host` o `/\host` acabarían siendo `//host`
+  // eslint-disable-next-line no-control-regex -- los caracteres de control son justo lo que se rechaza
   if (/[\u0000- \u007f\\]/.test(raw)) {
     return '/';
   }

@@ -10,14 +10,14 @@ import { RouterLink } from '@angular/router';
 import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { passwordPolicy } from '../../../core/auth/password-policy';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { firstErrorMessage } from '../../../shared/form/access.messages';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
-import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
+import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
 
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 interface TextField {
   name: 'firstName' | 'lastName' | 'tenantName' | 'email';
   label: string;

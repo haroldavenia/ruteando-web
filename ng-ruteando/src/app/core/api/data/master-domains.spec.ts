@@ -1,16 +1,15 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { Fixture, firstResult, respondWith, setupApi } from '../../../../testing/api-testing';
-import { MasterDomain } from '../models';
-import { MasterDomainsApi } from './master-domains.api';
-import { MASTER_DOMAIN_DEFAULTS, MasterDomainsService } from './master-domains.service';
-
+import { firstResult, Fixture, respondWith, setupApi } from '../../../../testing/api-testing';
 import list from '../../../../testing/fixtures/gateway/get__master-domains.json';
 import get from '../../../../testing/fixtures/gateway/get__master-domains__code.json';
 import values from '../../../../testing/fixtures/gateway/get__master-domains__code__values.json';
-import addValue from '../../../../testing/fixtures/gateway/post__master-domains__code__values.json';
 import toggle from '../../../../testing/fixtures/gateway/patch__master-domains__code__values__key__toggle.json';
+import addValue from '../../../../testing/fixtures/gateway/post__master-domains__code__values.json';
+import { MasterDomain } from '../models';
+import { MasterDomainsApi } from './master-domains.api';
+import { MASTER_DOMAIN_DEFAULTS, MasterDomainsService } from './master-domains.service';
 
 const fx = (f: unknown) => f as unknown as Fixture;
 

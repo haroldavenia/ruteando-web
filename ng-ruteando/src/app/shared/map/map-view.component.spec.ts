@@ -1,18 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import { toLonLat, fromLonLat } from 'ol/proj';
-import Translate from 'ol/interaction/Translate';
 import Point from 'ol/geom/Point';
+import Translate from 'ol/interaction/Translate';
 import type TileLayer from 'ol/layer/Tile';
+import VectorLayer from 'ol/layer/Vector';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import VectorSource from 'ol/source/Vector';
 import type CircleStyle from 'ol/style/Circle';
 import type Style from 'ol/style/Style';
 
-import { LatLng } from '../../core/geo/lat-lng';
-import { ThemeService, THEME_STORAGE_KEY } from '../../core/theme/theme.service';
-
 import { TEST_MAP_CONFIG } from '../../../testing/map';
-
+import { LatLng } from '../../core/geo/lat-lng';
+import { THEME_STORAGE_KEY, ThemeService } from '../../core/theme/theme.service';
 import { MAP_CONFIG } from './map-config';
 import { toHex } from './map-palette';
 import { MapViewComponent } from './map-view.component';

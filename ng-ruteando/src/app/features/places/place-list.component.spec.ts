@@ -7,18 +7,16 @@ import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { Fixture, respondWith } from '../../../testing/api-testing';
+import remove from '../../../testing/fixtures/gateway/delete__places__id.json';
+import list from '../../../testing/fixtures/gateway/get__places.json';
 import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
-import { Fixture, respondWith } from '../../../testing/api-testing';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-
 import { PlaceListComponent } from './place-list.component';
 import { PlacesMapComponent } from './places-map.component';
-
-import list from '../../../testing/fixtures/gateway/get__places.json';
-import remove from '../../../testing/fixtures/gateway/delete__places__id.json';
 
 describe('PlaceListComponent', () => {
   let fixture: ComponentFixture<PlaceListComponent>;

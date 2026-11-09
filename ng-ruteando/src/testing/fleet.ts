@@ -1,8 +1,7 @@
 import { Page } from '../app/core/api/api-config';
 import { Resource, ResourceType, User } from '../app/core/api/models';
-
-import resourceFixture from './fixtures/gateway/get__resources.json';
 import typeFixture from './fixtures/gateway/get__resource-types.json';
+import resourceFixture from './fixtures/gateway/get__resources.json';
 import driverFixture from './fixtures/gateway/get__users__drivers.json';
 
 /** Un registro real de cada colección de flota (capturado del gateway); sirve de base de los constructores. */

@@ -1,6 +1,5 @@
 import { AuditLog } from '../../core/api/models';
-
-import { AuditFilters, addDays, dayKey, parseDay, startOfDay } from './audit-filters';
+import { addDays, AuditFilters, dayKey, parseDay, startOfDay } from './audit-filters';
 import { AUDIT_KINDS, AuditKind, auditKind } from './audit-labels';
 
 export interface AuditSummary {

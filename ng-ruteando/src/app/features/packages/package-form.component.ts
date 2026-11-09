@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Injector, signal } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -11,7 +11,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -19,6 +18,8 @@ import { MasterDomainsService } from '../../core/api/data/master-domains.service
 import { PackagesApi } from '../../core/api/data/packages.api';
 import { Package, PackageInput } from '../../core/api/models';
 import { fromGeoJsonPoint, toGeoJsonPoint } from '../../core/geo/lat-lng';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RecordLoader } from '../../shared/data/record-loader';
 import { SubmitState } from '../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../shared/data/unsaved-changes.guard';
@@ -27,12 +28,10 @@ import { FormActionsComponent } from '../../shared/form/form-actions.component';
 import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
-import { LocationFieldsComponent, createLocationGroup } from '../../shared/map/location-fields.component';
-
+import { createLocationGroup, LocationFieldsComponent } from '../../shared/map/location-fields.component';
+import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { DEFAULT_SERVICE_TYPES, serviceTypeLabel } from './package-labels';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const DUPLICATE_GUIDE = t('Ya existe un paquete con ese número de guía');
 
 /** Campos que el gateway calcula o que se cambian por otra vía: no se reenvían al guardar. */

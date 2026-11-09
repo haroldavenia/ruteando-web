@@ -3,16 +3,16 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 
 import { UsersApi } from '../../../core/api/data/users.api';
 import { User } from '../../../core/api/models';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { messageFor } from '../../../shared/data/api-messages';
+import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { driverName } from '../fleet-labels';
 
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 export interface AssignDriverData {
   vehicle: string;
   currentDriverId: string | null;

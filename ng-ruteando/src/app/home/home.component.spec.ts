@@ -9,7 +9,6 @@ import { API_BASE_URL } from '../core/api/api-config';
 import { errorInterceptor } from '../core/api/error.interceptor';
 import { CurrentUser } from '../core/auth/current-user';
 import { UserRole } from '../core/auth/session.model';
-
 import { HomeComponent } from './home.component';
 
 const day = (n: number) => `2026-10-${String(n).padStart(2, '0')}T10:00:00Z`;

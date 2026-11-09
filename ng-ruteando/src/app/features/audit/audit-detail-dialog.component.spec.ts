@@ -8,6 +8,7 @@ import { provideRouter } from '@angular/router';
 
 import { Fixture, respondWith } from '../../../testing/api-testing';
 import { auditLog } from '../../../testing/audit';
+import one from '../../../testing/fixtures/gateway/get__audit-logs__id.json';
 import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { makeUser } from '../../../testing/session';
 import { API_BASE_URL } from '../../core/api/api-config';
@@ -15,7 +16,6 @@ import { errorInterceptor } from '../../core/api/error.interceptor';
 import { AuditLog } from '../../core/api/models';
 import { CurrentUser } from '../../core/auth/current-user';
 import { UserRole } from '../../core/auth/session.model';
-
 import {
   AuditDetailData,
   AuditDetailDialogComponent,
@@ -23,8 +23,6 @@ import {
   DIRECT_FORBIDDEN,
   EVENT_GONE,
 } from './audit-detail-dialog.component';
-
-import one from '../../../testing/fixtures/gateway/get__audit-logs__id.json';
 
 describe('AuditDetailDialogComponent', () => {
   let http: HttpTestingController;

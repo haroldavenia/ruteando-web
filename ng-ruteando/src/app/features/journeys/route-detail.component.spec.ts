@@ -5,14 +5,12 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
 import { Fixture } from '../../../testing/api-testing';
+import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-
 import { RouteDetailComponent } from './route-detail.component';
-
-import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 
 const journey = (plan as unknown as Fixture).response.body as {
   id: string;

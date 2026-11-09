@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import { t } from '../../core/i18n/i18n';
+
 export type SkeletonVariant = 'stats' | 'form' | 'list' | 'ring';
 
 /** Cuántas piezas dibuja cada variante si no se pide otra cifra. */

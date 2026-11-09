@@ -1,5 +1,4 @@
 import { driver, resource, resourceType } from '../../../testing/fleet';
-
 import { csvFileName, driversToCsv, typesToCsv, vehiclesToCsv } from './fleet-export';
 
 const lines = (csv: string): string[] => csv.replace('\uFEFF', '').trim().split('\r\n');

@@ -1,6 +1,6 @@
 import { AuditLog } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
 import { toCsv } from '../../shared/data/csv';
-
 import { diffChanges } from './audit-diff';
 import {
   auditActionLabel,
@@ -11,7 +11,6 @@ import {
   auditSummary,
 } from './audit-labels';
 
-import { t } from '../../core/i18n/i18n';
 const HEADER = [
   'Instante (UTC)',
   t('Acción'),

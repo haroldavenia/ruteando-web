@@ -1,5 +1,4 @@
 import { AuditLog } from '../../core/api/models';
-
 import { hasValueChanges } from './audit-diff';
 import { AUDIT_KINDS, AuditKind, auditKind } from './audit-labels';
 import { AuditScopeId } from './audit-scopes';

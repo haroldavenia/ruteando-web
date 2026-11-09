@@ -6,7 +6,6 @@ import { Observable, of } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { OUTLINED_FIELDS_PROVIDER } from '../form/outlined-fields';
-
 import { DataColumn, DataFacet, DataTableComponent } from './data-table.component';
 import { FullListState } from './full-list-state';
 

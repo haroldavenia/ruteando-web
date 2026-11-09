@@ -1,13 +1,12 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuditLog } from '../../core/api/models';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { formatDateTime, formatRelativeTime } from '../../shared/format';
 import { StatusTone } from '../../shared/ui/status-tone';
-
 import { auditActionLabel, auditActor, auditKind, auditKindIcon, auditKindTone } from './audit-labels';
 
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 interface RelatedItem {
   log: AuditLog;
   action: string;

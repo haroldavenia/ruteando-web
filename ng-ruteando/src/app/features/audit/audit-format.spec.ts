@@ -34,6 +34,7 @@ describe('audit-format', () => {
 
   it('formatNumber separa los miles al estilo español', () => {
     expect(formatNumber(7)).toBe('7');
+    // eslint-disable-next-line no-irregular-whitespace -- el formato de Intl usa un espacio fino o duro
     expect(formatNumber(1000)).toMatch(/^1[\s  .]?000$/);
   });
 });

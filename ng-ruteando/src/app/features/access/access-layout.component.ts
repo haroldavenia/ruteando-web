@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { Data, RouterOutlet } from '@angular/router';
 
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { BrandComponent } from '../../shared/brand/brand.component';
 import { RouteBackdropComponent } from '../../shared/brand/route-backdrop.component';
 import { LanguageToggleComponent } from '../../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../../shared/ui/theme-toggle.component';
-
 import { AccessPitchComponent } from './access-pitch.component';
 import { AccessStepsComponent } from './access-steps.component';
-
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /**
  * Layout de las pantallas de acceso, sin barra ni menú lateral. En pantallas estrechas, una tarjeta centrada con la marca y el
  * contenido enrutado sobre la ilustración de rutas; desde 1024px, la ilustración con su presentación queda a la izquierda y el

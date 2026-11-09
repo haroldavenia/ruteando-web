@@ -1,4 +1,5 @@
 import { locale, t } from '../core/i18n/i18n';
+
 const PLACEHOLDER = '—';
 const KM = new Intl.NumberFormat(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const PERCENT = new Intl.NumberFormat(locale(), { maximumFractionDigits: 1 });

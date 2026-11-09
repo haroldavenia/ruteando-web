@@ -1,6 +1,5 @@
-import { CM3_PER_M3, CapacitySource, decodeCapacity } from './resource-types/capacity-codec';
-
 import { locale, t } from '../../core/i18n/i18n';
+import { CapacitySource, CM3_PER_M3, decodeCapacity } from './resource-types/capacity-codec';
 /** Etiquetas en español de los perfiles de ruteo (`OsrmProfile`); los valores del gateway vienen en inglés. */
 export const OSRM_PROFILE_LABELS: Readonly<Record<string, string>> = {
   driving: t('Conducción'),

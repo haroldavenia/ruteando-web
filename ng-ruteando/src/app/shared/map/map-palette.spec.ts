@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ThemeService } from '../../core/theme/theme.service';
-
-import { parseColor, readMapPalette, readableOn, toHex, toRgba } from './map-palette';
+import { parseColor, readableOn, readMapPalette, toHex, toRgba } from './map-palette';
 import { ROUTE_COLORS, ROUTE_COLORS_DARK } from './route-colors';
 
 /** Color de fondo que resuelve un token con el esquema actual del documento. */

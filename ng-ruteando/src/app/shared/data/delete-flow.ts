@@ -1,12 +1,11 @@
 import { inject, signal } from '@angular/core';
-import { Observable, filter, switchMap } from 'rxjs';
+import { filter, Observable, switchMap } from 'rxjs';
 
 import { ApiError } from '../../core/api/api-error';
-
+import { t } from '../../core/i18n/i18n';
 import { messageFor } from './api-messages';
 import { DeleteConfirmation } from './delete-confirmation';
 
-import { t } from '../../core/i18n/i18n';
 export interface DeleteOptions {
   /** Tipo de registro en singular y minúscula ("vehículo"). */
   entity: string;

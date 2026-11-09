@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, Injector, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, Injector, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -12,7 +12,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -23,6 +22,8 @@ import { PlacesApi } from '../../core/api/data/places.api';
 import { ResourcesApi } from '../../core/api/data/resources.api';
 import { SettingsApi } from '../../core/api/data/settings.api';
 import { Place, Resource, Settings, SettingsInput } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RecordLoader } from '../../shared/data/record-loader';
 import { SubmitState } from '../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../shared/data/unsaved-changes.guard';
@@ -37,10 +38,10 @@ import {
   minutesToSeconds,
   secondsToMinutes,
   shiftErrors,
-  toUtcIso,
   todayLocalDate,
+  toUtcIso,
 } from '../../shared/time/shift-time';
-
+import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import {
   DEFAULT_LENGTH_OF_STAY_TYPES,
   DEFAULT_RESTRICTION_TYPES,
@@ -50,9 +51,6 @@ import {
   restrictionTypeLabel,
   routeTopologyLabel,
 } from './settings-labels';
-
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /** Cuántos lugares y vehículos se cargan en los selectores; si hay más, el formulario avisa. */
 export const SELECT_LIMIT = 200;
 

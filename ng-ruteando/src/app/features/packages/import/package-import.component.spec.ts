@@ -1,18 +1,16 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
 import { Fixture, respondWith } from '../../../../testing/api-testing';
+import create from '../../../../testing/fixtures/gateway/post__packages.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
 import { parseCsv } from '../../../shared/data/csv';
-
 import { MAX_DATA_ROWS, MAX_FILE_BYTES, PackageImportComponent } from './package-import.component';
 import { packageTemplateCsv } from './package-rows';
-
-import create from '../../../../testing/fixtures/gateway/post__packages.json';
 
 const HEADER = 'ID_GUIA;DIRECCION;LONGITUD;LATITUD';
 const csvOf = (...lines: string[]) => [HEADER, ...lines].join('\n');

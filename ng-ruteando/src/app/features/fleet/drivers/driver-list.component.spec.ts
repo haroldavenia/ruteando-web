@@ -6,16 +6,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../../testing/api-testing';
-import { API_BASE_URL } from '../../../core/api/api-config';
-import { errorInterceptor } from '../../../core/api/error.interceptor';
-
-import { DriverListComponent } from './driver-list.component';
-
+import remove from '../../../../testing/fixtures/gateway/delete__users__id.json';
 import drivers from '../../../../testing/fixtures/gateway/get__users__drivers.json';
 import resetPassword from '../../../../testing/fixtures/gateway/post__users__id__reset-password.json';
-import remove from '../../../../testing/fixtures/gateway/delete__users__id.json';
+import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
+import { API_BASE_URL } from '../../../core/api/api-config';
+import { errorInterceptor } from '../../../core/api/error.interceptor';
+import { DriverListComponent } from './driver-list.component';
 
 describe('DriverListComponent', () => {
   let fixture: ComponentFixture<DriverListComponent>;

@@ -6,6 +6,10 @@ import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Fixture, respondWith } from '../../../../testing/api-testing';
+import registerFx from '../../../../testing/fixtures/gateway/post__auth__register.json';
+import resendFx from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
+import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
+import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { authInterceptor } from '../../../core/api/auth.interceptor';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
@@ -13,11 +17,6 @@ import { refreshInterceptor } from '../../../core/api/refresh.interceptor';
 import { CurrentUser } from '../../../core/auth/current-user';
 import { TokenStorageService } from '../../../core/auth/token-storage.service';
 import { RegisterComponent } from './register.component';
-
-import registerFx from '../../../../testing/fixtures/gateway/post__auth__register.json';
-import resendFx from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
-import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
-import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
 
 const fx = (f: unknown) => f as unknown as Fixture;
 const REGISTER = '/gateway/auth/register';

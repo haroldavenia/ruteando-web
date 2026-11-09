@@ -11,8 +11,8 @@ import { DriverFormComponent } from '../../features/fleet/drivers/driver-form.co
 import { ResourceTypeFormComponent } from '../../features/fleet/resource-types/resource-type-form.component';
 import { ResourceFormComponent } from '../../features/fleet/resources/resource-form.component';
 import { JourneyFormComponent } from '../../features/journeys/journey-form.component';
-import { PackageFormComponent } from '../../features/packages/package-form.component';
 import { PackageImportComponent } from '../../features/packages/import/package-import.component';
+import { PackageFormComponent } from '../../features/packages/package-form.component';
 import { PlaceFormComponent } from '../../features/places/place-form.component';
 import { SettingsFormComponent } from '../../features/settings/settings-form.component';
 import { ZoneFormComponent } from '../../features/zones/zone-form.component';

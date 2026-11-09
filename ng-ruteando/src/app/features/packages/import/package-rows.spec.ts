@@ -1,18 +1,16 @@
+import list from '../../../../testing/fixtures/gateway/get__packages.json';
+import { Package } from '../../../core/api/models';
 import { parseCsv } from '../../../shared/data/csv';
 import { packagesToCsv } from '../package-export';
-import { Package } from '../../../core/api/models';
-
 import {
   IMPORT_COLUMNS,
-  MAX_TEXT_LENGTH,
-  ValidationResult,
   importErrorsCsv,
+  MAX_TEXT_LENGTH,
   normalizeHeader,
   packageTemplateCsv,
   validateRows,
+  ValidationResult,
 } from './package-rows';
-
-import list from '../../../../testing/fixtures/gateway/get__packages.json';
 
 const validate = (csv: string): ValidationResult => validateRows(parseCsv(csv));
 const HEADER = 'DIRECCION;LONGITUD;LATITUD';

@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { Observable, Subject, of, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
-
 import { FULL_LIST_LIMIT, FULL_LIST_PAGE_SIZE, FullListState } from './full-list-state';
 
 /** Un servidor con `total` registros numerados que responde por páginas, como el gateway. */

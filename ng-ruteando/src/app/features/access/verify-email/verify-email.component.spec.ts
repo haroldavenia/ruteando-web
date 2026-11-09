@@ -4,19 +4,18 @@ import { Component, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Fixture, respondWith } from '../../../../testing/api-testing';
+import resendFx from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
+import verifyFx from '../../../../testing/fixtures/gateway/post__auth__verify-email.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { authInterceptor } from '../../../core/api/auth.interceptor';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
 import { refreshInterceptor } from '../../../core/api/refresh.interceptor';
 import { CurrentUser } from '../../../core/auth/current-user';
 import { VerifyEmailComponent } from './verify-email.component';
-
-import verifyFx from '../../../../testing/fixtures/gateway/post__auth__verify-email.json';
-import resendFx from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
 
 @Component({ template: 'inicio' })
 class InicioComponent {}

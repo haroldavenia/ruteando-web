@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, model, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -6,14 +6,14 @@ import { Subscription } from 'rxjs';
 
 import { PackagesApi } from '../../core/api/data/packages.api';
 import { Package } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { messageFor } from '../../shared/data/api-messages';
 import { DataColumn, DataTableComponent } from '../../shared/data/data-table.component';
 import { ListState } from '../../shared/data/list-state';
 import { fetchAllPackages } from '../packages/package-export';
 import { formatPackageLocation, packageStatusLabel, serviceTypeLabel } from '../packages/package-labels';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const PENDING = 'pending';
 
 /**

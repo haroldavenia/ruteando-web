@@ -1,12 +1,10 @@
 import { MatDialog } from '@angular/material/dialog';
-import { EMPTY, Observable, catchError, from, map, mergeMap, of, switchMap, toArray } from 'rxjs';
+import { catchError, EMPTY, from, map, mergeMap, Observable, of, switchMap, toArray } from 'rxjs';
 
 import { ApiError } from '../../core/api/api-error';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-
-import { messageFor } from './api-messages';
-
 import { t } from '../../core/i18n/i18n';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { messageFor } from './api-messages';
 /** Peticiones a la vez: el gateway no tiene lote para estos recursos, así que cada registro es una petición. */
 export const BULK_CONCURRENCY = 4;
 

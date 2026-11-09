@@ -5,7 +5,6 @@ import { RouterTestingHarness } from '@angular/router/testing';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { OUTLINED_FIELDS_PROVIDER } from '../../shared/form/outlined-fields';
-
 import { AccessLayoutComponent } from './access-layout.component';
 
 describe('AccessLayoutComponent', () => {

@@ -4,9 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
 import { CurrentUser } from '../../core/auth/current-user';
-import { roleLabel } from '../../shared/ui/role-label';
-
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { roleLabel } from '../../shared/ui/role-label';
 /** «Sin permiso»: a donde llevan las guardas de rol. Dice el motivo y el rol de la sesión, y ofrece volver al inicio. */
 @Component({
   selector: 'app-forbidden',

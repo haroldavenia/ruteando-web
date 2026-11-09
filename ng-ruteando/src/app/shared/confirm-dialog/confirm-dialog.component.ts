@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+
 export interface ConfirmDialogData {
   title: string;
   message: string;

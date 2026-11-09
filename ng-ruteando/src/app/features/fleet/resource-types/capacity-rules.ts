@@ -1,6 +1,6 @@
+import { t } from '../../../core/i18n/i18n';
 import { CapacityValues, effectiveVolume } from './capacity-codec';
 
-import { t } from '../../../core/i18n/i18n';
 export type CapacityField =
   'weight' | 'volume' | 'width' | 'height' | 'depth' | 'minWeight' | 'maxWeight' | 'minVolume' | 'maxVolume';
 export type CapacityIssues = Partial<Record<CapacityField, string>>;

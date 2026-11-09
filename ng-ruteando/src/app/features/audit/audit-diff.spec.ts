@@ -1,8 +1,6 @@
-import { AuditLog } from '../../core/api/models';
-
-import { EMPTY_VALUE, auditFieldLabel, diffChanges, displayValue, hasValueChanges } from './audit-diff';
-
 import list from '../../../testing/fixtures/gateway/get__audit-logs.json';
+import { AuditLog } from '../../core/api/models';
+import { auditFieldLabel, diffChanges, displayValue, EMPTY_VALUE, hasValueChanges } from './audit-diff';
 
 const logs = (list.response.body as unknown as { content: AuditLog[] }).content;
 

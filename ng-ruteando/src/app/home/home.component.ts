@@ -1,31 +1,29 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, inject, signal } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, PLATFORM_ID, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { JourneysApi } from '../core/api/data/journeys.api';
 import { PackagesApi } from '../core/api/data/packages.api';
 import { Journey } from '../core/api/models';
 import { OPERATIONS_ROLES } from '../core/auth/admin-roles';
 import { CurrentUser } from '../core/auth/current-user';
-import { messageFor } from '../shared/data/api-messages';
+import { locale, t } from '../core/i18n/i18n';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
+import { journeyStatusLabel } from '../features/journeys/journey-labels';
+import { fetchLatestJourneys } from '../features/journeys/latest-journeys';
+import { areaLinksFor } from '../layout/nav-items';
 import { CityMapComponent } from '../shared/brand/city-map.component';
+import { messageFor } from '../shared/data/api-messages';
 import { FormResultComponent } from '../shared/form/form-result.component';
 import { formatDateTime } from '../shared/format';
 import { ProgressRingComponent } from '../shared/ui/progress-ring.component';
 import { SkeletonComponent } from '../shared/ui/skeleton.component';
 import { StatusBadgeComponent } from '../shared/ui/status-badge.component';
 import { statusTone } from '../shared/ui/status-tone';
-import { journeyStatusLabel } from '../features/journeys/journey-labels';
-import { fetchLatestJourneys } from '../features/journeys/latest-journeys';
-import { areaLinksFor } from '../layout/nav-items';
-
 import { FIGURES_SAMPLE_SIZE, PackageFigures, packageFigures } from './package-figures';
-
-import { locale, t } from '../core/i18n/i18n';
-import { TranslatePipe } from '../core/i18n/translate.pipe';
 /**
  * Inicio: cabecera con el saludo y las acciones principales (planificar una jornada e importar paquetes, solo para quienes
  * operan jornadas), accesos a las áreas que el rol puede abrir (los mismos del menú lateral) como mosaicos y las últimas

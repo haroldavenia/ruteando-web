@@ -3,7 +3,6 @@ import { of } from 'rxjs';
 
 import { PackagesApi } from '../../core/api/data/packages.api';
 import { Package } from '../../core/api/models';
-
 import { changePackageStatus } from './package-status-change';
 
 describe('changePackageStatus', () => {

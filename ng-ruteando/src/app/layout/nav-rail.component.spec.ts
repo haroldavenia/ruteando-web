@@ -4,9 +4,8 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 
 import { UserRole } from '../core/auth/session.model';
-
-import { NavRailComponent } from './nav-rail.component';
 import { navItemsFor } from './nav-items';
+import { NavRailComponent } from './nav-rail.component';
 
 describe('NavRailComponent', () => {
   let fixture: ComponentFixture<NavRailComponent>;

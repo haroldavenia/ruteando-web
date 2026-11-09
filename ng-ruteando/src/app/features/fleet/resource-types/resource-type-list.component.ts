@@ -5,19 +5,19 @@ import { RouterLink } from '@angular/router';
 
 import { ResourceTypesApi } from '../../../core/api/data/resource-types.api';
 import { ResourceType } from '../../../core/api/models';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { DataColumn, DataTableComponent } from '../../../shared/data/data-table.component';
 import { DeleteFlow } from '../../../shared/data/delete-flow';
 import { FullListState } from '../../../shared/data/full-list-state';
 import { PageHeaderComponent } from '../../../shared/data/page-header.component';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { ActionTitleDirective } from '../../../shared/ui/action-title.directive';
-import { FleetTabsComponent } from '../fleet-tabs.component';
 import { typesToCsv } from '../fleet-export';
 import { capacitySummary, profileLabel } from '../fleet-labels';
 import { FleetListActions } from '../fleet-list-actions';
+import { FleetTabsComponent } from '../fleet-tabs.component';
 
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 const IN_USE = t('No se puede eliminar: hay vehículos de este tipo');
 
 @Component({

@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { DomainWaypoint } from '../../core/api/models';
-
 import { RouteVisitsStore, VISITS_CONCURRENCY } from './route-visits.store';
 
 const stop = (sequence: number, packageId: string | null): DomainWaypoint =>

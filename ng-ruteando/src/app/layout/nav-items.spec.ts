@@ -1,6 +1,5 @@
 import { UserRole } from '../core/auth/session.model';
-
-import { NAV_ITEMS, areaLinksFor, navItemsFor, quickActionsFor } from './nav-items';
+import { areaLinksFor, NAV_ITEMS, navItemsFor, quickActionsFor } from './nav-items';
 
 const labels = (items: { label: string }[]) => items.map((i) => i.label);
 

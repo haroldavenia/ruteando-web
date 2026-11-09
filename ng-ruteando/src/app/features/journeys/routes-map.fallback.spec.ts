@@ -2,15 +2,13 @@ import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { toPlannedJourney } from '../../core/api/journey-mapper';
 import { DomainRoute, Journey } from '../../core/api/models';
 import { MAP_CONFIG } from '../../shared/map/map-config';
 import { OPENLAYERS_LOADER } from '../../shared/map/openlayers';
-
 import { RoutesMapComponent } from './routes-map.component';
-
-import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 
 const route = toPlannedJourney(plan.response.body as unknown as Journey).routes[0];
 const wait = () => new Promise((resolve) => setTimeout(resolve, 150));

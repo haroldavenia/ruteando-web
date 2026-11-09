@@ -7,12 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { map, startWith, switchMap } from 'rxjs';
 
-import { PASSWORD_REQUIREMENTS, missingRules } from '../../core/auth/password-policy';
+import { missingRules, PASSWORD_REQUIREMENTS } from '../../core/auth/password-policy';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionTitleDirective } from '../ui/action-title.directive';
 import { FieldMessages, firstErrorMessage } from './access.messages';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 let nextId = 0;
 
 /**

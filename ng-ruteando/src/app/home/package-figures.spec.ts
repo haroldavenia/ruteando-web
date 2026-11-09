@@ -1,5 +1,4 @@
 import { Package } from '../core/api/models';
-
 import { FIGURES_SAMPLE_SIZE, packageFigures } from './package-figures';
 
 const item = (status: string) => ({ status }) as Package;

@@ -1,8 +1,7 @@
 import { Injector } from '@angular/core';
 
-import { notify } from '../../shared/form/notify';
-
 import { t } from '../../core/i18n/i18n';
+import { notify } from '../../shared/form/notify';
 /**
  * Copia un texto al portapapeles y avisa. Si el navegador no lo permite (página sin HTTPS, permiso denegado) el aviso trae el
  * texto para copiarlo a mano.

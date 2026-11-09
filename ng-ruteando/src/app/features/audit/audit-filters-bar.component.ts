@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,11 +6,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { AuditFilters, AuditRange, NO_PERSON, addDays, dayKey, hasActiveFilters, startOfDay } from './audit-filters';
-import { AUDIT_KINDS, AuditKind, auditKindLabel, shortId } from './audit-labels';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { addDays, AuditFilters, AuditRange, dayKey, hasActiveFilters, NO_PERSON, startOfDay } from './audit-filters';
+import { AUDIT_KINDS, AuditKind, auditKindLabel, shortId } from './audit-labels';
+
 const RANGES: readonly { value: AuditRange; label: string }[] = [
   { value: '24h', label: t('24 horas') },
   { value: '7d', label: t('7 días') },

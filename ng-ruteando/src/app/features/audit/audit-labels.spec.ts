@@ -1,12 +1,12 @@
+import list from '../../../testing/fixtures/gateway/get__audit-logs.json';
 import { AuditLog } from '../../core/api/models';
-
 import {
-  AUDIT_KINDS,
-  AuditKind,
   actorInitials,
+  AUDIT_KINDS,
   auditActionLabel,
   auditActor,
   auditEntityLabel,
+  AuditKind,
   auditKind,
   auditKindIcon,
   auditKindLabel,
@@ -18,8 +18,6 @@ import {
   normalizeRole,
   shortId,
 } from './audit-labels';
-
-import list from '../../../testing/fixtures/gateway/get__audit-logs.json';
 
 const logs = (list.response.body as unknown as { content: AuditLog[] }).content;
 

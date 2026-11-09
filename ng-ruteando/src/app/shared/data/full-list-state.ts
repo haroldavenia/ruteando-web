@@ -1,12 +1,10 @@
 import { signal } from '@angular/core';
-import { EMPTY, Observable, expand, reduce } from 'rxjs';
+import { EMPTY, expand, Observable, reduce } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 import { ApiError } from '../../core/api/api-error';
-
-import { ListState } from './list-state';
-
 import { t } from '../../core/i18n/i18n';
+import { ListState } from './list-state';
 /** Registros por petición al traer todo el listado. */
 export const FULL_LIST_PAGE_SIZE = 100;
 /** Tope de registros que se traen: pasado este número se avisa y se trabaja con los primeros. */

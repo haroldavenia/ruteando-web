@@ -1,6 +1,6 @@
 import { UserRole } from '../../core/auth/session.model';
-
 import { t } from '../../core/i18n/i18n';
+
 const LABELS: Readonly<Record<UserRole, string>> = {
   super_admin: t('Superadministrador'),
   tenant_admin: t('Administrador'),

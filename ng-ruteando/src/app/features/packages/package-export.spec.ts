@@ -1,11 +1,9 @@
 import { firstValueFrom, of, throwError } from 'rxjs';
 
+import list from '../../../testing/fixtures/gateway/get__packages.json';
 import { Page } from '../../core/api/api-config';
 import { Package } from '../../core/api/models';
-
 import { EXPORT_HEADER, EXPORT_PAGE_SIZE, ExportProgress, fetchAllPackages, packagesToCsv } from './package-export';
-
-import list from '../../../testing/fixtures/gateway/get__packages.json';
 
 const first = list.response.body.content[0] as unknown as Package;
 const pack = (n: number, extra: Partial<Package> = {}): Package => ({

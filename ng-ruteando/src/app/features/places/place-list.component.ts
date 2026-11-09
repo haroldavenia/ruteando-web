@@ -5,18 +5,17 @@ import { RouterLink } from '@angular/router';
 
 import { PlacesApi } from '../../core/api/data/places.api';
 import { Place } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { DataColumn, DataFacet, DataTableComponent } from '../../shared/data/data-table.component';
 import { DeleteFlow } from '../../shared/data/delete-flow';
 import { FullListState } from '../../shared/data/full-list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
+import { formatLocation, PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
 import { PlacesMapComponent } from './places-map.component';
-import { PLACE_TYPE_LABELS, formatLocation, placeTypeLabel } from './place-labels';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otros datos');
 
 @Component({

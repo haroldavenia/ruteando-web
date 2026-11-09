@@ -1,5 +1,5 @@
+import create from '../../../testing/fixtures/gateway/post__zones.json';
 import { LatLng } from '../../core/geo/lat-lng';
-
 import {
   areaKm2,
   isValidPolygon,
@@ -10,8 +10,6 @@ import {
   validatePolygon,
   verticesFromRing,
 } from './polygon-geometry';
-
-import create from '../../../testing/fixtures/gateway/post__zones.json';
 
 const ring = (create.request.body as { boundary: { coordinates: number[][][] } }).boundary.coordinates[0];
 const square: LatLng[] = [

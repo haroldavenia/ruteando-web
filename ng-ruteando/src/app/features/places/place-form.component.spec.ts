@@ -3,19 +3,17 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
+import get from '../../../testing/fixtures/gateway/get__places__id.json';
+import create from '../../../testing/fixtures/gateway/post__places.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { MAP_CONFIG } from '../../shared/map/map-config';
 import { MapViewComponent } from '../../shared/map/map-view.component';
-
 import { PHONE_PATTERN, PlaceFormComponent } from './place-form.component';
-
-import create from '../../../testing/fixtures/gateway/post__places.json';
-import get from '../../../testing/fixtures/gateway/get__places__id.json';
 
 const fx = (f: unknown) => f as Fixture;
 

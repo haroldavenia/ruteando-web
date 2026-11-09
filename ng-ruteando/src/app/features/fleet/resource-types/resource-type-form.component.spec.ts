@@ -2,18 +2,15 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Navigation, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, Navigation, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../../testing/api-testing';
+import get from '../../../../testing/fixtures/gateway/get__resource-types__id.json';
+import create from '../../../../testing/fixtures/gateway/post__resource-types.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
-
 import { toHandoffState } from '../type-handoff';
-
 import { ResourceTypeFormComponent } from './resource-type-form.component';
-
-import create from '../../../../testing/fixtures/gateway/post__resource-types.json';
-import get from '../../../../testing/fixtures/gateway/get__resource-types__id.json';
 
 describe('ResourceTypeFormComponent', () => {
   let fixture: ComponentFixture<ResourceTypeFormComponent>;

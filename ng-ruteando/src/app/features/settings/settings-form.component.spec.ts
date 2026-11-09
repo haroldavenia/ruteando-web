@@ -3,19 +3,17 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
+import places from '../../../testing/fixtures/gateway/get__places.json';
+import resources from '../../../testing/fixtures/gateway/get__resources.json';
+import get from '../../../testing/fixtures/gateway/get__settings__id.json';
+import create from '../../../testing/fixtures/gateway/post__settings.json';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { Settings } from '../../core/api/models';
-
-import { SettingsFormComponent, buildSettingsUpdateBody } from './settings-form.component';
-
-import create from '../../../testing/fixtures/gateway/post__settings.json';
-import get from '../../../testing/fixtures/gateway/get__settings__id.json';
-import places from '../../../testing/fixtures/gateway/get__places.json';
-import resources from '../../../testing/fixtures/gateway/get__resources.json';
+import { buildSettingsUpdateBody, SettingsFormComponent } from './settings-form.component';
 
 const fx = (f: unknown) => f as Fixture;
 const EMPTY_PAGE = {

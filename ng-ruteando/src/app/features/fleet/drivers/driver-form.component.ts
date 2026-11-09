@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Injector, signal } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -12,14 +12,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { MasterDomainsService } from '../../../core/api/data/master-domains.service';
 import { UsersApi } from '../../../core/api/data/users.api';
 import { User } from '../../../core/api/models';
-import { PASSWORD_MIN_LENGTH, matchesSibling, revalidateOnPasswordChange } from '../../access/shared/form-utils';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { RecordLoader } from '../../../shared/data/record-loader';
 import { SubmitState } from '../../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../../shared/data/unsaved-changes.guard';
@@ -30,10 +30,10 @@ import { FormHeadComponent } from '../../../shared/form/form-head.component';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { notify } from '../../../shared/form/notify';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
+import { matchesSibling, PASSWORD_MIN_LENGTH, revalidateOnPasswordChange } from '../../access/shared/form-utils';
 import { IDENTIFIER_KEYS, identifierLabel } from '../fleet-labels';
 
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 const DUPLICATE_EMAIL = t('Ya existe una cuenta con ese correo');
 const MESSAGES: FieldMessages = {
   required: t('Este campo es obligatorio'),

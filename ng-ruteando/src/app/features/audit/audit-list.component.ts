@@ -1,18 +1,18 @@
-import { Location, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, Location } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
-  Injector,
-  PLATFORM_ID,
-  ViewEncapsulation,
-  afterNextRender,
   computed,
+  DestroyRef,
   effect,
   inject,
+  Injector,
+  PLATFORM_ID,
   signal,
   untracked,
   viewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,30 +23,29 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { CurrentUser } from '../../core/auth/current-user';
 import { AuditLog } from '../../core/api/models';
+import { CurrentUser } from '../../core/auth/current-user';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { downloadCsv } from '../../shared/data/csv';
 import { DataColumn, DataFacet, DataTableComponent } from '../../shared/data/data-table.component';
-import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { readPref, writePref } from '../../shared/data/list-prefs';
+import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { notify } from '../../shared/form/notify';
 import { formatDateTime } from '../../shared/format';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
 import { ActivityPanelComponent, PickedDays } from './activity-panel.component';
+import { AuditStore } from './audit.store';
 import type { AuditDetailData, AuditDetailDialogComponent, AuditDetailResult } from './audit-detail-dialog.component';
 import { AuditEventCardComponent } from './audit-event-card.component';
-import { AuditFiltersBarComponent } from './audit-filters-bar.component';
-import { AuditFilters, AuditQuery, EMPTY_QUERY, parseAuditQuery, toQueryParams } from './audit-filters';
-import { formatClock, formatNumber } from './audit-format';
 import { auditCsvFileName, auditToCsv } from './audit-export';
-import { AuditKind, auditActionLabel, auditActor, auditEntityLabel, auditKind, auditKindTone } from './audit-labels';
+import { AuditFilters, AuditQuery, EMPTY_QUERY, parseAuditQuery, toQueryParams } from './audit-filters';
+import { AuditFiltersBarComponent } from './audit-filters-bar.component';
+import { formatClock, formatNumber } from './audit-format';
+import { auditActionLabel, auditActor, auditEntityLabel, AuditKind, auditKind, auditKindTone } from './audit-labels';
 import { AuditScopeId, resolveScope, scopesFor } from './audit-scopes';
 import { AuditViewState } from './audit-view-state';
-import { AuditStore } from './audit.store';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const TECH_KEY = 'ruteando-audit-tech';
 const SEARCH_DELAY_MS = 250;
 

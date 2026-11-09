@@ -5,18 +5,18 @@ import { RouterLink } from '@angular/router';
 
 import { ZonesApi } from '../../core/api/data/zones.api';
 import { Zone } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ClientPaging } from '../../shared/data/client-paging';
 import { DataColumn, DataTableComponent } from '../../shared/data/data-table.component';
 import { DeleteFlow } from '../../shared/data/delete-flow';
 import { ListState } from '../../shared/data/list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
-import { colorName } from '../../shared/map/route-colors';
 import { verticesFromRing } from '../../shared/map/polygon-geometry';
+import { colorName } from '../../shared/map/route-colors';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export const ZONE_IN_USE = t('No se puede eliminar: la zona se usa en lugares, paquetes o configuraciones');
 
 @Component({

@@ -1,3 +1,22 @@
+import assigned from '../../../../testing/fixtures/gateway/get__assigned-services.json';
+import audit from '../../../../testing/fixtures/gateway/get__audit-logs.json';
+import auditMine from '../../../../testing/fixtures/gateway/get__audit-logs__me.json';
+import metrics from '../../../../testing/fixtures/gateway/get__journeys__journeyId__metrics.json';
+import navigations from '../../../../testing/fixtures/gateway/get__journeys__journeyId__navigations.json';
+import masterDomains from '../../../../testing/fixtures/gateway/get__master-domains.json';
+import packages from '../../../../testing/fixtures/gateway/get__packages.json';
+import places from '../../../../testing/fixtures/gateway/get__places.json';
+import resourceTypes from '../../../../testing/fixtures/gateway/get__resource-types.json';
+import resources from '../../../../testing/fixtures/gateway/get__resources.json';
+import settings from '../../../../testing/fixtures/gateway/get__settings__id.json';
+import users from '../../../../testing/fixtures/gateway/get__users.json';
+import zones from '../../../../testing/fixtures/gateway/get__zones.json';
+import forgotPassword from '../../../../testing/fixtures/gateway/post__auth__forgot-password.json';
+import login from '../../../../testing/fixtures/gateway/post__auth__login.json';
+import register from '../../../../testing/fixtures/gateway/post__auth__register.json';
+import resendVerification from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
+import resetPassword from '../../../../testing/fixtures/gateway/post__auth__reset-password.json';
+import plan from '../../../../testing/fixtures/gateway/post__journeys__plan.json';
 import {
   MessageResponse,
   RegisterResponse,
@@ -24,26 +43,6 @@ import {
   Waypoint,
   Zone,
 } from './index';
-
-import places from '../../../../testing/fixtures/gateway/get__places.json';
-import zones from '../../../../testing/fixtures/gateway/get__zones.json';
-import resourceTypes from '../../../../testing/fixtures/gateway/get__resource-types.json';
-import resources from '../../../../testing/fixtures/gateway/get__resources.json';
-import settings from '../../../../testing/fixtures/gateway/get__settings__id.json';
-import packages from '../../../../testing/fixtures/gateway/get__packages.json';
-import masterDomains from '../../../../testing/fixtures/gateway/get__master-domains.json';
-import plan from '../../../../testing/fixtures/gateway/post__journeys__plan.json';
-import metrics from '../../../../testing/fixtures/gateway/get__journeys__journeyId__metrics.json';
-import navigations from '../../../../testing/fixtures/gateway/get__journeys__journeyId__navigations.json';
-import assigned from '../../../../testing/fixtures/gateway/get__assigned-services.json';
-import audit from '../../../../testing/fixtures/gateway/get__audit-logs.json';
-import auditMine from '../../../../testing/fixtures/gateway/get__audit-logs__me.json';
-import users from '../../../../testing/fixtures/gateway/get__users.json';
-import login from '../../../../testing/fixtures/gateway/post__auth__login.json';
-import register from '../../../../testing/fixtures/gateway/post__auth__register.json';
-import forgotPassword from '../../../../testing/fixtures/gateway/post__auth__forgot-password.json';
-import resetPassword from '../../../../testing/fixtures/gateway/post__auth__reset-password.json';
-import resendVerification from '../../../../testing/fixtures/gateway/post__auth__resend-verification.json';
 
 /**
  * `Record<keyof T, true>` obliga a listar TODAS las claves del modelo (si el tipo cambia, esto no

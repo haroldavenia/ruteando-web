@@ -6,12 +6,10 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
 import { Fixture } from '../../../testing/api-testing';
+import list from '../../../testing/fixtures/gateway/get__packages.json';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
-
 import { PackageListComponent } from './package-list.component';
-
-import list from '../../../testing/fixtures/gateway/get__packages.json';
 
 const value = (key: string, active: boolean) => ({ key, label: key, description: null, sortOrder: null, active });
 /** Catálogo como el del gateway real: `returned` y una clave de pruebas están inactivos. */

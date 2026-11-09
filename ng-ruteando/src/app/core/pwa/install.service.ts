@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 
 /** El evento que Chrome, Edge y Android lanzan cuando la aplicación se puede instalar (no está en los tipos de TypeScript). */
 interface BeforeInstallPromptEvent extends Event {

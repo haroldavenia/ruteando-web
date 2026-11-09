@@ -1,29 +1,27 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  ElementRef,
-  PLATFORM_ID,
-  afterNextRender,
   effect,
+  ElementRef,
   inject,
   input,
   output,
+  PLATFORM_ID,
   signal,
   viewChild,
 } from '@angular/core';
 import type OlMap from 'ol/Map';
 
 import { LatLng, latLng, toOlCoordinate } from '../../core/geo/lat-lng';
-import { ThemeService } from '../../core/theme/theme.service';
-
-import { MAP_CONFIG } from './map-config';
-import { readMapPalette } from './map-palette';
-import { OPENLAYERS_LOADER, OpenLayers } from './openlayers';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ThemeService } from '../../core/theme/theme.service';
+import { MAP_CONFIG } from './map-config';
+import { readMapPalette } from './map-palette';
+import { OpenLayers, OPENLAYERS_LOADER } from './openlayers';
 /** Redondea a 6 decimales (~10 cm) y lleva la longitud a -180..180 si el mapa dio la vuelta al mundo. */
 function normalize(lon: number, lat: number): LatLng {
   const wrapped = ((((lon + 180) % 360) + 360) % 360) - 180;

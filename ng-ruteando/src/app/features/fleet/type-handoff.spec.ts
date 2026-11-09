@@ -19,6 +19,7 @@ describe('type-handoff', () => {
         'https://otro.invalid/flota/x',
         '/\\otro.invalid',
         '/flota/../acceso',
+        // eslint-disable-next-line no-script-url -- la prueba comprueba justo que se rechaza
         'javascript:alert(1)',
         '',
         null,

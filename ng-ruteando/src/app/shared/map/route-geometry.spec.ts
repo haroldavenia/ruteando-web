@@ -1,10 +1,7 @@
-import { DomainRoute, DomainWaypoint } from '../../core/api/models';
-import { toPlannedJourney } from '../../core/api/journey-mapper';
-import { Journey } from '../../core/api/models';
-
-import { lonLatBounds, routeCoordinates, routeLine, routeStops } from './route-geometry';
-
 import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
+import { toPlannedJourney } from '../../core/api/journey-mapper';
+import { DomainRoute, DomainWaypoint, Journey } from '../../core/api/models';
+import { lonLatBounds, routeCoordinates, routeLine, routeStops } from './route-geometry';
 
 const fixtureRoute = toPlannedJourney(plan.response.body as unknown as Journey).routes[0];
 

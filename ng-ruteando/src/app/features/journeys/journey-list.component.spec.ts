@@ -6,15 +6,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../testing/api-testing';
+import remove from '../../../testing/fixtures/gateway/delete__journeys__id.json';
+import list from '../../../testing/fixtures/gateway/get__journeys.json';
+import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
-
 import { JourneyListComponent } from './journey-list.component';
-
-import list from '../../../testing/fixtures/gateway/get__journeys.json';
-import remove from '../../../testing/fixtures/gateway/delete__journeys__id.json';
 
 const fx = (f: unknown) => f as Fixture;
 

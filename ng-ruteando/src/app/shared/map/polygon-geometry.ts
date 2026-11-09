@@ -1,5 +1,4 @@
 import { LatLng, latLng } from '../../core/geo/lat-lng';
-
 import { t } from '../../core/i18n/i18n';
 /** Más vértices que esto y no se comprueban los cruces (la comprobación es O(n²)). */
 export const MAX_CHECKED_VERTICES = 2000;

@@ -3,18 +3,17 @@ import {
   ActivatedRouteSnapshot,
   CanActivateChildFn,
   CanActivateFn,
+  provideRouter,
   Route,
   Router,
   RouterStateSnapshot,
   UrlTree,
-  provideRouter,
 } from '@angular/router';
 
 import { makeUser } from '../../../testing/session';
 import { routes } from '../../app.routes';
 import { CurrentUser } from '../../core/auth/current-user';
 import { UserRole } from '../../core/auth/session.model';
-
 import { AUDIT_ROUTES } from './audit.routes';
 
 describe('rutas de auditoría', () => {

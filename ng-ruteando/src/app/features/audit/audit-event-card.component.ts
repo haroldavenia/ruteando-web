@@ -1,13 +1,11 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuditLog } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
 import { formatDateTime, formatRelativeTime } from '../../shared/format';
 import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
-
 import { auditActionLabel, auditActor, auditEntityLabel, auditKind, auditKindTone } from './audit-labels';
-
-import { t } from '../../core/i18n/i18n';
 /**
  * Un evento como tarjeta, para la vista de tarjetas del listado: solo lo esencial —la acción como etiqueta, cuándo fue, quién y
  * sobre qué tipo de cosa—. Toda la tarjeta es un botón (con el ojo como pista) que abre la modal con el detalle completo. Con los

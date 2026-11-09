@@ -1,8 +1,8 @@
 import { PackageInput } from '../../../core/api/models';
 import { toGeoJsonPoint } from '../../../core/geo/lat-lng';
+import { t } from '../../../core/i18n/i18n';
 import { toCsv } from '../../../shared/data/csv';
 
-import { t } from '../../../core/i18n/i18n';
 export const MAX_TEXT_LENGTH = 500;
 export const PREVIEW_ROWS = 20;
 

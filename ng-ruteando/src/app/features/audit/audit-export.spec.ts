@@ -1,6 +1,5 @@
 import { AUDIT_FIXTURE_LOGS, auditLog } from '../../../testing/audit';
 import { parseCsv } from '../../shared/data/csv';
-
 import { auditCsvFileName, auditToCsv } from './audit-export';
 
 describe('audit-export', () => {

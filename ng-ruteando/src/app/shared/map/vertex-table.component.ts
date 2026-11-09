@@ -1,15 +1,14 @@
-import { ChangeDetectionStrategy, Component, effect, inject, model, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, model, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { DestroyRef } from '@angular/core';
 
 import { LatLng } from '../../core/geo/lat-lng';
-import { ActionTitleDirective } from '../ui/action-title.directive';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ActionTitleDirective } from '../ui/action-title.directive';
+
 type VertexGroup = FormGroup<{ lat: FormControl<number | null>; lng: FormControl<number | null> }>;
 
 const group = (point?: LatLng): VertexGroup =>

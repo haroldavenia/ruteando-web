@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import { fromLonLat, toLonLat } from 'ol/proj';
 import Point from 'ol/geom/Point';
+import VectorLayer from 'ol/layer/Vector';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import VectorSource from 'ol/source/Vector';
 
 import { TEST_MAP_CONFIG } from '../../../testing/map';
-
-import { LocationFieldsComponent, LocationGroup, createLocationGroup } from './location-fields.component';
+import { createLocationGroup, LocationFieldsComponent, LocationGroup } from './location-fields.component';
 import { MAP_CONFIG } from './map-config';
 import { MapViewComponent } from './map-view.component';
 import { OPENLAYERS_LOADER } from './openlayers';

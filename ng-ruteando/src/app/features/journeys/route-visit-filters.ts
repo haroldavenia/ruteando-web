@@ -1,5 +1,4 @@
 import { DomainWaypoint, Package } from '../../core/api/models';
-
 import { t } from '../../core/i18n/i18n';
 /** Una visita es una parada de la ruta con paquete; su estado es el del paquete. */
 export interface RouteVisit {

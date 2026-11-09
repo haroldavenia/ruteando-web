@@ -5,7 +5,6 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { LANGUAGE_STORAGE_KEY } from '../../core/i18n/i18n';
 import { PAGE_RELOAD, SWITCH_ANIMATION } from '../../core/i18n/language.service';
-
 import { LanguageToggleComponent } from './language-toggle.component';
 
 describe('LanguageToggleComponent', () => {

@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
-import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
 /**
  * Cabecera de la modal de detalle: un glifo grande, el tipo de acción en versalitas, el título de la modal (el que la nombra para los
  * lectores de pantalla), hace cuánto y el botón de cerrar. Su color (`--tone-bg` y `--tone-fg`) lo pone la modal según el tipo de

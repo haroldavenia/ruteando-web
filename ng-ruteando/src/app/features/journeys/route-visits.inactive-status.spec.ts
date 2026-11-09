@@ -7,7 +7,6 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { DomainRoute, DomainWaypoint } from '../../core/api/models';
-
 import { RouteVisitsComponent } from './route-visits.component';
 
 const waypoint = (sequence: number, packageId: string): DomainWaypoint =>

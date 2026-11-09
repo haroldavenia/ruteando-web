@@ -1,22 +1,16 @@
-import { ChangeDetectionStrategy, Component, Injector, computed, inject, signal } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, inject, Injector, signal } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ZonesApi } from '../../core/api/data/zones.api';
 import { Zone, ZoneInput } from '../../core/api/models';
 import { LatLng } from '../../core/geo/lat-lng';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RecordLoader } from '../../shared/data/record-loader';
 import { SubmitState } from '../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../shared/data/unsaved-changes.guard';
@@ -33,10 +27,9 @@ import {
   validatePolygon,
   verticesFromRing,
 } from '../../shared/map/polygon-geometry';
-import { ROUTE_COLORS, ROUTE_COLOR_NAMES } from '../../shared/map/route-colors';
+import { ROUTE_COLOR_NAMES, ROUTE_COLORS } from '../../shared/map/route-colors';
+import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const DUPLICATE_CODE = t('Ya existe una zona con ese código');
 export const MAX_CODE_LENGTH = 20;
 const READ_ONLY_FIELDS: readonly (keyof Zone)[] = ['id', 'tenantId', 'createdAt', 'updatedAt'];

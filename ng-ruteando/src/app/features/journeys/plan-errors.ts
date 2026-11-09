@@ -1,5 +1,4 @@
 import { ApiError } from '../../core/api/api-error';
-
 import { t } from '../../core/i18n/i18n';
 /** Mensaje técnico que el gateway pone en el cuerpo del error (`{ error, message, ... }`), si lo hay. */
 export function gatewayMessage(error: ApiError): string | null {

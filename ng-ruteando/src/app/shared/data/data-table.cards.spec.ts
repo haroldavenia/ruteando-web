@@ -5,7 +5,6 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { OUTLINED_FIELDS_PROVIDER } from '../form/outlined-fields';
-
 import { DataColumn, DataTableComponent } from './data-table.component';
 import { FullListState } from './full-list-state';
 

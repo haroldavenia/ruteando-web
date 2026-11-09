@@ -1,15 +1,14 @@
-import { DestroyRef, PLATFORM_ID, inject } from '@angular/core';
+import { DestroyRef, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
+import { t } from '../../core/i18n/i18n';
 import { bulkDeleteMessages, deleteMany } from '../../shared/data/bulk-run';
 import { downloadCsv } from '../../shared/data/csv';
 import { DeleteFlow } from '../../shared/data/delete-flow';
-
 import { csvFileName } from './fleet-export';
 
-import { t } from '../../core/i18n/i18n';
 export interface FleetListConfig<T> {
   /** «vehículo» / «vehículos». */
   singular: string;

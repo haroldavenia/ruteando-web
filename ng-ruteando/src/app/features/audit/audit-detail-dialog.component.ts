@@ -2,11 +2,11 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  inject,
   Injector,
   PLATFORM_ID,
   ViewEncapsulation,
-  computed,
-  inject,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -18,13 +18,14 @@ import { ApiError } from '../../core/api/api-error';
 import { AuditLogsApi } from '../../core/api/data/audit-logs.api';
 import { AuditLog } from '../../core/api/models';
 import { CurrentUser } from '../../core/auth/current-user';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { readPref } from '../../shared/data/list-prefs';
 import { RecordLoader } from '../../shared/data/record-loader';
 import { formatRelativeTime } from '../../shared/format';
-
 import { AuditChangesComponent } from './audit-changes.component';
-import { AuditDetailHeadComponent } from './audit-detail-head.component';
 import { copyToClipboard } from './audit-clipboard';
+import { AuditDetailHeadComponent } from './audit-detail-head.component';
 import { diffChanges } from './audit-diff';
 import { AuditFactsComponent } from './audit-facts.component';
 import {
@@ -40,8 +41,6 @@ import { entityTarget, entityWasDeleted } from './audit-links';
 import { AuditRelatedComponent } from './audit-related.component';
 import { AuditTechComponent } from './audit-tech.component';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const TECH_KEY = 'ruteando-audit-tech';
 /** Cuántos eventos de la misma entidad se ofrecen en la línea de tiempo. */
 const RELATED_LIMIT = 5;

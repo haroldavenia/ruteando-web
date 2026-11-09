@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LatLng } from '../../core/geo/lat-lng';
-
 import { VertexTableComponent } from './vertex-table.component';
 
 const square: LatLng[] = [

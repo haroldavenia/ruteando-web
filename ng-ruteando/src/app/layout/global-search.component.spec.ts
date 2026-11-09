@@ -5,7 +5,6 @@ import { provideRouter, Router } from '@angular/router';
 import { makeUser } from '../../testing/session';
 import { CurrentUser } from '../core/auth/current-user';
 import { UserRole } from '../core/auth/session.model';
-
 import { GlobalSearchComponent } from './global-search.component';
 import { navItemsFor } from './nav-items';
 

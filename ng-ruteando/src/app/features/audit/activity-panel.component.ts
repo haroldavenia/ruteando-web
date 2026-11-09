@@ -2,29 +2,28 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  PLATFORM_ID,
-  ViewEncapsulation,
   computed,
   inject,
   input,
   output,
+  PLATFORM_ID,
   signal,
+  ViewEncapsulation,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuditLog } from '../../core/api/models';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { readPref, writePref } from '../../shared/data/list-prefs';
 import { formatRelativeTime } from '../../shared/format';
-
 import { ActivityBarsComponent, PickedDays } from './activity-bars.component';
 import { ActivitySharesComponent } from './activity-shares.component';
-import { formatNumber } from './audit-format';
 import { AuditFilters } from './audit-filters';
-import { AuditKind, auditEntityLabel } from './audit-labels';
+import { formatNumber } from './audit-format';
+import { auditEntityLabel, AuditKind } from './audit-labels';
 import { summarize } from './audit-stats';
 
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export type { PickedDays };
 
 const PANEL_KEY = 'ruteando-audit-panel';

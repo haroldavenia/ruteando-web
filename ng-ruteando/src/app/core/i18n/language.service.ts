@@ -1,6 +1,6 @@
-import { Injectable, InjectionToken, inject } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 
-import { LANGUAGES, Language, language, useLanguage } from './i18n';
+import { Language, language, LANGUAGES, useLanguage } from './i18n';
 
 /** Recarga la página tras cambiar de idioma; las pruebas lo sustituyen para no recargar el navegador. */
 export const PAGE_RELOAD = new InjectionToken<() => void>('PAGE_RELOAD', {

@@ -2,11 +2,11 @@ import {
   DEFAULT_LENGTH_OF_STAY_TYPES,
   DEFAULT_RESTRICTION_TYPES,
   DEFAULT_ROUTE_TOPOLOGIES,
-  SettingsSummary,
   describeSettings,
   lengthOfStayLabel,
   restrictionTypeLabel,
   routeTopologyLabel,
+  SettingsSummary,
 } from './settings-labels';
 
 describe('describeSettings', () => {

@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 
-import { ThemePreference, ThemeService } from '../../core/theme/theme.service';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ThemePreference, ThemeService } from '../../core/theme/theme.service';
+
 interface ThemeOption {
   readonly value: ThemePreference;
   readonly label: string;

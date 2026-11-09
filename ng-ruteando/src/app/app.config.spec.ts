@@ -4,11 +4,11 @@ import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
+import { makeSession, makeUser } from '../testing/session';
 import { appConfig } from './app.config';
 import { ApiError } from './core/api/api-error';
 import { CurrentUser } from './core/auth/current-user';
 import { TokenStorageService } from './core/auth/token-storage.service';
-import { makeSession, makeUser } from '../testing/session';
 
 describe('appConfig: cadena de interceptores HTTP', () => {
   let http: HttpClient;

@@ -4,14 +4,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import list from '../../../testing/fixtures/gateway/get__packages.json';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
-
 import { PackagePickerComponent } from './package-picker.component';
 
-import list from '../../../testing/fixtures/gateway/get__packages.json';
-
-type Item = { id: string; name: string; guideNumber: string | null; status: string };
+interface Item {
+  id: string;
+  name: string;
+  guideNumber: string | null;
+  status: string;
+}
 const base = list.response.body.content[0] as unknown as Item;
 const item = (n: number, status = 'pending'): Item => ({
   ...base,

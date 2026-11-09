@@ -1,4 +1,4 @@
-import { Observable, map, of, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
 

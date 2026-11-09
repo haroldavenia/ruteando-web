@@ -4,21 +4,20 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { Fixture, respondWith } from '../../../../testing/api-testing';
+import resetFx from '../../../../testing/fixtures/gateway/post__auth__reset-password.json';
+import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
+import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
+import invalidTokenFx from '../../../../testing/fixtures/gateway-errors/post__auth__reset-password__invalid-token.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { authInterceptor } from '../../../core/api/auth.interceptor';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
 import { refreshInterceptor } from '../../../core/api/refresh.interceptor';
 import { CurrentUser } from '../../../core/auth/current-user';
 import { ResetPasswordComponent } from './reset-password.component';
-
-import resetFx from '../../../../testing/fixtures/gateway/post__auth__reset-password.json';
-import invalidTokenFx from '../../../../testing/fixtures/gateway-errors/post__auth__reset-password__invalid-token.json';
-import policyFx from '../../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
-import validationFx from '../../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
 
 @Component({ template: 'acceso' })
 class AccesoComponent {}

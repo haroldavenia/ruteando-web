@@ -1,12 +1,11 @@
 import { describeCrudApi } from '../../../../testing/crud-api-spec';
-import { ResourceTypeInput } from '../models';
-import { ResourceTypesApi } from './resource-types.api';
-
+import remove from '../../../../testing/fixtures/gateway/delete__resource-types__id.json';
 import list from '../../../../testing/fixtures/gateway/get__resource-types.json';
 import get from '../../../../testing/fixtures/gateway/get__resource-types__id.json';
 import create from '../../../../testing/fixtures/gateway/post__resource-types.json';
 import update from '../../../../testing/fixtures/gateway/put__resource-types__id.json';
-import remove from '../../../../testing/fixtures/gateway/delete__resource-types__id.json';
+import { ResourceTypeInput } from '../models';
+import { ResourceTypesApi } from './resource-types.api';
 
 describeCrudApi<ResourceTypeInput>({
   name: 'ResourceTypesApi',

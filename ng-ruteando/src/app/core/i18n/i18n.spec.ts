@@ -2,9 +2,9 @@ import { EN } from './dictionaries/en';
 import { PT } from './dictionaries/pt';
 import {
   DEFAULT_LANGUAGE,
-  LANGUAGES,
-  LANGUAGE_STORAGE_KEY,
   language,
+  LANGUAGE_STORAGE_KEY,
+  LANGUAGES,
   locale,
   setDictionary,
   t,

@@ -1,10 +1,9 @@
-import { Fixture, firstResult, respondWith, setupApi } from '../../../../testing/api-testing';
-import { AuditLogsApi } from './audit-logs.api';
-
+import { firstResult, Fixture, respondWith, setupApi } from '../../../../testing/api-testing';
 import list from '../../../../testing/fixtures/gateway/get__audit-logs.json';
-import mine from '../../../../testing/fixtures/gateway/get__audit-logs__me.json';
 import admin from '../../../../testing/fixtures/gateway/get__audit-logs__admin.json';
 import one from '../../../../testing/fixtures/gateway/get__audit-logs__id.json';
+import mine from '../../../../testing/fixtures/gateway/get__audit-logs__me.json';
+import { AuditLogsApi } from './audit-logs.api';
 
 describe('AuditLogsApi', () => {
   const setup = () => setupApi(AuditLogsApi);

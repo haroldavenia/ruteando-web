@@ -1,4 +1,4 @@
-import { TONE_ICONS, statusTone } from './status-tone';
+import { statusTone, TONE_ICONS } from './status-tone';
 
 describe('statusTone', () => {
   it('paquetes: atendido es éxito, pendiente neutro, no atendido aviso, cancelado peligro y devuelto información', () => {

@@ -1,12 +1,12 @@
 import {
-  MAX_SHIFT_MINUTES,
   fromUtcIso,
   localDateOf,
+  MAX_SHIFT_MINUTES,
   minutesToSeconds,
   secondsToMinutes,
   shiftErrors,
-  toUtcIso,
   todayLocalDate,
+  toUtcIso,
 } from './shift-time';
 
 /** Huso (minutos respecto a UTC) con un ejemplo de lugar. */

@@ -4,20 +4,17 @@ import type Feature from 'ol/Feature';
 import type { Geometry, LineString } from 'ol/geom';
 import type VectorLayer from 'ol/layer/Vector';
 import type VectorSource from 'ol/source/Vector';
-import { fromLonLat } from 'ol/proj';
 import type Style from 'ol/style/Style';
 
+import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { toPlannedJourney } from '../../core/api/journey-mapper';
 import { DomainRoute, DomainWaypoint, Journey } from '../../core/api/models';
-import { ThemeService, THEME_STORAGE_KEY } from '../../core/theme/theme.service';
+import { THEME_STORAGE_KEY, ThemeService } from '../../core/theme/theme.service';
 import { MAP_CONFIG } from '../../shared/map/map-config';
 import { toHex } from '../../shared/map/map-palette';
 import { ROUTE_COLORS_DARK, routeColor } from '../../shared/map/route-colors';
-
 import { RoutesMapComponent } from './routes-map.component';
-
-import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 
 const base = toPlannedJourney(plan.response.body as unknown as Journey).routes[0];
 

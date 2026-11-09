@@ -1,8 +1,8 @@
-import { Type } from '@angular/core';
 import { HttpTestingController } from '@angular/common/http/testing';
+import { Type } from '@angular/core';
 
 import { CrudApi } from '../app/core/api/crud-api';
-import { Fixture, asPage, expectSameContract, firstResult, respondWith, setupApi } from './api-testing';
+import { asPage, expectSameContract, firstResult, Fixture, respondWith, setupApi } from './api-testing';
 
 interface CrudSpecOptions<TInput> {
   name: string;

@@ -3,23 +3,21 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
+import get from '../../../testing/fixtures/gateway/get__zones__id.json';
+import create from '../../../testing/fixtures/gateway/post__zones.json';
+import update from '../../../testing/fixtures/gateway/put__zones__id.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { makeUser } from '../../../testing/session';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
+import { Zone } from '../../core/api/models';
 import { CurrentUser } from '../../core/auth/current-user';
 import { LatLng } from '../../core/geo/lat-lng';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-
-import { MAX_CODE_LENGTH, ZoneFormComponent, buildZoneUpdateBody } from './zone-form.component';
-import { Zone } from '../../core/api/models';
-
-import create from '../../../testing/fixtures/gateway/post__zones.json';
-import get from '../../../testing/fixtures/gateway/get__zones__id.json';
-import update from '../../../testing/fixtures/gateway/put__zones__id.json';
+import { buildZoneUpdateBody, MAX_CODE_LENGTH, ZoneFormComponent } from './zone-form.component';
 
 const fx = (f: unknown) => f as Fixture;
 const SQUARE: LatLng[] = [

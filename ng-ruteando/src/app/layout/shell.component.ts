@@ -12,31 +12,30 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 import { AuthService } from '../core/auth/auth.service';
 import { CurrentUser } from '../core/auth/current-user';
+import { t } from '../core/i18n/i18n';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 import { InstallService } from '../core/pwa/install.service';
 import { BrandComponent } from '../shared/brand/brand.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { ActionTitleDirective } from '../shared/ui/action-title.directive';
 import { LanguageToggleComponent } from '../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../shared/ui/theme-toggle.component';
-import { ActionTitleDirective } from '../shared/ui/action-title.directive';
-
 import { GlobalSearchComponent } from './global-search.component';
-import { NavRailComponent } from './nav-rail.component';
 import { navItemsFor } from './nav-items';
+import { NavRailComponent } from './nav-rail.component';
 
-import { t } from '../core/i18n/i18n';
-import { TranslatePipe } from '../core/i18n/translate.pipe';
 @Component({
   selector: 'app-shell',
   imports: [

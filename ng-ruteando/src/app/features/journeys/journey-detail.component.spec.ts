@@ -5,15 +5,13 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 
 import { Fixture } from '../../../testing/api-testing';
+import get from '../../../testing/fixtures/gateway/get__journeys__id.json';
+import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-
 import { JourneyDetailComponent } from './journey-detail.component';
-
-import get from '../../../testing/fixtures/gateway/get__journeys__id.json';
-import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
 
 const fx = (f: unknown) => f as Fixture;
 const listed = fx(get).response.body as { id: string };

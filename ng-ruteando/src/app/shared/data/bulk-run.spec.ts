@@ -1,8 +1,7 @@
-import { Observable, Subject, defer, finalize, of, throwError } from 'rxjs';
+import { defer, finalize, Observable, of, Subject, throwError } from 'rxjs';
 
 import { ApiError } from '../../core/api/api-error';
-
-import { BULK_CONCURRENCY, BulkResult, BulkTarget, bulkDeleteMessages, deleteMany, runBulk } from './bulk-run';
+import { BULK_CONCURRENCY, bulkDeleteMessages, BulkResult, BulkTarget, deleteMany, runBulk } from './bulk-run';
 
 const targets = (n: number): BulkTarget[] =>
   Array.from({ length: n }, (_, i) => ({ id: `id${i}`, label: `Registro ${i}` }));

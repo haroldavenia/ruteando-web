@@ -1,12 +1,12 @@
 import {
   CapacityValues,
-  EMPTY_CAPACITY,
-  WEIGHT_UNITS_PER_KG,
   decodeCapacity,
   effectiveVolume,
+  EMPTY_CAPACITY,
   encodeCapacity,
   mergeOpaque,
   volumeOfMeasures,
+  WEIGHT_UNITS_PER_KG,
 } from './capacity-codec';
 
 // Estas pruebas fijan la HIPÓTESIS de almacenamiento (peso en kg, volumen en cm³, medidas en cm; ver capacity-codec.ts): el gateway real

@@ -1,8 +1,8 @@
 import {
-  IDENTIFIER_KEYS,
-  IDENTIFIER_LABELS,
   capacitySummary,
   driverName,
+  IDENTIFIER_KEYS,
+  IDENTIFIER_LABELS,
   identifierLabel,
   identifierText,
   vehicleLabel,

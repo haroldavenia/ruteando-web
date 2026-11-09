@@ -1,16 +1,16 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
-  ElementRef,
-  PLATFORM_ID,
-  afterNextRender,
   computed,
+  DestroyRef,
   effect,
+  ElementRef,
   inject,
   input,
   model,
+  PLATFORM_ID,
   signal,
   untracked,
   viewChild,
@@ -18,26 +18,25 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import type OlMap from 'ol/Map';
 import type { FeatureLike } from 'ol/Feature';
 import type VectorLayer from 'ol/layer/Vector';
+import type OlMap from 'ol/Map';
 import type VectorSource from 'ol/source/Vector';
 
 import { DomainRoute } from '../../core/api/models';
 import { toOlCoordinate } from '../../core/geo/lat-lng';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ThemeService } from '../../core/theme/theme.service';
 import { formatDateTime, formatDistance } from '../../shared/format';
 import { MAP_CONFIG } from '../../shared/map/map-config';
-import { MapPalette, readMapPalette, readableOn, toRgba } from '../../shared/map/map-palette';
-import { OPENLAYERS_LOADER, OpenLayers } from '../../shared/map/openlayers';
+import { MapPalette, readableOn, readMapPalette, toRgba } from '../../shared/map/map-palette';
+import { OpenLayers, OPENLAYERS_LOADER } from '../../shared/map/openlayers';
 import { routeColorFor } from '../../shared/map/route-colors';
-import { LonLat, lonLatBounds, routeCoordinates, routeLine, routeStops } from '../../shared/map/route-geometry';
+import { lonLatBounds, routeCoordinates, routeLine, routeStops } from '../../shared/map/route-geometry';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
 import { stopTypeLabel } from './journey-labels';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export interface StopRef {
   routeIndex: number;
   sequence: number;

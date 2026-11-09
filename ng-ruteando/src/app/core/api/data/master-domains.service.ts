@@ -1,5 +1,5 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { Observable, catchError, shareReplay, tap, throwError } from 'rxjs';
+import { inject, Injectable, signal } from '@angular/core';
+import { catchError, Observable, shareReplay, tap, throwError } from 'rxjs';
 
 import { MasterDomain, MasterDomainValue } from '../models';
 import { MasterDomainsApi } from './master-domains.api';

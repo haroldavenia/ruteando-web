@@ -10,7 +10,6 @@ import { driver, fleetPage, resource, resourceType } from '../../../testing/flee
 import { iconButtonsWithoutTitle } from '../../../testing/icon-button-titles';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
-
 import { DriverListComponent } from './drivers/driver-list.component';
 import { ResourceTypeListComponent } from './resource-types/resource-type-list.component';
 import { ResourceListComponent } from './resources/resource-list.component';

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AUDIT_FIXTURE_LOGS, auditLog, localIso } from '../../../testing/audit';
 import { AuditLog } from '../../core/api/models';
-
 import { ActivityPanelComponent, PickedDays } from './activity-panel.component';
 import { EMPTY_FILTERS } from './audit-filters';
 import { AuditKind } from './audit-labels';

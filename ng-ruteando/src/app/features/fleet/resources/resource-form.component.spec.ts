@@ -1,22 +1,19 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Navigation, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, Navigation, provideRouter, Router } from '@angular/router';
 
 import { Fixture, respondWith } from '../../../../testing/api-testing';
-import { API_BASE_URL } from '../../../core/api/api-config';
-import { errorInterceptor } from '../../../core/api/error.interceptor';
-
-import { toHandoffState } from '../type-handoff';
-
-import { ResourceFormComponent, SELECT_LIMIT } from './resource-form.component';
-import { fromUtcIso } from '../../../shared/time/shift-time';
-
 import places from '../../../../testing/fixtures/gateway/get__places.json';
 import types from '../../../../testing/fixtures/gateway/get__resource-types.json';
-import create from '../../../../testing/fixtures/gateway/post__resources.json';
 import get from '../../../../testing/fixtures/gateway/get__resources__id.json';
+import create from '../../../../testing/fixtures/gateway/post__resources.json';
+import { API_BASE_URL } from '../../../core/api/api-config';
+import { errorInterceptor } from '../../../core/api/error.interceptor';
+import { fromUtcIso } from '../../../shared/time/shift-time';
+import { toHandoffState } from '../type-handoff';
+import { ResourceFormComponent, SELECT_LIMIT } from './resource-form.component';
 
 const fx = (f: unknown) => f as Fixture;
 

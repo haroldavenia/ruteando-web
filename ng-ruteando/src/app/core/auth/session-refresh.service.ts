@@ -1,13 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, finalize, map, shareReplay, tap, throwError } from 'rxjs';
+import { finalize, map, Observable, shareReplay, Subject, tap, throwError } from 'rxjs';
 
 import { API_BASE_URL } from '../api/api-config';
+import { t } from '../i18n/i18n';
 import { SessionResponse } from './session.model';
 import { TokenStorageService } from './token-storage.service';
-
-import { t } from '../i18n/i18n';
 /** No hay token de refresco con el que renovar la sesión. */
 export class NoRefreshTokenError extends Error {
   constructor() {

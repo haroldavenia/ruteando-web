@@ -8,6 +8,8 @@ import { filter, switchMap } from 'rxjs';
 
 import { ResourcesApi } from '../../../core/api/data/resources.api';
 import { Resource } from '../../../core/api/models';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { messageFor } from '../../../shared/data/api-messages';
 import { DataColumn, DataTableComponent } from '../../../shared/data/data-table.component';
@@ -17,15 +19,12 @@ import { PageHeaderComponent } from '../../../shared/data/page-header.component'
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { ActionTitleDirective } from '../../../shared/ui/action-title.directive';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge.component';
-import { FleetTabsComponent } from '../fleet-tabs.component';
 import { vehiclesToCsv } from '../fleet-export';
 import { driverName, vehicleLabel } from '../fleet-labels';
 import { FleetListActions } from '../fleet-list-actions';
-
+import { FleetTabsComponent } from '../fleet-tabs.component';
 import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
 
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-resource-list',
   imports: [

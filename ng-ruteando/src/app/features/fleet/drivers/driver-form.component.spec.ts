@@ -2,16 +2,14 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../../testing/api-testing';
+import { expectSameContract, Fixture, respondWith } from '../../../../testing/api-testing';
+import get from '../../../../testing/fixtures/gateway/get__users__id.json';
+import create from '../../../../testing/fixtures/gateway/post__users.json';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
-
 import { DriverFormComponent } from './driver-form.component';
-
-import create from '../../../../testing/fixtures/gateway/post__users.json';
-import get from '../../../../testing/fixtures/gateway/get__users__id.json';
 
 describe('DriverFormComponent', () => {
   let fixture: ComponentFixture<DriverFormComponent>;

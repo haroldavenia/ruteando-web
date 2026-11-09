@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LANGUAGE_STORAGE_KEY, language } from './i18n';
+import { language, LANGUAGE_STORAGE_KEY } from './i18n';
 import { LanguageService, PAGE_RELOAD, SWITCH_ANIMATION } from './language.service';
 
 describe('LanguageService', () => {

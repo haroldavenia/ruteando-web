@@ -5,11 +5,10 @@ import { MatInputModule } from '@angular/material/input';
 import { startWith } from 'rxjs';
 
 import { LatLng, latLng } from '../../core/geo/lat-lng';
-
-import { MapViewComponent } from './map-view.component';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { MapViewComponent } from './map-view.component';
+
 export type LocationGroup = FormGroup<{ lat: FormControl<number | null>; lng: FormControl<number | null> }>;
 
 /** Grupo de formulario con latitud y longitud obligatorias y dentro de rango. */

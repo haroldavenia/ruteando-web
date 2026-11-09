@@ -1,8 +1,8 @@
 import {
+  colorName,
+  ROUTE_COLOR_NAMES,
   ROUTE_COLORS,
   ROUTE_COLORS_DARK,
-  ROUTE_COLOR_NAMES,
-  colorName,
   routeColor,
   routeColorThemed,
 } from './route-colors';

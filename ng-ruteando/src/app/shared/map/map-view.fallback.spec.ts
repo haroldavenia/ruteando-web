@@ -2,7 +2,6 @@ import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { TEST_MAP_CONFIG } from '../../../testing/map';
-
 import { MAP_CONFIG } from './map-config';
 import { MapViewComponent } from './map-view.component';
 import { OPENLAYERS_LOADER } from './openlayers';

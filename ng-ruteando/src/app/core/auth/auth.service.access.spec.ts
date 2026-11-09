@@ -1,9 +1,19 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 
 import { Fixture, respondWith } from '../../../testing/api-testing';
+import forgotFx from '../../../testing/fixtures/gateway/post__auth__forgot-password.json';
+import logoutFx from '../../../testing/fixtures/gateway/post__auth__logout.json';
+import registerFx from '../../../testing/fixtures/gateway/post__auth__register.json';
+import resendFx from '../../../testing/fixtures/gateway/post__auth__resend-verification.json';
+import resetFx from '../../../testing/fixtures/gateway/post__auth__reset-password.json';
+import verifyFx from '../../../testing/fixtures/gateway/post__auth__verify-email.json';
+import validationFx from '../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
+import duplicateFx from '../../../testing/fixtures/gateway-errors/post__auth__register__email-already-exists.json';
+import policyFx from '../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
+import invalidTokenFx from '../../../testing/fixtures/gateway-errors/post__auth__reset-password__invalid-token.json';
 import { API_BASE_URL } from '../api/api-config';
 import { ApiError } from '../api/api-error';
 import { authInterceptor } from '../api/auth.interceptor';
@@ -12,18 +22,6 @@ import { refreshInterceptor } from '../api/refresh.interceptor';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './current-user';
 import { TokenStorageService } from './token-storage.service';
-
-import registerFx from '../../../testing/fixtures/gateway/post__auth__register.json';
-import verifyFx from '../../../testing/fixtures/gateway/post__auth__verify-email.json';
-import resendFx from '../../../testing/fixtures/gateway/post__auth__resend-verification.json';
-import forgotFx from '../../../testing/fixtures/gateway/post__auth__forgot-password.json';
-import resetFx from '../../../testing/fixtures/gateway/post__auth__reset-password.json';
-import logoutFx from '../../../testing/fixtures/gateway/post__auth__logout.json';
-
-import policyFx from '../../../testing/fixtures/gateway-errors/post__auth__register__password-policy-violation.json';
-import duplicateFx from '../../../testing/fixtures/gateway-errors/post__auth__register__email-already-exists.json';
-import invalidTokenFx from '../../../testing/fixtures/gateway-errors/post__auth__reset-password__invalid-token.json';
-import validationFx from '../../../testing/fixtures/gateway-errors/post__auth__login__validation-error.json';
 
 const fx = (f: unknown) => f as unknown as Fixture;
 const INVALID_LINK = 'El enlace no es válido o ha caducado';
@@ -65,7 +63,7 @@ describe('AuthService: operaciones de acceso', () => {
     controller.verify();
   });
 
-  const fail = <T>(source: {
+  const fail = (source: {
     subscribe: (o: { next: () => void; error: (e: unknown) => void }) => unknown;
   }): Promise<ApiError> =>
     new Promise((resolve, reject) =>

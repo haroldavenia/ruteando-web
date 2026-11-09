@@ -1,4 +1,4 @@
-import { PLATFORM_ID, ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, PLATFORM_ID, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -6,28 +6,27 @@ import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { PackagesApi } from '../../../core/api/data/packages.api';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { downloadCsv, parseCsv } from '../../../shared/data/csv';
 import { HasUnsavedChanges } from '../../../shared/data/unsaved-changes.guard';
-import { formatLatLng } from '../../../shared/format';
 import { FormHeadComponent } from '../../../shared/form/form-head.component';
-
+import { formatLatLng } from '../../../shared/format';
 import { RowResult, runImport } from './package-importer';
 import {
   ERRORS_FILE_NAME,
   IMPORT_COLUMNS,
+  importErrorsCsv,
   ImportRow,
+  packageTemplateCsv,
   PREVIEW_ROWS,
   ReportEntry,
   RowError,
   TEMPLATE_FILE_NAME,
-  ValidationResult,
-  importErrorsCsv,
-  packageTemplateCsv,
   validateRows,
+  ValidationResult,
 } from './package-rows';
 
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 export const MAX_FILE_BYTES = 2 * 1024 * 1024;
 export const MAX_DATA_ROWS = 2000;
 const MAX_ERRORS_SHOWN = 200;

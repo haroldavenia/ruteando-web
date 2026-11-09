@@ -32,6 +32,7 @@ describe('safeReturnUrl', () => {
       ['doble barra con ruta', '//otro.example/journeys'],
       ['barra invertida pegada', '/\\otro.example'],
       ['barra invertida en medio', '/journeys\\..\\otro'],
+      // eslint-disable-next-line no-script-url -- la prueba comprueba justo que se rechaza
       ['javascript:', 'javascript:alert(1)'],
       ['data:', 'data:text/html,<script>alert(1)</script>'],
       ['tabulador que el navegador elimina', '/\t/otro.example'],

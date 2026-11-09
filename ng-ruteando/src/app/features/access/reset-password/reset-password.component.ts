@@ -1,12 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   Injector,
   PLATFORM_ID,
-  afterNextRender,
-  inject,
   signal,
   viewChild,
 } from '@angular/core';
@@ -20,14 +20,13 @@ import { ApiError } from '../../../core/api/api-error';
 import { AuthService } from '../../../core/auth/auth.service';
 import { INVALID_LINK_MESSAGE } from '../../../core/auth/auth-messages';
 import { passwordPolicy } from '../../../core/auth/password-policy';
-import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
-import { FormResultComponent } from '../../../shared/form/form-result.component';
-import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
-import { notify } from '../../../shared/form/notify';
-import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
-
 import { t } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
+import { FormResultComponent } from '../../../shared/form/form-result.component';
+import { notify } from '../../../shared/form/notify';
+import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
+import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
 /** Estados del gateway que indican que el enlace ya no sirve (el gateway no documenta cuál usa). */
 const LINK_ERRORS = [400, 401, 404, 410];
 /** Códigos de un 400 que culpan a la contraseña o a los datos escritos, no al enlace: el token sigue valiendo. */

@@ -1,8 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { Provider, Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Observable, firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 import { API_BASE_URL, Page } from '../app/core/api/api-config';
 

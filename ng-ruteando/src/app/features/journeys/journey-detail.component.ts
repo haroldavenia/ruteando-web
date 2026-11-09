@@ -4,20 +4,18 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { JourneysApi } from '../../core/api/data/journeys.api';
 import { PlannedJourney } from '../../core/api/models';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RecordLoader } from '../../shared/data/record-loader';
 import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { formatCount, formatDateTime, formatDuration } from '../../shared/format';
-
-import { JourneyRoutesComponent } from './journey-routes.component';
-import { RoutesMapComponent, StopRef } from './routes-map.component';
 import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
 import { statusTone } from '../../shared/ui/status-tone';
-
 import { journeyStatusLabel } from './journey-labels';
+import { JourneyRoutesComponent } from './journey-routes.component';
+import { RoutesMapComponent, StopRef } from './routes-map.component';
 
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 @Component({
   selector: 'app-journey-detail',
   imports: [

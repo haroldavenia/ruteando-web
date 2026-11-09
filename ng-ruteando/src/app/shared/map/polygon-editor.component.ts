@@ -1,17 +1,17 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
+  effect,
   ElementRef,
   HostListener,
-  PLATFORM_ID,
-  afterNextRender,
-  computed,
-  effect,
   inject,
   input,
   model,
+  PLATFORM_ID,
   signal,
   untracked,
   viewChild,
@@ -19,26 +19,24 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import type { Coordinate } from 'ol/coordinate';
 import type { Geometry } from 'ol/geom';
 import type Draw from 'ol/interaction/Draw';
 import type Modify from 'ol/interaction/Modify';
-import type OlMap from 'ol/Map';
 import type VectorLayer from 'ol/layer/Vector';
+import type OlMap from 'ol/Map';
 import type VectorSource from 'ol/source/Vector';
 
 import { LatLng } from '../../core/geo/lat-lng';
+import { locale, t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ThemeService } from '../../core/theme/theme.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-
 import { MAP_CONFIG } from './map-config';
 import { MapPalette, readMapPalette, toRgba } from './map-palette';
-import { OPENLAYERS_LOADER, OpenLayers } from './openlayers';
+import { OpenLayers, OPENLAYERS_LOADER } from './openlayers';
 import { areaKm2, polygonIssueMessage, validatePolygon, verticesFromRing } from './polygon-geometry';
 import { VertexTableComponent } from './vertex-table.component';
 
-import { locale, t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const FIT_PADDING = [48, 48, 48, 48];
 const AREA = new Intl.NumberFormat(locale(), { maximumFractionDigits: 1 });
 

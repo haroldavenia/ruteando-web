@@ -4,10 +4,9 @@ import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Observable, firstValueFrom, of, throwError } from 'rxjs';
+import { firstValueFrom, Observable, of, throwError } from 'rxjs';
 
 import { ApiError } from '../../core/api/api-error';
-
 import { SubmitState } from './submit-state';
 import { HasUnsavedChanges, unsavedChangesGuard } from './unsaved-changes.guard';
 

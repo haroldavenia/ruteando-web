@@ -1,20 +1,18 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { ApplicationRef } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { MatDialog } from '@angular/material/dialog';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import Polygon from 'ol/geom/Polygon';
 import Draw from 'ol/interaction/Draw';
 import Modify from 'ol/interaction/Modify';
 import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import Polygon from 'ol/geom/Polygon';
 import { fromLonLat, toLonLat } from 'ol/proj';
+import VectorSource from 'ol/source/Vector';
 
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { LatLng } from '../../core/geo/lat-lng';
-import { ThemeService, THEME_STORAGE_KEY } from '../../core/theme/theme.service';
-
+import { THEME_STORAGE_KEY, ThemeService } from '../../core/theme/theme.service';
 import { MAP_CONFIG } from './map-config';
 import { toHex } from './map-palette';
 import { PolygonEditorComponent } from './polygon-editor.component';
@@ -328,7 +326,10 @@ describe('PolygonEditorComponent', () => {
         probe.remove();
         return color;
       };
-      type Painted = { getStroke(): { getColor(): string }; getFill?(): { getColor(): string } };
+      interface Painted {
+        getStroke(): { getColor(): string };
+        getFill?(): { getColor(): string };
+      }
       const styles = () => {
         const layer = map().getLayers().item(1) as VectorLayer<VectorSource>;
         return layer.getStyleFunction()!(source().getFeatures()[0], 1) as unknown as Painted[];

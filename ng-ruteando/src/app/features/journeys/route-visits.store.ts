@@ -1,23 +1,22 @@
-import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription, catchError, finalize, map, mergeMap, of, from } from 'rxjs';
+import { catchError, finalize, from, map, mergeMap, of, Subscription } from 'rxjs';
 
 import { PackagesApi } from '../../core/api/data/packages.api';
 import { DomainWaypoint, Package } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
 import { messageFor } from '../../shared/data/api-messages';
-import { changePackageStatus } from '../packages/package-status-change';
 import { packageStatusLabel } from '../packages/package-labels';
-
+import { changePackageStatus } from '../packages/package-status-change';
 import {
+  filterVisits,
+  hasFilters,
   NO_FILTERS,
   RouteVisit,
   VisitFilters,
-  filterVisits,
-  hasFilters,
   visitProgress,
   visitsOf,
 } from './route-visit-filters';
-import { t } from '../../core/i18n/i18n';
 
 /** Paquetes que se piden a la vez: el gateway no tiene un endpoint por lotes. */
 export const VISITS_CONCURRENCY = 6;

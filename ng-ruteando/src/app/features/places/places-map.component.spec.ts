@@ -2,14 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import type VectorLayer from 'ol/layer/Vector';
 import type VectorSource from 'ol/source/Vector';
 
+import list from '../../../testing/fixtures/gateway/get__places.json';
 import { TEST_MAP_CONFIG } from '../../../testing/map';
 import { Place } from '../../core/api/models';
 import { MAP_CONFIG } from '../../shared/map/map-config';
 import { OPENLAYERS_LOADER } from '../../shared/map/openlayers';
-
 import { PlacesMapComponent } from './places-map.component';
-
-import list from '../../../testing/fixtures/gateway/get__places.json';
 
 const base = (list.response.body as unknown as { content: Place[] }).content[0];
 const place = (id: string, type: string, lng: number, lat: number): Place => ({

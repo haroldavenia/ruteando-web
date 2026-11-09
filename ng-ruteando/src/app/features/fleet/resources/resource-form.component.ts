@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Injector, signal } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -12,7 +12,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -20,6 +19,8 @@ import { PlacesApi } from '../../../core/api/data/places.api';
 import { ResourceTypesApi } from '../../../core/api/data/resource-types.api';
 import { ResourcesApi } from '../../../core/api/data/resources.api';
 import { Place, Resource, ResourceInput, ResourceType } from '../../../core/api/models';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { RecordLoader } from '../../../shared/data/record-loader';
 import { SubmitState } from '../../../shared/data/submit-state';
 import { HasUnsavedChanges } from '../../../shared/data/unsaved-changes.guard';
@@ -28,20 +29,17 @@ import { FormActionsComponent } from '../../../shared/form/form-actions.componen
 import { FormHeadComponent } from '../../../shared/form/form-head.component';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { notify } from '../../../shared/form/notify';
-
 import {
   fromUtcIso,
   localDateOf,
   minutesToSeconds,
   secondsToMinutes,
   shiftErrors,
-  toUtcIso,
   todayLocalDate,
+  toUtcIso,
 } from '../../../shared/time/shift-time';
+import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { readHandoff, toHandoffState } from '../type-handoff';
-
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 /** Cuántos tipos y lugares se cargan en los selectores; si hay más, el formulario avisa. */
 export const SELECT_LIMIT = 200;
 

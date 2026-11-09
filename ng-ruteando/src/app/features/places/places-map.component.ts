@@ -1,16 +1,16 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
-  ElementRef,
-  PLATFORM_ID,
-  afterNextRender,
   computed,
+  DestroyRef,
   effect,
+  ElementRef,
   inject,
   input,
   output,
+  PLATFORM_ID,
   signal,
   viewChild,
 } from '@angular/core';
@@ -18,16 +18,14 @@ import type OlMap from 'ol/Map';
 
 import { Place } from '../../core/api/models';
 import { fromGeoJsonPoint } from '../../core/geo/lat-lng';
-import { ThemeService } from '../../core/theme/theme.service';
-import { MAP_CONFIG } from '../../shared/map/map-config';
-import { readMapPalette, readableOn } from '../../shared/map/map-palette';
-import { OPENLAYERS_LOADER, OpenLayers } from '../../shared/map/openlayers';
-import { routeColorFor } from '../../shared/map/route-colors';
-
-import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ThemeService } from '../../core/theme/theme.service';
+import { MAP_CONFIG } from '../../shared/map/map-config';
+import { readableOn, readMapPalette } from '../../shared/map/map-palette';
+import { OpenLayers, OPENLAYERS_LOADER } from '../../shared/map/openlayers';
+import { routeColorFor } from '../../shared/map/route-colors';
+import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
 /**
  * Mapa de los lugares: un pin por lugar, del color y con la letra de su tipo (el color nunca es la única señal), y la leyenda de
  * los tipos que hay. Dibuja los lugares que recibe (la lista ya filtrada) y se ajusta para mostrarlos todos; un clic en un pin

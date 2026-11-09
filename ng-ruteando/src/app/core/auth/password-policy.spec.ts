@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 
-import { PASSWORD_POLICY_TEXT, PASSWORD_REQUIREMENTS, missingRules, passwordPolicy } from './password-policy';
+import { missingRules, PASSWORD_POLICY_TEXT, PASSWORD_REQUIREMENTS, passwordPolicy } from './password-policy';
 
 const VALIDA = 'Ruteando@2026abcdef'; // 19 caracteres, con las cuatro clases
 

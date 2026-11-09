@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, PLATFORM_ID, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,7 +10,8 @@ import { Subscription } from 'rxjs';
 import { MasterDomainsService } from '../../core/api/data/master-domains.service';
 import { PackagesApi } from '../../core/api/data/packages.api';
 import { Package } from '../../core/api/models';
-import { formatRelativeTime } from '../../shared/format';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { messageFor } from '../../shared/data/api-messages';
 import { downloadCsv } from '../../shared/data/csv';
 import { DataColumn, DataFacet, DataTableComponent } from '../../shared/data/data-table.component';
@@ -18,9 +19,9 @@ import { DeleteFlow } from '../../shared/data/delete-flow';
 import { FullListState } from '../../shared/data/full-list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
-import { statusTone } from '../../shared/ui/status-tone';
+import { formatRelativeTime } from '../../shared/format';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
+import { statusTone } from '../../shared/ui/status-tone';
 import { changeStatusOfMany } from './package-bulk-status';
 import { EXPORT_FILE_NAME, ExportProgress, fetchAllPackages, packagesToCsv } from './package-export';
 import {
@@ -31,8 +32,6 @@ import {
 } from './package-labels';
 import { changePackageStatus } from './package-status-change';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const IN_USE = t('No se puede eliminar: el paquete está incluido en una jornada');
 
 @Component({

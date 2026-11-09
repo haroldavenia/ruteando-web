@@ -6,19 +6,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
-import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { Fixture, respondWith } from '../../../../testing/api-testing';
+import remove from '../../../../testing/fixtures/gateway/delete__resources__id.json';
+import unassign from '../../../../testing/fixtures/gateway/delete__resources__id__driver.json';
+import list from '../../../../testing/fixtures/gateway/get__resources.json';
+import drivers from '../../../../testing/fixtures/gateway/get__users__drivers.json';
+import assign from '../../../../testing/fixtures/gateway/put__resources__id__driver__driverId.json';
+import { iconButtonsWithoutTitle } from '../../../../testing/icon-button-titles';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
 import { OUTLINED_FIELDS_PROVIDER } from '../../../shared/form/outlined-fields';
-
 import { ResourceListComponent } from './resource-list.component';
-
-import list from '../../../../testing/fixtures/gateway/get__resources.json';
-import assign from '../../../../testing/fixtures/gateway/put__resources__id__driver__driverId.json';
-import unassign from '../../../../testing/fixtures/gateway/delete__resources__id__driver.json';
-import remove from '../../../../testing/fixtures/gateway/delete__resources__id.json';
-import drivers from '../../../../testing/fixtures/gateway/get__users__drivers.json';
 
 describe('ResourceListComponent', () => {
   let fixture: ComponentFixture<ResourceListComponent>;

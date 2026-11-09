@@ -1,6 +1,5 @@
 import { Package } from '../../core/api/models';
 import { fromGeoJsonPoint } from '../../core/geo/lat-lng';
-
 import { locale, t } from '../../core/i18n/i18n';
 /** Etiquetas en español de `ServiceType`. */
 export const SERVICE_TYPE_LABELS: Readonly<Record<string, string>> = {

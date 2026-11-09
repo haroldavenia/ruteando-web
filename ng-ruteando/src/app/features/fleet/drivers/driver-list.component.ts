@@ -7,6 +7,8 @@ import { filter, switchMap } from 'rxjs';
 
 import { UsersApi } from '../../../core/api/data/users.api';
 import { User } from '../../../core/api/models';
+import { t } from '../../../core/i18n/i18n';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { messageFor } from '../../../shared/data/api-messages';
 import { ClientPaging } from '../../../shared/data/client-paging';
@@ -16,13 +18,11 @@ import { FullListState } from '../../../shared/data/full-list-state';
 import { PageHeaderComponent } from '../../../shared/data/page-header.component';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { ActionTitleDirective } from '../../../shared/ui/action-title.directive';
-import { FleetTabsComponent } from '../fleet-tabs.component';
 import { driversToCsv } from '../fleet-export';
 import { driverName, identifierText } from '../fleet-labels';
 import { FleetListActions } from '../fleet-list-actions';
+import { FleetTabsComponent } from '../fleet-tabs.component';
 
-import { t } from '../../../core/i18n/i18n';
-import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 const ASSIGNED = t('No se puede eliminar: el conductor está asignado a un vehículo');
 
 @Component({

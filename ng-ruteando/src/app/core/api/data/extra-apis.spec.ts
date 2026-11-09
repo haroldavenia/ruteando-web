@@ -1,34 +1,33 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { Fixture, expectSameContract, firstResult, respondWith, setupApi } from '../../../../testing/api-testing';
+import { expectSameContract, firstResult, Fixture, respondWith, setupApi } from '../../../../testing/api-testing';
+import assignedRemoveMany from '../../../../testing/fixtures/gateway/delete__assigned-services.json';
+import assignedRemove from '../../../../testing/fixtures/gateway/delete__assigned-services__id.json';
+import unassignDriver from '../../../../testing/fixtures/gateway/delete__resources__id__driver.json';
+import zonesDelete from '../../../../testing/fixtures/gateway/delete__zones__id.json';
+import assignedList from '../../../../testing/fixtures/gateway/get__assigned-services.json';
+import assignedGet from '../../../../testing/fixtures/gateway/get__assigned-services__id.json';
+import assignedSummary from '../../../../testing/fixtures/gateway/get__assigned-services__summary.json';
+import drivers from '../../../../testing/fixtures/gateway/get__users__drivers.json';
+import zonesList from '../../../../testing/fixtures/gateway/get__zones.json';
+import zonesContaining from '../../../../testing/fixtures/gateway/get__zones__containing.json';
+import zonesGet from '../../../../testing/fixtures/gateway/get__zones__id.json';
+import packageStatus from '../../../../testing/fixtures/gateway/patch__packages__id__status__status.json';
+import assignedCreate from '../../../../testing/fixtures/gateway/post__assigned-services.json';
+import resetPassword from '../../../../testing/fixtures/gateway/post__users__id__reset-password.json';
+import zonesCreate from '../../../../testing/fixtures/gateway/post__zones.json';
+import assignedUpdate from '../../../../testing/fixtures/gateway/put__assigned-services__id.json';
+import assignDriver from '../../../../testing/fixtures/gateway/put__resources__id__driver__driverId.json';
+import zonesUpdate from '../../../../testing/fixtures/gateway/put__zones__id.json';
 import { makeUser } from '../../../../testing/session';
-import { ApiError } from '../api-error';
 import { CurrentUser } from '../../auth/current-user';
+import { ApiError } from '../api-error';
 import { AssignedServicesApi } from './assigned-services.api';
 import { PackagesApi } from './packages.api';
 import { ResourcesApi } from './resources.api';
 import { UsersApi } from './users.api';
 import { ZonesApi } from './zones.api';
-
-import zonesList from '../../../../testing/fixtures/gateway/get__zones.json';
-import zonesGet from '../../../../testing/fixtures/gateway/get__zones__id.json';
-import zonesCreate from '../../../../testing/fixtures/gateway/post__zones.json';
-import zonesUpdate from '../../../../testing/fixtures/gateway/put__zones__id.json';
-import zonesDelete from '../../../../testing/fixtures/gateway/delete__zones__id.json';
-import zonesContaining from '../../../../testing/fixtures/gateway/get__zones__containing.json';
-import assignedList from '../../../../testing/fixtures/gateway/get__assigned-services.json';
-import assignedGet from '../../../../testing/fixtures/gateway/get__assigned-services__id.json';
-import assignedCreate from '../../../../testing/fixtures/gateway/post__assigned-services.json';
-import assignedUpdate from '../../../../testing/fixtures/gateway/put__assigned-services__id.json';
-import assignedRemove from '../../../../testing/fixtures/gateway/delete__assigned-services__id.json';
-import assignedRemoveMany from '../../../../testing/fixtures/gateway/delete__assigned-services.json';
-import assignedSummary from '../../../../testing/fixtures/gateway/get__assigned-services__summary.json';
-import assignDriver from '../../../../testing/fixtures/gateway/put__resources__id__driver__driverId.json';
-import unassignDriver from '../../../../testing/fixtures/gateway/delete__resources__id__driver.json';
-import packageStatus from '../../../../testing/fixtures/gateway/patch__packages__id__status__status.json';
-import drivers from '../../../../testing/fixtures/gateway/get__users__drivers.json';
-import resetPassword from '../../../../testing/fixtures/gateway/post__users__id__reset-password.json';
 
 const fx = (f: unknown) => f as unknown as Fixture;
 

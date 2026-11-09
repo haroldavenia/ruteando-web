@@ -1,11 +1,10 @@
 import { inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CanDeactivateFn } from '@angular/router';
-import { Observable, map, of } from 'rxjs';
-
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { map, Observable, of } from 'rxjs';
 
 import { t } from '../../core/i18n/i18n';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 /** Pantalla con un formulario que puede tener cambios sin guardar. */
 export interface HasUnsavedChanges {
   /** `true` si el formulario está modificado y todavía no se ha guardado. */

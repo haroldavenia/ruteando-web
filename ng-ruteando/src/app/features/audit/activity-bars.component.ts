@@ -1,14 +1,12 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import { AuditLog } from '../../core/api/models';
-
-import { formatDayKey, formatLongDayKey, formatNumber } from './audit-format';
-import { AuditFilters } from './audit-filters';
-import { ActivityBucket, activityByDay } from './audit-stats';
-
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { AuditFilters } from './audit-filters';
+import { formatDayKey, formatLongDayKey, formatNumber } from './audit-format';
+import { ActivityBucket, activityByDay } from './audit-stats';
 /** Los días elegidos: el de una barra, o la semana que agrupa. */
 export interface PickedDays {
   from: string;

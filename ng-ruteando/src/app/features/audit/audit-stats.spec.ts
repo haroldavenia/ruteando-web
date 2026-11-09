@@ -1,6 +1,5 @@
 import { AUDIT_FIXTURE_LOGS, auditLog, localIso, localTime } from '../../../testing/audit';
-
-import { DAILY_LIMIT, WEEKLY_LIMIT, activityByDay, kindShares, summarize } from './audit-stats';
+import { activityByDay, DAILY_LIMIT, kindShares, summarize, WEEKLY_LIMIT } from './audit-stats';
 
 describe('audit-stats', () => {
   describe('summarize', () => {

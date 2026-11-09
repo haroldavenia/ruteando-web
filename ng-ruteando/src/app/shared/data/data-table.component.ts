@@ -1,17 +1,17 @@
-import { NgTemplateOutlet, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  Injectable,
-  PLATFORM_ID,
-  TemplateRef,
   computed,
   contentChild,
+  ElementRef,
   inject,
+  Injectable,
   input,
   model,
+  PLATFORM_ID,
   signal,
+  TemplateRef,
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -25,14 +25,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { StatusBadgeComponent } from '../ui/status-badge.component';
 import { StatusTone } from '../ui/status-tone';
-
 import { readPref, writePref } from './list-prefs';
 import { DEFAULT_PAGE_SIZE, ListState } from './list-state';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export interface DataColumn<T> {
   id: string;
   header: string;

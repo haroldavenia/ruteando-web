@@ -1,16 +1,14 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, ViewEncapsulation } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { AuditLog } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { formatPercent } from '../../shared/format';
 import { StatusTone } from '../../shared/ui/status-tone';
-
 import { formatNumber } from './audit-format';
 import { AuditKind, auditKindIcon, auditKindLabel, auditKindTone } from './audit-labels';
 import { KindShare, kindShares } from './audit-stats';
-
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { t } from '../../core/i18n/i18n';
 /**
  * Cómo se reparten los eventos entre los seis tipos de acción: una barra apilada y, debajo, cada tipo con su glifo, su nombre, su
  * recuento y su porcentaje (el color nunca es la única señal). Cada tipo es un botón que filtra el listado.

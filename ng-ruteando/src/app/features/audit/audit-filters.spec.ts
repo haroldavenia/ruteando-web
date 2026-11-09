@@ -1,13 +1,12 @@
 import { AUDIT_FIXTURE_LOGS, auditLog, localIso, localTime } from '../../../testing/audit';
-
 import {
+  applyAuditFilters,
   AuditFilters,
+  dayKey,
   EMPTY_FILTERS,
   EMPTY_QUERY,
-  NO_PERSON,
-  applyAuditFilters,
-  dayKey,
   hasActiveFilters,
+  NO_PERSON,
   parseAuditQuery,
   parseDay,
   rangeBounds,

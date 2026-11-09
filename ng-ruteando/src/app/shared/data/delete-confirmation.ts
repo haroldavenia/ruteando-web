@@ -1,10 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, map } from 'rxjs';
-
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { map, Observable } from 'rxjs';
 
 import { t } from '../../core/i18n/i18n';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 /**
  * Confirmación de borrado con la acción nombrada con el verbo y el registro. Emite `true` solo al
  * confirmar; cancelar o cerrar con Escape emiten `false`, y el foco vuelve al botón de origen.

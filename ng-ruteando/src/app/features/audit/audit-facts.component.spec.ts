@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { auditLog } from '../../../testing/audit';
-
 import { AuditFactsComponent } from './audit-facts.component';
 
 describe('AuditFactsComponent', () => {

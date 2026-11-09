@@ -65,6 +65,7 @@ const OPTIONS: readonly LanguageOption[] = [
         }
       </mat-menu>
     } @else {
+      <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -- el teclado lo gestionan los radios hijos, que sí son enfocables -->
       <div class="seg" role="radiogroup" [attr.aria-label]="'Idioma' | t" (keydown)="onKey($event)">
         <mat-icon class="globe" aria-hidden="true">language</mat-icon>
         <div class="opts" [style.--i]="index()">

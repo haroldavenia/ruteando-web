@@ -6,14 +6,13 @@ import { ApplicationRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
-import { Subject, of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
-import { makeUser } from '../../testing/session';
 import { iconButtonsWithoutTitle } from '../../testing/icon-button-titles';
+import { makeUser } from '../../testing/session';
 import { API_BASE_URL } from '../core/api/api-config';
 import { AuthService } from '../core/auth/auth.service';
 import { CurrentUser } from '../core/auth/current-user';
-
 import { ShellComponent } from './shell.component';
 
 describe('ShellComponent', () => {

@@ -1,9 +1,9 @@
 import { HttpContext } from '@angular/common/http';
 
 import { withErrorMessage } from '../api/api-error-messages';
+import { t } from '../i18n/i18n';
 import { PASSWORD_POLICY_TEXT } from './password-policy';
 
-import { t } from '../i18n/i18n';
 export const INVALID_LINK_MESSAGE = t('El enlace no es válido o ha caducado');
 export const REVIEW_DATA_MESSAGE = t('Revisa los datos e inténtalo de nuevo');
 /** Cuando el gateway rechaza la contraseña (`PASSWORD_POLICY_VIOLATION`): la regla, no un error genérico. */

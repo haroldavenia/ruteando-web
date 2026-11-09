@@ -5,17 +5,16 @@ import { RouterLink } from '@angular/router';
 
 import { SettingsApi } from '../../core/api/data/settings.api';
 import { Settings } from '../../core/api/models';
+import { t } from '../../core/i18n/i18n';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { DataColumn, DataTableComponent } from '../../shared/data/data-table.component';
 import { DeleteFlow } from '../../shared/data/delete-flow';
 import { ListState } from '../../shared/data/list-state';
 import { PageHeaderComponent } from '../../shared/data/page-header.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { ActionTitleDirective } from '../../shared/ui/action-title.directive';
-
 import { restrictionTypeLabel, routeTopologyLabel } from './settings-labels';
 
-import { t } from '../../core/i18n/i18n';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const IN_USE = t('No se puede eliminar: la configuración se usa en una jornada');
 
 @Component({

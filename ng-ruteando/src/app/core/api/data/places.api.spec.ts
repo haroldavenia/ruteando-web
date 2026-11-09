@@ -1,14 +1,13 @@
+import { firstResult, Fixture, respondWith, setupApi } from '../../../../testing/api-testing';
 import { describeCrudApi } from '../../../../testing/crud-api-spec';
-import { Fixture, firstResult, respondWith, setupApi } from '../../../../testing/api-testing';
-import { PlaceInput } from '../models';
-import { PlacesApi } from './places.api';
-
+import remove from '../../../../testing/fixtures/gateway/delete__places__id.json';
 import list from '../../../../testing/fixtures/gateway/get__places.json';
 import get from '../../../../testing/fixtures/gateway/get__places__id.json';
+import nearby from '../../../../testing/fixtures/gateway/get__places__nearby.json';
 import create from '../../../../testing/fixtures/gateway/post__places.json';
 import update from '../../../../testing/fixtures/gateway/put__places__id.json';
-import remove from '../../../../testing/fixtures/gateway/delete__places__id.json';
-import nearby from '../../../../testing/fixtures/gateway/get__places__nearby.json';
+import { PlaceInput } from '../models';
+import { PlacesApi } from './places.api';
 
 describeCrudApi<PlaceInput>({
   name: 'PlacesApi',

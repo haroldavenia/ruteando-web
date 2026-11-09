@@ -1,4 +1,4 @@
-import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { Page, PageParams } from '../../core/api/api-config';
@@ -6,7 +6,6 @@ import { ApiError } from '../../core/api/api-error';
 import { AuditLogsApi } from '../../core/api/data/audit-logs.api';
 import { AuditLog } from '../../core/api/models';
 import { FullListState } from '../../shared/data/full-list-state';
-
 import { AuditScopeId } from './audit-scopes';
 
 const newestFirst = (a: AuditLog, b: AuditLog): number =>

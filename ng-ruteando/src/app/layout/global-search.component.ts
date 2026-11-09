@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, input, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -6,11 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 
 import { CurrentUser } from '../core/auth/current-user';
-
-import { NavItem, quickActionsFor } from './nav-items';
-
 import { t } from '../core/i18n/i18n';
 import { TranslatePipe } from '../core/i18n/translate.pipe';
+import { NavItem, quickActionsFor } from './nav-items';
 /** Una pantalla o una acción que ofrece la búsqueda. */
 export interface SearchOption {
   readonly label: string;

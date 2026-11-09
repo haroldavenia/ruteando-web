@@ -7,10 +7,9 @@ import { AUDIT_FIXTURE_LOGS, auditLog, gatewayAuditPage, localIso } from '../../
 import { API_BASE_URL } from '../../core/api/api-config';
 import { errorInterceptor } from '../../core/api/error.interceptor';
 import { AuditLog } from '../../core/api/models';
-
+import { AuditStore } from './audit.store';
 import { AuditFilters, EMPTY_FILTERS } from './audit-filters';
 import { AuditViewState, FORBIDDEN_MESSAGE } from './audit-view-state';
-import { AuditStore } from './audit.store';
 
 describe('AuditStore y AuditViewState', () => {
   let http: HttpTestingController;

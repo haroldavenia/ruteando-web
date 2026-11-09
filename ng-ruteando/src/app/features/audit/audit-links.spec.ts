@@ -1,5 +1,4 @@
 import { auditLog } from '../../../testing/audit';
-
 import { entityTarget, entityWasDeleted } from './audit-links';
 
 describe('audit-links', () => {

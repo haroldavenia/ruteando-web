@@ -1,19 +1,17 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 
-import { Fixture, expectSameContract, respondWith } from '../../../testing/api-testing';
-import { API_BASE_URL } from '../../core/api/api-config';
-import { errorInterceptor } from '../../core/api/error.interceptor';
-
-import { JourneyFormComponent } from './journey-form.component';
-
-import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
+import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
 import packages from '../../../testing/fixtures/gateway/get__packages.json';
 import settings from '../../../testing/fixtures/gateway/get__settings.json';
+import plan from '../../../testing/fixtures/gateway/post__journeys__plan.json';
+import { API_BASE_URL } from '../../core/api/api-config';
+import { errorInterceptor } from '../../core/api/error.interceptor';
+import { JourneyFormComponent } from './journey-form.component';
 
 const fx = (f: unknown) => f as Fixture;
 const planBody = fx(plan).request.body as { settingsId: string; packageIds: string[]; name: string };
