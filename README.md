@@ -4,7 +4,7 @@ Aplicación web de planificación de rutas. El frontend es Angular (`ng-ruteando
 
 ## Requisitos
 
-- Node `^20.19 || ^22.12 || >=24` (en `ng-ruteando/.nvmrc` está la 22: `nvm use`).
+- Node `^20.19 || ^22.12 || >=24` para el frontend y `^22.13 || >=24` para el servidor (usa `node:sqlite`); en `ng-ruteando/.nvmrc` está la 22: `nvm use`.
 - pnpm 10 (la versión exacta está en `packageManager` de `package.json`): `corepack enable` (viene con Node 20 a 24) o `npm install -g pnpm`; con pnpm 10 instalado, descarga solo la versión que pide el proyecto.
 - Dirección y clave de API del HanoIT Gateway.
 
@@ -32,6 +32,12 @@ GATEWAY_URL=http://localhost:4010 GATEWAY_API_KEY=mock pnpm start  # la app cont
 
 Usuarios (contraseña `demo1234`): `admin@example.invalid` (administración), `agente@example.invalid` (agente) y `conductor@example.invalid` (conductor, sin áreas). Las variables del entorno tienen prioridad sobre `.env`.
 
+## Segundo factor (opcional)
+
+El inicio de sesión admite un segundo factor: código por correo, código por SMS (Twilio) o aplicación autenticadora (TOTP, Google Authenticator). Lo impone el servidor, no el navegador. Sin `MFA_SECRET_KEY` en el `.env` está apagado y el acceso funciona como siempre. Para activarlo genera una clave (`node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`) y configura el correo (`SMTP_*`) y, si lo usas, Twilio (`TWILIO_*`); todo está explicado en `.env.example`. Cada persona activa sus métodos en **Perfil** y las personas administradoras deciden en **Seguridad** cuáles se permiten y si son obligatorios. En producción el almacén (`MFA_DB_PATH`) necesita un volumen persistente y una sola instancia del servidor.
+
+Para probarlo en local: `docker compose up` levanta también **Mailpit** (http://localhost:8025), donde llegan los correos con los códigos y, con `SMS_PROVIDER=dev`, los SMS de prueba (no se envía nada real).
+
 ## Con Docker (desarrollo)
 
 Sin instalar Node ni copiar `.env`: `docker compose up` (o `pnpm run docker:dev`) levanta el gateway simulado y `ng serve` en http://localhost:4200 (usuarios y contraseña como en la sección anterior). La primera vez instala las dependencias en volúmenes de Docker y tarda unos minutos; después solo reinstala si cambia el `pnpm-lock.yaml`. Tras la migración a pnpm (que cambia `Dockerfile.dev`), reconstruye las imágenes una vez: `docker compose --profile prod-like --profile test build` (o `docker compose up --build`); si una imagen vieja se queda con `pnpm: not found`, es eso. Los volúmenes con `node_modules` de npm se reinstalan solos (el hash del lock cambió); si algo queda raro, `docker compose down -v`. El código se monta desde el equipo y recarga al guardar.
@@ -43,7 +49,7 @@ docker compose --profile test run --rm test    # pruebas del frontend (pnpm run 
 docker compose down                            # parar (pnpm run docker:down); `down -v` borra también las dependencias
 ```
 
-Para usar otro gateway define `DOCKER_GATEWAY_URL` y `DOCKER_GATEWAY_API_KEY` (en `.env` o en el entorno); `GATEWAY_URL` y `GATEWAY_API_KEY` no se usan aquí a propósito, para no apuntar al gateway real por accidente. No hay base de datos. Es una imagen de desarrollo (`Dockerfile.dev`), no la de producción.
+Para usar otro gateway define `DOCKER_GATEWAY_URL` y `DOCKER_GATEWAY_API_KEY` (en `.env` o en el entorno); `GATEWAY_URL` y `GATEWAY_API_KEY` no se usan aquí a propósito, para no apuntar al gateway real por accidente. La base de datos del segundo factor es un SQLite en un volumen de Docker (`mfa_data`). Es una imagen de desarrollo (`Dockerfile.dev`), no la de producción.
 
 ## Desarrollo
 
