@@ -116,6 +116,9 @@ export class ShellComponent {
     if (url === '/sin-permiso') {
       return t('Sin permiso');
     }
+    if (url === '/perfil') {
+      return t('Perfil');
+    }
     const flat = this.items().flatMap((item) => item.children ?? [item]);
     const match = flat.find((item) =>
       item.link === '/' ? url === '/' : url === item.link || url.startsWith(`${item.link}/`)
