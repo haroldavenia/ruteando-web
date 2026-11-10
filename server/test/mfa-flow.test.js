@@ -610,3 +610,94 @@ test('un método ya verificado no se pisa con una activación nueva: se desactiv
     200
   );
 });
+
+test('el reto de activación no es una sesión: no sirve para la política, los restablecimientos ni las bajas', async () => {
+  const admin = ctx.tokenOf('admin@x.invalid');
+  // la empresa lo exige a los administradores y este aún no tiene ningún método
+  await ctx.call('PUT', '/gateway/mfa/policy', {
+    token: admin,
+    body: { methods: { email: true, sms: true, totp: true }, required: 'roles', roles: ['tenant_admin'] },
+  });
+  const r = await ctx.login('admin@x.invalid');
+  assert.equal(r.json.mfaEnrollRequired, true);
+  const challenge = r.json.challengeId;
+
+  const none = { methods: { email: true, sms: true, totp: true }, required: 'none', roles: [] };
+  const attempts = [
+    ['PUT', '/gateway/mfa/policy', { body: none }],
+    ['GET', '/gateway/mfa/policy', {}],
+    ['GET', '/gateway/mfa/users', {}],
+    ['POST', '/gateway/mfa/users/u-agent/reset', {}],
+    ['POST', '/gateway/mfa/session/send', { body: { via: 'email' } }],
+    ['POST', '/gateway/mfa/recovery-codes/regenerate', { body: { via: 'recovery', code: 'AAAAA-AAAAA' } }],
+    ['DELETE', '/gateway/mfa/methods/totp', { body: { via: 'recovery', code: 'AAAAA-AAAAA' } }],
+  ];
+  for (const [method, path, opts] of attempts) {
+    const res = await ctx.call(method, path, { ...opts, challenge });
+    assert.equal(res.status, 403, `${method} ${path}`);
+    assert.equal(res.json.code, 'FORBIDDEN', `${method} ${path}`);
+  }
+  // la política sigue exigiendo el segundo factor y el reto sigue valiendo para activar un método
+  assert.equal(ctx.store.getPolicy(T1).required, 'roles');
+  assert.equal((await ctx.call('GET', '/gateway/mfa/status', { challenge })).status, 200);
+  assert.equal((await ctx.call('POST', '/gateway/mfa/totp/setup', { challenge })).status, 200);
+});
+
+test('los códigos erróneos se cuentan por persona: abrir retos nuevos no da intentos nuevos', async () => {
+  const { secret } = await ctx.enableTotp('agente@x.invalid');
+  const wrong = (challengeId) =>
+    ctx.call('POST', '/gateway/mfa/login/verify', { body: { challengeId, method: 'totp', code: '000000' } });
+
+  // 10 fallos repartidos en dos retos (cada uno agota sus 5 intentos, pero además suman por persona)
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const r = await ctx.login('agente@x.invalid');
+    for (let i = 0; i < 5; i++) await wrong(r.json.challengeId);
+  }
+  const blocked = await ctx.login('agente@x.invalid');
+  assert.equal(blocked.status, 429);
+  assert.equal(blocked.json.code, 'TOO_MANY_FAILURES');
+  assert.equal(blocked.json.accessToken, undefined);
+  assert.equal(blocked.json.challengeId, undefined, 'no se abre ningún reto nuevo');
+  assert.ok(blocked.json.retryAfterSeconds > 0);
+
+  // el bloqueo no es de un solo canal: tampoco deja confirmar con el código bueno desde la sesión
+  const session = ctx.tokenOf('agente@x.invalid');
+  const viaSession = await ctx.call('DELETE', '/gateway/mfa/methods/totp', {
+    token: session,
+    body: { via: 'totp', code: totpAt(secret, ctx.now()) },
+  });
+  assert.equal(viaSession.status, 429);
+  assert.equal(ctx.store.getFactor('u-agent', 'totp').verified, true);
+
+  // otra persona no se ve afectada, y pasada la ventana la persona vuelve a poder entrar
+  assert.equal((await ctx.login('admin@x.invalid')).status, 200);
+  ctx.tick(15 * 60 * 1000 + 1);
+  const again = await ctx.login('agente@x.invalid');
+  assert.equal(again.json.mfaRequired, true);
+  const ok = await ctx.call('POST', '/gateway/mfa/login/verify', {
+    body: { challengeId: again.json.challengeId, method: 'totp', code: totpAt(secret, ctx.now()) },
+  });
+  assert.equal(ok.status, 200);
+});
+
+test('un código por correo se descarta tras 5 intentos erróneos: hay que pedir otro', async () => {
+  const token = ctx.tokenOf('agente@x.invalid');
+  await ctx.call('POST', '/gateway/mfa/email/setup', { token });
+  const real = ctx.lastCode();
+  for (let i = 0; i < 5; i++) {
+    const res = await ctx.call('POST', '/gateway/mfa/email/confirm', {
+      token,
+      body: { code: real === '000000' ? '111111' : '000000' },
+    });
+    assert.equal(res.status, 401);
+  }
+  const late = await ctx.call('POST', '/gateway/mfa/email/confirm', { token, body: { code: real } });
+  assert.equal(late.status, 401, 'el código bueno ya no vale tras 5 intentos fallidos');
+  assert.equal(ctx.store.getFactor('u-agent', 'email').verified, false);
+  // pidiendo otro, se puede activar
+  await ctx.call('POST', '/gateway/mfa/email/setup', { token });
+  assert.equal(
+    (await ctx.call('POST', '/gateway/mfa/email/confirm', { token, body: { code: ctx.lastCode() } })).status,
+    200
+  );
+});

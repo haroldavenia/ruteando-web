@@ -110,8 +110,15 @@ export class MfaApi {
     return this.http.get<MfaPolicy>(`${this.baseUrl}/policy${query}`, this.options());
   }
 
-  savePolicy(policy: Pick<MfaPolicy, 'methods' | 'required' | 'roles'>, tenantId?: string | null): Observable<MfaPolicy> {
-    return this.http.put<MfaPolicy>(this.baseUrl + '/policy', { ...policy, ...(tenantId ? { tenantId } : {}) }, this.options());
+  savePolicy(
+    policy: Pick<MfaPolicy, 'methods' | 'required' | 'roles'>,
+    tenantId?: string | null
+  ): Observable<MfaPolicy> {
+    return this.http.put<MfaPolicy>(
+      this.baseUrl + '/policy',
+      { ...policy, ...(tenantId ? { tenantId } : {}) },
+      this.options()
+    );
   }
 
   /** Quién tiene al menos un método activo en la empresa. */
@@ -121,6 +128,10 @@ export class MfaApi {
   }
 
   resetUser(userId: string): Observable<{ reset: true }> {
-    return this.http.post<{ reset: true }>(`${this.baseUrl}/users/${encodeURIComponent(userId)}/reset`, {}, this.options());
+    return this.http.post<{ reset: true }>(
+      `${this.baseUrl}/users/${encodeURIComponent(userId)}/reset`,
+      {},
+      this.options()
+    );
   }
 }

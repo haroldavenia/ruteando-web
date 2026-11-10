@@ -42,6 +42,10 @@ El servidor SHALL exponer la verificación del reto en `POST /gateway/mfa/login/
 - **WHEN** se acumulan 5 intentos fallidos en el mismo reto
 - **THEN** el reto se invalida, las siguientes verificaciones responden `429` y hay que iniciar sesión de nuevo
 
+#### Scenario: Bloqueo por persona
+- **WHEN** una persona acumula 10 códigos erróneos en 15 minutos, repartidos en uno o varios retos o en acciones con sesión
+- **THEN** el inicio de sesión no abre ningún reto nuevo, las verificaciones y las confirmaciones responden `429` aunque el código sea correcto, y todo vuelve a la normalidad al terminar la ventana; las demás personas no se ven afectadas
+
 #### Scenario: Método no disponible
 - **WHEN** se verifica con un método que la persona no tiene activo o que la empresa tiene desactivado
 - **THEN** la respuesta es `400` y no cuenta como código válido
@@ -56,6 +60,10 @@ El servidor SHALL enviar un código de 6 dígitos de un solo uso, válido 5 minu
 #### Scenario: Reenvío limitado
 - **WHEN** se piden más de 3 envíos del mismo método en 10 minutos para la misma persona
 - **THEN** la respuesta es `429` y no se envía ningún mensaje
+
+#### Scenario: Intentos erróneos del código
+- **WHEN** se escriben 5 códigos erróneos contra el mismo código enviado
+- **THEN** ese código se descarta y el correcto también falla; hay que pedir uno nuevo
 
 #### Scenario: Código usado o caducado
 - **WHEN** se presenta un código ya usado o con más de 5 minutos
@@ -147,6 +155,10 @@ El servidor SHALL validar la sesión de quien llama a `/gateway/mfa/**` con el g
 #### Scenario: Activar de nuevo un método ya activo
 - **WHEN** la persona intenta activar de nuevo un método que ya tiene verificado (por ejemplo, con otro teléfono)
 - **THEN** la respuesta es `409`, el método sigue verificado sin cambios y no se envía ningún código; para cambiarlo hay que desactivarlo antes con un código válido
+
+#### Scenario: El reto de activación no es una sesión
+- **WHEN** quien solo tiene un reto de activación obligatoria (sin haber superado el segundo factor) llama a cualquier ruta que no sea el estado o el alta y la confirmación de un método
+- **THEN** la respuesta es `403` y no cambia nada: ni la política, ni los restablecimientos, ni las bajas, ni los códigos de recuperación
 
 #### Scenario: Políticas de otra empresa
 - **WHEN** un administrador intenta leer o cambiar la política o los factores de una empresa que no es la suya

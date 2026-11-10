@@ -992,6 +992,7 @@ export const EN: Readonly<Record<string, string>> = {
   'El código no es válido': 'The code is not valid',
   'La verificación caducó. Inicia sesión de nuevo': 'The verification expired. Sign in again',
   'Demasiados intentos. Inicia sesión de nuevo': 'Too many attempts. Sign in again',
+  'Demasiados códigos erróneos. Inténtalo de nuevo en unos minutos': 'Too many wrong codes. Try again in a few minutes',
   'Demasiados envíos. Espera unos minutos e inténtalo de nuevo':
     'Too many codes sent. Wait a few minutes and try again',
   'Ese método no está disponible': 'That method is not available',

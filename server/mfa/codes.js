@@ -1,8 +1,10 @@
 /**
  * Códigos de un solo uso de 6 dígitos en memoria (correo y SMS de desarrollo): se guardan solo como huella, caducan a los 5 minutos
- * y se gastan al acertar. Un fallo no gasta el código (el límite de intentos es del reto, en challenges.js).
+ * y se gastan al acertar. Tras 5 fallos el código se descarta (hay que pedir otro); además hay un bloqueo por persona (limits.js).
  */
 const TTL_MS = 5 * 60 * 1000;
+/** Intentos erróneos tras los que el código emitido se descarta. */
+const MAX_WRONG = 5;
 
 function createCodeStore({ codec, now = Date.now, ttlMs = TTL_MS }) {
   const codes = new Map();
@@ -10,7 +12,7 @@ function createCodeStore({ codec, now = Date.now, ttlMs = TTL_MS }) {
     /** Emite un código nuevo para la clave (sustituye al anterior) y lo devuelve para enviarlo. */
     issue(key) {
       const code = codec.numericCode();
-      codes.set(key, { hash: codec.hash('code:' + key, code), expiresAt: now() + ttlMs });
+      codes.set(key, { hash: codec.hash('code:' + key, code), expiresAt: now() + ttlMs, wrong: 0 });
       return code;
     },
     /** `true` solo si el código es el vigente de esa clave; en ese caso queda gastado. */
@@ -21,7 +23,10 @@ function createCodeStore({ codec, now = Date.now, ttlMs = TTL_MS }) {
         codes.delete(key);
         return false;
       }
-      if (!codec.safeEqual(entry.hash, codec.hash('code:' + key, String(code || '').replace(/\s/g, '')))) return false;
+      if (!codec.safeEqual(entry.hash, codec.hash('code:' + key, String(code || '').replace(/\s/g, '')))) {
+        if (++entry.wrong >= MAX_WRONG) codes.delete(key);
+        return false;
+      }
       codes.delete(key);
       return true;
     },
@@ -29,4 +34,4 @@ function createCodeStore({ codec, now = Date.now, ttlMs = TTL_MS }) {
   };
 }
 
-module.exports = { createCodeStore, TTL_MS };
+module.exports = { createCodeStore, TTL_MS, MAX_WRONG };

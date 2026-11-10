@@ -26,4 +26,29 @@ function createLimiter({ max = SEND_LIMIT.max, windowMs = SEND_LIMIT.windowMs, n
   };
 }
 
-module.exports = { createLimiter, SEND_LIMIT, MAX_ATTEMPTS };
+/** Fallos de verificación por persona (no por reto): 10 en 15 minutos bloquean nuevas verificaciones y nuevos retos. */
+const FAILURE_LIMIT = { max: 10, windowMs: 15 * 60 * 1000 };
+
+/**
+ * Cuenta los códigos erróneos de una persona en una ventana deslizante. Sin esto, quien conoce la contraseña podría abrir retos nuevos
+ * sin fin y probar 5 códigos en cada uno. `state(key).blocked` no consume nada; `record` anota un fallo; `clear` lo olvida al acertar.
+ */
+function createFailureTracker({ max = FAILURE_LIMIT.max, windowMs = FAILURE_LIMIT.windowMs, now = Date.now } = {}) {
+  const failures = new Map();
+  const recent = (key) => (failures.get(key) || []).filter((at) => now() - at < windowMs);
+  return {
+    state(key) {
+      const list = recent(key);
+      failures.set(key, list);
+      return list.length >= max
+        ? { blocked: true, retryAfterMs: windowMs - (now() - list[0]) }
+        : { blocked: false, retryAfterMs: 0 };
+    },
+    record(key) {
+      failures.set(key, [...recent(key), now()]);
+    },
+    clear: (key) => void failures.delete(key),
+  };
+}
+
+module.exports = { createLimiter, createFailureTracker, SEND_LIMIT, MAX_ATTEMPTS, FAILURE_LIMIT };

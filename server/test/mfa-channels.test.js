@@ -108,6 +108,16 @@ test('un código de un solo uso se gasta al acertar, no al fallar, y caduca', ()
   assert.equal(store.check('u1:email', third), false);
 });
 
+test('un código se descarta tras 5 intentos erróneos aunque luego se escriba bien', () => {
+  const store = createCodeStore({ codec });
+  const code = store.issue('u1:email');
+  const wrong = code === '000000' ? '111111' : '000000';
+  for (let i = 0; i < 5; i++) assert.equal(store.check('u1:email', wrong), false);
+  assert.equal(store.check('u1:email', code), false, 'el código bueno ya no vale');
+  const fresh = store.issue('u1:email');
+  assert.equal(store.check('u1:email', fresh), true, 'uno nuevo sí');
+});
+
 test('los teléfonos se validan en formato internacional y se enmascaran', () => {
   assert.equal(isValidPhone('+573001234567'), true);
   for (const bad of ['3001234567', '+0123456789', '+57 300 123', '+5730012345678901', '', null]) {

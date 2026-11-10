@@ -12,7 +12,7 @@ const { createChallenges } = require('./challenges');
 const { createCodeStore } = require('./codes');
 const { createCrypto, normalizeRecoveryCode, parseMasterKey } = require('./crypto');
 const { createGatewayClient, GatewayError } = require('./gateway');
-const { createLimiter } = require('./limits');
+const { createFailureTracker, createLimiter } = require('./limits');
 const { createMailer } = require('./mailer');
 const { createSms, isValidPhone, maskPhone } = require('./sms');
 const { openStore, REQUIRED_MODES } = require('./store');
@@ -23,6 +23,16 @@ const ADMIN_ROLES = ['tenant_admin', 'super_admin'];
 const KNOWN_ROLES = ['tenant_admin', 'super_admin', 'agent', 'driver'];
 const SESSION_METHODS = ['email', 'sms', 'totp'];
 const RECOVERY_COUNT = 10;
+/** Rutas que admite el reto de activación obligatoria (todas las demás exigen una sesión de verdad). */
+const CHALLENGE_ROUTES = new Set([
+  '/status',
+  '/email/setup',
+  '/email/confirm',
+  '/sms/setup',
+  '/sms/confirm',
+  '/totp/setup',
+  '/totp/confirm',
+]);
 
 function maskEmail(email) {
   const [local = '', domain = ''] = String(email || '').split('@');
@@ -60,6 +70,17 @@ function createMfa(env = process.env, overrides = {}) {
   const codes = createCodeStore({ codec, now });
   const sendLimiter = createLimiter({ now });
   const challenges = createChallenges({ now });
+  // Códigos erróneos por PERSONA: los 5 intentos de cada reto no bastan si se pueden abrir retos nuevos sin fin
+  const failures = createFailureTracker({ now });
+  /** Si la persona acumuló demasiados códigos erróneos, responde 429 y devuelve `true`. */
+  function lockedOut(res, user) {
+    const state = failures.state(user.id);
+    if (!state.blocked) return false;
+    fail(res, 429, 'TOO_MANY_FAILURES', 'Demasiados códigos erróneos. Inténtalo de nuevo en unos minutos.', {
+      retryAfterSeconds: Math.ceil(state.retryAfterMs / 1000),
+    });
+    return true;
+  }
   const available = { email: mailer.available, sms: sms.available, totp: true };
 
   // ---------- reglas de la política ----------
@@ -111,6 +132,13 @@ function createMfa(env = process.env, overrides = {}) {
 
   /** Comprueba un código de un método ya activo (o el de recuperación). Gasta los códigos de un solo uso. */
   async function checkCode(user, method, code) {
+    const ok = await rawCheck(user, method, code);
+    if (ok) failures.clear(user.id);
+    else failures.record(user.id);
+    return ok;
+  }
+
+  async function rawCheck(user, method, code) {
     if (method === 'recovery') {
       return store.consumeRecoveryCode(user.id, codec.hash('recovery', normalizeRecoveryCode(code)));
     }
@@ -148,6 +176,11 @@ function createMfa(env = process.env, overrides = {}) {
         const c = challenges.get(challengeId);
         if (!c || c.locked || c.mode !== 'enroll')
           return fail(res, 401, 'CHALLENGE_EXPIRED', 'El reto no es válido o caducó.');
+        // El reto de activación NO es una sesión: solo sirve para dar de alta un método. Si valiera para la política, los restablecimientos
+        // o las bajas, quien solo conoce la contraseña se saltaría el segundo factor que la empresa exige.
+        if (!CHALLENGE_ROUTES.has(req.path)) {
+          return fail(res, 403, 'FORBIDDEN', 'Con el reto de activación solo se pueden activar métodos.');
+        }
         req.mfaUser = c.user;
         req.viaChallenge = c.id;
         return next();
@@ -198,6 +231,7 @@ function createMfa(env = process.env, overrides = {}) {
       return res.status(out.status).type(out.contentType).send(out.text);
     }
     const user = session.user;
+    if (lockedOut(res, user)) return; // la sesión del gateway se descarta: nada llega al navegador
     const policy = store.getPolicy(user.tenantId);
     const active = activeMethods(user, policy);
 
@@ -266,6 +300,7 @@ function createMfa(env = process.env, overrides = {}) {
       if (!c) return;
       const method = req.body?.method;
       if (!c.methods.includes(method)) return fail(res, 400, 'METHOD_UNAVAILABLE', 'Ese método no está disponible.');
+      if (lockedOut(res, c.user)) return;
       const ok = await checkCode(c.user, method, req.body?.code);
       if (!ok) {
         const state = challenges.fail(c.id);
@@ -373,6 +408,7 @@ function createMfa(env = process.env, overrides = {}) {
       const user = req.mfaUser;
       const factor = store.getFactor(user.id, 'email');
       if (!factor || factor.verified) return fail(res, 409, 'NOT_PENDING', 'No hay una activación pendiente.');
+      if (lockedOut(res, user)) return;
       if (!(await checkCode(user, 'email', req.body?.code)))
         return fail(res, 401, 'INVALID_CODE', 'El código no es válido.');
       store.putFactor({ ...factor, verified: true });
@@ -411,6 +447,7 @@ function createMfa(env = process.env, overrides = {}) {
       const user = req.mfaUser;
       const factor = store.getFactor(user.id, 'sms');
       if (!factor || factor.verified) return fail(res, 409, 'NOT_PENDING', 'No hay una activación pendiente.');
+      if (lockedOut(res, user)) return;
       if (!(await checkCode(user, 'sms', req.body?.code)))
         return fail(res, 401, 'INVALID_CODE', 'El código no es válido.');
       store.putFactor({ ...factor, verified: true });
@@ -441,8 +478,13 @@ function createMfa(env = process.env, overrides = {}) {
       const user = req.mfaUser;
       const factor = store.getFactor(user.id, 'totp');
       if (!factor || factor.verified) return fail(res, 409, 'NOT_PENDING', 'No hay una activación pendiente.');
+      if (lockedOut(res, user)) return;
       const step = verifyTotp(codec.decrypt(factor.secretEnc), req.body?.code, now(), null);
-      if (step == null) return fail(res, 401, 'INVALID_CODE', 'El código no es válido.');
+      if (step == null) {
+        failures.record(user.id);
+        return fail(res, 401, 'INVALID_CODE', 'El código no es válido.');
+      }
+      failures.clear(user.id);
       store.putFactor({ ...factor, verified: true, lastStep: step });
       res.json({ active: true, ...afterEnable(user, 'totp') });
     })
@@ -472,6 +514,7 @@ function createMfa(env = process.env, overrides = {}) {
       fail(res, 400, 'METHOD_UNAVAILABLE', 'Ese método no está disponible.');
       return false;
     }
+    if (lockedOut(res, user)) return false;
     if (!(await checkCode(user, via, req.body?.code))) {
       fail(res, 401, 'INVALID_CODE', 'El código no es válido.');
       return false;

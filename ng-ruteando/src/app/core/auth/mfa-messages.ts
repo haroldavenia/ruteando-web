@@ -9,6 +9,7 @@ export const mfaErrors = (): HttpContext =>
     INVALID_CODE: t('El código no es válido'),
     CHALLENGE_EXPIRED: t('La verificación caducó. Inicia sesión de nuevo'),
     TOO_MANY_ATTEMPTS: t('Demasiados intentos. Inicia sesión de nuevo'),
+    TOO_MANY_FAILURES: t('Demasiados códigos erróneos. Inténtalo de nuevo en unos minutos'),
     TOO_MANY_REQUESTS: t('Demasiados envíos. Espera unos minutos e inténtalo de nuevo'),
     METHOD_UNAVAILABLE: t('Ese método no está disponible'),
     METHOD_NOT_ALLOWED: t('Tu empresa no permite este método'),

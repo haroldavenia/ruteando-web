@@ -3,7 +3,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const { parseMasterKey, createCrypto, normalizeRecoveryCode } = require('../mfa/crypto');
-const { createLimiter } = require('../mfa/limits');
+const { createFailureTracker, createLimiter } = require('../mfa/limits');
 
 const key = crypto.randomBytes(32);
 
@@ -68,4 +68,25 @@ test('el límite de envíos corta al cuarto en la ventana y se libera pasado el 
   assert.ok(limiter.hit('luis:email').allowed, 'otra persona tiene su propio cupo');
   t += 600_000;
   assert.ok(limiter.hit('ana:email').allowed, 'pasada la ventana vuelve a haber cupo');
+});
+
+test('el bloqueo por persona salta al décimo fallo en 15 minutos, no consume al consultarlo y se libera acertando o esperando', () => {
+  let t = 5_000_000;
+  const tracker = createFailureTracker({ now: () => t });
+  for (let i = 0; i < 9; i++) {
+    assert.equal(tracker.state('ana').blocked, false);
+    tracker.record('ana');
+    t += 1000;
+  }
+  assert.equal(tracker.state('ana').blocked, false, 'consultar no cuenta');
+  tracker.record('ana');
+  const blocked = tracker.state('ana');
+  assert.equal(blocked.blocked, true);
+  assert.ok(blocked.retryAfterMs > 800_000 && blocked.retryAfterMs <= 900_000);
+  assert.equal(tracker.state('luis').blocked, false, 'otra persona no se ve afectada');
+  t += 15 * 60 * 1000;
+  assert.equal(tracker.state('ana').blocked, false, 'pasada la ventana se libera');
+  for (let i = 0; i < 10; i++) tracker.record('ana');
+  tracker.clear('ana');
+  assert.equal(tracker.state('ana').blocked, false, 'acertar lo olvida');
 });

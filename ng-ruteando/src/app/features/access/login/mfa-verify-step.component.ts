@@ -28,7 +28,7 @@ import { FormResultComponent } from '../../../shared/form/form-result.component'
 import { cleanCode, mfaMethodIcon, mfaMethodLabel } from '../../../shared/mfa/mfa-labels';
 
 /** Códigos del servidor tras los que el reto ya no sirve: hay que volver a escribir la contraseña. */
-const DEAD_CHALLENGE = ['CHALLENGE_EXPIRED', 'TOO_MANY_ATTEMPTS'];
+const DEAD_CHALLENGE = ['CHALLENGE_EXPIRED', 'TOO_MANY_ATTEMPTS', 'TOO_MANY_FAILURES'];
 
 /**
  * Segundo paso del acceso: la persona supera el reto con un método activo (correo, SMS, aplicación autenticadora) o con un código
