@@ -27,7 +27,29 @@ x-gateway: &gateway
   GATEWAY_URL: ${DOCKER_GATEWAY_URL:-http://mock-gateway:4010}
   GATEWAY_API_KEY: ${DOCKER_GATEWAY_API_KEY:-mock}
 
+# Segundo factor (add-mfa): los correos y los SMS de desarrollo llegan a Mailpit (http://localhost:8025), nada sale a internet.
+# MFA_SECRET_KEY de aquí es SOLO de desarrollo (no es un secreto): en cualquier otro entorno se define una propia.
+x-mfa: &mfa
+  MFA_SECRET_KEY: ${MFA_SECRET_KEY:-cnV0ZWFuZG8tZGV2LWNsYXZlLXNvbG8tcHJ1ZWJhISE=}
+  MFA_DB_PATH: /data/mfa.sqlite
+  SMTP_HOST: mailpit
+  SMTP_PORT: '1025'
+  SMS_PROVIDER: dev
+
 services:
+  # Bandeja de correo de desarrollo: SMTP en 1025 e interfaz web en :8025
+  mailpit:
+    image: axllent/mailpit:v1.33.1
+    ports:
+      - '8025:8025'
+      # SMTP también hacia el equipo: así `pnpm start` o `ng serve` fuera de Docker usan SMTP_HOST=127.0.0.1
+      - '1025:1025'
+    healthcheck:
+      test: ['CMD', '/mailpit', 'readyz']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   # Instala las dependencias (raíz y frontend, un solo pnpm-lock.yaml) solo cuando cambia ese fichero
   deps:
     <<: *dev
@@ -60,7 +82,14 @@ services:
     <<: *dev
     command: pnpm --filter ng-ruteando start --host 0.0.0.0 --poll 2000
     environment:
-      <<: *gateway
+      <<: [*gateway, *mfa]
+    volumes:
+      - .:/app
+      - node_modules_root:/app/node_modules
+      - node_modules_web:/app/ng-ruteando/node_modules
+      - angular_cache:/app/ng-ruteando/.angular
+      - pnpm_store:/pnpm-store
+      - mfa_data:/data
     ports:
       - '4200:4200'
     depends_on:
@@ -68,20 +97,31 @@ services:
         condition: service_completed_successfully
       mock-gateway:
         condition: service_healthy
+      mailpit:
+        condition: service_healthy
 
   app:
     <<: *dev
     profiles: ['prod-like']
     command: sh -c "pnpm run build:web && pnpm start"
     environment:
-      <<: *gateway
+      <<: [*gateway, *mfa]
       PORT: '3000'
+    volumes:
+      - .:/app
+      - node_modules_root:/app/node_modules
+      - node_modules_web:/app/ng-ruteando/node_modules
+      - angular_cache:/app/ng-ruteando/.angular
+      - pnpm_store:/pnpm-store
+      - mfa_data:/data
     ports:
       - '3000:3000'
     depends_on:
       deps:
         condition: service_completed_successfully
       mock-gateway:
+        condition: service_healthy
+      mailpit:
         condition: service_healthy
 
   test:
@@ -97,6 +137,7 @@ services:
         condition: service_completed_successfully
 
 volumes:
+  mfa_data:
   node_modules_root:
   node_modules_web:
   angular_cache:
