@@ -59,7 +59,7 @@ Generar la clave: `node -e "console.log(require('crypto').randomBytes(32).toStri
 
 ### Configurar Twilio (SMS real)
 
-Estado: el canal con Twilio está programado y probado solo con respuestas simuladas; **aún no se ha probado contra Twilio de verdad**. Hazlo primero con una cuenta de prueba y tu propio teléfono.
+Pruébalo primero con una cuenta de prueba y tu propio teléfono.
 
 1. Crea la cuenta en https://www.twilio.com, verifica el correo y tu teléfono.
 2. En la consola, **Account → API keys & tokens → Auth Tokens → Live credentials**: copia el **Account SID** (`AC…`) y el **Auth Token**. Usa las **Live**; las credenciales *Test* de Twilio sirven para pocos recursos de su API y no están pensadas para Verify. El token da acceso a toda la cuenta: solo va en el `.env` o en el gestor de secretos, nunca en git ni en un chat.
@@ -90,8 +90,6 @@ Twilio es quien genera, envía y comprueba el código. El número de teléfono s
 8. **Gateway**: `GATEWAY_MODE=real` con `GATEWAY_URL` y `GATEWAY_API_KEY`. Si usas el simulado en un servidor accesible desde fuera, define `MOCK_GATEWAY_PASSWORD` (si no, cualquiera entra con `demo1234`).
 9. **CSP**: empieza con `CSP_MODE=report-only`; pasa a `enforce` solo tras recorrer la aplicación sin violaciones.
 10. **Comprobación final**: con una sesión iniciada, `GET /gateway/mfa/status` debe mostrar `methods.sms.available: true` (y el de correo también). Activa un método con una persona real de cada país objetivo antes de exigirlo en **Seguridad**.
-
-Pendiente de verificar con el gateway real: que `GET /auth/me`, `GET /users/:id` y el canal SMS se comporten como el simulado.
 
 ## Con Docker (desarrollo)
 
