@@ -69,6 +69,7 @@ describe('GlobalSearchComponent', () => {
       'Jornadas',
       'Configuraciones',
       'Auditoría',
+      'Seguridad',
     ]);
     expect(labels('Acciones')).toEqual(['Planificar jornada', 'Nuevo paquete', 'Importar paquetes']);
   });
@@ -108,7 +109,7 @@ describe('GlobalSearchComponent', () => {
     expect(
       Array.from(panel().querySelectorAll('mat-optgroup .mat-mdc-optgroup-label')).map((el) => el.textContent?.trim())
     ).toEqual(['Ir a', 'Acciones']);
-    expect(panel().querySelectorAll('mat-option').length).toBe(13);
+    expect(panel().querySelectorAll('mat-option').length).toBe(14);
   });
 
   it('el panel tiene el ancho y la posición de la píldora entera, no solo los del campo', async () => {

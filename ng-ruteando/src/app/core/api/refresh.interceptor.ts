@@ -7,7 +7,7 @@ import { TokenStorageService } from '../auth/token-storage.service';
 import { API_BASE_URL } from './api-config';
 import { ApiError } from './api-error';
 import { genericMessage } from './api-error-messages';
-import { apiPath, isApiUrl, isPublicApiPath } from './api-paths';
+import { apiPath, isApiUrl, isPublicApiPath, MFA_CHALLENGE_HEADER } from './api-paths';
 /** Si al token de acceso le quedan menos de 30 s se renueva antes de enviar la petición. */
 export const REFRESH_MARGIN_MS = 30_000;
 
@@ -27,7 +27,13 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
   const baseUrl = inject(API_BASE_URL);
   const path = apiPath(req.url, baseUrl);
   // Las rutas de autenticación gestionan su propio 401; el cierre de sesión no debe renovar nada
-  if (!isApiUrl(req.url, baseUrl) || isPublicApiPath(path) || path === '/auth/logout') {
+  // Con un reto de activación (`X-MFA-Challenge`) no hay sesión que renovar
+  if (
+    !isApiUrl(req.url, baseUrl) ||
+    isPublicApiPath(path) ||
+    path === '/auth/logout' ||
+    req.headers.has(MFA_CHALLENGE_HEADER)
+  ) {
     return next(req);
   }
 
@@ -66,7 +72,13 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
 
   return first$.pipe(
     catchError((error: unknown) => {
-      if (!(error instanceof ApiError) || error.status !== 401 || error instanceof SessionExpiredError) {
+      // Un código equivocado también es 401, pero no es una sesión caducada: no hay nada que renovar
+      if (
+        !(error instanceof ApiError) ||
+        error.status !== 401 ||
+        error.code === 'INVALID_CODE' ||
+        error instanceof SessionExpiredError
+      ) {
         return throwError(() => error);
       }
       // Otra petición ya renovó el token mientras esta estaba en vuelo: basta con reintentar

@@ -11,6 +11,7 @@ var express = require('express');
 var logger = require('morgan');
 
 var gatewayProxy = require('./gateway-proxy');
+var createMfa = require('./mfa').createMfa;
 var securityHeaders = require('./security-headers').securityHeaders;
 gatewayProxy.loadEnvFile(); // carga ../.env (si existe) antes de leer la configuración
 
@@ -39,6 +40,13 @@ app.use(securityHeaders(process.env));
 // Compresión (brotli o gzip según el navegador) de lo que sea texto: HTML, JS, CSS, JSON, SVG. Va antes del proxy y del estático para
 // que cubra también las respuestas del gateway; ignora lo que ya viene comprimido (imágenes, fuentes) y lo que trae Content-Encoding.
 app.use(compression());
+// Segundo factor (change add-mfa): intercepta POST /gateway/auth/login y atiende /gateway/mfa/**; va ANTES del proxy para que el login no pase
+// directo. Sin MFA_SECRET_KEY queda apagado (/gateway/mfa responde 503 y el login se reenvía tal cual).
+var mfa = createMfa(process.env);
+if (!mfa.enabled) {
+  console.log(('Segundo factor desactivado: ' + mfa.reason + '.').yellow);
+}
+mfa.mount(app);
 // Proxy del gateway: antes del estático y del comodín del cliente
 app.use('/gateway', gatewayProxy.createGatewayProxy());
 

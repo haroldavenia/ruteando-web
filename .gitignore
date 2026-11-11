@@ -7,3 +7,6 @@ cosas
 
 # pnpm es el gestor de paquetes: un package-lock.json (npm install accidental) no se versiona
 package-lock.json
+
+# Almacén SQLite del segundo factor (política, factores y códigos de recuperación)
+/data/

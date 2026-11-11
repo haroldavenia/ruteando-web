@@ -5,12 +5,16 @@
   "description": "Aplicación web de planificación de rutas: servidor que publica ng-ruteando y reenvía al HanoIT Gateway",
   "license": "MIT",
   "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
+  },
   "dependencies": {
     "colors": "^1.4.0",
     "compression": "^1.8.2",
     "express": "^4.22.3",
     "http-proxy-middleware": "4.2.1",
-    "morgan": "^1.12.1"
+    "morgan": "^1.12.1",
+    "nodemailer": "^10.4.0"
   },
   "scripts": {
     "start": "node server/server.js",

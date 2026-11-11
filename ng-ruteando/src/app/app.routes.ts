@@ -1,7 +1,8 @@
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
 
 import { ADMIN_ROLES, OPERATIONS_ROLES } from './core/auth/admin-roles';
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
+import { LEGAL_DOCS } from './features/legal/legal-docs';
 
 export const routes: Routes = [
   {
@@ -40,6 +41,12 @@ export const routes: Routes = [
       },
     ],
   },
+  // Documentos legales (privacidad, términos, SMS): públicos, con su propio marco; se enlazan desde el pie del acceso
+  ...LEGAL_DOCS.map((doc): Route => ({
+    path: `legal/${doc}`,
+    data: { doc },
+    loadComponent: () => import('./features/legal/legal-page.component').then((m) => m.LegalPageComponent),
+  })),
   {
     // Área privada: el shell (barra y menú lateral) se carga bajo demanda y exige sesión
     path: '',
@@ -100,6 +107,17 @@ export const routes: Routes = [
         canActivate: [roleGuard(OPERATIONS_ROLES)],
         canActivateChild: [roleGuard(OPERATIONS_ROLES)],
         loadChildren: () => import('./features/audit/audit.routes').then((m) => m.AUDIT_ROUTES),
+      },
+      {
+        // Seguridad de la empresa (métodos de segundo factor y si es obligatorio): solo administradores
+        path: 'seguridad',
+        canActivate: [roleGuard(ADMIN_ROLES)],
+        loadComponent: () => import('./features/security/security.component').then((m) => m.SecurityComponent),
+      },
+      {
+        // Perfil: los datos de la propia persona y su verificación en dos pasos; cualquier rol con sesión
+        path: 'perfil',
+        loadComponent: () => import('./features/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
         path: 'sin-permiso',

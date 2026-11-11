@@ -47,12 +47,18 @@
           <span>{{ 'Instalar aplicación' | t }}</span>
         </button>
       }
+      <a mat-menu-item routerLink="/perfil">
+        <mat-icon aria-hidden="true">account_circle</mat-icon>
+        <span>{{ 'Perfil' | t }}</span>
+      </a>
       <button mat-menu-item type="button" (click)="confirmLogout()">
         <mat-icon aria-hidden="true">logout</mat-icon>
         <span>{{ 'Cerrar sesión' | t }}</span>
       </button>
     </mat-menu>
   </mat-toolbar>
+
+  <app-mfa-reminder />
 
   <mat-sidenav-container class="container">
     @if (!isWide()) {

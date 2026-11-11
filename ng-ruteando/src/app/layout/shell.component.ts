@@ -29,6 +29,7 @@ import { TranslatePipe } from '../core/i18n/translate.pipe';
 import { InstallService } from '../core/pwa/install.service';
 import { BrandComponent } from '../shared/brand/brand.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { MfaReminderComponent } from '../shared/mfa/mfa-reminder.component';
 import { ActionTitleDirective } from '../shared/ui/action-title.directive';
 import { LanguageToggleComponent } from '../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../shared/ui/theme-toggle.component';
@@ -47,6 +48,7 @@ import { NavRailComponent } from './nav-rail.component';
     RouterLinkActive,
     RouterOutlet,
     LanguageToggleComponent,
+    MfaReminderComponent,
     ThemeToggleComponent,
     MatButtonModule,
     MatIconModule,
@@ -115,6 +117,9 @@ export class ShellComponent {
     const url = this.url().split(/[?#]/)[0];
     if (url === '/sin-permiso') {
       return t('Sin permiso');
+    }
+    if (url === '/perfil') {
+      return t('Perfil');
     }
     const flat = this.items().flatMap((item) => item.children ?? [item]);
     const match = flat.find((item) =>

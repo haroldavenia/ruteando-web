@@ -209,6 +209,89 @@ describe('LoginComponent', () => {
     requests[0].flush(makeSession());
   });
 
+  describe('con segundo factor', () => {
+    const CHALLENGE = {
+      mfaRequired: true,
+      challengeId: 'reto-1',
+      methods: [{ method: 'totp', destination: null }],
+      expiresInSeconds: 300,
+    };
+    const VERIFY = '/gateway/mfa/login/verify';
+    const code = () => root.querySelector('input[autocomplete="one-time-code"]') as HTMLInputElement;
+
+    async function firstStep(response: object, url = '/acceso'): Promise<void> {
+      await open(url);
+      type(email(), 'persona@example.invalid');
+      type(password(), 'una-clave-valida');
+      submit();
+      controller.expectOne(LOGIN).flush(response);
+      await wait();
+      harness.detectChanges();
+    }
+
+    it('pasa al segundo paso sin sesión, sin navegar y sin conservar la contraseña', async () => {
+      await firstStep(CHALLENGE);
+
+      expect(root.querySelector('app-mfa-verify-step')).not.toBeNull();
+      expect(root.querySelector('input[autocomplete="current-password"]')).toBeNull();
+      expect(root.textContent).not.toContain('una-clave-valida');
+      expect(router.url).toBe('/acceso');
+      expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
+      expect(Object.keys(localStorage)).toEqual([]);
+    });
+
+    it('al verificar el código inicia sesión y va al destino de siempre', async () => {
+      await firstStep(CHALLENGE, '/acceso?returnUrl=%2Fjourneys%3Fpage%3D2');
+      type(code(), '123456');
+      submit();
+      controller.expectOne(VERIFY).flush(makeSession());
+      await wait();
+
+      expect(router.url).toBe('/journeys?page=2');
+      expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeTrue();
+    });
+
+    it('si el reto caduca vuelve a las credenciales con el motivo y el correo conservado', async () => {
+      await firstStep(CHALLENGE);
+      type(code(), '000000');
+      submit();
+      controller.expectOne(VERIFY).flush({ code: 'CHALLENGE_EXPIRED' }, { status: 401, statusText: 'Unauthorized' });
+      await wait();
+      harness.detectChanges();
+
+      expect(root.querySelector('app-mfa-verify-step')).toBeNull();
+      expect(password()).not.toBeNull();
+      expect(alertText()).toContain('La verificación caducó. Inicia sesión de nuevo');
+      expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
+    });
+
+    it('volver desde el segundo paso muestra otra vez las credenciales, sin mensaje', async () => {
+      await firstStep(CHALLENGE);
+      Array.from(root.querySelectorAll<HTMLButtonElement>('button.link'))
+        .find((b) => b.textContent?.trim() === 'Volver')!
+        .click();
+      harness.detectChanges();
+
+      expect(password().value).toBe('');
+      expect(alertText()).toBe('');
+    });
+
+    it('si la empresa exige activar un método muestra la activación y no da sesión todavía', async () => {
+      await firstStep({
+        mfaEnrollRequired: true,
+        challengeId: 'reto-2',
+        methods: ['totp', 'email'],
+        expiresInSeconds: 300,
+      });
+
+      expect(root.querySelector('app-mfa-enroll-step')).not.toBeNull();
+      expect(root.textContent).toContain('Activa la verificación en dos pasos');
+      expect(root.querySelectorAll('.choice').length).toBe(2);
+      expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
+      expect(router.url).toBe('/acceso');
+    });
+  });
+
   it('ofrece enlaces a recuperar la contraseña y a crear una cuenta', async () => {
     await open();
 

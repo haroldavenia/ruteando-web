@@ -575,8 +575,13 @@ function handle(method, path, query, body, headers) {
     }
   }
 
-  // --- conductores
+  // --- conductores y personas de la empresa (el listado de /users incluye a quienes inician sesión: lo usa la pantalla de Seguridad)
   if (path === '/users/drivers' && method === 'GET') return { status: 200, body: clone(db.drivers) };
+  if (path === '/users' && method === 'GET')
+    return {
+      status: 200,
+      body: paged(clone([...USERS, ...db.drivers.filter((d) => !USERS.some((u) => u.email === d.email))]), query),
+    };
   m = path.match(/^\/users(?:\/([^/]+))?$/);
   if (m && method === 'POST' && !m[1]) {
     const driver = {
@@ -599,7 +604,8 @@ function handle(method, path, query, body, headers) {
     return { status: 201, body: clone(driver) };
   }
   if (m && m[1]) {
-    const driver = db.drivers.find((d) => d.id === m[1]);
+    const driver =
+      db.drivers.find((d) => d.id === m[1]) ?? (method === 'GET' ? USERS.find((u) => u.id === m[1]) : undefined);
     if (!driver) return notFound('User', m[1], path);
     if (method === 'GET') return { status: 200, body: clone(driver) };
     if (method === 'PUT')

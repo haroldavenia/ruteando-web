@@ -6,6 +6,7 @@ import { BrandComponent } from '../../shared/brand/brand.component';
 import { RouteBackdropComponent } from '../../shared/brand/route-backdrop.component';
 import { LanguageToggleComponent } from '../../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../../shared/ui/theme-toggle.component';
+import { LegalLinksComponent } from '../legal/legal-links.component';
 import { AccessPitchComponent } from './access-pitch.component';
 import { AccessStepsComponent } from './access-steps.component';
 /**
@@ -23,6 +24,7 @@ import { AccessStepsComponent } from './access-steps.component';
     BrandComponent,
     RouteBackdropComponent,
     LanguageToggleComponent,
+    LegalLinksComponent,
     ThemeToggleComponent,
     AccessPitchComponent,
     AccessStepsComponent,

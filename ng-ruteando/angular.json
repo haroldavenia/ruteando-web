@@ -26,6 +26,7 @@
             "assets": ["src/favicon.ico", "src/favicon.svg", "src/manifest.webmanifest", "src/assets"],
             "styles": ["node_modules/ol/ol.css", "src/styles.scss"],
             "scripts": [],
+            "allowedCommonJsDependencies": ["qrcode", "dijkstrajs", "pngjs"],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {

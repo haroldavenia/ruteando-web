@@ -5,6 +5,7 @@
       <app-brand />
       <p class="tagline">{{ 'Planifica y sigue tus rutas' | t }}</p>
       <router-outlet #outlet="outlet" (activate)="onActivate(outlet.activatedRouteData)" />
+      <app-legal-links class="legal" />
     </div>
   </section>
   <div class="art">
