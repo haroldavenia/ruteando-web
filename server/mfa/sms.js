@@ -6,6 +6,7 @@
  * Sin SMS_PROVIDER válido, o sin las credenciales, `available` es `false` y nunca se llama a ningún proveedor.
  */
 const { createCodeStore } = require('./codes');
+const { smsDevEmail } = require('./email-templates');
 
 const PHONE = /^\+[1-9]\d{7,14}$/;
 
@@ -60,8 +61,7 @@ function createDev({ mailer, codec, now }) {
       const digits = phone.replace(/\D/g, '');
       await mailer.send({
         to: `sms+${digits}@sms.ruteando.local`,
-        subject: `SMS para ${maskPhone(phone)}`,
-        text: `Ruteando: tu código de verificación es ${code}. Caduca en 5 minutos.`,
+        ...smsDevEmail({ code, maskedPhone: maskPhone(phone) }),
       });
     },
     async checkCode(phone, code) {

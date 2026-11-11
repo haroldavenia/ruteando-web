@@ -38,9 +38,9 @@ async function startMock(extraEnv = {}) {
       MOCK_GATEWAY_LATENCY_MS: '0',
       MOCK_GATEWAY_PASSWORD: 'contrasena-de-prueba-xyz',
       MFA_DB_PATH: path.join(dir, 'mfa.sqlite'),
-      MFA_SECRET_KEY: undefined,
-      SMTP_HOST: undefined,
-      SMS_PROVIDER: undefined,
+      MFA_SECRET_KEY: '', // vacío (no undefined): server.js carga el .env local y solo respeta lo ya definido
+      SMTP_HOST: '',
+      SMS_PROVIDER: '',
       ...extraEnv,
     },
   });

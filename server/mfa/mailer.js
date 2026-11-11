@@ -27,9 +27,9 @@ function createMailer(env = process.env) {
 
   return {
     available: true,
-    /** Envía un mensaje de texto plano. Lanza si el SMTP lo rechaza; el mensaje del error no incluye el contenido. */
-    async send({ to, subject, text }) {
-      await transport.sendMail({ from, to, subject, text });
+    /** Envía un mensaje: `text` siempre y, si viene, `html` (con `attachments` para las imágenes embebidas). Lanza si el SMTP lo rechaza; el mensaje del error no incluye el contenido. */
+    async send({ to, subject, text, html, attachments }) {
+      await transport.sendMail({ from, to, subject, text, html, attachments });
     },
   };
 }

@@ -10,6 +10,7 @@ const path = require('node:path');
 const express = require('express');
 const { createChallenges } = require('./challenges');
 const { createCodeStore } = require('./codes');
+const { codeEmail } = require('./email-templates');
 const { createCrypto, normalizeRecoveryCode, parseMasterKey } = require('./crypto');
 const { createGatewayClient, GatewayError } = require('./gateway');
 const { createFailureTracker, createLimiter } = require('./limits');
@@ -119,11 +120,7 @@ function createMfa(env = process.env, overrides = {}) {
     }
     if (method === 'email') {
       const code = codes.issue(`email:${user.id}`);
-      await mailer.send({
-        to: user.email,
-        subject: 'Tu código de verificación',
-        text: `Tu código de verificación de ${ISSUER} es ${code}. Caduca en 5 minutos. Si no lo pediste, ignora este mensaje.`,
-      });
+      await mailer.send({ to: user.email, ...codeEmail({ code, to: user.email, issuer: ISSUER }) });
     } else {
       const factor = store.getFactor(user.id, 'sms');
       await sms.sendCode(factor.destination);
