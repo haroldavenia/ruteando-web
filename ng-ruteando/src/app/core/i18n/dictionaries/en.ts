@@ -1035,6 +1035,12 @@ export const EN: Readonly<Record<string, string>> = {
   'Te enviaremos un código a {0}': 'We will send a code to {0}',
   'Código de 6 dígitos de tu aplicación': '6-digit code from your app',
   'Elegir otro método': 'Choose another method',
+  'Política de privacidad': 'Privacy policy',
+  'Términos y condiciones': 'Terms and conditions',
+  'Verificación por SMS': 'SMS verification',
+  'Última actualización: {0}': 'Last updated: {0}',
+  'Información legal': 'Legal information',
+  'Ir al inicio': 'Go to the start page',
   'Protege tu cuenta con la verificación en dos pasos': 'Protect your account with two-step verification',
   'Aún no tienes ningún método activo: elige correo, SMS o una aplicación autenticadora.':
     'You have no method turned on yet: choose email, SMS or an authenticator app.',

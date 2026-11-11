@@ -1038,6 +1038,12 @@ export const PT: Readonly<Record<string, string>> = {
   'Te enviaremos un código a {0}': 'Vamos enviar um código para {0}',
   'Código de 6 dígitos de tu aplicación': 'Código de 6 dígitos da sua aplicação',
   'Elegir otro método': 'Escolher outro método',
+  'Política de privacidad': 'Política de privacidade',
+  'Términos y condiciones': 'Termos e condições',
+  'Verificación por SMS': 'Verificação por SMS',
+  'Última actualización: {0}': 'Última atualização: {0}',
+  'Información legal': 'Informação legal',
+  'Ir al inicio': 'Ir para o início',
   'Protege tu cuenta con la verificación en dos pasos': 'Proteja a sua conta com a verificação em dois passos',
   'Aún no tienes ningún método activo: elige correo, SMS o una aplicación autenticadora.':
     'Ainda não tem nenhum método ativo: escolha e-mail, SMS ou uma aplicação de autenticação.',
