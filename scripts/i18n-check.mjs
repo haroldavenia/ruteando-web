@@ -17,8 +17,13 @@ const walk = (dir) =>
     const path = join(dir, name);
     return statSync(path).isDirectory() ? walk(path) : [path];
   });
+// legal-content.ts lleva cada idioma redactado completo (no pasa por t()), así que no se revisa aquí.
 const files = walk(join(root, 'src/app')).filter(
-  (f) => /\.(ts|html)$/.test(f) && !/\.spec\.ts$/.test(f) && !f.includes(`${sep}core${sep}i18n${sep}`)
+  (f) =>
+    /\.(ts|html)$/.test(f) &&
+    !/\.spec\.ts$/.test(f) &&
+    !f.includes(`${sep}core${sep}i18n${sep}`) &&
+    !f.endsWith(`${sep}legal${sep}legal-content.ts`)
 );
 
 const unescape = (s) => s.replace(/\\(['\\])/g, '$1');
