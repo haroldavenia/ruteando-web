@@ -123,6 +123,20 @@ test('GET /auth/unlink/google y POST /api/account tampoco existen', async () => 
   assert.equal((await fetch(withBuild.base + '/api/account', { method: 'POST' })).status, 404);
 });
 
+test('GET /healthCheck es público, responde 200 en JSON y no se cachea', async () => {
+  const res = await fetch(withBuild.base + '/healthCheck');
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('content-type'), /application\/json/);
+  assert.equal(res.headers.get('cache-control'), 'no-store');
+  assert.equal((await res.json()).status, 'ok');
+});
+
+test('GET /healthCheck responde 503 si el frontend no está compilado', async () => {
+  const res = await fetch(withoutBuild.base + '/healthCheck');
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).status, 'error');
+});
+
 test('el servidor arranca sin MongoDB y no lo menciona en el registro', () => {
   assert.doesNotMatch(withBuild.log(), /mongo/i);
   assert.doesNotMatch(withoutBuild.log(), /mongo/i);

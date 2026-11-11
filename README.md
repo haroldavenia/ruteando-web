@@ -53,6 +53,28 @@ Desde `ng-ruteando/`: `pnpm start` (puerto 4200, con el mismo proxy `/gateway` y
 
 La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar aplicación» en el menú de usuario (y en la barra de direcciones); en iPhone/iPad, «Compartir → Añadir a pantalla de inicio». Carga desde caché y avisa cuando hay una versión nueva; los datos siempre vienen del gateway (sin conexión se ve la carcasa, no los datos). Se prueba con `pnpm run build:web && pnpm start` (en `ng serve` no hay service worker). Requiere HTTPS salvo en `localhost`.
 
+## Vigilancia con Jenkins (`/healthCheck`)
+
+`GET /healthCheck` es público (sin sesión ni cabeceras) y lo consulta Jenkins para avisar si la aplicación se cae:
+
+- `200 {"status":"ok","frontend":"ok","uptime":…}`: el servidor atiende y el frontend está compilado.
+- `503 {"status":"error",…}`: el servidor atiende pero el frontend no está compilado (`pnpm run build:web`).
+- Sin respuesta o error de conexión: el servidor está caído.
+
+No consulta el gateway (una caída del gateway no es una caída de esta aplicación), no se cachea y no se registra en el log. En `ng serve` no existe; se prueba con `pnpm run build:web && pnpm start` y `curl -i http://localhost:3000/healthCheck`.
+
+### Configurar Jenkins
+
+El `Jenkinsfile` de la raíz consulta la URL cada 5 minutos con `curl` (3 intentos separados 10 s, para no avisar por un parpadeo), envía un correo si falla y otro cuando se recupera.
+
+1. **Correo de Jenkins**: Manage Jenkins → System → «E-mail Notification» (servidor SMTP y remitente). Sin esto el paso `mail` no envía nada.
+2. **Crear el trabajo**: New Item → «Pipeline» → en «Pipeline» elige «Pipeline script from SCM», Git, la URL de este repositorio (con credenciales si es privado), la rama que se despliega (`main`) y el script `Jenkinsfile`. El agente de Jenkins necesita `curl`.
+3. **Ejecutarlo una vez** («Build Now»): Jenkins lee los parámetros del `Jenkinsfile` en esa primera ejecución (con los valores de ejemplo fallará, es normal). A partir de ahí el trabajo se programa solo.
+4. **Poner los valores reales**: «Build with Parameters» → `HEALTH_URL` (la URL pública de producción, por ejemplo `https://tu-dominio/healthCheck`) y `ALERT_EMAIL` (quién recibe el aviso). Para que las ejecuciones programadas los usen, cambia también los `defaultValue` en el `Jenkinsfile` y súbelo.
+5. **Comprobar el aviso**: pon temporalmente una `HEALTH_URL` inexistente o detén el servidor; en la siguiente ejecución debe llegar el correo «CAÍDA». Al restablecerla llega «Ruteando se recuperó».
+
+Requisitos: Jenkins debe alcanzar la URL pública (si está en otra red, usa un agente dentro de ella) y el proxy inverso no debe pedir sesión ni autenticación en `/healthCheck`. Para avisar por Slack, Teams u otro canal, sustituye los dos `mail` del `post` por el paso de su plugin.
+
 ## Integración continua
 
 `.github/workflows/ci.yml` verifica cada pull request (a cualquier rama base) y cada push a `main` con cinco trabajos: `Frontend` (lint con ESLint, formato con Prettier, pruebas con Chrome sin interfaz y compilación de producción), `Servidor` (pruebas), `Specs` (`openspec validate --specs --strict`), `Auditoría` (`pnpm audit` de las dependencias de producción, nivel alto) y `ci`, que resume los anteriores. **La comprobación obligatoria de `main` es `ci`.** Usa el Node de `ng-ruteando/.nvmrc`, pnpm (versión de `packageManager`) y `pnpm install --frozen-lockfile`, y no necesita secretos ni el gateway real.
