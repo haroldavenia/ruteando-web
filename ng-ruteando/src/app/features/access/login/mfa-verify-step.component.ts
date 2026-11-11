@@ -21,7 +21,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ApiError } from '../../../core/api/api-error';
 import { MfaApi } from '../../../core/api/data/mfa.api';
 import { AuthService } from '../../../core/auth/auth.service';
-import { MfaChallenge, MfaChallengeMethod } from '../../../core/auth/mfa.model';
+import { MfaChallenge, MfaChallengeMethod, MfaMethodOption } from '../../../core/auth/mfa.model';
 import { t } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
@@ -49,47 +49,125 @@ const DEAD_CHALLENGE = ['CHALLENGE_EXPIRED', 'TOO_MANY_ATTEMPTS', 'TOO_MANY_FAIL
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h1>{{ 'Verificación en dos pasos' | t }}</h1>
-    <p class="lead">{{ prompt() }}</p>
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <mat-form-field class="field">
-        <mat-label>{{ method() === 'recovery' ? ('Código de recuperación' | t) : ('Código' | t) }}</mat-label>
-        <mat-icon matPrefix aria-hidden="true">{{ icon(method()) }}</mat-icon>
-        <input
-          #codeInput
-          matInput
-          [attr.inputmode]="method() === 'recovery' ? 'text' : 'numeric'"
-          autocomplete="one-time-code"
-          formControlName="code"
-        />
-        @if (code.invalid && code.touched) {
-          <mat-error>{{ 'Escribe el código' | t }}</mat-error>
+    @if (picking()) {
+      <p class="lead">{{ 'Elige cómo quieres verificar tu identidad.' | t }}</p>
+      <ul class="choices">
+        @for (m of choices(); track m.method) {
+          <li>
+            <button type="button" class="choice" (click)="select(m.method)">
+              <mat-icon aria-hidden="true">{{ icon(m.method) }}</mat-icon>
+              <span class="choice-text">
+                <strong>{{ label(m.method) }}</strong>
+                <small>{{ hint(m) }}</small>
+              </span>
+              <mat-icon aria-hidden="true">chevron_right</mat-icon>
+            </button>
+          </li>
         }
-      </mat-form-field>
-      <app-form-result [error]="error()" [success]="info()" />
-      @if (loading()) {
-        <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Verificando' | t" />
+      </ul>
+      @if (hasRecovery()) {
+        <p class="alt">
+          <button type="button" class="link" (click)="select('recovery')">
+            {{ '¿No puedes usar ninguno? Usa un código de recuperación' | t }}
+          </button>
+        </p>
       }
-      <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Verificar' | t }}</button>
-    </form>
-    @if (canResend()) {
       <p class="alt">
-        <button type="button" class="link" [disabled]="loading()" (click)="send()">{{ 'Reenviar código' | t }}</button>
+        <button type="button" class="link" (click)="cancelled.emit('')">{{ 'Volver' | t }}</button>
       </p>
-    }
-    @if (others().length) {
-      <p class="alt">
-        {{ 'Usar otro método:' | t }}
-        @for (m of others(); track m.method; let last = $last) {
-          <button type="button" class="link" (click)="select(m.method)">{{ label(m.method) }}</button
-          >{{ last ? '' : ' · ' }}
+    } @else {
+      <p class="lead">{{ prompt() }}</p>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <mat-form-field class="field">
+          <mat-label>{{ method() === 'recovery' ? ('Código de recuperación' | t) : ('Código' | t) }}</mat-label>
+          <mat-icon matPrefix aria-hidden="true">{{ icon(method()) }}</mat-icon>
+          <input
+            #codeInput
+            matInput
+            [attr.inputmode]="method() === 'recovery' ? 'text' : 'numeric'"
+            autocomplete="one-time-code"
+            formControlName="code"
+          />
+          @if (code.invalid && code.touched) {
+            <mat-error>{{ 'Escribe el código' | t }}</mat-error>
+          }
+        </mat-form-field>
+        <app-form-result [error]="error()" [success]="info()" />
+        @if (loading()) {
+          <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Verificando' | t" />
         }
+        <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Verificar' | t }}</button>
+      </form>
+      @if (canResend()) {
+        <p class="alt">
+          <button type="button" class="link" [disabled]="loading()" (click)="send()">
+            {{ 'Reenviar código' | t }}
+          </button>
+        </p>
+      }
+      @if (choices().length > 1) {
+        <p class="alt">
+          <button type="button" class="link" (click)="back()">{{ 'Elegir otro método' | t }}</button>
+        </p>
+      } @else if (others().length) {
+        <p class="alt">
+          {{ 'Usar otro método:' | t }}
+          @for (m of others(); track m.method; let last = $last) {
+            <button type="button" class="link" (click)="select(m.method)">{{ label(m.method) }}</button
+            >{{ last ? '' : ' · ' }}
+          }
+        </p>
+      }
+      <p class="alt">
+        <button type="button" class="link" (click)="cancelled.emit('')">{{ 'Volver' | t }}</button>
       </p>
     }
-    <p class="alt">
-      <button type="button" class="link" (click)="cancelled.emit('')">{{ 'Volver' | t }}</button>
-    </p>
   `,
   styles: `
+    .choices {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 8px;
+      padding: 0;
+      list-style: none;
+    }
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      min-height: 64px;
+      padding: 12px 16px;
+      border: 1px solid var(--mat-sys-outline-variant);
+      border-radius: 12px;
+      background: var(--mat-sys-surface);
+      color: var(--mat-sys-on-surface);
+      font: inherit;
+      text-align: start;
+      cursor: pointer;
+    }
+    .choice:hover {
+      background: var(--mat-sys-surface-container);
+      border-color: var(--mat-sys-primary);
+    }
+    .choice:focus-visible {
+      outline: 2px solid var(--mat-sys-primary);
+      outline-offset: 2px;
+    }
+    .choice-text {
+      display: grid;
+      flex: 1;
+      min-width: 0;
+      gap: 2px;
+    }
+    .choice-text strong {
+      font-weight: 500;
+    }
+    .choice-text small {
+      color: var(--mat-sys-on-surface-variant);
+      font-size: 0.8125rem;
+      overflow-wrap: anywhere;
+    }
     .link {
       padding: 0;
       border: 0;
@@ -124,11 +202,14 @@ export class MfaVerifyStepComponent implements OnInit {
   // `(ngSubmit)` solo existe dentro de un formGroup: sin él el formulario recargaría la página
   protected readonly form = new FormGroup({ code: this.code });
 
-  /** La aplicación autenticadora primero (no manda nada); si no, el primer método activo. */
-  protected readonly method = computed<MfaChallengeMethod>(() => {
-    const methods = this.challenge().methods.map((m) => m.method);
-    return this.chosen() ?? (methods.includes('totp') ? 'totp' : (methods[0] ?? 'recovery'));
-  });
+  /** Los métodos que la persona tiene activos (correo, SMS, aplicación); el código de recuperación va aparte. */
+  protected readonly choices = computed(() => this.challenge().methods.filter((m) => m.method !== 'recovery'));
+  protected readonly hasRecovery = computed(() => this.challenge().methods.some((m) => m.method === 'recovery'));
+  /** Con más de un método activo se pregunta cuál usar antes de pedir o enviar nada; con uno solo se va directo. */
+  protected readonly picking = computed(() => this.chosen() === null && this.choices().length > 1);
+  protected readonly method = computed<MfaChallengeMethod>(
+    () => this.chosen() ?? this.choices()[0]?.method ?? 'recovery'
+  );
   protected readonly others = computed(() => this.challenge().methods.filter((m) => m.method !== this.method()));
   protected readonly canResend = computed(() => this.method() === 'email' || this.method() === 'sms');
   protected readonly prompt = computed(() => {
@@ -148,17 +229,32 @@ export class MfaVerifyStepComponent implements OnInit {
   protected icon = mfaMethodIcon;
 
   constructor() {
-    // Al cambiar de método el foco vuelve al campo del código
+    // Al elegir o cambiar de método el foco va al campo del código (si el selector está abierto no hay campo)
     effect(() => {
       this.method();
+      this.picking();
       setTimeout(() => this.codeInput()?.nativeElement.focus());
     });
   }
 
   ngOnInit(): void {
-    if (this.canResend()) {
+    if (!this.picking() && this.canResend()) {
       this.send();
     }
+  }
+
+  protected hint(option: MfaMethodOption): string {
+    return option.method === 'totp'
+      ? t('Código de 6 dígitos de tu aplicación')
+      : t('Te enviaremos un código a {0}', [option.destination ?? '']);
+  }
+
+  /** Vuelve al selector de método. */
+  protected back(): void {
+    this.chosen.set(null);
+    this.code.reset('');
+    this.error.set(null);
+    this.info.set(null);
   }
 
   protected select(method: MfaChallengeMethod): void {

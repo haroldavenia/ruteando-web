@@ -54,6 +54,8 @@ describe('MfaVerifyStepComponent', () => {
   const status = () => root.querySelector('[role="status"] span')?.textContent?.trim() ?? '';
   const links = () => Array.from(root.querySelectorAll<HTMLButtonElement>('button.link'));
   const linkNamed = (text: string) => links().find((b) => b.textContent?.trim() === text);
+  const choices = () => Array.from(root.querySelectorAll<HTMLButtonElement>('button.choice'));
+  const choiceNamed = (text: string) => choices().find((b) => b.querySelector('strong')?.textContent?.trim() === text);
 
   function type(value: string): void {
     input().value = value;
@@ -89,13 +91,51 @@ describe('MfaVerifyStepComponent', () => {
     controller.verify();
   });
 
-  it('con la aplicación autenticadora no envía nada y pide el código de 6 dígitos', async () => {
+  it('con varios métodos activos pregunta cuál usar y no envía ni pide nada todavía', async () => {
     await open(challenge(EMAIL, TOTP, RECOVERY));
+
+    controller.expectNone(SEND);
+    expect(root.querySelector('input')).toBeNull();
+    expect(lead()).toBe('Elige cómo quieres verificar tu identidad.');
+    expect(choices().map((b) => b.querySelector('strong')?.textContent?.trim())).toEqual([
+      'Correo electrónico',
+      'Aplicación autenticadora',
+    ]);
+    expect(choiceNamed('Correo electrónico')!.textContent).toContain('a•••@example.invalid');
+    expect(linkNamed('¿No puedes usar ninguno? Usa un código de recuperación')).toBeDefined();
+  });
+
+  it('al elegir la aplicación autenticadora no envía nada y pide el código de 6 dígitos', async () => {
+    await open(challenge(EMAIL, TOTP, RECOVERY));
+
+    choiceNamed('Aplicación autenticadora')!.click();
+    fixture.detectChanges();
 
     controller.expectNone(SEND);
     expect(lead()).toContain('aplicación autenticadora');
     expect(input().getAttribute('autocomplete')).toBe('one-time-code');
     expect(input().getAttribute('inputmode')).toBe('numeric');
+  });
+
+  it('desde el campo del código se puede volver al selector', async () => {
+    await open(challenge(EMAIL, TOTP));
+    choiceNamed('Aplicación autenticadora')!.click();
+    fixture.detectChanges();
+
+    linkNamed('Elegir otro método')!.click();
+    fixture.detectChanges();
+
+    expect(root.querySelector('input')).toBeNull();
+    expect(choices().length).toBe(2);
+  });
+
+  it('con un solo método activo va directo al código, sin selector', async () => {
+    await open(challenge(TOTP, RECOVERY));
+
+    expect(choices().length).toBe(0);
+    expect(input()).not.toBeNull();
+    expect(linkNamed('Código de recuperación')).toBeDefined();
+    expect(linkNamed('Elegir otro método')).toBeUndefined();
   });
 
   it('al acertar abre la sesión, avisa y la petición no lleva token', async () => {
@@ -175,11 +215,10 @@ describe('MfaVerifyStepComponent', () => {
     expect(host.cancelled).toEqual([]);
   });
 
-  it('se puede cambiar de método y el de recuperación acepta texto y no envía nada', async () => {
+  it('el código de recuperación acepta texto y no envía nada', async () => {
     await open(challenge(TOTP, EMAIL, RECOVERY));
-    expect(linkNamed('Código de recuperación')).toBeDefined();
 
-    linkNamed('Código de recuperación')!.click();
+    linkNamed('¿No puedes usar ninguno? Usa un código de recuperación')!.click();
     fixture.detectChanges();
     controller.expectNone(SEND);
     expect(lead()).toContain('códigos de recuperación');
@@ -198,7 +237,7 @@ describe('MfaVerifyStepComponent', () => {
     await open(challenge(TOTP, EMAIL));
     controller.expectNone(SEND);
 
-    linkNamed('Correo electrónico')!.click();
+    choiceNamed('Correo electrónico')!.click();
     controller.expectOne(SEND).flush({ sent: true, destination: 'a•••@example.invalid', expiresInSeconds: 300 });
     await wait();
     fixture.detectChanges();
