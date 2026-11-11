@@ -114,13 +114,28 @@ La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar a
 
 ## Vigilancia con Jenkins (`/healthCheck`)
 
-`GET /healthCheck` es público (sin sesión ni cabeceras) y lo consulta Jenkins para avisar si la aplicación se cae:
+### Ruta
 
-- `200 {"status":"ok","frontend":"ok","uptime":…}`: el servidor atiende y el frontend está compilado.
-- `503 {"status":"error",…}`: el servidor atiende pero el frontend no está compilado (`pnpm run build:web`).
-- Sin respuesta o error de conexión: el servidor está caído.
+| | |
+|---|---|
+| Ruta | `GET /healthCheck` (también responde `HEAD`) |
+| Acceso | Público: sin sesión, sin `X-Api-Key` y sin pasar por el gateway |
+| Producción | `https://<tu-dominio>/healthCheck` (la misma dirección y puerto que la aplicación) |
+| Local | `http://localhost:3000/healthCheck` con `pnpm run build:web && pnpm start` (con `PORT` cambia el puerto) |
+| Docker | `http://localhost:3000/healthCheck` con `docker compose --profile prod-like up app`; el servicio `web` de desarrollo (`ng serve`) no la tiene |
+| Cabeceras | `Cache-Control: no-store`, `Content-Type: application/json` |
 
-No consulta el gateway (una caída del gateway no es una caída de esta aplicación), no se cachea y no se registra en el log. En `ng serve` no existe; se prueba con `pnpm run build:web && pnpm start` y `curl -i http://localhost:3000/healthCheck`.
+```
+curl -i https://<tu-dominio>/healthCheck
+```
+
+| Respuesta | Cuerpo | Significa |
+|---|---|---|
+| `200` | `{"status":"ok","frontend":"ok","uptime":3600}` | El servidor atiende y el frontend está compilado. `uptime` son los segundos desde que arrancó el proceso. |
+| `503` | `{"status":"error","frontend":"sin compilar","uptime":12}` | El servidor atiende pero falta la compilación (`pnpm run build:web`): los usuarios no ven la aplicación. |
+| sin respuesta, `502`/`504` del proxy | | El servidor está caído o el proxy inverso no lo alcanza. |
+
+No consulta el gateway (una caída del gateway no es una caída de esta aplicación), no se cachea y no se registra en el log. Si un proxy inverso (nginx, Traefik, Coolify) va delante, comprueba que no pida autenticación en esa ruta y que la reenvía a la aplicación.
 
 ### Configurar Jenkins
 
