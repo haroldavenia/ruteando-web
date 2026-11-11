@@ -34,7 +34,11 @@ x-mfa: &mfa
   MFA_DB_PATH: /data/mfa.sqlite
   SMTP_HOST: mailpit
   SMTP_PORT: '1025'
-  SMS_PROVIDER: dev
+  # `dev` por defecto (el SMS llega a Mailpit); con SMS_PROVIDER=twilio en el .env se usa Twilio Verify de verdad
+  SMS_PROVIDER: ${SMS_PROVIDER:-dev}
+  TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+  TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+  TWILIO_VERIFY_SERVICE_SID: ${TWILIO_VERIFY_SERVICE_SID:-}
 
 services:
   # Bandeja de correo de desarrollo: SMTP en 1025 e interfaz web en :8025
