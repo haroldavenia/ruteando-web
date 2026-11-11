@@ -250,4 +250,44 @@ describe('interceptores de autenticación y renovación de sesión', () => {
     expect(navigate).toHaveBeenCalledTimes(1);
     controller.expectNone('/gateway/journeys');
   });
+  it('un código del segundo factor equivocado (401 INVALID_CODE) no renueva ni cierra la sesión', async () => {
+    login();
+    const result = call('/gateway/mfa/totp/confirm', 'POST', { code: '000000' }).catch((e: ApiError) => e);
+
+    controller
+      .expectOne('/gateway/mfa/totp/confirm')
+      .flush({ code: 'INVALID_CODE' }, { status: 401, statusText: 'Unauthorized' });
+    const error = (await result) as ApiError;
+
+    expect(error.code).toBe('INVALID_CODE');
+    controller.expectNone(REFRESH_URL);
+    expect(tokens.get()).toBe('a1');
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('con el reto de activación (X-MFA-Challenge) no hay sesión que renovar ni se redirige', async () => {
+    const result = new Promise<unknown>((resolve, reject) =>
+      http
+        .post('/gateway/mfa/totp/confirm', {}, { headers: { 'X-MFA-Challenge': 'reto-2' } })
+        .subscribe({ next: resolve, error: reject })
+    ).catch((e: ApiError) => e);
+
+    controller
+      .expectOne('/gateway/mfa/totp/confirm')
+      .flush({ code: 'INVALID_CODE' }, { status: 401, statusText: 'Unauthorized' });
+    expect(((await result) as ApiError).code).toBe('INVALID_CODE');
+    controller.expectNone(REFRESH_URL);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('los pasos del reto de login son públicos: sin token y sin renovar ante un 401', async () => {
+    login();
+    const result = call('/gateway/mfa/login/verify', 'POST', {}).catch((e: ApiError) => e);
+
+    const req = controller.expectOne('/gateway/mfa/login/verify');
+    expect(req.request.headers.has('Authorization')).toBeFalse();
+    req.flush({ code: 'CHALLENGE_EXPIRED' }, { status: 401, statusText: 'Unauthorized' });
+    expect(((await result) as ApiError).code).toBe('CHALLENGE_EXPIRED');
+    controller.expectNone(REFRESH_URL);
+  });
 });

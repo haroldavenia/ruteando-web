@@ -116,6 +116,91 @@ describe('AuthService', () => {
     });
   });
 
+  describe('segundo factor', () => {
+    const CHALLENGE = {
+      mfaRequired: true,
+      challengeId: 'reto-1',
+      methods: [
+        { method: 'totp', destination: null },
+        { method: 'recovery', destination: null },
+      ],
+      expiresInSeconds: 300,
+    };
+    const VERIFY_URL = '/gateway/mfa/login/verify';
+
+    function nothingSaved(): void {
+      expect(tokens.get()).toBe('');
+      expect(tokens.getRefreshToken()).toBeNull();
+      expect(currentUser.isAuthenticated()).toBeFalse();
+      expect([localStorage, sessionStorage].flatMap((st) => Object.keys(st)).length).toBe(0);
+    }
+
+    it('si el servidor exige un segundo factor devuelve el reto y no guarda ningún token ni usuario', async () => {
+      const result = new Promise((resolve) => service.login('persona@example.invalid', PASSWORD).subscribe(resolve));
+      controller.expectOne(LOGIN_URL).flush(CHALLENGE);
+
+      expect(await result).toEqual({ kind: 'challenge', challenge: CHALLENGE as never });
+      nothingSaved();
+    });
+
+    it('si la empresa exige activar un método devuelve el reto de activación, también sin sesión', async () => {
+      const enroll = {
+        mfaEnrollRequired: true,
+        challengeId: 'reto-2',
+        methods: ['totp', 'email'],
+        expiresInSeconds: 300,
+      };
+      const result = new Promise((resolve) => service.login('persona@example.invalid', PASSWORD).subscribe(resolve));
+      controller.expectOne(LOGIN_URL).flush(enroll);
+
+      expect(await result).toEqual({ kind: 'enroll', enroll: enroll as never });
+      nothingSaved();
+    });
+
+    it('al verificar con un código válido abre la sesión igual que un login normal, sin token en la petición', async () => {
+      const done = new Promise((resolve) => service.verifyMfa('reto-1', 'totp', '123456').subscribe(resolve));
+
+      const req = controller.expectOne(VERIFY_URL);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ challengeId: 'reto-1', method: 'totp', code: '123456' });
+      expect(req.request.headers.has('Authorization')).toBeFalse();
+      req.flush({ ...makeSession('acc', 'ref', 3599, makeUser({ role: 'agent' })), mfa: { method: 'totp' } });
+      await done;
+
+      expect(tokens.get()).toBe('acc');
+      expect(tokens.getRefreshToken()).toBe('ref');
+      expect(currentUser.isAuthenticated()).toBeTrue();
+      expect(currentUser.role()).toBe('agent');
+    });
+
+    it('un código incorrecto no abre sesión ni intenta renovarla, y el mensaje es el del código', async () => {
+      const result = new Promise<unknown>((resolve) =>
+        service.verifyMfa('reto-1', 'totp', '000000').subscribe({ error: resolve })
+      );
+      controller
+        .expectOne(VERIFY_URL)
+        .flush({ code: 'INVALID_CODE', message: 'x' }, { status: 401, statusText: 'Unauthorized' });
+
+      const error = (await result) as ApiError;
+      expect(error.status).toBe(401);
+      expect(error.code).toBe('INVALID_CODE');
+      expect(error.message).toBe('El código no es válido');
+      nothingSaved();
+      controller.expectNone(REFRESH_URL);
+    });
+
+    it('completar una activación obligatoria entrega la sesión', async () => {
+      const done = new Promise((resolve) => service.completeMfaEnrollment('reto-2').subscribe(resolve));
+      const req = controller.expectOne('/gateway/mfa/login/complete');
+      expect(req.request.body).toEqual({ challengeId: 'reto-2' });
+      req.flush(makeSession('acc2', 'ref2'));
+      await done;
+
+      expect(tokens.get()).toBe('acc2');
+      expect(currentUser.isAuthenticated()).toBeTrue();
+    });
+  });
+
   describe('logout', () => {
     async function loggedIn(): Promise<void> {
       const done = new Promise((resolve) => service.login('persona@example.invalid', PASSWORD).subscribe(resolve));

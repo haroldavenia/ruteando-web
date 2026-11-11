@@ -6,9 +6,11 @@ import { Router } from '@angular/router';
 import { catchError, firstValueFrom, map, Observable, of, tap } from 'rxjs';
 
 import { API_BASE_URL } from '../api/api-config';
+import { MfaApi } from '../api/data/mfa.api';
 import { REFRESH_MARGIN_MS } from '../api/refresh.interceptor';
 import { linkErrors, loginErrors, registerErrors } from './auth-messages';
 import { CurrentUser } from './current-user';
+import { LoginResponse, LoginResult, MfaChallengeMethod } from './mfa.model';
 import { MessageResponse, RegisterRequest, RegisterResponse, SessionResponse, UserProfile } from './session.model';
 import { SessionRefreshService } from './session-refresh.service';
 import { TokenStorageService } from './token-storage.service';
@@ -20,6 +22,7 @@ import { TokenStorageService } from './token-storage.service';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly mfa = inject(MfaApi);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly tokens = inject(TokenStorageService);
   private readonly refresher = inject(SessionRefreshService);
@@ -41,10 +44,34 @@ export class AuthService {
     });
   }
 
-  login(email: string, password: string): Observable<UserProfile> {
+  /**
+   * Inicia sesión. Si el servidor exige un segundo factor, NO se guarda ningún token ni usuario: se devuelve el reto para que
+   * la pantalla lo complete con `verifyMfa` (o con `completeMfaEnrollment` si hay que activar un método primero).
+   */
+  login(email: string, password: string): Observable<LoginResult> {
     return this.http
-      .post<SessionResponse>(`${this.baseUrl}/auth/login`, { email, password }, { context: loginErrors() })
-      .pipe(map((session) => this.startSession(session)));
+      .post<LoginResponse>(`${this.baseUrl}/auth/login`, { email, password }, { context: loginErrors() })
+      .pipe(
+        map((response): LoginResult => {
+          if ('mfaRequired' in response) {
+            return { kind: 'challenge', challenge: response };
+          }
+          if ('mfaEnrollRequired' in response) {
+            return { kind: 'enroll', enroll: response };
+          }
+          return { kind: 'session', user: this.startSession(response) };
+        })
+      );
+  }
+
+  /** Supera el reto con el código de un método (o de recuperación) y, solo entonces, abre la sesión. */
+  verifyMfa(challengeId: string, method: MfaChallengeMethod, code: string): Observable<UserProfile> {
+    return this.mfa.loginVerify(challengeId, method, code).pipe(map((session) => this.startSession(session)));
+  }
+
+  /** Cierra una activación obligatoria: con un método ya activo el servidor entrega la sesión. */
+  completeMfaEnrollment(challengeId: string): Observable<UserProfile> {
+    return this.mfa.loginComplete(challengeId).pipe(map((session) => this.startSession(session)));
   }
 
   /** Crea la cuenta y su tenant. No inicia sesión: eso ocurre al verificar el correo. */

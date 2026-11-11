@@ -4,7 +4,7 @@ Aplicación web de planificación de rutas. El frontend es Angular (`ng-ruteando
 
 ## Requisitos
 
-- Node `^20.19 || ^22.12 || >=24` (en `ng-ruteando/.nvmrc` está la 22: `nvm use`).
+- Node `^20.19 || ^22.12 || >=24` para el frontend y `^22.13 || >=24` para el servidor (usa `node:sqlite`); en `ng-ruteando/.nvmrc` está la 22: `nvm use`.
 - pnpm 10 (la versión exacta está en `packageManager` de `package.json`): `corepack enable` (viene con Node 20 a 24) o `npm install -g pnpm`; con pnpm 10 instalado, descarga solo la versión que pide el proyecto.
 - Dirección y clave de API del HanoIT Gateway.
 
@@ -32,6 +32,65 @@ GATEWAY_URL=http://localhost:4010 GATEWAY_API_KEY=mock pnpm start  # la app cont
 
 Usuarios (contraseña `demo1234`): `admin@example.invalid` (administración), `agente@example.invalid` (agente) y `conductor@example.invalid` (conductor, sin áreas). Las variables del entorno tienen prioridad sobre `.env`.
 
+## Segundo factor (opcional)
+
+El inicio de sesión admite un segundo factor: código por correo, código por SMS (Twilio Verify) o aplicación autenticadora (TOTP, Google Authenticator). Lo impone el servidor, no el navegador. Sin `MFA_SECRET_KEY` está apagado y el acceso funciona como siempre. Cada persona activa sus métodos en **Perfil** (`/perfil`) y las personas administradoras deciden en **Seguridad** (`/seguridad`) cuáles se permiten y si son obligatorios. Todas las variables están comentadas en `.env.example`; aquí van los pasos.
+
+### Variables
+
+| Variable | Qué es | Desarrollo | Producción |
+|---|---|---|---|
+| `MFA_SECRET_KEY` | Clave de 32 bytes en base64 que cifra los secretos TOTP. **Secreto.** Sin ella el módulo está apagado. Cambiarla invalida los TOTP ya activados. | Genera una (con Docker ya viene una de pruebas) | **Una propia y guardada en el gestor de secretos** |
+| `MFA_DB_PATH` | Fichero SQLite con la política, los factores y los códigos de recuperación (`data/mfa.sqlite`, ignorado por git). | Por defecto | **Volumen persistente**: si se pierde, todo el mundo tiene que volver a activar sus métodos |
+| `MFA_DEV_PORT` | Solo `ng serve`: puerto del módulo (4020). | Opcional | No se usa |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Correo de los códigos (y de los «SMS» de desarrollo). Sin `SMTP_HOST` no hay método de correo. | Mailpit: `localhost` / `1025` | Tu proveedor SMTP (ver abajo) |
+| `SMS_PROVIDER` | `dev` (el «SMS» llega como correo a Mailpit, no se envía nada real) o `twilio`. Con otro valor el SMS no se ofrece. | `dev` | `twilio` |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_VERIFY_SERVICE_SID` | Credenciales de Twilio Verify. **El token es un secreto.** Si falta alguna, el SMS no se ofrece a nadie. | Vacías | Las tres, de la cuenta **Live** |
+
+Generar la clave: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`.
+
+### Desarrollo (sin enviar nada real)
+
+- **Con Docker** (lo más simple): `docker compose up` levanta Mailpit (http://localhost:8025) con una `MFA_SECRET_KEY` de pruebas. Los correos con códigos y, con `SMS_PROVIDER=dev`, los «SMS» llegan a esa bandeja. Para activar SMS en `/perfil` usa cualquier número en formato internacional (por ejemplo `+573001234567`): no sale del equipo.
+- **Sin Docker**: `docker compose up mailpit` y en el `.env` `MFA_SECRET_KEY=<la que generaste>`, `SMTP_HOST=127.0.0.1`, `SMTP_PORT=1025` y `SMS_PROVIDER=dev`; reinicia `pnpm start` o `ng serve`.
+- Docker toma `SMS_PROVIDER` y `TWILIO_*` del `.env` (por defecto `dev`). Tras cambiarlos: `docker compose restart web`.
+- Con el gateway simulado los usuarios cambian de id en cada arranque: tras reiniciarlo hay que volver a activar los métodos.
+- Límites (también en desarrollo): 5 intentos por código, 10 códigos erróneos por persona cada 15 minutos y 3 envíos por persona y método cada 10 minutos; al superarlos responde 429.
+
+### Configurar Twilio (SMS real)
+
+Pruébalo primero con una cuenta de prueba y tu propio teléfono.
+
+1. Crea la cuenta en https://www.twilio.com, verifica el correo y tu teléfono.
+2. En la consola, **Account → API keys & tokens → Auth Tokens → Live credentials**: copia el **Account SID** (`AC…`) y el **Auth Token**. Usa las **Live**; las credenciales *Test* de Twilio sirven para pocos recursos de su API y no están pensadas para Verify. El token da acceso a toda la cuenta: solo va en el `.env` o en el gestor de secretos, nunca en git ni en un chat.
+3. **Verify → Services → Create new** (o usa uno existente): nombre «Ruteando» (aparece en el texto del SMS), canal **SMS** activo y **Fraud Guard** activado. Verifica que la longitud del código sea **6**. Copia el **Service SID** (`VA…`).
+4. **Geo permissions** (Messaging → Settings): habilita los países de tus usuarios (por ejemplo Colombia `+57` o República Dominicana `+1`). Si un país está apagado, el envío falla.
+5. Cuenta de prueba (*trial*): solo envía a números verificados. Verifica el tuyo en **Phone Numbers → Manage → Verified Caller IDs**. El saldo de prueba alcanza para pocas verificaciones.
+6. En el `.env`:
+   ```
+   SMS_PROVIDER=twilio
+   TWILIO_ACCOUNT_SID=AC...
+   TWILIO_AUTH_TOKEN=...
+   TWILIO_VERIFY_SERVICE_SID=VA...
+   ```
+   y reinicia (`docker compose restart web`, o `pnpm start`).
+7. Comprueba: en `/perfil` aparece «Mensaje de texto (SMS)», actívalo con tu número (`+57…`), llega el SMS y confirma; cierra sesión e inicia otra vez eligiendo SMS. Si falla, mira **Monitor → Logs → Verify** en la consola de Twilio (estado y motivo del error).
+
+Twilio es quien genera, envía y comprueba el código. El número de teléfono se guarda en `MFA_DB_PATH`: trátalo como dato personal en los respaldos. Los textos legales que Twilio pide para el alta (privacidad, términos y consentimiento de SMS) están en `/legal/privacidad`, `/legal/terminos` y `/legal/sms`; son un **borrador** que debe revisar quien responda legalmente, y la aplicación tiene que estar en un dominio público.
+
+### Producción
+
+1. **Requisitos**: Node `^22.13 || >=24` (usa `node:sqlite`) y **una sola instancia** del servidor (los retos de acceso viven en memoria).
+2. `MFA_SECRET_KEY`: una clave nueva y propia (no la de Docker). Guárdala: si se pierde o cambia, los TOTP activos dejan de valer.
+3. `MFA_DB_PATH` en un **volumen persistente** con copia de seguridad.
+4. **Correo**: `SMTP_HOST`, `SMTP_PORT` y `SMTP_FROM` de tu proveedor, con `SMTP_USER` y `SMTP_PASS`. Puerto 587 con `SMTP_SECURE=false` (STARTTLS) o 465 con `SMTP_SECURE=true`. Sin usuario el servidor no negocia TLS: no lo dejes así fuera de Mailpit. `SMTP_FROM` debe ser un remitente de un dominio que controles (con SPF/DKIM) para que los códigos no caigan en spam.
+5. **SMS**: `SMS_PROVIDER=twilio` y las tres `TWILIO_*` de la cuenta **Live**. No uses `dev` en producción: no envía SMS reales.
+6. **Cuenta de Twilio de pago**: pasa de *trial* a cuenta pagada (método de pago y saldo), confirma los *Geo permissions* y define alertas o un límite de gasto. Twilio cobra por verificación y además la tarifa del SMS de cada país: consulta los precios de Verify antes de ofrecerlo a todos. Los límites de la aplicación (3 envíos y 10 errores) ayudan contra el abuso pero no sustituyen ese tope.
+7. **HTTPS** delante del servidor, con `X-Forwarded-Proto: https` (activa HSTS). Prueba el acceso **a través del proxy real**, no solo contra el puerto de la aplicación.
+8. **Gateway**: `GATEWAY_MODE=real` con `GATEWAY_URL` y `GATEWAY_API_KEY`. Si usas el simulado en un servidor accesible desde fuera, define `MOCK_GATEWAY_PASSWORD` (si no, cualquiera entra con `demo1234`).
+9. **CSP**: empieza con `CSP_MODE=report-only`; pasa a `enforce` solo tras recorrer la aplicación sin violaciones.
+10. **Comprobación final**: con una sesión iniciada, `GET /gateway/mfa/status` debe mostrar `methods.sms.available: true` (y el de correo también). Activa un método con una persona real de cada país objetivo antes de exigirlo en **Seguridad**.
+
 ## Con Docker (desarrollo)
 
 Sin instalar Node ni copiar `.env`: `docker compose up` (o `pnpm run docker:dev`) levanta el gateway simulado y `ng serve` en http://localhost:4200 (usuarios y contraseña como en la sección anterior). La primera vez instala las dependencias en volúmenes de Docker y tarda unos minutos; después solo reinstala si cambia el `pnpm-lock.yaml`. Tras la migración a pnpm (que cambia `Dockerfile.dev`), reconstruye las imágenes una vez: `docker compose --profile prod-like --profile test build` (o `docker compose up --build`); si una imagen vieja se queda con `pnpm: not found`, es eso. Los volúmenes con `node_modules` de npm se reinstalan solos (el hash del lock cambió); si algo queda raro, `docker compose down -v`. El código se monta desde el equipo y recarga al guardar.
@@ -43,7 +102,7 @@ docker compose --profile test run --rm test    # pruebas del frontend (pnpm run 
 docker compose down                            # parar (pnpm run docker:down); `down -v` borra también las dependencias
 ```
 
-Para usar otro gateway define `DOCKER_GATEWAY_URL` y `DOCKER_GATEWAY_API_KEY` (en `.env` o en el entorno); `GATEWAY_URL` y `GATEWAY_API_KEY` no se usan aquí a propósito, para no apuntar al gateway real por accidente. No hay base de datos. Es una imagen de desarrollo (`Dockerfile.dev`), no la de producción.
+Para usar otro gateway define `DOCKER_GATEWAY_URL` y `DOCKER_GATEWAY_API_KEY` (en `.env` o en el entorno); `GATEWAY_URL` y `GATEWAY_API_KEY` no se usan aquí a propósito, para no apuntar al gateway real por accidente. La base de datos del segundo factor es un SQLite en un volumen de Docker (`mfa_data`). Es una imagen de desarrollo (`Dockerfile.dev`), no la de producción.
 
 ## Desarrollo
 

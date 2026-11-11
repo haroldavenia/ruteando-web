@@ -39,7 +39,29 @@ if (delayMs) {
   console.warn(`[proxy /gateway] Retraso artificial de ${delayMs} ms en cada petición (GATEWAY_DELAY_MS).`);
 }
 
+// Segundo factor (change add-mfa): `ng serve` no usa Express, así que el mismo módulo del servidor (server/mfa) corre en un puerto local
+// (MFA_DEV_PORT, 4020) y el login y /gateway/mfa se le envían ANTES que el resto de /gateway. Si el puerto ya lo usa otro `ng serve`, se
+// reutiliza. Sin MFA_SECRET_KEY el módulo queda apagado: /gateway/mfa responde 503 en JSON y el login llega al gateway sin intervención.
+const mfaPort = Number(process.env.MFA_DEV_PORT) || 4020;
+const mfa = require('../server/mfa').createMfa(process.env);
+if (!mfa.enabled) {
+  console.warn(`[proxy /gateway/mfa] Segundo factor desactivado: ${mfa.reason}.`);
+}
+const mfaApp = require('express')();
+mfa.mount(mfaApp);
+mfaApp
+  .listen(mfaPort, '127.0.0.1')
+  .on('error', (err) =>
+    console.warn(
+      `[proxy /gateway/mfa] No se pudo abrir el puerto ${mfaPort} (${err.code}); se usará el que ya esté abierto.`
+    )
+  );
+const mfaTarget = `http://127.0.0.1:${mfaPort}`;
+
 module.exports = {
+  // Con el módulo apagado el login tampoco se desvía: sigue por /gateway como siempre
+  ...(mfa.enabled ? { '/gateway/auth/login': { target: mfaTarget, changeOrigin: false } } : {}),
+  '/gateway/mfa': { target: mfaTarget, changeOrigin: false },
   '/gateway': {
     // Con variables ausentes se usa un destino ficticio; `bypass` responde 503 antes de reenviar
     target: target || 'http://127.0.0.1:9',

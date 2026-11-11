@@ -156,7 +156,8 @@ describe('AuditDetailDialogComponent', () => {
     const tone = () => root().getAttribute('data-tone');
 
     it('la cabecera lleva el tono, el glifo y el tipo de la acción', async () => {
-      await open(withLog(changed()));
+      // fecha reciente: el texto relativo («hace…») solo se usa dentro del último mes
+      await open(withLog({ ...changed(), createdAt: new Date(Date.now() - 3_600_000).toISOString() }));
       expect(tone()).toBe('warning');
       expect(head().querySelector('.audit-modal-icon mat-icon')?.textContent).toBe('published_with_changes');
       expect(head().querySelector('.audit-modal-kind')?.textContent).toBe('Cambio de estado');

@@ -990,4 +990,148 @@ export const PT: Readonly<Record<string, string>> = {
   'Tema claro': 'Tema claro',
   'Tema oscuro': 'Tema escuro',
   'Tema de color': 'Tema de cores',
+  // Segundo factor (add-mfa)
+  'El código no es válido': 'O código não é válido',
+  'La verificación caducó. Inicia sesión de nuevo': 'A verificação expirou. Inicie sessão novamente',
+  'Demasiados intentos. Inicia sesión de nuevo': 'Muitas tentativas. Inicie sessão novamente',
+  'Demasiados códigos erróneos. Inténtalo de nuevo en unos minutos':
+    'Demasiados códigos errados. Tente novamente dentro de alguns minutos',
+  'Demasiados envíos. Espera unos minutos e inténtalo de nuevo':
+    'Muitos envios. Aguarde alguns minutos e tente novamente',
+  'Ese método no está disponible': 'Esse método não está disponível',
+  'Tu empresa no permite este método': 'A sua empresa não permite este método',
+  'Ese método ya está activo. Desactívalo con un código antes de cambiarlo':
+    'Esse método já está ativo. Desative-o com um código antes de alterá-lo',
+  'Escribe el teléfono en formato internacional, por ejemplo +573001234567':
+    'Escreva o telefone em formato internacional, por exemplo +573001234567',
+  'Tu empresa exige el segundo factor: no puedes quitar el último método':
+    'A sua empresa exige a verificação em dois passos: não pode remover o último método',
+  'Para exigir el segundo factor hace falta permitir al menos un método':
+    'Para exigir a verificação em dois passos, permita pelo menos um método',
+  'La configuración no es válida': 'A configuração não é válida',
+  'No hay una activación pendiente': 'Não há nenhuma ativação pendente',
+  'Activa un método antes de entrar': 'Ative um método antes de entrar',
+  'El segundo factor no está activado en el servidor': 'A verificação em dois passos não está ativada no servidor',
+  'El segundo factor es obligatorio pero ningún método está disponible':
+    'A verificação em dois passos é obrigatória, mas nenhum método está disponível',
+  'No se encontró lo que buscabas': 'Não encontrámos o que procurava',
+  'Activa la verificación en dos pasos': 'Ative a verificação em dois passos',
+  'Método activado. Guarda tus códigos de recuperación antes de entrar.':
+    'Método ativado. Guarde os seus códigos de recuperação antes de entrar.',
+  'Tu empresa exige un segundo factor. Activa uno para poder entrar.':
+    'A sua empresa exige um segundo fator. Ative um para poder entrar.',
+  'Entrando': 'A entrar',
+  'Escribe el código de 6 dígitos de tu aplicación autenticadora.':
+    'Escreva o código de 6 dígitos da sua aplicação autenticadora.',
+  'Escribe uno de tus códigos de recuperación. Cada uno sirve una sola vez.':
+    'Escreva um dos seus códigos de recuperação. Cada um serve uma única vez.',
+  'Te enviamos un código a {0}. Escríbelo para continuar.': 'Enviámos um código para {0}. Escreva-o para continuar.',
+  'Código enviado a {0}': 'Código enviado para {0}',
+  'Verificación en dos pasos': 'Verificação em dois passos',
+  'Código de recuperación': 'Código de recuperação',
+  'Escribe el código': 'Escreva o código',
+  'Verificando': 'A verificar',
+  'Verificar': 'Verificar',
+  'Reenviar código': 'Reenviar código',
+  'Usar otro método:': 'Usar outro método:',
+  'Elige cómo quieres verificar tu identidad.': 'Escolha como quer verificar a sua identidade.',
+  'Te enviaremos un código a {0}': 'Vamos enviar um código para {0}',
+  'Código de 6 dígitos de tu aplicación': 'Código de 6 dígitos da sua aplicação',
+  'Elegir otro método': 'Escolher outro método',
+  'Política de privacidad': 'Política de privacidade',
+  'Términos y condiciones': 'Termos e condições',
+  'Verificación por SMS': 'Verificação por SMS',
+  'Última actualización: {0}': 'Última atualização: {0}',
+  'Información legal': 'Informação legal',
+  'Ir al inicio': 'Ir para o início',
+  'Protege tu cuenta con la verificación en dos pasos': 'Proteja a sua conta com a verificação em dois passos',
+  'Aún no tienes ningún método activo: elige correo, SMS o una aplicación autenticadora.':
+    'Ainda não tem nenhum método ativo: escolha e-mail, SMS ou uma aplicação de autenticação.',
+  'Activar ahora': 'Ativar agora',
+  'Más tarde': 'Mais tarde',
+  '¿No puedes usar ninguno? Usa un código de recuperación': 'Não consegue usar nenhum? Use um código de recuperação',
+  'Con el prefijo del país, por ejemplo +573001234567': 'Com o indicativo do país, por exemplo +573001234567',
+  'Atrás': 'Voltar',
+  'Enviar código': 'Enviar código',
+  'Escanea el código con tu aplicación autenticadora y escribe el código de 6 dígitos que muestra.':
+    'Leia o código com a sua aplicação autenticadora e escreva o código de 6 dígitos que ela mostra.',
+  '¿No puedes escanear? Escribe esta clave en la aplicación:': 'Não consegue ler? Escreva esta chave na aplicação:',
+  'Te enviamos un código a {0}. Escríbelo para activar este método.':
+    'Enviámos um código para {0}. Escreva-o para ativar este método.',
+  'Escribe el código de 6 dígitos': 'Escreva o código de 6 dígitos',
+  'Activar': 'Ativar',
+  'Mensaje de texto (SMS)': 'Mensagem de texto (SMS)',
+  // Segundo factor (add-mfa)
+  'Aplicación autenticadora': 'Aplicação autenticadora',
+  'Te enviamos un código a tu correo cada vez que inicies sesión.':
+    'Enviamos um código para o seu correio sempre que iniciar sessão.',
+  'Te enviamos un código por mensaje de texto a tu teléfono.':
+    'Enviamos um código por mensagem de texto para o seu telemóvel.',
+  'Un código que cambia cada 30 segundos en Google Authenticator u otra aplicación.':
+    'Um código que muda a cada 30 segundos no Google Authenticator ou noutra aplicação.',
+  'Código QR para la aplicación autenticadora': 'Código QR para a aplicação autenticadora',
+  'Códigos copiados': 'Códigos copiados',
+  'No se pudo copiar: selecciónalos y cópialos a mano': 'Não foi possível copiar: selecione-os e copie-os manualmente',
+  'Descarga iniciada': 'Transferência iniciada',
+  'Guarda estos códigos en un lugar seguro. Cada uno sirve una sola vez si pierdes tu teléfono, y no volverán a mostrarse.':
+    'Guarde estes códigos num lugar seguro. Cada um serve uma única vez se perder o telemóvel e não voltarão a ser mostrados.',
+  'Códigos de recuperación': 'Códigos de recuperação',
+  'Copiar': 'Copiar',
+  'Descargar': 'Transferir',
+  'Ya los guardé': 'Já os guardei',
+  // Segundo factor (add-mfa)
+  'No permitido por tu empresa': 'Não permitido pela sua empresa',
+  'No disponible en el servidor': 'Não disponível no servidor',
+  'Sin activar': 'Sem ativar',
+  'Método activado: {0}': 'Método ativado: {0}',
+  'Método desactivado: {0}': 'Método desativado: {0}',
+  'Códigos de recuperación nuevos generados': 'Novos códigos de recuperação gerados',
+  'Perfil': 'Perfil',
+  'Tu cuenta': 'A sua conta',
+  'Añade un segundo paso al iniciar sesión: un código además de tu contraseña.':
+    'Adicione um segundo passo ao iniciar sessão: um código além da palavra-passe.',
+  'Tu empresa exige la verificación en dos pasos.': 'A sua empresa exige a verificação em dois passos.',
+  'Desactivar': 'Desativar',
+  'Activar o desactivar un método': 'Ativar ou desativar um método',
+  'Activar {0}': 'Ativar {0}',
+  'Desactivar {0}': 'Desativar {0}',
+  'Códigos de recuperación nuevos': 'Novos códigos de recuperação',
+  'Generar códigos': 'Gerar códigos',
+  'Te queda 1 código sin usar': 'Resta-lhe 1 código por usar',
+  'Te quedan {0} códigos sin usar': 'Restam-lhe {0} códigos por usar',
+  'Generar nuevos': 'Gerar novos',
+  'Guarda tus códigos de recuperación': 'Guarde os seus códigos de recuperação',
+  'Elige al menos un rol o cambia la obligatoriedad': 'Escolha pelo menos uma função ou altere a obrigatoriedade',
+  'Cambios guardados': 'Alterações guardadas',
+  'Restablecer la verificación en dos pasos': 'Repor a verificação em dois passos',
+  '{0} perderá sus métodos y sus códigos de recuperación. En su próximo inicio de sesión se aplicará la política de la empresa.':
+    '{0} perderá os seus métodos e códigos de recuperação. No próximo início de sessão aplicar-se-á a política da empresa.',
+  'Restablecer': 'Repor',
+  'Se restableció la verificación en dos pasos de {0}': 'A verificação em dois passos de {0} foi reposta',
+  'Seguridad': 'Segurança',
+  'Verificación en dos pasos de tu empresa': 'Verificação em dois passos da sua empresa',
+  'Métodos permitidos': 'Métodos permitidos',
+  'Las personas solo pueden activar los métodos que permitas aquí.':
+    'As pessoas só podem ativar os métodos que permitir aqui.',
+  'El servidor no lo tiene configurado todavía.': 'O servidor ainda não o tem configurado.',
+  'Exigir la verificación en dos pasos': 'Exigir a verificação em dois passos',
+  'Quién debe usarla': 'Quem deve usá-la',
+  'Nadie: cada persona decide': 'Ninguém: cada pessoa decide',
+  'Todas las personas de la empresa': 'Todas as pessoas da empresa',
+  'Solo ciertos roles': 'Apenas certas funções',
+  'Roles obligados': 'Funções obrigadas a usá-la',
+  'Guardar cambios': 'Guardar alterações',
+  'Personas': 'Pessoas',
+  'Todavía no hay personas.': 'Ainda não há pessoas.',
+  'No se pudo cargar la lista de personas.': 'Não foi possível carregar a lista de pessoas.',
+  // Segundo factor (add-mfa)
+  'Personas de la empresa y si tienen activa la verificación en dos pasos':
+    'Pessoas da empresa e se têm a verificação em dois passos ativa',
+  'Confirmar': 'Confirmar',
+  'Para confirmar, escribe el código de tu aplicación autenticadora.':
+    'Para confirmar, escreva o código da sua aplicação autenticadora.',
+  'Para confirmar, escribe uno de tus códigos de recuperación.':
+    'Para confirmar, escreva um dos seus códigos de recuperação.',
+  'Para confirmar, pide un código y escríbelo aquí.': 'Para confirmar, peça um código e escreva-o aqui.',
+  'Método de confirmación': 'Método de confirmação',
 };

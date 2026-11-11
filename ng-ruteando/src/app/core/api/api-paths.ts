@@ -7,8 +7,15 @@ const PUBLIC_PATHS = [
   '/auth/reset-password',
   '/auth/verify-email',
   '/auth/resend-verification',
+  // Pasos del reto de segundo factor: se hacen sin sesión (todavía no hay token)
+  '/mfa/login/send',
+  '/mfa/login/verify',
+  '/mfa/login/complete',
 ];
 const PUBLIC_PREFIXES = ['/invitations/accept/'];
+
+/** Cabecera con el reto de activación obligatoria del segundo factor: sustituye a la sesión en las altas (no hay token todavía). */
+export const MFA_CHALLENGE_HEADER = 'X-MFA-Challenge';
 
 /** `true` si la URL es una petición al gateway (empieza por la URL base seguida de `/`). */
 export function isApiUrl(url: string, baseUrl: string): boolean {

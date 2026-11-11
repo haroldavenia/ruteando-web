@@ -16,6 +16,7 @@ describe('nav-items', () => {
           'Jornadas',
           'Configuraciones',
           'Auditoría',
+          'Seguridad',
         ]);
       }
     });
@@ -42,6 +43,7 @@ describe('nav-items', () => {
         'Jornadas',
         'Configuraciones',
         'Auditoría',
+        'Seguridad',
       ]);
     });
 
