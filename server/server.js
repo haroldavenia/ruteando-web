@@ -24,6 +24,16 @@ var app = express();
 
 app.set('port', process.env.PORT || 3000);
 app.disable('x-powered-by');
+// GET /healthCheck: público y sin sesión, lo consulta Jenkins (ver Jenkinsfile) para avisar si la aplicación se cae. Va antes del registro
+// para no llenarlo con una línea cada pocos minutos. 200 = el servidor responde y el frontend está compilado; 503 si falta la compilación.
+// No consulta el gateway: una caída del gateway no es una caída de esta aplicación.
+app.get('/healthCheck', function (req, res) {
+  var ok = !!webEntryFile();
+  res
+    .status(ok ? 200 : 503)
+    .set('Cache-Control', 'no-store')
+    .send({ status: ok ? 'ok' : 'error', frontend: ok ? 'ok' : 'sin compilar', uptime: Math.round(process.uptime()) });
+});
 app.use(logger('dev'));
 // Cabeceras de seguridad en todas las respuestas, también las del proxy y el estático
 app.use(securityHeaders(process.env));

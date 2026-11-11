@@ -112,6 +112,43 @@ Desde `ng-ruteando/`: `pnpm start` (puerto 4200, con el mismo proxy `/gateway` y
 
 La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar aplicación» en el menú de usuario (y en la barra de direcciones); en iPhone/iPad, «Compartir → Añadir a pantalla de inicio». Carga desde caché y avisa cuando hay una versión nueva; los datos siempre vienen del gateway (sin conexión se ve la carcasa, no los datos). Se prueba con `pnpm run build:web && pnpm start` (en `ng serve` no hay service worker). Requiere HTTPS salvo en `localhost`.
 
+## Vigilancia con Jenkins (`/healthCheck`)
+
+### Ruta
+
+| | |
+|---|---|
+| Ruta | `GET /healthCheck` (también responde `HEAD`) |
+| Acceso | Público: sin sesión, sin `X-Api-Key` y sin pasar por el gateway |
+| Producción | `https://<tu-dominio>/healthCheck` (la misma dirección y puerto que la aplicación) |
+| Local | `http://localhost:3000/healthCheck` con `pnpm run build:web && pnpm start` (con `PORT` cambia el puerto) |
+| Docker | `http://localhost:3000/healthCheck` con `docker compose --profile prod-like up app`; el servicio `web` de desarrollo (`ng serve`) no la tiene |
+| Cabeceras | `Cache-Control: no-store`, `Content-Type: application/json` |
+
+```
+curl -i https://<tu-dominio>/healthCheck
+```
+
+| Respuesta | Cuerpo | Significa |
+|---|---|---|
+| `200` | `{"status":"ok","frontend":"ok","uptime":3600}` | El servidor atiende y el frontend está compilado. `uptime` son los segundos desde que arrancó el proceso. |
+| `503` | `{"status":"error","frontend":"sin compilar","uptime":12}` | El servidor atiende pero falta la compilación (`pnpm run build:web`): los usuarios no ven la aplicación. |
+| sin respuesta, `502`/`504` del proxy | | El servidor está caído o el proxy inverso no lo alcanza. |
+
+No consulta el gateway (una caída del gateway no es una caída de esta aplicación), no se cachea y no se registra en el log. Si un proxy inverso (nginx, Traefik, Coolify) va delante, comprueba que no pida autenticación en esa ruta y que la reenvía a la aplicación.
+
+### Configurar Jenkins
+
+El `Jenkinsfile` de la raíz consulta la URL cada 5 minutos con `curl` (3 intentos separados 10 s, para no avisar por un parpadeo), envía un correo si falla y otro cuando se recupera.
+
+1. **Correo de Jenkins**: Manage Jenkins → System → «E-mail Notification» (servidor SMTP y remitente). Sin esto el paso `mail` no envía nada.
+2. **Crear el trabajo**: New Item → «Pipeline» → en «Pipeline» elige «Pipeline script from SCM», Git, la URL de este repositorio (con credenciales si es privado), la rama que se despliega (`main`) y el script `Jenkinsfile`. El agente de Jenkins necesita `curl`.
+3. **Ejecutarlo una vez** («Build Now»): Jenkins lee los parámetros del `Jenkinsfile` en esa primera ejecución (con los valores de ejemplo fallará, es normal). A partir de ahí el trabajo se programa solo.
+4. **Poner los valores reales**: «Build with Parameters» → `HEALTH_URL` (la URL pública de producción, por ejemplo `https://tu-dominio/healthCheck`) y `ALERT_EMAIL` (quién recibe el aviso). Para que las ejecuciones programadas los usen, cambia también los `defaultValue` en el `Jenkinsfile` y súbelo.
+5. **Comprobar el aviso**: pon temporalmente una `HEALTH_URL` inexistente o detén el servidor; en la siguiente ejecución debe llegar el correo «CAÍDA». Al restablecerla llega «Ruteando se recuperó».
+
+Requisitos: Jenkins debe alcanzar la URL pública (si está en otra red, usa un agente dentro de ella) y el proxy inverso no debe pedir sesión ni autenticación en `/healthCheck`. Para avisar por Slack, Teams u otro canal, sustituye los dos `mail` del `post` por el paso de su plugin.
+
 ## Integración continua
 
 `.github/workflows/ci.yml` verifica cada pull request (a cualquier rama base) y cada push a `main` con cinco trabajos: `Frontend` (lint con ESLint, formato con Prettier, pruebas con Chrome sin interfaz y compilación de producción), `Servidor` (pruebas), `Specs` (`openspec validate --specs --strict`), `Auditoría` (`pnpm audit` de las dependencias de producción, nivel alto) y `ci`, que resume los anteriores. **La comprobación obligatoria de `main` es `ci`.** Usa el Node de `ng-ruteando/.nvmrc`, pnpm (versión de `packageManager`) y `pnpm install --frozen-lockfile`, y no necesita secretos ni el gateway real.

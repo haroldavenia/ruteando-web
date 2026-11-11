@@ -33,5 +33,14 @@
       "cacheConfig": { "strategy": "performance", "maxSize": 300, "maxAge": "7d", "cacheOpaqueResponses": true }
     }
   ],
-  "navigationUrls": ["/**", "!/**/*.*", "!/**/*__*", "!/**/*__*/**", "!/gateway/**", "!/api/**", "!/auth/**"]
+  "navigationUrls": [
+    "/**",
+    "!/**/*.*",
+    "!/**/*__*",
+    "!/**/*__*/**",
+    "!/gateway/**",
+    "!/api/**",
+    "!/auth/**",
+    "!/healthCheck"
+  ]
 }
