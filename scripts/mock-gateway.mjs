@@ -8,7 +8,7 @@
 //   GATEWAY_MODE=mock pnpm start                        # app contra el mock, que se arranca solo (ver .env.example)
 //
 // Usuarios (contraseña `demo1234`): admin@example.invalid (tenant_admin), agente@example.invalid (agent),
-// conductor@example.invalid (driver). Variables: MOCK_GATEWAY_PORT (4010) y MOCK_GATEWAY_LATENCY_MS (120).
+// conductor@example.invalid (driver), havenia@hanoit.com (tenant_admin). Variables: MOCK_GATEWAY_PORT (4010) y MOCK_GATEWAY_LATENCY_MS (120).
 import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { dirname, join, resolve } from 'node:path';
@@ -105,6 +105,7 @@ const USERS = [
   { id: newId(), email: 'admin@example.invalid', role: 'tenant_admin', firstName: 'Ada', lastName: 'Administradora' },
   { id: newId(), email: 'agente@example.invalid', role: 'agent', firstName: 'Álvaro', lastName: 'Agente' },
   { id: newId(), email: 'conductor@example.invalid', role: 'driver', firstName: 'Carmen', lastName: 'Conductora' },
+  { id: newId(), email: 'havenia@hanoit.com', role: 'tenant_admin', firstName: 'Havenia', lastName: 'HanoIT' },
 ].map((user) => ({
   ...user,
   phone: null,
