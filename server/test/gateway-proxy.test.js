@@ -232,6 +232,11 @@ test('las rutas solo de servidor (intercambio del SSO) no se alcanzan desde el n
     '/gateway/auth/%73so/exchange',
     '/gateway/places/../auth/sso/exchange',
     '/gateway/auth/sso/exchange?x=1',
+    '/gateway/auth/sso%252Fexchange',
+    '/gateway/auth%252Fsso/exchange',
+    '/gateway/auth;x=1/sso/exchange',
+    '/gateway/auth/sso;x=1/exchange',
+    '/gateway/auth/sso%2525252fexchange',
   ]) {
     const res = await fetch(proxied.base + p, {
       method: 'POST',

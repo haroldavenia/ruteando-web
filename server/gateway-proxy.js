@@ -25,14 +25,26 @@ const DEFAULT_TIMEOUT_MS = 30000;
  * comparar (mayúsculas, `%2F`, barras repetidas, barras invertidas) y se rechazan los segmentos `.` y `..`.
  */
 function isServerOnlyPath(url) {
-  let p;
-  try {
-    p = decodeURIComponent(String(url).split(/[?#]/)[0]);
-  } catch (err) {
-    return true; // codificación inválida: no se reenvía
+  let p = String(url).split(/[?#]/)[0];
+  // Decodifica hasta que no cambie (`%252f`); si aún queda un `%` es una codificación rara: no se reenvía
+  for (let i = 0; i < 5; i++) {
+    let next;
+    try {
+      next = decodeURIComponent(p);
+    } catch (err) {
+      return true; // codificación inválida
+    }
+    if (next === p) break;
+    p = next;
   }
-  p = p.toLowerCase().replace(/\\/g, '/').replace(/\/+/g, '/');
-  return /(^|\/)\.\.?(\/|$)/.test(p) || /^(\/gateway)?\/auth\/sso(\/|$)/.test(p);
+  if (p.includes('%')) return true;
+  p = p
+    .toLowerCase()
+    .replace(/\\/g, '/')
+    .replace(/;[^/]*/g, '') // parámetros de ruta (`/auth;x=1/sso`)
+    .replace(/\/+/g, '/');
+  // El segmento `auth/sso` en cualquier posición (el gateway no tiene rutas del navegador con ese nombre) y los segmentos `.` y `..`
+  return /(^|\/)\.\.?(\/|$)/.test(p) || /(^|\/)auth\/sso(\/|$)/.test(p);
 }
 
 /** Carga ../.env si existe. No pisa las variables que ya estén definidas en el entorno. */
