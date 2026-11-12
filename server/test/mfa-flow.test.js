@@ -701,3 +701,33 @@ test('un código por correo se descarta tras 5 intentos erróneos: hay que pedir
     200
   );
 });
+
+test('cada método se desactiva con un código del propio método (correo, SMS y aplicación), y uno erróneo no lo apaga', async () => {
+  const token = ctx.tokenOf('agente@x.invalid');
+  const setups = {
+    email: () => ctx.call('POST', '/gateway/mfa/email/setup', { token }),
+    sms: () => ctx.call('POST', '/gateway/mfa/sms/setup', { token, body: { phone: '+573001234567' } }),
+  };
+  for (const method of ['email', 'sms']) {
+    assert.equal((await setups[method]()).status, 200);
+    assert.equal(
+      (await ctx.call('POST', `/gateway/mfa/${method}/confirm`, { token, body: { code: ctx.lastCode() } })).status,
+      200
+    );
+    ctx.tick(60_000);
+    // el código se pide al propio método y es el que autoriza quitarlo
+    const send = await ctx.call('POST', '/gateway/mfa/session/send', { token, body: { via: method } });
+    assert.equal(send.status, 200, `${method}: se puede enviar el código al método que se quita`);
+    const code = ctx.lastCode();
+    const bad = await ctx.call('DELETE', `/gateway/mfa/methods/${method}`, {
+      token,
+      body: { via: method, code: code === '000000' ? '111111' : '000000' },
+    });
+    assert.equal(bad.status, 401, `${method}: un código erróneo no lo apaga`);
+    assert.equal((await ctx.call('GET', '/gateway/mfa/status', { token })).json.methods[method].active, true);
+    const ok = await ctx.call('DELETE', `/gateway/mfa/methods/${method}`, { token, body: { via: method, code } });
+    assert.equal(ok.status, 200, `${method}: el código correcto lo apaga`);
+    assert.equal((await ctx.call('GET', '/gateway/mfa/status', { token })).json.methods[method].active, false);
+    ctx.tick(10 * 60_000); // fuera de la ventana de envíos
+  }
+});

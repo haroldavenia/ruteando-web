@@ -51,7 +51,7 @@ La aplicación SHALL ofrecer `/perfil` a cualquier persona con sesión, con el e
 - **THEN** la pantalla muestra los 10 códigos una sola vez, con copiar y descargar, y avisa de que no volverán a mostrarse
 
 #### Scenario: Desactivar un método
-- **WHEN** la persona desactiva un método y escribe un código válido de un método activo
+- **WHEN** la persona desactiva un método y escribe un código válido de un método activo (incluido el que está quitando) o un código de recuperación
 - **THEN** el método queda inactivo y la pantalla lo refleja
 
 #### Scenario: Obligatorio para su empresa
