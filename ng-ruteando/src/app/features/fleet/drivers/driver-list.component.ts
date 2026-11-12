@@ -44,7 +44,7 @@ const ASSIGNED = t('No se puede eliminar: el conductor está asignado a un vehí
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/flota/conductores/nuevo"
+      <a mat-flat-button class="primary-action" routerLink="/fleet/drivers/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo conductor' | t }}</a
       >
     </app-page-header>
@@ -61,7 +61,7 @@ const ASSIGNED = t('No se puede eliminar: el conductor está asignado a un vehí
       <ng-template #rowActions let-row>
         <a
           mat-icon-button
-          [routerLink]="['/flota/conductores', row.id]"
+          [routerLink]="['/fleet/drivers', row.id]"
           [attr.aria-label]="('Editar conductor ' | t) + name(row)"
         >
           <mat-icon aria-hidden="true">edit</mat-icon>
@@ -91,7 +91,7 @@ const ASSIGNED = t('No se puede eliminar: el conductor está asignado a un vehí
           <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/flota/conductores/nuevo">{{ 'Crear el primer conductor' | t }}</a>
+      <a empty-action mat-stroked-button routerLink="/fleet/drivers/new">{{ 'Crear el primer conductor' | t }}</a>
     </app-data-table>
   `,
 })

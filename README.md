@@ -34,7 +34,7 @@ Usuarios (contraseña `demo1234`): `admin@example.invalid` (administración), `a
 
 ## Segundo factor (opcional)
 
-El inicio de sesión admite un segundo factor: código por correo, código por SMS (Twilio Verify) o aplicación autenticadora (TOTP, Google Authenticator). Lo impone el servidor, no el navegador. Sin `MFA_SECRET_KEY` está apagado y el acceso funciona como siempre. Cada persona activa sus métodos en **Perfil** (`/perfil`) y las personas administradoras deciden en **Seguridad** (`/seguridad`) cuáles se permiten y si son obligatorios. Todas las variables están comentadas en `.env.example`; aquí van los pasos.
+El inicio de sesión admite un segundo factor: código por correo, código por SMS (Twilio Verify) o aplicación autenticadora (TOTP, Google Authenticator). Lo impone el servidor, no el navegador. Sin `MFA_SECRET_KEY` está apagado y el acceso funciona como siempre. Cada persona activa sus métodos en **Perfil** (`/profile`) y las personas administradoras deciden en **Seguridad** (`/security`) cuáles se permiten y si son obligatorios. Todas las variables están comentadas en `.env.example`; aquí van los pasos.
 
 ### Variables
 
@@ -51,7 +51,7 @@ Generar la clave: `node -e "console.log(require('crypto').randomBytes(32).toStri
 
 ### Desarrollo (sin enviar nada real)
 
-- **Con Docker** (lo más simple): `docker compose up` levanta Mailpit (http://localhost:8025) con una `MFA_SECRET_KEY` de pruebas. Los correos con códigos y, con `SMS_PROVIDER=dev`, los «SMS» llegan a esa bandeja. Para activar SMS en `/perfil` usa cualquier número en formato internacional (por ejemplo `+573001234567`): no sale del equipo.
+- **Con Docker** (lo más simple): `docker compose up` levanta Mailpit (http://localhost:8025) con una `MFA_SECRET_KEY` de pruebas. Los correos con códigos y, con `SMS_PROVIDER=dev`, los «SMS» llegan a esa bandeja. Para activar SMS en `/profile` usa cualquier número en formato internacional (por ejemplo `+573001234567`): no sale del equipo.
 - **Sin Docker**: `docker compose up mailpit` y en el `.env` `MFA_SECRET_KEY=<la que generaste>`, `SMTP_HOST=127.0.0.1`, `SMTP_PORT=1025` y `SMS_PROVIDER=dev`; reinicia `pnpm start` o `ng serve`.
 - Docker toma `SMS_PROVIDER` y `TWILIO_*` del `.env` (por defecto `dev`). Tras cambiarlos: `docker compose restart web`.
 - Con el gateway simulado los usuarios cambian de id en cada arranque: tras reiniciarlo hay que volver a activar los métodos.
@@ -74,9 +74,9 @@ Pruébalo primero con una cuenta de prueba y tu propio teléfono.
    TWILIO_VERIFY_SERVICE_SID=VA...
    ```
    y reinicia (`docker compose restart web`, o `pnpm start`).
-7. Comprueba: en `/perfil` aparece «Mensaje de texto (SMS)», actívalo con tu número (`+57…`), llega el SMS y confirma; cierra sesión e inicia otra vez eligiendo SMS. Si falla, mira **Monitor → Logs → Verify** en la consola de Twilio (estado y motivo del error).
+7. Comprueba: en `/profile` aparece «Mensaje de texto (SMS)», actívalo con tu número (`+57…`), llega el SMS y confirma; cierra sesión e inicia otra vez eligiendo SMS. Si falla, mira **Monitor → Logs → Verify** en la consola de Twilio (estado y motivo del error).
 
-Twilio es quien genera, envía y comprueba el código. El número de teléfono se guarda en `MFA_DB_PATH`: trátalo como dato personal en los respaldos. Los textos legales que Twilio pide para el alta (privacidad, términos y consentimiento de SMS) están en `/legal/privacidad`, `/legal/terminos` y `/legal/sms`; son un **borrador** que debe revisar quien responda legalmente, y la aplicación tiene que estar en un dominio público.
+Twilio es quien genera, envía y comprueba el código. El número de teléfono se guarda en `MFA_DB_PATH`: trátalo como dato personal en los respaldos. Los textos legales que Twilio pide para el alta (privacidad, términos y consentimiento de SMS) están en `/legal/privacy`, `/legal/terms` y `/legal/sms`; son un **borrador** que debe revisar quien responda legalmente, y la aplicación tiene que estar en un dominio público.
 
 ### Producción
 

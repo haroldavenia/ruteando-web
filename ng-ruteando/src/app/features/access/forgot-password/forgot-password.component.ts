@@ -56,7 +56,7 @@ const NEUTRAL_MESSAGE = t('Si el correo existe, recibirás instrucciones para re
       </form>
     }
     <p class="alt">
-      <a routerLink="/acceso">{{ 'Volver a iniciar sesión' | t }}</a>
+      <a routerLink="/access">{{ 'Volver a iniciar sesión' | t }}</a>
     </p>
   `,
 })

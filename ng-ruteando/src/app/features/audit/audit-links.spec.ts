@@ -7,17 +7,17 @@ describe('audit-links', () => {
 
   it('los paquetes, jornadas, lugares, configuraciones, vehículos y zonas se abren en su pantalla', () => {
     expect(entityTarget(log('package'), 'tenant_admin')).toEqual({
-      commands: ['/paquetes', 'abc123'],
+      commands: ['/packages', 'abc123'],
       label: 'Abrir paquete',
     });
-    expect(entityTarget(log('journey'), 'tenant_admin')?.commands).toEqual(['/jornadas', 'abc123']);
-    expect(entityTarget(log('place'), 'tenant_admin')?.commands).toEqual(['/lugares', 'abc123']);
-    expect(entityTarget(log('settings'), 'tenant_admin')?.commands).toEqual(['/configuraciones', 'abc123']);
+    expect(entityTarget(log('journey'), 'tenant_admin')?.commands).toEqual(['/journeys', 'abc123']);
+    expect(entityTarget(log('place'), 'tenant_admin')?.commands).toEqual(['/places', 'abc123']);
+    expect(entityTarget(log('settings'), 'tenant_admin')?.commands).toEqual(['/settings', 'abc123']);
     expect(entityTarget(log('resource'), 'tenant_admin')).toEqual({
-      commands: ['/flota/vehiculos', 'abc123'],
+      commands: ['/fleet/vehicles', 'abc123'],
       label: 'Abrir vehículo',
     });
-    expect(entityTarget(log('zone'), 'tenant_admin')?.commands).toEqual(['/zonas', 'abc123']);
+    expect(entityTarget(log('zone'), 'tenant_admin')?.commands).toEqual(['/zones', 'abc123']);
   });
 
   it('los usuarios, invitaciones, empresas y notificaciones no tienen pantalla propia', () => {

@@ -128,10 +128,10 @@ describe('GlobalSearchComponent', () => {
     const navigateByUrl = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
     input().focus();
     type('zonas');
-    fixture.componentInstance.go({ label: 'Zonas', icon: 'hexagon', link: '/zonas' });
+    fixture.componentInstance.go({ label: 'Zonas', icon: 'hexagon', link: '/zones' });
     fixture.detectChanges();
 
-    expect(navigateByUrl).toHaveBeenCalledWith('/zonas');
+    expect(navigateByUrl).toHaveBeenCalledWith('/zones');
     expect(fixture.componentInstance.search.value).toBe('');
     expect(document.activeElement).not.toBe(input());
   });

@@ -13,7 +13,7 @@ describe('AccessLayoutComponent', () => {
       providers: [
         provideRouter([
           {
-            path: 'acceso',
+            path: 'access',
             component: AccessLayoutComponent,
             children: [
               { path: '', loadComponent: () => import('./forbidden.component').then((m) => m.ForbiddenComponent) },
@@ -23,7 +23,7 @@ describe('AccessLayoutComponent', () => {
       ],
     });
     const harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl('/acceso');
+    await harness.navigateByUrl('/access');
     const root: HTMLElement = harness.routeNativeElement!.closest('app-access-layout') ?? harness.routeNativeElement!;
 
     expect(document.body.textContent).toContain('Ruteando');
@@ -39,7 +39,7 @@ describe('AccessLayoutComponent', () => {
       providers: [
         provideRouter([
           {
-            path: 'acceso',
+            path: 'access',
             component: AccessLayoutComponent,
             children: [
               { path: '', loadComponent: () => import('./login/login.component').then((m) => m.LoginComponent) },
@@ -52,7 +52,7 @@ describe('AccessLayoutComponent', () => {
       ],
     });
     const harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl('/acceso');
+    await harness.navigateByUrl('/access');
     const fields = Array.from(document.querySelectorAll('app-access-layout mat-form-field'));
     expect(fields.length).toBeGreaterThan(0);
     expect(fields.every((field) => field.classList.contains('mat-form-field-appearance-outline'))).toBeTrue();
@@ -74,7 +74,7 @@ describe('AccessLayoutComponent', () => {
         providers: [
           provideRouter([
             {
-              path: 'acceso',
+              path: 'access',
               component: AccessLayoutComponent,
               children: [
                 { path: '', loadComponent: () => import('./forbidden.component').then((m) => m.ForbiddenComponent) },
@@ -84,7 +84,7 @@ describe('AccessLayoutComponent', () => {
         ],
       });
       harness = await RouterTestingHarness.create();
-      await harness.navigateByUrl('/acceso');
+      await harness.navigateByUrl('/access');
     });
 
     it('lleva el tema de acceso, la marca, el fondo decorativo y el eslogan', () => {

@@ -113,7 +113,7 @@ describe('JourneyListComponent', () => {
     const row = root().querySelector('tr.mat-mdc-row')!;
     const link = row.querySelector('td a') as HTMLAnchorElement;
     expect(link.textContent?.trim()).toBe('Postman journey');
-    expect(link.getAttribute('href')).toBe(`/jornadas/${item.id}`);
+    expect(link.getAttribute('href')).toBe(`/journeys/${item.id}`);
     expect(row.textContent).toContain('Planificada');
     expect(row.textContent).toContain('Postman settings');
     const cells = Array.from(row.querySelectorAll('td')).map((c) => c.textContent!.trim());
@@ -159,7 +159,7 @@ describe('JourneyListComponent', () => {
   it('con la lista vacía ofrece planificar la primera', () => {
     load({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     expect(root().textContent).toContain('Todavía no hay jornadas');
-    expect(root().querySelector('a[href="/jornadas/nueva"][empty-action]')).not.toBeNull();
+    expect(root().querySelector('a[href="/journeys/new"][empty-action]')).not.toBeNull();
   });
 
   describe('borrado', () => {

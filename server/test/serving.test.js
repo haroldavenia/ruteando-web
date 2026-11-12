@@ -75,7 +75,7 @@ test('una ruta profunda del cliente devuelve la aplicación', async () => {
 });
 
 test('una ruta del cliente que coincide con una carpeta del build no redirige: devuelve la aplicación', async () => {
-  const res = await fetch(withBuild.base + '/acceso?returnUrl=%2Fjourneys', {
+  const res = await fetch(withBuild.base + '/access?returnUrl=%2Fjourneys', {
     redirect: 'manual',
     headers: { Accept: 'text/html' },
   });

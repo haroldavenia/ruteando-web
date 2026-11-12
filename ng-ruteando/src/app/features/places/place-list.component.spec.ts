@@ -144,7 +144,7 @@ describe('PlaceListComponent', () => {
       const ficha = root().querySelector('.ficha')!;
       expect(ficha.textContent).toContain('L1');
       expect(ficha.textContent).toContain('Tienda');
-      expect(ficha.querySelector('a')?.getAttribute('href')).toBe('/lugares/l1');
+      expect(ficha.querySelector('a')?.getAttribute('href')).toBe('/places/l1');
       expect((map().componentInstance as PlacesMapComponent).selectedId()).toBe('l1');
 
       (ficha.querySelector('button[aria-label="Cerrar la ficha del lugar"]') as HTMLButtonElement).click();
@@ -169,7 +169,7 @@ describe('PlaceListComponent', () => {
       .flush({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     fixture.detectChanges();
     expect(root().textContent).toContain('Todavía no hay lugares');
-    expect(root().querySelector('a[href="/lugares/nuevo"][empty-action]')).not.toBeNull();
+    expect(root().querySelector('a[href="/places/new"][empty-action]')).not.toBeNull();
   });
 
   it('un tipo desconocido se muestra con su clave', () => {

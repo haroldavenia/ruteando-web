@@ -71,7 +71,7 @@ test('sin Accept-Encoding no se comprime y la respuesta avisa de que varía', as
 });
 
 test('el HTML de la aplicación y el SVG también se comprimen', async () => {
-  const html = await get('/acceso', 'br, gzip');
+  const html = await get('/access', 'br, gzip');
   assert.equal(html.headers['content-encoding'], 'br');
   assert.equal(zlib.brotliDecompressSync(html.body).toString(), BIG_HTML);
   const svg = await get('/icono.svg', 'br');

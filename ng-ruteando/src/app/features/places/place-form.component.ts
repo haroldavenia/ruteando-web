@@ -57,7 +57,7 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
     <app-form-head
       [title]="isNew ? ('Nuevo lugar' | t) : ('Editar lugar' | t)"
       [backLabel]="'Lugares' | t"
-      backLink="/lugares"
+      backLink="/places"
     />
     @switch (loader.status()) {
       @case ('loading') {
@@ -65,11 +65,11 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
       }
       @case ('missing') {
         <app-form-result [error]="loader.error()" />
-        <a mat-stroked-button routerLink="/lugares">{{ 'Volver al listado' | t }}</a>
+        <a mat-stroked-button routerLink="/places">{{ 'Volver al listado' | t }}</a>
       }
       @case ('error') {
         <app-form-result [error]="loader.error()" />
-        <a mat-stroked-button routerLink="/lugares">{{ 'Volver al listado' | t }}</a>
+        <a mat-stroked-button routerLink="/places">{{ 'Volver al listado' | t }}</a>
       }
       @default {
         <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
@@ -110,7 +110,7 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
           </section>
           <app-form-result [error]="submit.error()" />
           <app-form-actions [dirty]="hasUnsavedChanges()">
-            <a mat-button routerLink="/lugares">{{ 'Cancelar' | t }}</a>
+            <a mat-button routerLink="/places">{{ 'Cancelar' | t }}</a>
             <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
               {{ 'Guardar' | t }}
             </button>
@@ -207,7 +207,7 @@ export class PlaceFormComponent implements HasUnsavedChanges {
     this.submit.submit(request$, () => {
       this.saved.set(true);
       void notify(this.injector, this.id === null ? t('Lugar creado') : t('Lugar guardado'));
-      void this.router.navigateByUrl('/lugares');
+      void this.router.navigateByUrl('/places');
     });
   }
 }

@@ -67,7 +67,7 @@ import { MfaVerifyStepComponent } from './mfa-verify-step.component';
             [messages]="{ required: ('Introduce tu contraseña' | t) }"
           />
           <div class="forgot">
-            <a routerLink="/acceso/recuperar">{{ '¿Olvidaste tu contraseña?' | t }}</a>
+            <a routerLink="/access/recover">{{ '¿Olvidaste tu contraseña?' | t }}</a>
           </div>
           <app-form-result [error]="error()" />
           @if (loading()) {
@@ -76,7 +76,7 @@ import { MfaVerifyStepComponent } from './mfa-verify-step.component';
           <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Iniciar sesión' | t }}</button>
         </form>
         <p class="alt">
-          {{ '¿No tienes cuenta?' | t }} <a routerLink="/acceso/registro">{{ 'Crear cuenta' | t }}</a>
+          {{ '¿No tienes cuenta?' | t }} <a routerLink="/access/register">{{ 'Crear cuenta' | t }}</a>
         </p>
       }
     }

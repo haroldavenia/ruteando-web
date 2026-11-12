@@ -78,8 +78,8 @@ describe('AuditDetailDialogComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'paquetes/:id', children: [] },
-          { path: 'lugares/:id', children: [] },
+          { path: 'packages/:id', children: [] },
+          { path: 'places/:id', children: [] },
         ]),
         provideNoopAnimations(),
         { provide: API_BASE_URL, useValue: '/gateway' },
@@ -331,7 +331,7 @@ describe('AuditDetailDialogComponent', () => {
     it('enlaza a la pantalla de la entidad y cierra la modal al ir', async () => {
       await open(withLog(changed()));
       const open_ = link('Abrir paquete')!;
-      expect(open_.getAttribute('href')).toBe('/paquetes/pkg1');
+      expect(open_.getAttribute('href')).toBe('/packages/pkg1');
       const closed = ref.afterClosed().toPromise();
       open_.click();
       await closed;

@@ -149,7 +149,7 @@ describe('PlaceFormComponent', () => {
       const head = root().querySelector('app-form-head')!;
 
       expect(head.querySelector('h1')?.textContent).toBe('Nuevo lugar');
-      expect(head.querySelector('a.back')?.getAttribute('href')).toBe('/lugares');
+      expect(head.querySelector('a.back')?.getAttribute('href')).toBe('/places');
       expect(head.querySelector('a.back')?.textContent?.trim()).toBe('Lugares');
     });
 
@@ -174,7 +174,7 @@ describe('PlaceFormComponent', () => {
       const actions = root().querySelector('app-form-actions')!;
 
       expect(actions.querySelector('a')?.textContent?.trim()).toBe('Cancelar');
-      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/lugares');
+      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/places');
       expect(actions.querySelector('button')?.getAttribute('type')).toBe('submit');
       expect(actions.querySelector('button')?.textContent?.trim()).toBe('Guardar');
     });
@@ -217,7 +217,7 @@ describe('PlaceFormComponent', () => {
       http.expectOne('/gateway/places/x').flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
-      expect(root().querySelector('a[href="/lugares"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/places"]')).not.toBeNull();
     });
   });
 });

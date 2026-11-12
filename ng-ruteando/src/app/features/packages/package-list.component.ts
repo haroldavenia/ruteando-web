@@ -58,13 +58,13 @@ const IN_USE = t('No se puede eliminar: el paquete está incluido en una jornada
   `,
   template: `
     <app-page-header [title]="'Paquetes' | t" [subtitle]="state.countText('paquete', 'paquetes')">
-      <a mat-stroked-button routerLink="/paquetes/importar"
+      <a mat-stroked-button routerLink="/packages/import"
         ><mat-icon aria-hidden="true">upload_file</mat-icon>{{ 'Importar CSV' | t }}</a
       >
       <button mat-stroked-button type="button" (click)="exportCsv()" [disabled]="exporting() || state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/paquetes/nuevo"
+      <a mat-flat-button class="primary-action" routerLink="/packages/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo paquete' | t }}</a
       >
     </app-page-header>
@@ -84,7 +84,7 @@ const IN_USE = t('No se puede eliminar: el paquete está incluido en una jornada
       <ng-template #rowActions let-row>
         <a
           mat-icon-button
-          [routerLink]="['/paquetes', row.id]"
+          [routerLink]="['/packages', row.id]"
           [attr.aria-label]="('Editar paquete ' | t) + label(row)"
         >
           <mat-icon aria-hidden="true">edit</mat-icon>
@@ -121,8 +121,8 @@ const IN_USE = t('No se puede eliminar: el paquete está incluido en una jornada
         </button>
       </ng-template>
       <span empty-action class="empty-actions">
-        <a mat-stroked-button routerLink="/paquetes/nuevo">{{ 'Crear el primer paquete' | t }}</a>
-        <a mat-stroked-button routerLink="/paquetes/importar">{{ 'Importar un CSV' | t }}</a>
+        <a mat-stroked-button routerLink="/packages/new">{{ 'Crear el primer paquete' | t }}</a>
+        <a mat-stroked-button routerLink="/packages/import">{{ 'Importar un CSV' | t }}</a>
       </span>
     </app-data-table>
 

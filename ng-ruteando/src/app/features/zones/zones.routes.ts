@@ -9,7 +9,7 @@ export const ZONES_ROUTES: Routes = [
     loadComponent: () => import('./zone-list.component').then((m) => m.ZoneListComponent),
   },
   {
-    path: 'nueva',
+    path: 'new',
     canDeactivate: [unsavedChangesGuard],
     loadComponent: () => import('./zone-form.component').then((m) => m.ZoneFormComponent),
   },

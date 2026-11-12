@@ -90,7 +90,7 @@ describe('PackageFormComponent', () => {
 
     it('la cabecera ofrece volver a los paquetes sobre el título', () => {
       expect(root().querySelector('app-form-head h1')?.textContent).toBe('Nuevo paquete');
-      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/paquetes');
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/packages');
     });
 
     it('los campos van en cuatro secciones con icono: identificación, dirección, carga y ubicación', () => {
@@ -280,7 +280,7 @@ describe('PackageFormComponent', () => {
       http.expectOne('/gateway/packages/x').flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
-      expect(root().querySelector('a[href="/paquetes"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/packages"]')).not.toBeNull();
     });
   });
 });

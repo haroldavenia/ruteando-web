@@ -1,4 +1,4 @@
-<app-form-head [title]="'Importar paquetes' | t" [backLabel]="'Paquetes' | t" backLink="/paquetes" />
+<app-form-head [title]="'Importar paquetes' | t" [backLabel]="'Paquetes' | t" backLink="/packages" />
 
 <ol class="steps" [attr.aria-label]="'Pasos de la importación' | t">
   @for (step of steps(); track step.number) {
@@ -246,7 +246,7 @@
     }
     <div class="actions">
       @if (counts().created > 0 || counts().existed > 0) {
-        <a mat-flat-button class="primary-action" routerLink="/paquetes">{{ 'Ver los paquetes' | t }}</a>
+        <a mat-flat-button class="primary-action" routerLink="/packages">{{ 'Ver los paquetes' | t }}</a>
       }
       @if (failedRows().length > 0) {
         <button mat-stroked-button type="button" (click)="retryFailed()">{{ 'Reintentar las fallidas' | t }}</button>

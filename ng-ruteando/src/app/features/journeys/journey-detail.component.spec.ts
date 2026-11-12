@@ -165,7 +165,7 @@ describe('JourneyDetailComponent', () => {
   it('cada ruta enlaza a su detalle con un nombre accesible', () => {
     setup(listed.id, fx(get).response.body);
     const link = root().querySelector('li.route a') as HTMLAnchorElement;
-    expect(link.getAttribute('href')).toBe(`/jornadas/${listed.id}/rutas/0`);
+    expect(link.getAttribute('href')).toBe(`/journeys/${listed.id}/routes/0`);
     expect(link.getAttribute('aria-label')).toBe('Ver la ruta Postman route');
     expect(link.textContent).toContain('Ver ruta');
   });
@@ -186,7 +186,7 @@ describe('JourneyDetailComponent', () => {
   it('lista los paquetes no planificables con enlace a su ficha', () => {
     setup(listed.id, { ...(fx(get).response.body as object), invalidPackageIds: ['p1', 'p2'] });
     const links = Array.from(root().querySelectorAll('#invalid-title ~ ul a')) as HTMLAnchorElement[];
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/paquetes/p1', '/paquetes/p2']);
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/packages/p1', '/packages/p2']);
     expect(text()).toContain('Paquetes que no se pudieron planificar');
   });
 
@@ -198,7 +198,7 @@ describe('JourneyDetailComponent', () => {
   it('un identificador inexistente (404) enlaza al listado', () => {
     setup('no-existe', undefined, { status: 404 });
     expect(text()).toContain('El registro ya no existe');
-    expect(root().querySelector('a[href="/jornadas"]')).not.toBeNull();
+    expect(root().querySelector('a[href="/journeys"]')).not.toBeNull();
   });
 
   it('otro error se muestra con su mensaje', () => {
@@ -344,7 +344,7 @@ describe('JourneyDetailComponent', () => {
     it('el enlace de vuelta ofrece volver a las jornadas', () => {
       setup(planned.id, fx(plan).response.body);
 
-      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/jornadas');
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/journeys');
       expect(root().querySelector('app-form-head a.back')?.textContent?.trim()).toBe('Jornadas');
     });
   });

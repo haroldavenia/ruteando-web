@@ -29,7 +29,7 @@ describe('ForgotPasswordComponent', () => {
   async function open(): Promise<void> {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'acceso/recuperar', component: ForgotPasswordComponent }]),
+        provideRouter([{ path: 'access/recover', component: ForgotPasswordComponent }]),
         provideNoopAnimations(),
         { provide: API_BASE_URL, useValue: '/gateway' },
         provideHttpClient(withInterceptors([authInterceptor, refreshInterceptor, errorInterceptor])),
@@ -38,7 +38,7 @@ describe('ForgotPasswordComponent', () => {
     });
     controller = TestBed.inject(HttpTestingController);
     harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl('/acceso/recuperar');
+    await harness.navigateByUrl('/access/recover');
     harness.detectChanges();
     root = harness.routeNativeElement as HTMLElement;
   }
@@ -123,6 +123,6 @@ describe('ForgotPasswordComponent', () => {
   });
 
   it('ofrece volver a iniciar sesión', () => {
-    expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/acceso');
+    expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/access');
   });
 });

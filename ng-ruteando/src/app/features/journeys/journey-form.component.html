@@ -1,4 +1,4 @@
-<app-form-head [title]="'Planificar jornada' | t" [backLabel]="'Jornadas' | t" backLink="/jornadas" />
+<app-form-head [title]="'Planificar jornada' | t" [backLabel]="'Jornadas' | t" backLink="/journeys" />
 <div class="with-summary">
   <form class="card form-grid" [formGroup]="form" (ngSubmit)="plan()" appFocusFirstInvalid novalidate>
     <section class="form-section">
@@ -21,7 +21,7 @@
       @if (settingsLoaded() && settings().length === 0) {
         <p class="hint">
           {{ 'Todavía no hay configuraciones. Primero' | t }}
-          <a routerLink="/configuraciones/nuevo">{{ 'crea una configuración' | t }}</a
+          <a routerLink="/settings/new">{{ 'crea una configuración' | t }}</a
           >.
         </p>
       }
@@ -34,7 +34,7 @@
       <h2><span class="step-num" aria-hidden="true">2</span>{{ 'Paquetes' | t }}</h2>
       @if (picker.isEmpty()) {
         <p class="hint">
-          {{ 'Todavía no hay paquetes. Primero' | t }} <a routerLink="/paquetes/nuevo">{{ 'crea un paquete' | t }}</a
+          {{ 'Todavía no hay paquetes. Primero' | t }} <a routerLink="/packages/new">{{ 'crea un paquete' | t }}</a
           >.
         </p>
       }
@@ -50,7 +50,7 @@
     }
     <app-form-result [error]="submit.error()" />
     <app-form-actions [dirty]="hasUnsavedChanges()">
-      <a mat-button routerLink="/jornadas">{{ 'Cancelar' | t }}</a>
+      <a mat-button routerLink="/journeys">{{ 'Cancelar' | t }}</a>
       <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
         {{ 'Planificar' | t }}
       </button>

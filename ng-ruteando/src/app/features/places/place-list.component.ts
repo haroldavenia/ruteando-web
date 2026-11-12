@@ -35,7 +35,7 @@ const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otro
   styleUrl: './place-list.component.scss',
   template: `
     <app-page-header [title]="'Lugares' | t" [subtitle]="state.countText('lugar', 'lugares')">
-      <a mat-flat-button class="primary-action" routerLink="/lugares/nuevo"
+      <a mat-flat-button class="primary-action" routerLink="/places/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo lugar' | t }}</a
       >
     </app-page-header>
@@ -54,7 +54,7 @@ const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otro
               </div>
               <a
                 mat-stroked-button
-                [routerLink]="['/lugares', place.id]"
+                [routerLink]="['/places', place.id]"
                 [attr.aria-label]="('Editar lugar ' | t) + place.name"
                 >{{ 'Editar' | t }}</a
               >
@@ -79,7 +79,7 @@ const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otro
         [searchPlaceholder]="'Buscar por nombre o dirección' | t"
       >
         <ng-template #rowActions let-row>
-          <a mat-icon-button [routerLink]="['/lugares', row.id]" [attr.aria-label]="('Editar lugar ' | t) + row.name">
+          <a mat-icon-button [routerLink]="['/places', row.id]" [attr.aria-label]="('Editar lugar ' | t) + row.name">
             <mat-icon aria-hidden="true">edit</mat-icon>
           </a>
           <button
@@ -91,7 +91,7 @@ const IN_USE = t('No se puede eliminar: el lugar se usa como depósito o en otro
             <mat-icon aria-hidden="true">delete</mat-icon>
           </button>
         </ng-template>
-        <a empty-action mat-stroked-button routerLink="/lugares/nuevo">{{ 'Crear el primer lugar' | t }}</a>
+        <a empty-action mat-stroked-button routerLink="/places/new">{{ 'Crear el primer lugar' | t }}</a>
       </app-data-table>
     </div>
   `,

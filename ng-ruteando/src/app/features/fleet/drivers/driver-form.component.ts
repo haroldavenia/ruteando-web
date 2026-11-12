@@ -77,7 +77,7 @@ function documentValidator(missing: 'type' | 'value'): ValidatorFn {
     <app-form-head
       [title]="isNew ? ('Nuevo conductor' | t) : ('Editar conductor' | t)"
       [backLabel]="'Conductores' | t"
-      backLink="/flota/conductores"
+      backLink="/fleet/drivers"
     />
     @switch (loader.status()) {
       @case ('loading') {
@@ -85,11 +85,11 @@ function documentValidator(missing: 'type' | 'value'): ValidatorFn {
       }
       @case ('missing') {
         <app-form-result [error]="loader.error()" />
-        <a mat-stroked-button routerLink="/flota/conductores">{{ 'Volver al listado' | t }}</a>
+        <a mat-stroked-button routerLink="/fleet/drivers">{{ 'Volver al listado' | t }}</a>
       }
       @case ('error') {
         <app-form-result [error]="loader.error()" />
-        <a mat-stroked-button routerLink="/flota/conductores">{{ 'Volver al listado' | t }}</a>
+        <a mat-stroked-button routerLink="/fleet/drivers">{{ 'Volver al listado' | t }}</a>
       }
       @default {
         <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
@@ -149,7 +149,7 @@ function documentValidator(missing: 'type' | 'value'): ValidatorFn {
           }
           <app-form-result [error]="submit.error()" />
           <app-form-actions [dirty]="hasUnsavedChanges()">
-            <a mat-button routerLink="/flota/conductores">{{ 'Cancelar' | t }}</a>
+            <a mat-button routerLink="/fleet/drivers">{{ 'Cancelar' | t }}</a>
             <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
               {{ 'Guardar' | t }}
             </button>
@@ -264,7 +264,7 @@ export class DriverFormComponent implements HasUnsavedChanges {
       () => {
         this.saved.set(true);
         void notify(this.injector, this.id === null ? t('Conductor creado') : t('Conductor guardado'));
-        void this.router.navigateByUrl('/flota/conductores');
+        void this.router.navigateByUrl('/fleet/drivers');
       },
       { 409: DUPLICATE_EMAIL }
     );

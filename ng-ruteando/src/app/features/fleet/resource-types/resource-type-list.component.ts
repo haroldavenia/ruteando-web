@@ -39,7 +39,7 @@ const IN_USE = t('No se puede eliminar: hay vehículos de este tipo');
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/flota/tipos/nuevo"
+      <a mat-flat-button class="primary-action" routerLink="/fleet/types/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo tipo' | t }}</a
       >
     </app-page-header>
@@ -54,7 +54,7 @@ const IN_USE = t('No se puede eliminar: hay vehículos de este tipo');
       [searchPlaceholder]="'Buscar por nombre o categoría' | t"
     >
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/flota/tipos', row.id]" [attr.aria-label]="('Editar tipo ' | t) + row.name">
+        <a mat-icon-button [routerLink]="['/fleet/types', row.id]" [attr.aria-label]="('Editar tipo ' | t) + row.name">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
         <button
@@ -74,7 +74,7 @@ const IN_USE = t('No se puede eliminar: hay vehículos de este tipo');
           <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/flota/tipos/nuevo">{{ 'Crear el primer tipo' | t }}</a>
+      <a empty-action mat-stroked-button routerLink="/fleet/types/new">{{ 'Crear el primer tipo' | t }}</a>
     </app-data-table>
   `,
 })

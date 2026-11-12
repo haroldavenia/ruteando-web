@@ -1,7 +1,7 @@
 <app-form-head
   [title]="isNew ? ('Nuevo paquete' | t) : ('Editar paquete' | t)"
   [backLabel]="'Paquetes' | t"
-  backLink="/paquetes"
+  backLink="/packages"
 />
 @switch (loader.status()) {
   @case ('loading') {
@@ -9,11 +9,11 @@
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/paquetes">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/packages">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/paquetes">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/packages">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     <form class="card" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
@@ -92,7 +92,7 @@
       </section>
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
-        <a mat-button routerLink="/paquetes">{{ 'Cancelar' | t }}</a>
+        <a mat-button routerLink="/packages">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
           {{ 'Guardar' | t }}
         </button>

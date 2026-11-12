@@ -62,13 +62,13 @@ describe('NavRailComponent', () => {
     expect(items.map((item) => item.tagName)).toEqual(['A', 'BUTTON', 'A', 'A', 'A', 'A', 'A', 'A', 'A']);
     expect(items.filter((item) => item.tagName === 'A').map((item) => item.getAttribute('href'))).toEqual([
       '/',
-      '/lugares',
-      '/zonas',
-      '/paquetes',
-      '/jornadas',
-      '/configuraciones',
-      '/auditoria',
-      '/seguridad',
+      '/places',
+      '/zones',
+      '/packages',
+      '/journeys',
+      '/settings',
+      '/audit',
+      '/security',
     ]);
     expect(items[1].getAttribute('aria-haspopup')).toBe('menu');
   });
@@ -80,21 +80,21 @@ describe('NavRailComponent', () => {
     await new Promise((resolve) => setTimeout(resolve, 40));
     const entries = Array.from(overlay.querySelectorAll('a[mat-menu-item]')) as HTMLAnchorElement[];
     expect(entries.map((entry) => entry.getAttribute('href'))).toEqual([
-      '/flota/vehiculos',
-      '/flota/tipos',
-      '/flota/conductores',
+      '/fleet/vehicles',
+      '/fleet/types',
+      '/fleet/drivers',
     ]);
   });
 
   it('marca «Flota» como activa en cualquiera de sus pantallas y solo en ellas', async () => {
-    await navigate('/flota/conductores', ['flota/conductores']);
+    await navigate('/fleet/drivers', ['fleet/drivers']);
     expect(active()).toEqual(['Flota']);
-    await navigate('/zonas', ['zonas']);
+    await navigate('/zones', ['zones']);
     expect(active()).toEqual(['Zonas']);
   });
 
   it('la entrada activa lleva aria-current y la barra de la marca', async () => {
-    await navigate('/paquetes', ['paquetes']);
+    await navigate('/packages', ['packages']);
     const entry = root().querySelector('a.rail-item.active') as HTMLElement;
     expect(entry.getAttribute('aria-current')).toBe('page');
     expect(getComputedStyle(entry, '::before').width).toBe('4px');

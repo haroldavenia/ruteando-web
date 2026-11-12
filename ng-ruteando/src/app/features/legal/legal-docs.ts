@@ -1,7 +1,7 @@
 import { t } from '../../core/i18n/i18n';
 
-/** Documentos legales públicos: el texto va en la dirección (`/legal/privacidad`). */
-export const LEGAL_DOCS = ['privacidad', 'terminos', 'sms'] as const;
+/** Documentos legales públicos: el texto va en la dirección (`/legal/privacy`). */
+export const LEGAL_DOCS = ['privacy', 'terms', 'sms'] as const;
 export type LegalDoc = (typeof LEGAL_DOCS)[number];
 
 /**
@@ -18,9 +18,9 @@ export const LEGAL_INFO = {
 /** Nombre corto de cada documento: el pie del acceso, el título de la página y la navegación entre ellos. */
 export function legalTitle(doc: LegalDoc): string {
   switch (doc) {
-    case 'privacidad':
+    case 'privacy':
       return t('Política de privacidad');
-    case 'terminos':
+    case 'terms':
       return t('Términos y condiciones');
     case 'sms':
       return t('Verificación por SMS');

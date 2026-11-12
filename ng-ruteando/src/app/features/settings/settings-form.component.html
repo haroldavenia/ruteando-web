@@ -1,7 +1,7 @@
 <app-form-head
   [title]="isNew ? ('Nueva configuración' | t) : ('Editar configuración' | t)"
   [backLabel]="'Configuraciones' | t"
-  backLink="/configuraciones"
+  backLink="/settings"
 />
 @switch (loader.status()) {
   @case ('loading') {
@@ -9,11 +9,11 @@
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/configuraciones">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/settings">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/configuraciones">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/settings">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     <div class="with-summary">
@@ -95,7 +95,7 @@
           </mat-form-field>
           @if (placesLoaded() && places().length === 0) {
             <p class="hint">
-              {{ 'Todavía no hay lugares. Primero' | t }} <a routerLink="/lugares/nuevo">{{ 'crea un lugar' | t }}</a
+              {{ 'Todavía no hay lugares. Primero' | t }} <a routerLink="/places/new">{{ 'crea un lugar' | t }}</a
               >.
             </p>
           }
@@ -118,7 +118,7 @@
           @if (vehiclesLoaded() && vehicles().length === 0) {
             <p class="hint">
               {{ 'Todavía no hay vehículos. Primero' | t }}
-              <a routerLink="/flota/vehiculos/nuevo">{{ 'crea un vehículo' | t }}</a
+              <a routerLink="/fleet/vehicles/new">{{ 'crea un vehículo' | t }}</a
               >.
             </p>
           }
@@ -160,7 +160,7 @@
 
         <app-form-result [error]="submit.error()" />
         <app-form-actions [dirty]="hasUnsavedChanges()">
-          <a mat-button routerLink="/configuraciones">{{ 'Cancelar' | t }}</a>
+          <a mat-button routerLink="/settings">{{ 'Cancelar' | t }}</a>
           <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
             {{ 'Guardar' | t }}
           </button>

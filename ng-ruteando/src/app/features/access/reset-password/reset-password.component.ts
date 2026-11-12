@@ -53,7 +53,7 @@ const FORM_ERROR_CODES = ['PASSWORD_POLICY_VIOLATION', 'VALIDATION_ERROR'];
         <h1>{{ 'Restablecer contraseña' | t }}</h1>
         <app-form-result [error]="invalidMessage" />
         <p class="alt">
-          <a routerLink="/acceso/recuperar">{{ 'Solicitar un enlace nuevo' | t }}</a>
+          <a routerLink="/access/recover">{{ 'Solicitar un enlace nuevo' | t }}</a>
         </p>
       </div>
     } @else {
@@ -127,7 +127,7 @@ export class ResetPasswordComponent {
     this.auth.resetPassword(this.token, this.form.getRawValue().password).subscribe({
       next: () => {
         void this.router
-          .navigateByUrl('/acceso')
+          .navigateByUrl('/access')
           .then(() => notify(this.injector, t('Contraseña actualizada, ya puedes iniciar sesión')));
       },
       error: (error: ApiError) => {

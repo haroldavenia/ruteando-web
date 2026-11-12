@@ -58,7 +58,7 @@ La clave es un secreto: no la escribas en los ficheros de entorno ni en el códi
 src/app/
   app.component.ts     componente raíz (solo un router-outlet)
   app.config.ts        proveedores (router, hidratación, HTTP con interceptores, animaciones, restauración de sesión)
-  app.routes.ts        rutas: /acceso/** con su layout; el área privada con el shell diferido y authGuard
+  app.routes.ts        rutas: /access/** con su layout; el área privada con el shell diferido y authGuard
   core/                api (HTTP, errores, modelos, servicios de datos), auth (sesión, guards), geo
   features/access/     pantallas de acceso: login, registro, verificar correo, recuperar y restablecer
   features/fleet/      flota (solo tenant_admin y super_admin): tipos de vehículo, vehículos y conductores
@@ -76,22 +76,22 @@ src/app/
 
 | Ruta | Pantalla |
 |---|---|
-| `/acceso` | Iniciar sesión (`?returnUrl=` solo admite rutas internas) |
-| `/acceso/registro` | Crear cuenta |
-| `/acceso/recuperar` | Recuperar contraseña |
-| `/acceso/verificar-email?token=` | Verificar el correo (inicia sesión) |
-| `/acceso/restablecer?token=` | Elegir una contraseña nueva |
+| `/access` | Iniciar sesión (`?returnUrl=` solo admite rutas internas) |
+| `/access/register` | Crear cuenta |
+| `/access/recover` | Recuperar contraseña |
+| `/access/verify-email?token=` | Verificar el correo (inicia sesión) |
+| `/access/reset?token=` | Elegir una contraseña nueva |
 
-Los correos del gateway deben enlazar a `/acceso/verificar-email?token=...` y a `/acceso/restablecer?token=...`. La página de inicio y el resto del área privada exigen sesión.
+Los correos del gateway deben enlazar a `/access/verify-email?token=...` y a `/access/reset?token=...`. La página de inicio y el resto del área privada exigen sesión.
 
 ## Flota
 
 | Ruta | Pantalla |
 |---|---|
-| `/flota` | Lleva a `/flota/vehiculos` |
-| `/flota/vehiculos`, `/nuevo`, `/:id` | Vehículos: listado, alta, edición, borrado y asignación de conductor |
-| `/flota/tipos`, `/nuevo`, `/:id` | Tipos de vehículo |
-| `/flota/conductores`, `/nuevo`, `/:id` | Conductores (usuarios con rol `driver`) y envío del enlace de restablecimiento |
+| `/fleet` | Lleva a `/fleet/vehicles` |
+| `/fleet/vehicles`, `/nuevo`, `/:id` | Vehículos: listado, alta, edición, borrado y asignación de conductor |
+| `/fleet/types`, `/nuevo`, `/:id` | Tipos de vehículo |
+| `/fleet/drivers`, `/nuevo`, `/:id` | Conductores (usuarios con rol `driver`) y envío del enlace de restablecimiento |
 
 Solo `tenant_admin` y `super_admin` (`roleGuard(ADMIN_ROLES)`); el menú lateral oculta la sección al resto. Cada pantalla es una ruta diferida y los formularios avisan antes de salir con cambios sin guardar (`unsavedChangesGuard`). El patrón de listado (`ListState`, `DataTableComponent`, `PageHeaderComponent`), borrado (`DeleteFlow`) y envío (`SubmitState`) vive en `shared/data/` y es el que reutilizarán las fases siguientes.
 
@@ -99,8 +99,8 @@ Solo `tenant_admin` y `super_admin` (`roleGuard(ADMIN_ROLES)`); el menú lateral
 
 | Ruta | Pantalla |
 |---|---|
-| `/lugares` | Listado de lugares |
-| `/lugares/nuevo`, `/lugares/:id` | Alta y edición (ubicación en el mapa o con latitud y longitud) |
+| `/places` | Listado de lugares |
+| `/places/new`, `/places/:id` | Alta y edición (ubicación en el mapa o con latitud y longitud) |
 
 El mapa (`shared/map`) usa OpenLayers, que se carga solo en el navegador y bajo demanda. Las teselas y su atribución se configuran en `src/environments/environment*.ts` (`map`); por defecto son las de OpenStreetMap (sin clave, uso ligero, atribución obligatoria): para producción real cambia `tilesUrl` y `attribution`. Los campos de latitud y longitud son la alternativa accesible al mapa y siempre están presentes. No hay geocodificación: la dirección se guarda como texto.
 
@@ -108,18 +108,18 @@ El mapa (`shared/map`) usa OpenLayers, que se carga solo en el navegador y bajo 
 
 | Ruta | Pantalla |
 |---|---|
-| `/paquetes` | Listado, cambio de estado, borrado y «Exportar CSV» |
-| `/paquetes/nuevo`, `/paquetes/:id` | Alta y edición (ubicación en el mapa o con coordenadas) |
-| `/paquetes/importar` | Importar paquetes desde un CSV: plantilla, vista previa con errores por fila, importación con progreso y cancelación, resumen, reintento de fallidas e informe de errores |
+| `/packages` | Listado, cambio de estado, borrado y «Exportar CSV» |
+| `/packages/new`, `/packages/:id` | Alta y edición (ubicación en el mapa o con coordenadas) |
+| `/packages/import` | Importar paquetes desde un CSV: plantilla, vista previa con errores por fila, importación con progreso y cancelación, resumen, reintento de fallidas e informe de errores |
 
-Acceso para `tenant_admin`, `super_admin` y `agent` (`OPERATIONS_ROLES`). La guía es única por empresa. El CSV usa `;`, UTF-8 con BOM y las columnas del legacy; los textos que empiezan por `=`, `+`, `-` o `@` llevan un apóstrofo para que la hoja de cálculo no los ejecute. La importación (`/paquetes/importar`) lee el CSV en el navegador (máximo 2 MB y 2000 filas) y crea los paquetes de 4 en 4; como la aplicación no geocodifica, el archivo debe traer `LONGITUD` y `LATITUD`. Descarga la plantilla desde la propia pantalla.
+Acceso para `tenant_admin`, `super_admin` y `agent` (`OPERATIONS_ROLES`). La guía es única por empresa. El CSV usa `;`, UTF-8 con BOM y las columnas del legacy; los textos que empiezan por `=`, `+`, `-` o `@` llevan un apóstrofo para que la hoja de cálculo no los ejecute. La importación (`/packages/import`) lee el CSV en el navegador (máximo 2 MB y 2000 filas) y crea los paquetes de 4 en 4; como la aplicación no geocodifica, el archivo debe traer `LONGITUD` y `LATITUD`. Descarga la plantilla desde la propia pantalla.
 
 ## Configuraciones
 
 | Ruta | Pantalla |
 |---|---|
-| `/configuraciones` | Listado y borrado |
-| `/configuraciones/nuevo`, `/configuraciones/:id` | Alta y edición |
+| `/settings` | Listado y borrado |
+| `/settings/new`, `/settings/:id` | Alta y edición |
 
 Solo `tenant_admin` y `super_admin`. Una configuración elige topología de la ruta, tipo de restricción, lugares de salida y llegada, vehículos y reglas de evaluación; con «Rutas fijas» se pide el número de rutas y con los demás tipos, el turno. Es lo que luego recibe la planificación de jornadas.
 
@@ -127,9 +127,9 @@ Solo `tenant_admin` y `super_admin`. Una configuración elige topología de la r
 
 | Ruta | Pantalla |
 |---|---|
-| `/jornadas` | Listado y borrado |
-| `/jornadas/nueva` | Planificar: nombre, configuración y paquetes (selección que se conserva entre páginas) |
-| `/jornadas/:id` | Detalle: resumen, rutas, paradas y paquetes no planificables |
+| `/journeys` | Listado y borrado |
+| `/journeys/new` | Planificar: nombre, configuración y paquetes (selección que se conserva entre páginas) |
+| `/journeys/:id` | Detalle: resumen, rutas, paradas y paquetes no planificables |
 
 Acceso para `tenant_admin`, `super_admin` y `agent`. La optimización la hace el gateway: la aplicación envía el nombre, la configuración y los ids de los paquetes. Si la planificación tarda más que `GATEWAY_TIMEOUT_MS` (30 s por defecto) el proxy responde 504; súbelo en `.env`. Conocido: el gateway real rechaza ids de paquete hexadecimales en `journeys/plan` (400 `For input string`). El detalle muestra las rutas en un mapa (una línea de color por ruta, paradas numeradas y depósitos con «D») con una leyenda y una ficha de parada operables con teclado; elegir una ruta o una parada en las tablas («Ver en el mapa») la enfoca en el mapa.
 
@@ -139,8 +139,8 @@ El tema de Angular Material se define una sola vez en `src/styles.scss`.
 
 | Ruta | Pantalla |
 |---|---|
-| `/zonas` | Listado y borrado (el gateway rechaza borrar una zona en uso) |
-| `/zonas/nueva` | Alta: nombre, código, color y polígono |
-| `/zonas/:id` | Edición |
+| `/zones` | Listado y borrado (el gateway rechaza borrar una zona en uso) |
+| `/zones/new` | Alta: nombre, código, color y polígono |
+| `/zones/:id` | Edición |
 
 Solo `tenant_admin` y `super_admin`. El polígono se dibuja en el mapa (clics y doble clic o «Terminar polígono»; Escape cancela), se ajusta arrastrando vértices y también se escribe en la tabla de vértices, que es la alternativa accesible con teclado. Se exige un mínimo de 3 vértices, área distinta de cero y lados sin cruces; el resumen bajo el mapa lo anuncia. Sin verificar contra el gateway real: validación de geometría, formato de `color` y borrado de una zona en uso.

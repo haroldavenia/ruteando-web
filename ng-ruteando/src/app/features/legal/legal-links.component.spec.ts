@@ -12,8 +12,8 @@ describe('LegalLinksComponent', () => {
 
     const links = Array.from(root.querySelectorAll('a')).map((a) => [a.textContent?.trim(), a.getAttribute('href')]);
     expect(links).toEqual([
-      ['Política de privacidad', '/legal/privacidad'],
-      ['Términos y condiciones', '/legal/terminos'],
+      ['Política de privacidad', '/legal/privacy'],
+      ['Términos y condiciones', '/legal/terms'],
       ['Verificación por SMS', '/legal/sms'],
     ]);
     expect(root.querySelector('nav')?.getAttribute('aria-label')).toBe('Información legal');

@@ -217,7 +217,7 @@ export class PackageFormComponent implements HasUnsavedChanges {
       () => {
         this.saved.set(true);
         void notify(this.injector, this.id === null ? t('Paquete creado') : t('Paquete guardado'));
-        void this.router.navigateByUrl('/paquetes');
+        void this.router.navigateByUrl('/packages');
       },
       { 409: DUPLICATE_GUIDE }
     );

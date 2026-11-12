@@ -242,7 +242,7 @@ describe('DriverFormComponent', () => {
       http.expectOne('/gateway/users/x').flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
-      expect(root().querySelector('a[href="/flota/conductores"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/fleet/drivers"]')).not.toBeNull();
     });
   });
 });

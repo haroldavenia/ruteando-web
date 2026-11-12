@@ -39,5 +39,5 @@ export function readHandoff(state: unknown): TypeHandoff | null {
  */
 export function fleetReturnUrl(raw: string | null): string | null {
   const safe = safeReturnUrl(raw);
-  return safe.startsWith('/flota/') ? safe : null;
+  return safe.startsWith('/fleet/') ? safe : null;
 }

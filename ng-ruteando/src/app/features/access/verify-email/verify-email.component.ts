@@ -71,7 +71,7 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
           <button mat-flat-button type="submit" [disabled]="resending()">{{ 'Reenviar verificación' | t }}</button>
         </form>
         <p class="alt">
-          <a routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a>
+          <a routerLink="/access">{{ 'Ir a iniciar sesión' | t }}</a>
         </p>
       </div>
     }

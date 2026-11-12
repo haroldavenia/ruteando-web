@@ -350,7 +350,7 @@ describe('RoutesMapComponent', () => {
       await create([shifted(0, 'Norte', 0)]);
       clickAt(pixelOf(0, 1));
       fixture.detectChanges();
-      expect(root().querySelector('.card a')?.getAttribute('href')).toBe('/paquetes/pkg-0');
+      expect(root().querySelector('.card a')?.getAttribute('href')).toBe('/packages/pkg-0');
 
       clickAt(pixelOf(0, 2));
       fixture.detectChanges();

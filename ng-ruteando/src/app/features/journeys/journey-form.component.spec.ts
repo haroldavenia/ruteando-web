@@ -91,7 +91,7 @@ describe('JourneyFormComponent', () => {
       setup();
 
       expect(root().querySelector('app-form-head h1')?.textContent).toBe('Planificar jornada');
-      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/jornadas');
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/journeys');
     });
 
     it('son dos secciones numeradas, Configuración y Paquetes, en una sola página con un único formulario', () => {
@@ -152,7 +152,7 @@ describe('JourneyFormComponent', () => {
       setup();
       const actions = root().querySelector('app-form-actions')!;
 
-      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/jornadas');
+      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/journeys');
       expect(actions.querySelector('button')?.textContent?.trim()).toBe('Planificar');
       expect(actions.querySelector('[role="status"]')?.textContent?.trim()).toBe('');
 
@@ -190,7 +190,7 @@ describe('JourneyFormComponent', () => {
     expectSameContract(req, fx(plan));
     respondWith(req, fx(plan));
     const created = (fx(plan).response.body as { id: string }).id;
-    expect(navigate).toHaveBeenCalledWith(['/jornadas', created]);
+    expect(navigate).toHaveBeenCalledWith(['/journeys', created]);
   });
 
   it('muestra el progreso, desactiva el botón y no permite una segunda planificación', () => {
@@ -275,22 +275,22 @@ describe('JourneyFormComponent', () => {
     });
   });
 
-  it('sin configuraciones lo explica y enlaza a /configuraciones/nuevo', () => {
+  it('sin configuraciones lo explica y enlaza a /settings/new', () => {
     setup({ settings: page([]) });
     expect(root().textContent).toContain('Todavía no hay configuraciones');
-    expect(root().querySelector('a[href="/configuraciones/nuevo"]')).not.toBeNull();
+    expect(root().querySelector('a[href="/settings/new"]')).not.toBeNull();
   });
 
-  it('sin paquetes lo explica y enlaza a /paquetes/nuevo', () => {
+  it('sin paquetes lo explica y enlaza a /packages/new', () => {
     setup({ packages: page([]) });
     expect(root().textContent).toContain('Todavía no hay paquetes. Primero');
-    expect(root().querySelector('a[href="/paquetes/nuevo"]:not([empty-action])')).not.toBeNull();
+    expect(root().querySelector('a[href="/packages/new"]:not([empty-action])')).not.toBeNull();
   });
 
   it('con datos no muestra los enlaces de creación', () => {
     setup();
-    expect(root().querySelector('a[href="/configuraciones/nuevo"]')).toBeNull();
-    expect(root().querySelector('.hint a[href="/paquetes/nuevo"]')).toBeNull();
+    expect(root().querySelector('a[href="/settings/new"]')).toBeNull();
+    expect(root().querySelector('.hint a[href="/packages/new"]')).toBeNull();
   });
 
   it('con datos escritos o paquetes elegidos avisa al salir, y tras planificar ya no', () => {

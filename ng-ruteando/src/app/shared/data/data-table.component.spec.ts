@@ -213,7 +213,7 @@ describe('DataTableComponent', () => {
     host = fixture.componentInstance;
     host.fetch = () => of(page([{ name: 'Furgón', plate: 'ABC123' }]));
     (host as { columns: DataColumn<Row>[] }).columns = [
-      { ...COLUMNS[0], link: (r) => ['/flota', r.plate] },
+      { ...COLUMNS[0], link: (r) => ['/fleet', r.plate] },
       COLUMNS[1],
     ];
     host.state.load(0);
@@ -223,7 +223,7 @@ describe('DataTableComponent', () => {
 
     const link = root().querySelector('td a') as HTMLAnchorElement | null;
     expect(link?.textContent?.trim()).toBe('Furgón');
-    expect(link?.getAttribute('href')).toBe('/flota/ABC123');
+    expect(link?.getAttribute('href')).toBe('/fleet/ABC123');
     expect(root().querySelectorAll('td a').length).toBe(1);
   });
 

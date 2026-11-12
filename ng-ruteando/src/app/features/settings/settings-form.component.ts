@@ -379,7 +379,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     this.submit.submit(request$, () => {
       this.saved.set(true);
       void notify(this.injector, this.id === null ? t('Configuración creada') : t('Configuración guardada'));
-      void this.router.navigateByUrl('/configuraciones');
+      void this.router.navigateByUrl('/settings');
     });
   }
 

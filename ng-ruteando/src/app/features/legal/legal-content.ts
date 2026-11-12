@@ -47,7 +47,7 @@ export const LEGAL_CONTACT: Record<Language, LegalContact> = {
 
 export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
   es: {
-    privacidad: {
+    privacy: {
       intro:
         'Esta política explica qué datos trata Ruteando cuando usas la aplicación, para qué los usa y qué control tienes sobre ellos.',
       sections: [
@@ -115,7 +115,7 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
         },
       ],
     },
-    terminos: {
+    terms: {
       intro: 'Al usar Ruteando aceptas estos términos. Si no estás de acuerdo con ellos, no uses la aplicación.',
       sections: [
         {
@@ -220,7 +220,7 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
     },
   },
   en: {
-    privacidad: {
+    privacy: {
       intro:
         'This policy explains what data Ruteando handles when you use the application, what it uses it for and what control you have over it.',
       sections: [
@@ -288,7 +288,7 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
         },
       ],
     },
-    terminos: {
+    terms: {
       intro: 'By using Ruteando you accept these terms. If you do not agree with them, do not use the application.',
       sections: [
         {
@@ -393,7 +393,7 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
     },
   },
   pt: {
-    privacidad: {
+    privacy: {
       intro:
         'Esta política explica que dados o Ruteando trata quando utiliza a aplicação, para que os usa e que controlo tem sobre eles.',
       sections: [
@@ -461,7 +461,7 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
         },
       ],
     },
-    terminos: {
+    terms: {
       intro: 'Ao usar o Ruteando aceita estes termos. Se não concordar com eles, não use a aplicação.',
       sections: [
         {

@@ -32,7 +32,7 @@ const IN_USE = t('No se puede eliminar: la configuración se usa en una jornada'
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-page-header [title]="'Configuraciones' | t" [subtitle]="state.countText('configuración', 'configuraciones')">
-      <a mat-flat-button class="primary-action" routerLink="/configuraciones/nuevo"
+      <a mat-flat-button class="primary-action" routerLink="/settings/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva configuración' | t }}</a
       >
     </app-page-header>
@@ -46,7 +46,7 @@ const IN_USE = t('No se puede eliminar: la configuración se usa en una jornada'
       <ng-template #rowActions let-row>
         <a
           mat-icon-button
-          [routerLink]="['/configuraciones', row.id]"
+          [routerLink]="['/settings', row.id]"
           [attr.aria-label]="('Editar configuración ' | t) + row.description"
         >
           <mat-icon aria-hidden="true">edit</mat-icon>
@@ -60,9 +60,7 @@ const IN_USE = t('No se puede eliminar: la configuración se usa en una jornada'
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/configuraciones/nuevo">{{
-        'Crear la primera configuración' | t
-      }}</a>
+      <a empty-action mat-stroked-button routerLink="/settings/new">{{ 'Crear la primera configuración' | t }}</a>
     </app-data-table>
   `,
 })

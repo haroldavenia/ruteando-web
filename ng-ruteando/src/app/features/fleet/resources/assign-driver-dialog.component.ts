@@ -42,7 +42,7 @@ export interface AssignDriverData {
       } @else if (drivers().length === 0) {
         <p>
           {{ 'No hay conductores creados.' | t }}
-          <a routerLink="/flota/conductores" mat-dialog-close>{{ 'Crear un conductor' | t }}</a>
+          <a routerLink="/fleet/drivers" mat-dialog-close>{{ 'Crear un conductor' | t }}</a>
         </p>
       } @else {
         <mat-form-field class="field">

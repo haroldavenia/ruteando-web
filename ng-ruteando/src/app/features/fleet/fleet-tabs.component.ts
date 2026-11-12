@@ -59,13 +59,11 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   `,
   template: `
     <nav [attr.aria-label]="'Secciones de la flota' | t">
-      <a routerLink="/flota/vehiculos" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'Vehículos' | t }}</a>
-      <a routerLink="/flota/tipos" routerLinkActive="active" ariaCurrentWhenActive="page">{{
+      <a routerLink="/fleet/vehicles" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'Vehículos' | t }}</a>
+      <a routerLink="/fleet/types" routerLinkActive="active" ariaCurrentWhenActive="page">{{
         'Tipos de vehículo' | t
       }}</a>
-      <a routerLink="/flota/conductores" routerLinkActive="active" ariaCurrentWhenActive="page">{{
-        'Conductores' | t
-      }}</a>
+      <a routerLink="/fleet/drivers" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'Conductores' | t }}</a>
     </nav>
   `,
 })

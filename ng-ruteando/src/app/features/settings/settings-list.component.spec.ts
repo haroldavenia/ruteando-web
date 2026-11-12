@@ -90,7 +90,7 @@ describe('SettingsListComponent', () => {
   it('con la lista vacía ofrece crear la primera', () => {
     load({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     expect(root().textContent).toContain('Todavía no hay configuraciones');
-    expect(root().querySelector('a[href="/configuraciones/nuevo"][empty-action]')).not.toBeNull();
+    expect(root().querySelector('a[href="/settings/new"][empty-action]')).not.toBeNull();
   });
 
   describe('borrado', () => {

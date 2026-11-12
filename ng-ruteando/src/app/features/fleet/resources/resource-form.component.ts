@@ -216,7 +216,7 @@ export class ResourceFormComponent implements HasUnsavedChanges {
     this.leaving.set(true);
     const draft: VehicleDraft = { ...this.form.getRawValue(), anchorDate: this.anchorDate };
     void this.router
-      .navigate(['/flota/tipos/nuevo'], {
+      .navigate(['/fleet/types/new'], {
         queryParams: { volver: this.router.url.split('?')[0] },
         state: toHandoffState({ draft }),
       })
@@ -286,7 +286,7 @@ export class ResourceFormComponent implements HasUnsavedChanges {
       () => {
         this.saved.set(true);
         void notify(this.injector, this.id === null ? t('Vehículo creado') : t('Vehículo guardado'));
-        void this.router.navigateByUrl('/flota/vehiculos');
+        void this.router.navigateByUrl('/fleet/vehicles');
       },
       { 409: DUPLICATE_PLATE }
     );

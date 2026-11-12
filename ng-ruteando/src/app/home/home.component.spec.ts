@@ -210,7 +210,7 @@ describe('HomeComponent', () => {
       it(`${role} puede planificar una jornada e importar paquetes desde la cabecera`, () => {
         open(role);
         expect(actions().map((a) => a.textContent?.trim())).toEqual(['addPlanificar jornada', 'Importar paquetes']);
-        expect(actions().map((a) => a.getAttribute('href'))).toEqual(['/jornadas/nueva', '/paquetes/importar']);
+        expect(actions().map((a) => a.getAttribute('href'))).toEqual(['/journeys/new', '/packages/import']);
         expect(root().querySelectorAll('.hero-actions mat-icon[aria-hidden="true"]').length).toBe(1);
       });
     }
@@ -341,7 +341,7 @@ describe('HomeComponent', () => {
       const create = Array.from(card().querySelectorAll('a')).find((a) =>
         a.textContent?.includes('Crear el primer paquete')
       )!;
-      expect(create.getAttribute('href')).toBe('/paquetes/nuevo');
+      expect(create.getAttribute('href')).toBe('/packages/new');
       expect(card().querySelector('app-progress-ring')).toBeNull();
       expect(kpis().length).toBe(0);
     });
@@ -420,9 +420,9 @@ describe('HomeComponent', () => {
       );
       expect(journeyLinks().map((a) => a.textContent)).toEqual(['Jornada 3', 'Jornada 2', 'Jornada 1']);
       expect(journeyLinks().map((a) => a.getAttribute('href'))).toEqual([
-        '/jornadas/j3',
-        '/jornadas/j2',
-        '/jornadas/j1',
+        '/journeys/j3',
+        '/journeys/j2',
+        '/journeys/j1',
       ]);
       const first = row(0).textContent!;
       expect(first).toContain('Completada');
@@ -445,12 +445,12 @@ describe('HomeComponent', () => {
       expect(journeyLinks().map((a) => a.textContent)).toEqual(['Jornada 3', 'Jornada 2', 'Jornada 1']);
     });
 
-    it('la cabecera de la tarjeta tiene «Ver todas», con el nombre accesible completo, que lleva a /jornadas', () => {
+    it('la cabecera de la tarjeta tiene «Ver todas», con el nombre accesible completo, que lleva a /journeys', () => {
       open('tenant_admin', page([journey(1)], 12));
       const all = root().querySelector('.card-head a') as HTMLAnchorElement;
       expect(all.textContent?.trim()).toBe('Ver todas');
       expect(all.getAttribute('aria-label')).toBe('Ver todas las jornadas');
-      expect(all.getAttribute('href')).toBe('/jornadas');
+      expect(all.getAttribute('href')).toBe('/journeys');
       expect(Math.round(all.getBoundingClientRect().height)).toBe(48);
       expect(getComputedStyle(all).borderTopLeftRadius).toBe('12px');
     });
@@ -461,7 +461,7 @@ describe('HomeComponent', () => {
       const link = Array.from(root().querySelectorAll('a')).find((a) =>
         a.textContent?.includes('Planificar la primera jornada')
       )!;
-      expect(link.getAttribute('href')).toBe('/jornadas/nueva');
+      expect(link.getAttribute('href')).toBe('/journeys/new');
       expect(Math.round(link.getBoundingClientRect().height)).toBe(48);
       expect(journeyLinks().length).toBe(0);
     });

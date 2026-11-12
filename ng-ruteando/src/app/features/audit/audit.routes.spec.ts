@@ -18,8 +18,8 @@ import { AUDIT_ROUTES } from './audit.routes';
 
 describe('rutas de auditoría', () => {
   const shell = routes.find((route) => route.path === '' && route.children)!;
-  const audit = shell.children!.find((route) => route.path === 'auditoria') as Route;
-  const state = { url: '/auditoria' } as RouterStateSnapshot;
+  const audit = shell.children!.find((route) => route.path === 'audit') as Route;
+  const state = { url: '/audit' } as RouterStateSnapshot;
 
   const guard = (fn: CanActivateFn | CanActivateChildFn | undefined, role: UserRole | null): boolean | UrlTree => {
     const current = TestBed.inject(CurrentUser);
@@ -49,14 +49,14 @@ describe('rutas de auditoría', () => {
     }
   });
 
-  it('el conductor va a /sin-permiso', () => {
+  it('el conductor va a /forbidden', () => {
     const result = guard(audit.canActivate![0] as CanActivateFn, 'driver') as UrlTree;
-    expect(TestBed.inject(Router).serializeUrl(result)).toBe('/sin-permiso');
+    expect(TestBed.inject(Router).serializeUrl(result)).toBe('/forbidden');
   });
 
-  it('sin sesión va a /acceso recordando a dónde iba', () => {
+  it('sin sesión va a /access recordando a dónde iba', () => {
     const result = guard(audit.canActivate![0] as CanActivateFn, null) as UrlTree;
-    expect(TestBed.inject(Router).serializeUrl(result)).toBe('/acceso?returnUrl=%2Fauditoria');
+    expect(TestBed.inject(Router).serializeUrl(result)).toBe('/access?returnUrl=%2Faudit');
   });
 
   it('es una sola pantalla, diferida: el detalle de un evento es una modal, no otra ruta', async () => {

@@ -20,8 +20,8 @@ describe('guards de acceso', () => {
       providers: [
         provideRouter([
           { path: '', pathMatch: 'full', component: PaginaComponent },
-          { path: 'acceso', canActivate: [guestGuard], component: PaginaComponent },
-          { path: 'sin-permiso', component: PaginaComponent },
+          { path: 'access', canActivate: [guestGuard], component: PaginaComponent },
+          { path: 'forbidden', component: PaginaComponent },
           { path: 'journeys', canActivate: [authGuard], component: PaginaComponent },
           { path: 'admin', canActivate: [roleGuard(['tenant_admin', 'super_admin'])], component: PaginaComponent },
         ]),
@@ -33,10 +33,10 @@ describe('guards de acceso', () => {
   });
 
   describe('authGuard', () => {
-    it('un usuario anónimo va a /acceso con la ruta de origen en returnUrl', async () => {
+    it('un usuario anónimo va a /access con la ruta de origen en returnUrl', async () => {
       await harness.navigateByUrl('/journeys');
 
-      expect(router.url).toBe('/acceso?returnUrl=%2Fjourneys');
+      expect(router.url).toBe('/access?returnUrl=%2Fjourneys');
     });
 
     it('un usuario con sesión ve la ruta protegida', async () => {
@@ -49,7 +49,7 @@ describe('guards de acceso', () => {
     it('conserva en returnUrl la consulta de la ruta de origen', async () => {
       await harness.navigateByUrl('/journeys?page=2');
 
-      expect(router.url).toBe('/acceso?returnUrl=%2Fjourneys%3Fpage%3D2');
+      expect(router.url).toBe('/access?returnUrl=%2Fjourneys%3Fpage%3D2');
     });
   });
 
@@ -61,23 +61,23 @@ describe('guards de acceso', () => {
       expect(router.url).toBe('/admin');
     });
 
-    it('un rol no permitido va a /sin-permiso y no carga el contenido de la ruta', async () => {
+    it('un rol no permitido va a /forbidden y no carga el contenido de la ruta', async () => {
       currentUser.set(makeUser({ role: 'driver' }));
       await harness.navigateByUrl('/admin');
 
-      expect(router.url).toBe('/sin-permiso');
+      expect(router.url).toBe('/forbidden');
     });
 
-    it('un usuario anónimo va a /acceso con returnUrl', async () => {
+    it('un usuario anónimo va a /access con returnUrl', async () => {
       await harness.navigateByUrl('/admin');
 
-      expect(router.url).toBe('/acceso?returnUrl=%2Fadmin');
+      expect(router.url).toBe('/access?returnUrl=%2Fadmin');
     });
 
     it('usa el rol de la sesión nueva tras cerrar una y abrir otra', async () => {
       currentUser.set(makeUser({ role: 'driver' }));
       await harness.navigateByUrl('/admin');
-      expect(router.url).toBe('/sin-permiso');
+      expect(router.url).toBe('/forbidden');
 
       currentUser.clear();
       currentUser.set(makeUser({ role: 'super_admin' }));
@@ -88,23 +88,23 @@ describe('guards de acceso', () => {
   });
 
   describe('guestGuard', () => {
-    it('un usuario anónimo ve /acceso', async () => {
-      await harness.navigateByUrl('/acceso');
+    it('un usuario anónimo ve /access', async () => {
+      await harness.navigateByUrl('/access');
 
-      expect(router.url).toBe('/acceso');
+      expect(router.url).toBe('/access');
     });
 
-    it('un usuario con sesión que abre /acceso va a la página de inicio', async () => {
+    it('un usuario con sesión que abre /access va a la página de inicio', async () => {
       currentUser.set(makeUser());
-      await harness.navigateByUrl('/acceso');
+      await harness.navigateByUrl('/access');
 
       expect(router.url).toBe('/');
     });
   });
 
-  it('las redirecciones no entran en bucle: de ruta protegida a /acceso se queda en /acceso', async () => {
+  it('las redirecciones no entran en bucle: de ruta protegida a /access se queda en /access', async () => {
     await harness.navigateByUrl('/journeys');
-    expect(router.url.startsWith('/acceso')).toBeTrue();
-    expect(router.url).not.toContain('returnUrl=%2Facceso');
+    expect(router.url.startsWith('/access')).toBeTrue();
+    expect(router.url).not.toContain('returnUrl=%2Faccess');
   });
 });

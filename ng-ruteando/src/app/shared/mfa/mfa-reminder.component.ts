@@ -16,7 +16,7 @@ import { MfaApi } from '../../core/api/data/mfa.api';
 import { MfaStatus } from '../../core/auth/mfa.model';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
-const PROFILE = '/perfil';
+const PROFILE = '/profile';
 const onProfile = (url: string) => url.split(/[?#]/)[0] === PROFILE;
 
 /** Hay algo que activar: la persona no tiene ningún método y la empresa permite y el servidor ofrece al menos uno. */
@@ -43,7 +43,7 @@ export function needsMfaActivation(status: MfaStatus): boolean {
           <span>{{ 'Aún no tienes ningún método activo: elige correo, SMS o una aplicación autenticadora.' | t }}</span>
         </p>
         <span class="actions">
-          <a mat-flat-button routerLink="/perfil">{{ 'Activar ahora' | t }}</a>
+          <a mat-flat-button routerLink="/profile">{{ 'Activar ahora' | t }}</a>
           <button mat-button type="button" (click)="dismissed.set(true)">{{ 'Más tarde' | t }}</button>
         </span>
       </div>

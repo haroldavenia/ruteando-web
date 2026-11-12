@@ -69,9 +69,9 @@ describe('nav-items', () => {
     it('administración y agentes pueden planificar una jornada, crear un paquete e importar paquetes', () => {
       for (const role of ['tenant_admin', 'super_admin', 'agent'] as UserRole[]) {
         expect(quickActionsFor(role).map((action) => [action.label, action.link])).toEqual([
-          ['Planificar jornada', '/jornadas/nueva'],
-          ['Nuevo paquete', '/paquetes/nuevo'],
-          ['Importar paquetes', '/paquetes/importar'],
+          ['Planificar jornada', '/journeys/new'],
+          ['Nuevo paquete', '/packages/new'],
+          ['Importar paquetes', '/packages/import'],
         ]);
       }
     });

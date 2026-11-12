@@ -19,7 +19,7 @@ import { refreshInterceptor } from '../../../core/api/refresh.interceptor';
 import { CurrentUser } from '../../../core/auth/current-user';
 import { ResetPasswordComponent } from './reset-password.component';
 
-@Component({ template: 'acceso' })
+@Component({ template: 'access' })
 class AccesoComponent {}
 
 const fx = (f: unknown) => f as unknown as Fixture;
@@ -47,9 +47,9 @@ describe('ResetPasswordComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'acceso/restablecer', component: ResetPasswordComponent },
-          { path: 'acceso/recuperar', component: AccesoComponent },
-          { path: 'acceso', component: AccesoComponent },
+          { path: 'access/reset', component: ResetPasswordComponent },
+          { path: 'access/recover', component: AccesoComponent },
+          { path: 'access', component: AccesoComponent },
         ]),
         provideNoopAnimations(),
         { provide: API_BASE_URL, useValue: '/gateway' },
@@ -72,9 +72,9 @@ describe('ResetPasswordComponent', () => {
   afterEach(() => controller.verify());
 
   describe('con un token', () => {
-    beforeEach(() => open('/acceso/restablecer?token=TOKEN-9'));
+    beforeEach(() => open('/access/reset?token=TOKEN-9'));
 
-    it('cambia la contraseña con el token en el cuerpo, lleva a /acceso con el aviso y no inicia sesión', async () => {
+    it('cambia la contraseña con el token en el cuerpo, lleva a /access con el aviso y no inicia sesión', async () => {
       type(inputs()[0], VALID_PASSWORD);
       type(inputs()[1], VALID_PASSWORD);
       submit();
@@ -84,7 +84,7 @@ describe('ResetPasswordComponent', () => {
       respondWith(req, fx(resetFx));
       await wait();
 
-      expect(router.url).toBe('/acceso');
+      expect(router.url).toBe('/access');
       expect(snackOpen).toHaveBeenCalledOnceWith('Contraseña actualizada, ya puedes iniciar sesión', 'Cerrar', {
         duration: 6000,
       });
@@ -96,7 +96,7 @@ describe('ResetPasswordComponent', () => {
         [],
         jasmine.objectContaining({ queryParams: { token: null }, replaceUrl: true })
       );
-      expect(router.url).toBe('/acceso/restablecer');
+      expect(router.url).toBe('/access/reset');
     });
 
     it('sigue pudiendo enviar con el token guardado en memoria tras quitarlo de la URL', async () => {
@@ -159,7 +159,7 @@ describe('ResetPasswordComponent', () => {
 
       expect(root.querySelector('[role="alert"]')?.textContent).toContain('El enlace no es válido o ha caducado');
       expect(root.querySelector('form')).toBeNull();
-      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/acceso/recuperar');
+      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/access/recover');
     });
 
     it('con PASSWORD_POLICY_VIOLATION mantiene el formulario y el enlace, muestra la regla, vacía las contraseñas, enfoca la nueva y permite reintentar con el mismo token', async () => {
@@ -176,7 +176,7 @@ describe('ResetPasswordComponent', () => {
       expect(alert).not.toContain('El enlace no es válido');
       expect(root.querySelector('form')).not.toBeNull();
       expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).not.toContain(
-        '/acceso/recuperar'
+        '/access/recover'
       );
       expect(inputs().map((i) => i.value)).toEqual(['', '']);
       expect(document.activeElement).toBe(inputs()[0]);
@@ -207,7 +207,7 @@ describe('ResetPasswordComponent', () => {
 
       expect(root.querySelector('[role="alert"]')?.textContent).toContain('El enlace no es válido o ha caducado');
       expect(root.querySelector('form')).toBeNull();
-      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/acceso/recuperar');
+      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/access/recover');
     });
 
     it('con un fallo del servidor muestra el mensaje genérico, vacía las contraseñas y permite reintentar', () => {
@@ -228,11 +228,11 @@ describe('ResetPasswordComponent', () => {
   });
 
   it('sin token muestra el mensaje de enlace no válido y el enlace para solicitar otro, sin formulario', async () => {
-    await open('/acceso/restablecer');
+    await open('/access/reset');
 
     expect(root.querySelector('[role="alert"]')?.textContent).toContain('El enlace no es válido o ha caducado');
     expect(root.querySelector('form')).toBeNull();
-    expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/acceso/recuperar');
+    expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/access/recover');
     controller.expectNone(RESET);
   });
 });

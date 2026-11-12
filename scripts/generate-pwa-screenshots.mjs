@@ -85,7 +85,7 @@ try {
       ],
     });
     events.length = 0;
-    await send('Page.navigate', { url: `${base}/acceso` });
+    await send('Page.navigate', { url: `${base}/access` });
     for (let i = 0; i < 80 && !events.includes('Page.loadEventFired'); i++) await sleep(250);
     await sleep(3500); // tipografías (Google Fonts) y arranque de Angular
     const reply = await send('Page.captureScreenshot', { format: 'png' });
