@@ -2,7 +2,7 @@
 
 - [x] 1.1 La persona elige métodos (Google, GitHub, Apple y SSO empresarial), política (permitido con interruptor por empresa), relación con el 2FA (se sigue pidiendo) y cómo se obtiene la sesión (intercambio en el gateway)
 - [x] 1.2 Documentar el contrato de `POST /auth/sso/exchange` en `design.md`
-- [ ] 1.3 Pedir el endpoint de intercambio al equipo del gateway real (HanoIT)
+- [ ] 1.3 Pedir el endpoint de intercambio al equipo del gateway real (HanoIT). Texto redactado en la sesión del 2026-11-12; a esa fecha el gateway real NO tiene el endpoint (confirmado por la persona)
 
 ## 2. Servidor
 
@@ -23,6 +23,6 @@
 ## 4. Documentación y entrega
 
 - [x] 4.1 `.env.example`, `README.md` (sección «Inicio de sesión único») y `CLAUDE.md`
-- [ ] 4.2 Verificar con el simulado en el navegador (`scripts/mock-oidc-provider.cjs`) y con CI en verde
-- [ ] 4.3 Verificar con un proveedor real (Google primero) y con el gateway real cuando ofrezca el intercambio
+- [x] 4.2 Verificar con el simulado en el navegador (`scripts/mock-oidc-provider.cjs`) y con CI en verde
+- [ ] 4.3 Verificar con un proveedor real (Google primero) y con el gateway real cuando ofrezca el intercambio (bloqueada: sin el endpoint no se puede probar contra el gateway real)
 - [ ] 4.4 Archivar el change tras fusionar y verificar
