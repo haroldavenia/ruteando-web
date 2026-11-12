@@ -208,7 +208,7 @@ describe('AuthService', () => {
       await done;
     }
 
-    it('llama a POST /auth/logout, limpia la sesión y lleva a /acceso', async () => {
+    it('llama a POST /auth/logout, limpia la sesión y lleva a /access', async () => {
       await loggedIn();
       const done = new Promise((resolve) => service.logout().subscribe(resolve));
 
@@ -221,7 +221,7 @@ describe('AuthService', () => {
       expect(tokens.get()).toBe('');
       expect(tokens.getRefreshToken()).toBeNull();
       expect(currentUser.isAuthenticated()).toBeFalse();
-      expect(navigate).toHaveBeenCalledOnceWith(['/acceso']);
+      expect(navigate).toHaveBeenCalledOnceWith(['/access']);
     });
 
     it('si el gateway falla al cerrar, la sesión local se limpia igualmente', async () => {
@@ -233,7 +233,7 @@ describe('AuthService', () => {
 
       expect(tokens.get()).toBe('');
       expect(currentUser.isAuthenticated()).toBeFalse();
-      expect(navigate).toHaveBeenCalledOnceWith(['/acceso']);
+      expect(navigate).toHaveBeenCalledOnceWith(['/access']);
       controller.expectNone(REFRESH_URL);
     });
 
@@ -292,7 +292,7 @@ describe('AuthService', () => {
 
       expect(tokens.get()).toBe('');
       expect(currentUser.isAuthenticated()).toBeFalse();
-      expect(navigate).toHaveBeenCalledOnceWith(['/acceso'], { queryParams: { returnUrl: '/places' } });
+      expect(navigate).toHaveBeenCalledOnceWith(['/access'], { queryParams: { returnUrl: '/places' } });
     });
 
     it('al cerrar sesión se cancela la renovación programada', async () => {

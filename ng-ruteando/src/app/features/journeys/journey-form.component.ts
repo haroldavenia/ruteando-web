@@ -120,7 +120,7 @@ export class JourneyFormComponent implements HasUnsavedChanges {
       this.api.plan({ name: name.trim(), settingsId, packageIds: this.selectedIds() }),
       (journey) => {
         this.saved.set(true);
-        void this.router.navigate(['/jornadas', journey.id]);
+        void this.router.navigate(['/journeys', journey.id]);
       },
       {},
       planErrorMessage

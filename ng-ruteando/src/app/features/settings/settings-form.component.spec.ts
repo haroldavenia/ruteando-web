@@ -101,7 +101,7 @@ describe('SettingsFormComponent', () => {
       const head = root().querySelector('app-form-head')!;
 
       expect(head.querySelector('h1')?.textContent).toBe('Nueva configuración');
-      expect(head.querySelector('a.back')?.getAttribute('href')).toBe('/configuraciones');
+      expect(head.querySelector('a.back')?.getAttribute('href')).toBe('/settings');
     });
 
     it('los campos van en cinco secciones con icono y título', () => {
@@ -176,7 +176,7 @@ describe('SettingsFormComponent', () => {
 
     it('las acciones siguen siendo Cancelar y Guardar, con el aviso de cambios sin guardar', () => {
       const actions = root().querySelector('app-form-actions')!;
-      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/configuraciones');
+      expect(actions.querySelector('a')?.getAttribute('href')).toBe('/settings');
       expect(actions.querySelector('button')?.getAttribute('type')).toBe('submit');
 
       type('description', 'Reparto');
@@ -337,15 +337,15 @@ describe('SettingsFormComponent', () => {
     it('lo explica y enlaza a su pantalla de creación', () => {
       setup(null, { places: EMPTY_PAGE, resources: EMPTY_PAGE });
       expect(root().textContent).toContain('Todavía no hay lugares');
-      expect(root().querySelector('a[href="/lugares/nuevo"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/places/new"]')).not.toBeNull();
       expect(root().textContent).toContain('Todavía no hay vehículos');
-      expect(root().querySelector('a[href="/flota/vehiculos/nuevo"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/fleet/vehicles/new"]')).not.toBeNull();
     });
 
     it('con datos no muestra los enlaces', () => {
       setup(null);
-      expect(root().querySelector('a[href="/lugares/nuevo"]')).toBeNull();
-      expect(root().querySelector('a[href="/flota/vehiculos/nuevo"]')).toBeNull();
+      expect(root().querySelector('a[href="/places/new"]')).toBeNull();
+      expect(root().querySelector('a[href="/fleet/vehicles/new"]')).toBeNull();
     });
   });
 
@@ -422,7 +422,7 @@ describe('SettingsFormComponent', () => {
       http.expectOne('/gateway/settings/x').flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
-      expect(root().querySelector('a[href="/configuraciones"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/settings"]')).not.toBeNull();
     });
   });
 });

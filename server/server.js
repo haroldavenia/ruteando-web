@@ -79,7 +79,7 @@ function cacheHeaders(res, file) {
   }
 }
 
-// redirect: false -> el prerender deja carpetas como acceso/ y `GET /acceso` no debe redirigir a `/acceso/`
+// redirect: false -> el prerender deja carpetas como acceso/ y `GET /access` no debe redirigir a `/access/`
 app.use(express.static(WEB_DIST, { index: false, redirect: false, setHeaders: cacheHeaders }));
 
 app.get('*', function (req, res) {

@@ -242,7 +242,7 @@ export class ResourceTypeFormComponent implements HasUnsavedChanges {
       this.saved.set(true);
       void notify(this.injector, this.id === null ? t('Tipo de vehículo creado') : t('Tipo de vehículo guardado'));
       const state = this.handoff ? toHandoffState({ draft: this.handoff.draft, createdTypeId: record.id }) : undefined;
-      void this.router.navigateByUrl(this.returnTo ?? '/flota/tipos', { state });
+      void this.router.navigateByUrl(this.returnTo ?? '/fleet/types', { state });
     });
   }
 }

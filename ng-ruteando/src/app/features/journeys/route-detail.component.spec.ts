@@ -89,8 +89,8 @@ describe('RouteDetailComponent', () => {
 
   it('enlaza de vuelta a la jornada', () => {
     setup('0');
-    const back = root().querySelector('a[href^="/jornadas/"]') as HTMLAnchorElement;
-    expect(back.getAttribute('href')).toBe(`/jornadas/${journey.id}`);
+    const back = root().querySelector('a[href^="/journeys/"]') as HTMLAnchorElement;
+    expect(back.getAttribute('href')).toBe(`/journeys/${journey.id}`);
     expect(back.textContent).toContain(journey.name);
   });
 
@@ -98,7 +98,7 @@ describe('RouteDetailComponent', () => {
     setup('0');
     const back = root().querySelector('app-form-head a.back') as HTMLAnchorElement;
 
-    expect(back.getAttribute('href')).toBe(`/jornadas/${journey.id}`);
+    expect(back.getAttribute('href')).toBe(`/journeys/${journey.id}`);
     expect(back.textContent?.trim()).toBe(`Jornada ${journey.name}`);
     expect(root().querySelector('app-form-head h1')?.textContent).toBe('Capture vehicle');
   });
@@ -137,7 +137,7 @@ describe('RouteDetailComponent', () => {
     it(`el índice «${index}» que no corresponde a una ruta muestra «El registro ya no existe» con enlace a la jornada`, () => {
       setup(index);
       expect(text()).toContain('El registro ya no existe');
-      expect(root().querySelector('a[href^="/jornadas/"]')?.getAttribute('href')).toBe(`/jornadas/${journey.id}`);
+      expect(root().querySelector('a[href^="/journeys/"]')?.getAttribute('href')).toBe(`/journeys/${journey.id}`);
       expect(root().querySelector('app-routes-map')).toBeNull();
     });
   }
@@ -145,13 +145,13 @@ describe('RouteDetailComponent', () => {
   it('una jornada inexistente (404) enlaza al listado', () => {
     setup('0', undefined, { status: 404 });
     expect(text()).toContain('El registro ya no existe');
-    expect(root().querySelector('a[href="/jornadas"]')).not.toBeNull();
+    expect(root().querySelector('a[href="/journeys"]')).not.toBeNull();
   });
 
   it('un fallo de red muestra el error y permite volver al listado', () => {
     setup('0', undefined, { status: 500 });
     expect(root().querySelector('[role="alert"]')?.textContent?.trim()).toBeTruthy();
-    expect(root().querySelector('a[href="/jornadas"]')).not.toBeNull();
+    expect(root().querySelector('a[href="/journeys"]')).not.toBeNull();
   });
 
   describe('presentación', () => {

@@ -62,8 +62,8 @@ export class SessionRefreshService {
     this.tokens.resetToken();
     this.expired$.next();
     const url = this.router.url;
-    if (!url.startsWith('/acceso')) {
-      void this.router.navigate(['/acceso'], url === '/' ? {} : { queryParams: { returnUrl: url } });
+    if (!url.startsWith('/access')) {
+      void this.router.navigate(['/access'], url === '/' ? {} : { queryParams: { returnUrl: url } });
     }
   }
 }

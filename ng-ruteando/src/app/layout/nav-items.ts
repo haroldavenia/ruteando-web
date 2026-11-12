@@ -24,18 +24,18 @@ export const NAV_ITEMS: readonly NavItem[] = [
     icon: 'local_shipping',
     roles: ADMIN_ROLES,
     children: [
-      { label: t('Vehículos'), icon: 'directions_car', link: '/flota/vehiculos' },
-      { label: t('Tipos de vehículo'), icon: 'category', link: '/flota/tipos' },
-      { label: t('Conductores'), icon: 'badge', link: '/flota/conductores' },
+      { label: t('Vehículos'), icon: 'directions_car', link: '/fleet/vehicles' },
+      { label: t('Tipos de vehículo'), icon: 'category', link: '/fleet/types' },
+      { label: t('Conductores'), icon: 'badge', link: '/fleet/drivers' },
     ],
   },
-  { label: t('Lugares'), icon: 'place', link: '/lugares', roles: ADMIN_ROLES },
-  { label: t('Zonas'), icon: 'hexagon', link: '/zonas', roles: ADMIN_ROLES },
-  { label: t('Paquetes'), icon: 'deployed_code', link: '/paquetes', roles: OPERATIONS_ROLES },
-  { label: t('Jornadas'), icon: 'route', link: '/jornadas', roles: OPERATIONS_ROLES },
-  { label: t('Configuraciones'), short: t('Config.'), icon: 'tune', link: '/configuraciones', roles: ADMIN_ROLES },
-  { label: t('Auditoría'), icon: 'history', link: '/auditoria', roles: OPERATIONS_ROLES },
-  { label: t('Seguridad'), icon: 'shield', link: '/seguridad', roles: ADMIN_ROLES },
+  { label: t('Lugares'), icon: 'place', link: '/places', roles: ADMIN_ROLES },
+  { label: t('Zonas'), icon: 'hexagon', link: '/zones', roles: ADMIN_ROLES },
+  { label: t('Paquetes'), icon: 'deployed_code', link: '/packages', roles: OPERATIONS_ROLES },
+  { label: t('Jornadas'), icon: 'route', link: '/journeys', roles: OPERATIONS_ROLES },
+  { label: t('Configuraciones'), short: t('Config.'), icon: 'tune', link: '/settings', roles: ADMIN_ROLES },
+  { label: t('Auditoría'), icon: 'history', link: '/audit', roles: OPERATIONS_ROLES },
+  { label: t('Seguridad'), icon: 'shield', link: '/security', roles: ADMIN_ROLES },
 ];
 
 /** Acción rápida de la búsqueda: lleva a una pantalla en la que se empieza algo. */
@@ -47,9 +47,9 @@ export interface QuickAction {
 }
 
 export const QUICK_ACTIONS: readonly QuickAction[] = [
-  { label: t('Planificar jornada'), icon: 'add_road', link: '/jornadas/nueva', roles: OPERATIONS_ROLES },
-  { label: t('Nuevo paquete'), icon: 'add_box', link: '/paquetes/nuevo', roles: OPERATIONS_ROLES },
-  { label: t('Importar paquetes'), icon: 'upload_file', link: '/paquetes/importar', roles: OPERATIONS_ROLES },
+  { label: t('Planificar jornada'), icon: 'add_road', link: '/journeys/new', roles: OPERATIONS_ROLES },
+  { label: t('Nuevo paquete'), icon: 'add_box', link: '/packages/new', roles: OPERATIONS_ROLES },
+  { label: t('Importar paquetes'), icon: 'upload_file', link: '/packages/import', roles: OPERATIONS_ROLES },
 ];
 
 /** Acciones rápidas que el rol puede hacer (las mismas rutas que ya protegen las guardas). */

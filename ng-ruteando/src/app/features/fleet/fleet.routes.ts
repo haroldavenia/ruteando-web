@@ -3,9 +3,9 @@ import { Routes } from '@angular/router';
 import { unsavedChangesGuard } from '../../shared/data/unsaved-changes.guard';
 
 export const FLEET_ROUTES: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'vehiculos' },
+  { path: '', pathMatch: 'full', redirectTo: 'vehicles' },
   {
-    path: 'tipos',
+    path: 'types',
     children: [
       {
         path: '',
@@ -14,7 +14,7 @@ export const FLEET_ROUTES: Routes = [
           import('./resource-types/resource-type-list.component').then((m) => m.ResourceTypeListComponent),
       },
       {
-        path: 'nuevo',
+        path: 'new',
         canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>
           import('./resource-types/resource-type-form.component').then((m) => m.ResourceTypeFormComponent),
@@ -28,7 +28,7 @@ export const FLEET_ROUTES: Routes = [
     ],
   },
   {
-    path: 'vehiculos',
+    path: 'vehicles',
     children: [
       {
         path: '',
@@ -36,7 +36,7 @@ export const FLEET_ROUTES: Routes = [
         loadComponent: () => import('./resources/resource-list.component').then((m) => m.ResourceListComponent),
       },
       {
-        path: 'nuevo',
+        path: 'new',
         canDeactivate: [unsavedChangesGuard],
         loadComponent: () => import('./resources/resource-form.component').then((m) => m.ResourceFormComponent),
       },
@@ -48,7 +48,7 @@ export const FLEET_ROUTES: Routes = [
     ],
   },
   {
-    path: 'conductores',
+    path: 'drivers',
     children: [
       {
         path: '',
@@ -56,7 +56,7 @@ export const FLEET_ROUTES: Routes = [
         loadComponent: () => import('./drivers/driver-list.component').then((m) => m.DriverListComponent),
       },
       {
-        path: 'nuevo',
+        path: 'new',
         canDeactivate: [unsavedChangesGuard],
         loadComponent: () => import('./drivers/driver-form.component').then((m) => m.DriverFormComponent),
       },

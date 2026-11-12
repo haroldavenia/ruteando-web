@@ -9,7 +9,7 @@ export const PLACES_ROUTES: Routes = [
     loadComponent: () => import('./place-list.component').then((m) => m.PlaceListComponent),
   },
   {
-    path: 'nuevo',
+    path: 'new',
     canDeactivate: [unsavedChangesGuard],
     loadComponent: () => import('./place-form.component').then((m) => m.PlaceFormComponent),
   },

@@ -103,7 +103,7 @@ after(() => {
 
 for (const [name, url, status] of [
   ['la página de la aplicación', '/', 200],
-  ['una ruta del cliente', '/acceso/registro', 200],
+  ['una ruta del cliente', '/access/register', 200],
   ['un fichero estático', '/app.js', 200],
   ['un fichero inexistente', '/no-existe.js', 404],
   ['una ruta /api', '/api/x', 404],

@@ -39,8 +39,8 @@ describe('VerifyEmailComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'acceso/verificar-email', component: VerifyEmailComponent },
-          { path: 'acceso', component: InicioComponent },
+          { path: 'access/verify-email', component: VerifyEmailComponent },
+          { path: 'access', component: InicioComponent },
           { path: '', pathMatch: 'full', component: InicioComponent },
         ]),
         provideNoopAnimations(),
@@ -73,7 +73,7 @@ describe('VerifyEmailComponent', () => {
   describe('con un token válido', () => {
     beforeEach(async () => {
       await setup();
-      await harness.navigateByUrl('/acceso/verificar-email?token=TOKEN-1');
+      await harness.navigateByUrl('/access/verify-email?token=TOKEN-1');
       harness.detectChanges();
       await wait();
     });
@@ -111,7 +111,7 @@ describe('VerifyEmailComponent', () => {
   describe('con un token rechazado', () => {
     beforeEach(async () => {
       await setup();
-      await harness.navigateByUrl('/acceso/verificar-email?token=MALO');
+      await harness.navigateByUrl('/access/verify-email?token=MALO');
       harness.detectChanges();
       await wait();
       controller.expectOne(VERIFY).flush({ error: 'BAD_REQUEST' }, { status: 400, statusText: 'x' });
@@ -122,9 +122,9 @@ describe('VerifyEmailComponent', () => {
     it('muestra el mensaje de enlace no válido, el formulario de reenvío y el enlace a iniciar sesión', () => {
       expect(root.querySelector('[role="alert"]')?.textContent).toContain('El enlace no es válido o ha caducado');
       expect(root.querySelector('input[type="email"]')).not.toBeNull();
-      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/acceso');
+      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/access');
       expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
-      expect(router.url).toBe('/acceso/verificar-email');
+      expect(router.url).toBe('/access/verify-email');
     });
 
     it('permite reenviar la verificación y muestra el mensaje neutro', () => {
@@ -154,7 +154,7 @@ describe('VerifyEmailComponent', () => {
 
   it('sin token muestra el mensaje de enlace no válido sin llamar al gateway', async () => {
     await setup();
-    await open('/acceso/verificar-email');
+    await open('/access/verify-email');
 
     controller.expectNone(VERIFY);
     expect(root.querySelector('[role="alert"]')?.textContent).toContain('El enlace no es válido o ha caducado');
@@ -162,7 +162,7 @@ describe('VerifyEmailComponent', () => {
 
   it('con un fallo del servidor muestra el mensaje genérico y deja reintentar', async () => {
     await setup();
-    await harness.navigateByUrl('/acceso/verificar-email?token=T');
+    await harness.navigateByUrl('/access/verify-email?token=T');
     harness.detectChanges();
     await wait();
     controller.expectOne(VERIFY).flush(null, { status: 503, statusText: 'x' });
@@ -175,7 +175,7 @@ describe('VerifyEmailComponent', () => {
 
   it('en el servidor (SSR) no consume el token: no llama al gateway', async () => {
     await setup('server');
-    await harness.navigateByUrl('/acceso/verificar-email?token=TOKEN-1');
+    await harness.navigateByUrl('/access/verify-email?token=TOKEN-1');
     harness.detectChanges();
     await wait();
 

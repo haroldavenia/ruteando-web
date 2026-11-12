@@ -85,7 +85,7 @@ describe('ZoneFormComponent', () => {
     beforeEach(() => setup(null));
 
     it('la cabecera ofrece volver a las zonas y los campos van en dos secciones con icono', () => {
-      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/zonas');
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/zones');
       expect(
         Array.from(root().querySelectorAll('form section.form-section h2')).map((h) => h.textContent?.trim())
       ).toEqual(['Datos de la zona', 'Polígono']);
@@ -302,7 +302,7 @@ describe('ZoneFormComponent', () => {
         .flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
-      expect(root().querySelector('a[href="/zonas"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/zones"]')).not.toBeNull();
       expect(root().querySelector('form')).toBeNull();
     });
   });

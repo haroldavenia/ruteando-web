@@ -1,7 +1,7 @@
 <app-form-head
   [title]="isNew ? ('Nuevo vehículo' | t) : ('Editar vehículo' | t)"
   [backLabel]="'Vehículos' | t"
-  backLink="/flota/vehiculos"
+  backLink="/fleet/vehicles"
 />
 @switch (loader.status()) {
   @case ('loading') {
@@ -9,11 +9,11 @@
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/flota/vehiculos">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/fleet/vehicles">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/flota/vehiculos">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/fleet/vehicles">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
@@ -46,7 +46,7 @@
         @if (typesLoaded() && types().length === 0) {
           <p class="hint">
             {{ 'Todavía no hay tipos de vehículo. Primero' | t }}
-            <a routerLink="/flota/tipos">{{ 'crea un tipo' | t }}</a
+            <a routerLink="/fleet/types">{{ 'crea un tipo' | t }}</a
             >.
           </p>
         }
@@ -68,7 +68,7 @@
         @if (placesLoaded() && places().length === 0) {
           <p class="hint">
             {{ 'Todavía no hay lugares que usar como depósito. Primero' | t }}
-            <a routerLink="/lugares/nuevo">{{ 'crea un lugar' | t }}</a
+            <a routerLink="/places/new">{{ 'crea un lugar' | t }}</a
             >.
           </p>
         }
@@ -100,7 +100,7 @@
       </section>
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
-        <a mat-button routerLink="/flota/vehiculos">{{ 'Cancelar' | t }}</a>
+        <a mat-button routerLink="/fleet/vehicles">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
           {{ 'Guardar' | t }}
         </button>

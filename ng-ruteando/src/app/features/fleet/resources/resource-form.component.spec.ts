@@ -149,29 +149,29 @@ describe('ResourceFormComponent', () => {
       expect(control('name').value).toBe((fx(create).request.body as { name: string }).name);
     });
 
-    it('sin tipos explica que hay que crear uno y enlaza a /flota/tipos', () => {
+    it('sin tipos explica que hay que crear uno y enlaza a /fleet/types', () => {
       setup(null, {
         types: {
           response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } },
         },
       });
       expect(root().textContent).toContain('Todavía no hay tipos de vehículo');
-      expect(root().querySelector('a[href="/flota/tipos"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/fleet/types"]')).not.toBeNull();
     });
 
-    it('sin lugares explica que hace falta un depósito y enlaza a /lugares/nuevo', () => {
+    it('sin lugares explica que hace falta un depósito y enlaza a /places/new', () => {
       setup(null, {
         places: {
           response: { status: 200, body: { content: [], totalElements: 0, totalPages: 0, page: 0, size: 200 } },
         },
       });
       expect(root().textContent).toContain('Todavía no hay lugares que usar como depósito');
-      expect(root().querySelector('a[href="/lugares/nuevo"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/places/new"]')).not.toBeNull();
     });
 
     it('con lugares no muestra el enlace', () => {
       setup(null);
-      expect(root().querySelector('a[href="/lugares/nuevo"]')).toBeNull();
+      expect(root().querySelector('a[href="/places/new"]')).toBeNull();
     });
 
     it('avisa cuando la lista de tipos está truncada', () => {
@@ -197,7 +197,7 @@ describe('ResourceFormComponent', () => {
       http.expectOne('/gateway/resources/x').flush({ message: 'nf' }, { status: 404, statusText: 'Not Found' });
       fixture.detectChanges();
       expect(root().textContent).toContain('El registro ya no existe');
-      expect(root().querySelector('a[href="/flota/vehiculos"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/fleet/vehicles"]')).not.toBeNull();
     });
     it('al guardar reenvía los tipos de paquete y las zonas permitidas que el formulario no toca', () => {
       const record = {
@@ -255,7 +255,7 @@ describe('ResourceFormComponent', () => {
       (root().querySelector('.type-actions button') as HTMLButtonElement).click();
 
       const [commands, extras] = navigate.calls.mostRecent().args;
-      expect(commands).toEqual(['/flota/tipos/nuevo']);
+      expect(commands).toEqual(['/fleet/types/new']);
       expect(extras?.queryParams).toEqual({ volver: '/' });
       const handoff = (extras?.state as Record<string, { draft: { name: string; anchorDate: string } }>)[
         'fleetTypeHandoff'

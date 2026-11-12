@@ -6,19 +6,19 @@
   @case ('missing') {
     <h1>{{ 'Ruta' | t }}</h1>
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/jornadas">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/journeys">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <h1>{{ 'Ruta' | t }}</h1>
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/jornadas">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/journeys">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     @if (route(); as route) {
       <app-form-head
         [title]="route.name"
         [backLabel]="('Jornada ' | t) + loader.record()?.name"
-        [backLink]="'/jornadas/' + journeyId"
+        [backLink]="'/journeys/' + journeyId"
       />
 
       <section class="card" aria-labelledby="summary-title">
@@ -75,7 +75,7 @@
     } @else if (routeMissing()) {
       <h1>{{ 'Ruta' | t }}</h1>
       <app-form-result [error]="gone" />
-      <a mat-stroked-button [routerLink]="['/jornadas', journeyId]">{{ 'Volver a la jornada' | t }}</a>
+      <a mat-stroked-button [routerLink]="['/journeys', journeyId]">{{ 'Volver a la jornada' | t }}</a>
     }
   }
 }

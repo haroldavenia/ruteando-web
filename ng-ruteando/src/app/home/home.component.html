@@ -6,10 +6,10 @@
       <p class="greeting">{{ summary() }}</p>
       @if (canOperate()) {
         <div class="hero-actions">
-          <a mat-flat-button routerLink="/jornadas/nueva"
+          <a mat-flat-button routerLink="/journeys/new"
             ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Planificar jornada' | t }}</a
           >
-          <a mat-stroked-button routerLink="/paquetes/importar">{{ 'Importar paquetes' | t }}</a>
+          <a mat-stroked-button routerLink="/packages/import">{{ 'Importar paquetes' | t }}</a>
         </div>
       }
     </div>
@@ -31,7 +31,7 @@
           @if (figures(); as f) {
             @if (f.sample === 0) {
               <p>{{ 'Todavía no hay paquetes.' | t }}</p>
-              <a mat-stroked-button routerLink="/paquetes/nuevo">{{ 'Crear el primer paquete' | t }}</a>
+              <a mat-stroked-button routerLink="/packages/new">{{ 'Crear el primer paquete' | t }}</a>
             } @else {
               <app-progress-ring [value]="f.percent" />
               <p class="summary">{{ figuresSummary(f) }}</p>
@@ -58,7 +58,7 @@
     <section class="card" aria-labelledby="journeys-title">
       <div class="card-head">
         <h2 id="journeys-title">{{ 'Últimas jornadas' | t }}</h2>
-        <a mat-stroked-button routerLink="/jornadas" [attr.aria-label]="'Ver todas las jornadas' | t">{{
+        <a mat-stroked-button routerLink="/journeys" [attr.aria-label]="'Ver todas las jornadas' | t">{{
           'Ver todas' | t
         }}</a>
       </div>
@@ -73,13 +73,13 @@
         @case ('ready') {
           @if (journeys().length === 0) {
             <p>{{ 'Todavía no hay jornadas.' | t }}</p>
-            <a mat-stroked-button routerLink="/jornadas/nueva">{{ 'Planificar la primera jornada' | t }}</a>
+            <a mat-stroked-button routerLink="/journeys/new">{{ 'Planificar la primera jornada' | t }}</a>
           } @else {
             <ul class="journeys status-rows">
               @for (journey of journeys(); track journey.id) {
                 <li>
                   <div class="row-main">
-                    <a [routerLink]="['/jornadas', journey.id]">{{ journey.name }}</a>
+                    <a [routerLink]="['/journeys', journey.id]">{{ journey.name }}</a>
                     <span class="meta">{{ details(journey) }}</span>
                   </div>
                   <app-status-badge [label]="statusLabel(journey.status)" [tone]="tone(journey.status)" />

@@ -19,7 +19,7 @@ import { MFA_CHALLENGE_HEADER } from '../api-paths';
 
 /**
  * Segundo factor (`/gateway/mfa/**`, lo atiende nuestro servidor, no el gateway). Dos formas de autenticarse:
- *  - con la sesión (token de acceso), la normal de `/perfil` y `/seguridad`;
+ *  - con la sesión (token de acceso), la normal de `/profile` y `/security`;
  *  - con `challengeId`, cuando la empresa exige el segundo factor y la persona aún no tiene sesión: el reto de activación
  *    obligatoria viaja en la cabecera `X-MFA-Challenge` (las altas lo aceptan en lugar del token).
  */

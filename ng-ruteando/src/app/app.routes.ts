@@ -3,11 +3,14 @@ import { Route, Routes } from '@angular/router';
 import { ADMIN_ROLES, OPERATIONS_ROLES } from './core/auth/admin-roles';
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
 import { LEGAL_DOCS } from './features/legal/legal-docs';
+import { LEGACY_REDIRECT } from './legacy-redirects';
 
 export const routes: Routes = [
+  // Direcciones en español de versiones anteriores: se reenvían a las actuales
+  LEGACY_REDIRECT,
   {
     // Pantallas de acceso: layout propio, sin barra ni menú lateral
-    path: 'acceso',
+    path: 'access',
     loadComponent: () => import('./features/access/access-layout.component').then((m) => m.AccessLayoutComponent),
     children: [
       {
@@ -17,25 +20,25 @@ export const routes: Routes = [
         loadComponent: () => import('./features/access/login/login.component').then((m) => m.LoginComponent),
       },
       {
-        path: 'registro',
+        path: 'register',
         // En el diseño ancho, la presentación son los pasos hasta la primera jornada
         data: { pitch: 'steps' },
         canActivate: [guestGuard],
         loadComponent: () => import('./features/access/register/register.component').then((m) => m.RegisterComponent),
       },
       {
-        path: 'verificar-email',
+        path: 'verify-email',
         loadComponent: () =>
           import('./features/access/verify-email/verify-email.component').then((m) => m.VerifyEmailComponent),
       },
       {
-        path: 'recuperar',
+        path: 'recover',
         canActivate: [guestGuard],
         loadComponent: () =>
           import('./features/access/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
       },
       {
-        path: 'restablecer',
+        path: 'reset',
         loadComponent: () =>
           import('./features/access/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
       },
@@ -61,66 +64,66 @@ export const routes: Routes = [
       },
       {
         // Flota: tipos de vehículo, vehículos y conductores, solo para quienes administran la empresa
-        path: 'flota',
+        path: 'fleet',
         canActivate: [roleGuard(ADMIN_ROLES)],
         canActivateChild: [roleGuard(ADMIN_ROLES)],
         loadChildren: () => import('./features/fleet/fleet.routes').then((m) => m.FLEET_ROUTES),
       },
       {
         // Lugares (depósitos, almacenes, tiendas...): mismos roles que la flota
-        path: 'lugares',
+        path: 'places',
         canActivate: [roleGuard(ADMIN_ROLES)],
         canActivateChild: [roleGuard(ADMIN_ROLES)],
         loadChildren: () => import('./features/places/places.routes').then((m) => m.PLACES_ROUTES),
       },
       {
         // Configuraciones de planificación: las gestionan los administradores
-        path: 'configuraciones',
+        path: 'settings',
         canActivate: [roleGuard(ADMIN_ROLES)],
         canActivateChild: [roleGuard(ADMIN_ROLES)],
         loadChildren: () => import('./features/settings/settings.routes').then((m) => m.SETTINGS_ROUTES),
       },
       {
         // Zonas (áreas con polígono): las gestionan los administradores
-        path: 'zonas',
+        path: 'zones',
         canActivate: [roleGuard(ADMIN_ROLES)],
         canActivateChild: [roleGuard(ADMIN_ROLES)],
         loadChildren: () => import('./features/zones/zones.routes').then((m) => m.ZONES_ROUTES),
       },
       {
         // Jornadas: planificar y consultar; como los paquetes, para administradores y agentes
-        path: 'jornadas',
+        path: 'journeys',
         canActivate: [roleGuard(OPERATIONS_ROLES)],
         canActivateChild: [roleGuard(OPERATIONS_ROLES)],
         loadChildren: () => import('./features/journeys/journeys.routes').then((m) => m.JOURNEYS_ROUTES),
       },
       {
         // Paquetes: trabajo diario de administradores y agentes (el conductor no entra)
-        path: 'paquetes',
+        path: 'packages',
         canActivate: [roleGuard(OPERATIONS_ROLES)],
         canActivateChild: [roleGuard(OPERATIONS_ROLES)],
         loadChildren: () => import('./features/packages/packages.routes').then((m) => m.PACKAGES_ROUTES),
       },
       {
         // Auditoría: qué se hizo, quién y cuándo. Administradores y agentes; cada rol ve los eventos que el gateway le permite
-        path: 'auditoria',
+        path: 'audit',
         canActivate: [roleGuard(OPERATIONS_ROLES)],
         canActivateChild: [roleGuard(OPERATIONS_ROLES)],
         loadChildren: () => import('./features/audit/audit.routes').then((m) => m.AUDIT_ROUTES),
       },
       {
         // Seguridad de la empresa (métodos de segundo factor y si es obligatorio): solo administradores
-        path: 'seguridad',
+        path: 'security',
         canActivate: [roleGuard(ADMIN_ROLES)],
         loadComponent: () => import('./features/security/security.component').then((m) => m.SecurityComponent),
       },
       {
         // Perfil: los datos de la propia persona y su verificación en dos pasos; cualquier rol con sesión
-        path: 'perfil',
+        path: 'profile',
         loadComponent: () => import('./features/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
-        path: 'sin-permiso',
+        path: 'forbidden',
         loadComponent: () => import('./features/access/forbidden.component').then((m) => m.ForbiddenComponent),
       },
     ],

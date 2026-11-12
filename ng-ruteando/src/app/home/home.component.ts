@@ -70,7 +70,7 @@ export class HomeComponent {
   protected readonly today = new Intl.DateTimeFormat(locale(), { weekday: 'long', day: 'numeric', month: 'long' })
     .format(new Date())
     .replace(',', '');
-  /** Quien puede abrir `/jornadas` y `/paquetes` (administradores y agentes) ve las acciones principales. */
+  /** Quien puede abrir `/journeys` y `/packages` (administradores y agentes) ve las acciones principales. */
   protected readonly canOperate = computed(() => {
     const role = this.currentUser.role();
     return role !== null && OPERATIONS_ROLES.includes(role);

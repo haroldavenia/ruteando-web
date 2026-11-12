@@ -73,7 +73,7 @@ describe('MfaReminderComponent', () => {
     fixture.detectChanges();
 
     expect(banner()?.textContent).toContain('Protege tu cuenta con la verificación en dos pasos');
-    expect(banner()?.querySelector('a')?.getAttribute('href')).toBe('/perfil');
+    expect(banner()?.querySelector('a')?.getAttribute('href')).toBe('/profile');
   });
 
   it('«Más tarde» lo oculta', async () => {

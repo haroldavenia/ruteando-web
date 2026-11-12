@@ -37,7 +37,7 @@ describe('LoginComponent', () => {
   }
   const submit = () => root.querySelector('form')!.dispatchEvent(new Event('submit'));
 
-  async function open(url = '/acceso'): Promise<void> {
+  async function open(url = '/access'): Promise<void> {
     await harness.navigateByUrl(url);
     harness.detectChanges();
     root = harness.routeNativeElement as HTMLElement;
@@ -48,7 +48,7 @@ describe('LoginComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'acceso', component: LoginComponent },
+          { path: 'access', component: LoginComponent },
           { path: 'journeys', component: DestinoComponent },
           { path: '', pathMatch: 'full', component: DestinoComponent },
         ]),
@@ -122,7 +122,7 @@ describe('LoginComponent', () => {
     }
 
     it('sin returnUrl lleva a la página de inicio e inicia sesión', async () => {
-      await open('/acceso');
+      await open('/access');
       await login();
 
       expect(router.url).toBe('/');
@@ -130,18 +130,18 @@ describe('LoginComponent', () => {
     });
 
     it('con una ruta interna en returnUrl lleva a esa ruta', async () => {
-      await open('/acceso?returnUrl=%2Fjourneys%3Fpage%3D2');
+      await open('/access?returnUrl=%2Fjourneys%3Fpage%3D2');
       await login();
 
       expect(router.url).toBe('/journeys?page=2');
     });
 
     it('con un returnUrl externo lo ignora y lleva a la página de inicio', async () => {
-      await open('/acceso?returnUrl=https%3A%2F%2Fotro.example%2Fruta');
+      await open('/access?returnUrl=https%3A%2F%2Fotro.example%2Fruta');
       await login();
       expect(router.url).toBe('/');
 
-      await open('/acceso?returnUrl=%2F%2Fotro.example');
+      await open('/access?returnUrl=%2F%2Fotro.example');
       TestBed.inject(CurrentUser).clear();
       await login();
       expect(router.url).toBe('/');
@@ -158,7 +158,7 @@ describe('LoginComponent', () => {
     await wait();
 
     expect(alertText()).toContain('Correo o contraseña incorrectos');
-    expect(router.url).toBe('/acceso');
+    expect(router.url).toBe('/access');
     expect(password().value).toBe('');
     expect(email().value).toBe('persona@example.invalid');
     expect(document.activeElement).toBe(password());
@@ -219,7 +219,7 @@ describe('LoginComponent', () => {
     const VERIFY = '/gateway/mfa/login/verify';
     const code = () => root.querySelector('input[autocomplete="one-time-code"]') as HTMLInputElement;
 
-    async function firstStep(response: object, url = '/acceso'): Promise<void> {
+    async function firstStep(response: object, url = '/access'): Promise<void> {
       await open(url);
       type(email(), 'persona@example.invalid');
       type(password(), 'una-clave-valida');
@@ -235,13 +235,13 @@ describe('LoginComponent', () => {
       expect(root.querySelector('app-mfa-verify-step')).not.toBeNull();
       expect(root.querySelector('input[autocomplete="current-password"]')).toBeNull();
       expect(root.textContent).not.toContain('una-clave-valida');
-      expect(router.url).toBe('/acceso');
+      expect(router.url).toBe('/access');
       expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
       expect(Object.keys(localStorage)).toEqual([]);
     });
 
     it('al verificar el código inicia sesión y va al destino de siempre', async () => {
-      await firstStep(CHALLENGE, '/acceso?returnUrl=%2Fjourneys%3Fpage%3D2');
+      await firstStep(CHALLENGE, '/access?returnUrl=%2Fjourneys%3Fpage%3D2');
       type(code(), '123456');
       submit();
       controller.expectOne(VERIFY).flush(makeSession());
@@ -288,7 +288,7 @@ describe('LoginComponent', () => {
       expect(root.textContent).toContain('Activa la verificación en dos pasos');
       expect(root.querySelectorAll('.choice').length).toBe(2);
       expect(TestBed.inject(CurrentUser).isAuthenticated()).toBeFalse();
-      expect(router.url).toBe('/acceso');
+      expect(router.url).toBe('/access');
     });
   });
 
@@ -296,8 +296,8 @@ describe('LoginComponent', () => {
     await open();
 
     const hrefs = Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'));
-    expect(hrefs).toContain('/acceso/recuperar');
-    expect(hrefs).toContain('/acceso/registro');
+    expect(hrefs).toContain('/access/recover');
+    expect(hrefs).toContain('/access/register');
   });
 
   it('el botón de la contraseña muestra y oculta el texto', async () => {

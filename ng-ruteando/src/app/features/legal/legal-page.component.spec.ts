@@ -25,8 +25,8 @@ describe('LegalPageComponent', () => {
   }
 
   const cases: [LegalDoc, string][] = [
-    ['privacidad', 'Política de privacidad'],
-    ['terminos', 'Términos y condiciones'],
+    ['privacy', 'Política de privacidad'],
+    ['terms', 'Términos y condiciones'],
     ['sms', 'Verificación por SMS'],
   ];
   for (const [doc, title] of cases) {
@@ -39,7 +39,7 @@ describe('LegalPageComponent', () => {
   }
 
   it('sin correo de contacto configurado remite a quien administra la empresa', () => {
-    open('privacidad');
+    open('privacy');
     const last = Array.from(root.querySelectorAll('section')).at(-1)!;
     expect(last.querySelector('h2')?.textContent).toBe('Contacto');
     expect(last.textContent).toContain('persona que administra Ruteando');
@@ -51,13 +51,13 @@ describe('LegalPageComponent', () => {
   });
 
   it('marca como actual el documento que se está leyendo y deja ir a los otros', () => {
-    open('terminos');
+    open('terms');
     const hrefs = Array.from(root.querySelectorAll('footer a')).map((a) => a.getAttribute('href'));
-    expect(hrefs).toEqual(['/legal/privacidad', '/legal/terminos', '/legal/sms']);
+    expect(hrefs).toEqual(['/legal/privacy', '/legal/terms', '/legal/sms']);
   });
 
   it('el botón Volver regresa a donde estaba la persona o, sin historial, va al inicio', () => {
-    open('privacidad');
+    open('privacy');
     const back = spyOn(TestBed.inject(Location), 'back');
     const go = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
 

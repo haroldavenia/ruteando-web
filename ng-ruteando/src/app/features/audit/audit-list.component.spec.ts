@@ -42,7 +42,7 @@ describe('AuditListComponent', () => {
 
   async function open(
     role: UserRole,
-    to = '/auditoria',
+    to = '/audit',
     rows: AuditLog[] | null = AUDIT_FIXTURE_LOGS,
     scope = 'audit-logs'
   ): Promise<void> {
@@ -79,8 +79,8 @@ describe('AuditListComponent', () => {
         provideLocationMocks(),
         provideRouter([
           { path: '', children: [] },
-          { path: 'auditoria', component: AuditListComponent },
-          { path: 'paquetes/:id', children: [] },
+          { path: 'audit', component: AuditListComponent },
+          { path: 'packages/:id', children: [] },
         ]),
         provideNoopAnimations(),
         { provide: API_BASE_URL, useValue: '/gateway' },
@@ -109,14 +109,14 @@ describe('AuditListComponent', () => {
     });
 
     it('un agente solo ve su actividad: título «Mi actividad», sin selector, pidiendo /me', async () => {
-      await open('agent', '/auditoria', AUDIT_FIXTURE_LOGS, 'audit-logs/me');
+      await open('agent', '/audit', AUDIT_FIXTURE_LOGS, 'audit-logs/me');
       expect(root().querySelector('h1')?.textContent).toContain('Mi actividad');
       expect(root().querySelector('.audit-scope-group')).toBeNull();
       expect(cards().length).toBe(20);
     });
 
     it('el superadministrador ve todas las empresas y puede limitarlas con el identificador de una', async () => {
-      await open('super_admin', '/auditoria', AUDIT_FIXTURE_LOGS, 'audit-logs/admin');
+      await open('super_admin', '/audit', AUDIT_FIXTURE_LOGS, 'audit-logs/admin');
       const scopes = Array.from(root().querySelectorAll('.audit-scope-group .mat-button-toggle')).map((el) =>
         el.textContent?.trim()
       );
@@ -137,7 +137,7 @@ describe('AuditListComponent', () => {
     });
 
     it('«Mi actividad» no ofrece filtrar por persona ni cuenta personas, aunque la dirección lo pida', async () => {
-      await open('agent', '/auditoria?persona=ana@example.com', AUDIT_FIXTURE_LOGS, 'audit-logs/me');
+      await open('agent', '/audit?persona=ana@example.com', AUDIT_FIXTURE_LOGS, 'audit-logs/me');
       const labels = Array.from(root().querySelectorAll('app-audit-filters mat-label')).map((el) =>
         el.textContent?.trim()
       );
@@ -147,14 +147,14 @@ describe('AuditListComponent', () => {
     });
 
     it('un ámbito que el rol no puede consultar se ignora y se abre el suyo', async () => {
-      await open('agent', '/auditoria?ambito=todas', AUDIT_FIXTURE_LOGS, 'audit-logs/me');
+      await open('agent', '/audit?ambito=todas', AUDIT_FIXTURE_LOGS, 'audit-logs/me');
       expect(cards().length).toBe(20);
     });
   });
 
   describe('lectura de los eventos', () => {
     it('cada tarjeta muestra solo lo esencial: la acción en español, cuándo, quién y sobre qué tipo de cosa', async () => {
-      await open('tenant_admin', '/auditoria', [
+      await open('tenant_admin', '/audit', [
         auditLog({
           action: 'journey.delete',
           entityType: 'journey',
@@ -171,7 +171,7 @@ describe('AuditListComponent', () => {
     });
 
     it('el detalle completo no está en el listado: ni la descripción ni los identificadores', async () => {
-      await open('tenant_admin', '/auditoria', [
+      await open('tenant_admin', '/audit', [
         auditLog({
           action: 'resource.assign.driver',
           entityType: 'resource',
@@ -185,7 +185,7 @@ describe('AuditListComponent', () => {
     });
 
     it('sin correo dice «Sin identificar» y con rol anonymous «Anónimo»', async () => {
-      await open('tenant_admin', '/auditoria', [
+      await open('tenant_admin', '/audit', [
         auditLog({ actorEmail: null, actorRole: 'TENANT_ADMIN' }),
         auditLog({ actorEmail: null, actorRole: 'anonymous' }),
       ]);
@@ -195,9 +195,7 @@ describe('AuditListComponent', () => {
     });
 
     it('con los datos técnicos la tarjeta añade la clave de la acción, y sin ellos no', async () => {
-      await open('tenant_admin', '/auditoria', [
-        auditLog({ action: 'resource.assign.driver', entityType: 'resource' }),
-      ]);
+      await open('tenant_admin', '/audit', [auditLog({ action: 'resource.assign.driver', entityType: 'resource' })]);
       expect(cards()[0].querySelector('.audit-key')).toBeNull();
       (root().querySelectorAll('.audit-switches button[role=switch]')[1] as HTMLButtonElement).click();
       await settle();
@@ -206,7 +204,7 @@ describe('AuditListComponent', () => {
 
     it('la tabla tiene solo tres columnas: acción, quién y cuándo', async () => {
       localStorage.setItem('ruteando-list-view', 'table');
-      await open('tenant_admin', '/auditoria', [
+      await open('tenant_admin', '/audit', [
         auditLog({ action: 'place.create', entityType: 'place', description: 'Lugar creado: name=Bodega' }),
       ]);
       // La columna de acciones tiene un encabezado solo para lectores de pantalla
@@ -220,7 +218,7 @@ describe('AuditListComponent', () => {
 
     it('con los datos técnicos la tabla añade una columna con la clave de la acción', async () => {
       localStorage.setItem('ruteando-list-view', 'table');
-      await open('tenant_admin', '/auditoria', [auditLog({ action: 'place.create', entityType: 'place' })]);
+      await open('tenant_admin', '/audit', [auditLog({ action: 'place.create', entityType: 'place' })]);
       (root().querySelectorAll('.audit-switches button[role=switch]')[1] as HTMLButtonElement).click();
       await settle();
       const headers = Array.from(root().querySelectorAll('app-data-table th'))
@@ -231,7 +229,7 @@ describe('AuditListComponent', () => {
     });
 
     it('con la lista vacía lo dice sin ofrecer crear nada', async () => {
-      await open('tenant_admin', '/auditoria', []);
+      await open('tenant_admin', '/audit', []);
       expect(root().querySelector('app-data-table .state')?.textContent).toContain(
         'Todavía no hay eventos de auditoría'
       );
@@ -252,7 +250,7 @@ describe('AuditListComponent', () => {
 
     it('cada fila de la tabla trae un ojo siempre visible que dice qué evento abre', async () => {
       localStorage.setItem('ruteando-list-view', 'table');
-      await open('tenant_admin', '/auditoria', [one(), auditLog()]);
+      await open('tenant_admin', '/audit', [one(), auditLog()]);
       expect(eyes().length).toBe(2);
       expect(eyes()[0].getAttribute('aria-label')).toContain('Ver el detalle de «Estado de paquete cambiado»');
       expect(eyes()[0].getAttribute('title')).toBe(eyes()[0].getAttribute('aria-label'));
@@ -261,10 +259,10 @@ describe('AuditListComponent', () => {
 
     it('pulsar el ojo abre la modal con el detalle completo y pone el evento en la dirección', async () => {
       localStorage.setItem('ruteando-list-view', 'table');
-      await open('tenant_admin', '/auditoria', [one()]);
+      await open('tenant_admin', '/audit', [one()]);
       eyes()[0].click();
       await settleModal();
-      expect(url()).toBe('/auditoria?evento=evento-1');
+      expect(url()).toBe('/audit?evento=evento-1');
       expect(modal()).not.toBeNull();
       expect(modal()!.textContent).toContain('Estado de paquete cambiado');
       expect(modal()!.textContent).toContain('Qué cambió');
@@ -274,15 +272,15 @@ describe('AuditListComponent', () => {
     });
 
     it('la tarjeta entera abre la misma modal', async () => {
-      await open('tenant_admin', '/auditoria', [one()]);
+      await open('tenant_admin', '/audit', [one()]);
       cards()[0].click();
       await settleModal();
-      expect(url()).toBe('/auditoria?evento=evento-1');
+      expect(url()).toBe('/audit?evento=evento-1');
       expect(modal()?.textContent).toContain('Qué cambió');
     });
 
     it('un enlace con ?evento= abre la modal al terminar de cargar, con el evento que ya se trajo', async () => {
-      await open('tenant_admin', '/auditoria?evento=evento-1', null);
+      await open('tenant_admin', '/audit?evento=evento-1', null);
       expect(modal()).toBeNull();
       http.expectOne(page(0)).flush(gatewayAuditPage([one(), auditLog()]));
       await settleModal();
@@ -291,7 +289,7 @@ describe('AuditListComponent', () => {
     });
 
     it('un evento que no está entre los traídos se pide al gateway por su identificador', async () => {
-      await open('tenant_admin', '/auditoria?evento=lejano');
+      await open('tenant_admin', '/audit?evento=lejano');
       http
         .expectOne('/gateway/audit-logs/lejano')
         .flush({ ...one(), id: 'lejano', action: 'journey.delete', entityType: 'journey', changes: null });
@@ -301,7 +299,7 @@ describe('AuditListComponent', () => {
 
     it('cerrar con el botón quita el evento de la dirección y vuelve a la vista anterior', async () => {
       localStorage.setItem('ruteando-list-view', 'table');
-      await open('tenant_admin', '/auditoria?accion=estado', [one()]);
+      await open('tenant_admin', '/audit?accion=estado', [one()]);
       eyes()[0].click();
       await settleModal();
       expect(url()).toContain('evento=evento-1');
@@ -310,24 +308,24 @@ describe('AuditListComponent', () => {
         .click();
       await wait(50);
       await settleModal();
-      expect(url()).toBe('/auditoria?accion=estado');
+      expect(url()).toBe('/audit?accion=estado');
       expect(modal()).toBeNull();
     });
 
     it('el botón «atrás» del navegador cierra la modal', async () => {
-      await open('tenant_admin', '/auditoria', [one()]);
+      await open('tenant_admin', '/audit', [one()]);
       cards()[0].click();
       await settleModal();
       expect(modal()).not.toBeNull();
       TestBed.inject(Location).back();
       await wait(50);
       await settleModal();
-      expect(url()).toBe('/auditoria');
+      expect(url()).toBe('/audit');
       expect(modal()).toBeNull();
     });
 
     it('«Ver eventos de esta entidad» cierra la modal y filtra el listado por esa entidad', async () => {
-      await open('tenant_admin', '/auditoria', [one(), auditLog({ entityId: 'otra' })]);
+      await open('tenant_admin', '/audit', [one(), auditLog({ entityId: 'otra' })]);
       cards()[0].click();
       await settleModal();
       (Array.from(overlay().querySelectorAll('mat-dialog-actions button')) as HTMLButtonElement[])
@@ -335,7 +333,7 @@ describe('AuditListComponent', () => {
         .click();
       await wait(50);
       await settleModal();
-      expect(url()).toBe('/auditoria?id=pkg1');
+      expect(url()).toBe('/audit?id=pkg1');
       expect(modal()).toBeNull();
       expect(cards().length).toBe(1);
     });
@@ -344,10 +342,10 @@ describe('AuditListComponent', () => {
       const a = auditLog({ id: 'a', action: 'package.create', entityType: 'package', entityId: 'pkg1' });
       const b = auditLog({ id: 'b', action: 'package.status.change', entityType: 'package', entityId: 'pkg1' });
       const c = auditLog({ id: 'c', action: 'place.create', entityType: 'place', entityId: 'lug1' });
-      await open('tenant_admin', '/auditoria', [a, b, c]);
+      await open('tenant_admin', '/audit', [a, b, c]);
       cards()[0].click();
       await settleModal();
-      expect(url()).toBe('/auditoria?evento=a');
+      expect(url()).toBe('/audit?evento=a');
       const items = () => Array.from(overlay().querySelectorAll('.audit-timeline-item')) as HTMLButtonElement[];
       expect(items().length).toBe(1);
       expect(items()[0].textContent).toContain('Estado de paquete cambiado');
@@ -355,26 +353,26 @@ describe('AuditListComponent', () => {
       items()[0].click();
       await wait(50);
       await settleModal();
-      expect(url()).toBe('/auditoria?evento=b');
+      expect(url()).toBe('/audit?evento=b');
       expect(modal()?.querySelector('h2')?.textContent).toContain('Estado de paquete cambiado');
 
       // Saltar de evento reemplaza la dirección: un solo «atrás» cierra la modal
       TestBed.inject(Location).back();
       await wait(50);
       await settleModal();
-      expect(url()).toBe('/auditoria');
+      expect(url()).toBe('/audit');
       expect(modal()).toBeNull();
     });
 
     it('una dirección con un evento inválido no abre nada', async () => {
-      await open('tenant_admin', '/auditoria?evento=%3Cscript%3E');
+      await open('tenant_admin', '/audit?evento=%3Cscript%3E');
       expect(modal()).toBeNull();
     });
   });
 
   describe('filtros y dirección de la página', () => {
     it('los filtros de la dirección se aplican al abrirla', async () => {
-      await open('tenant_admin', '/auditoria?accion=eliminacion');
+      await open('tenant_admin', '/audit?accion=eliminacion');
       expect(cards().length).toBe(2);
       expect(root().querySelector('.subtitle')?.textContent).toContain('2 de 20 eventos');
     });
@@ -397,7 +395,7 @@ describe('AuditListComponent', () => {
     });
 
     it('un inicio posterior al fin se avisa y no se aplica', async () => {
-      await open('tenant_admin', '/auditoria?desde=2026-10-05&hasta=2026-10-07');
+      await open('tenant_admin', '/audit?desde=2026-10-05&hasta=2026-10-07');
       const from = root().querySelectorAll('.audit-dates input[type=date]')[0] as HTMLInputElement;
       from.value = '2026-10-20';
       from.dispatchEvent(new Event('change'));
@@ -413,7 +411,7 @@ describe('AuditListComponent', () => {
       await settle();
       button('Limpiar filtros').click();
       await settle();
-      expect(url()).toBe('/auditoria');
+      expect(url()).toBe('/audit');
       expect(button('Limpiar filtros')).toBeUndefined();
     });
 
@@ -426,7 +424,7 @@ describe('AuditListComponent', () => {
     });
 
     it('el historial de una entidad filtra por su identificador y se puede quitar', async () => {
-      await open('tenant_admin', '/auditoria?id=6acb99b48275a26dbdf8fcf5');
+      await open('tenant_admin', '/audit?id=6acb99b48275a26dbdf8fcf5');
       expect(cards().length).toBe(5);
       const remove = root().querySelector('button[aria-label="Quitar el filtro de entidad"]') as HTMLButtonElement;
       expect(remove.textContent).toContain('Vehículo');
@@ -436,7 +434,7 @@ describe('AuditListComponent', () => {
     });
 
     it('un valor inválido en la dirección se ignora y el resto se aplica', async () => {
-      await open('tenant_admin', '/auditoria?rango=1000d&accion=eliminacion&desde=2026-02-31');
+      await open('tenant_admin', '/audit?rango=1000d&accion=eliminacion&desde=2026-02-31');
       expect(cards().length).toBe(2);
     });
 
@@ -470,7 +468,7 @@ describe('AuditListComponent', () => {
     });
 
     it('abrir una dirección con búsqueda la deja escrita en el campo', async () => {
-      await open('tenant_admin', '/auditoria?q=paquete');
+      await open('tenant_admin', '/audit?q=paquete');
       expect((root().querySelector('app-data-table input[type=search]') as HTMLInputElement).value).toBe('paquete');
       expect(cards().length).toBeGreaterThan(0);
       expect(cards().length).toBeLessThan(20);
@@ -482,7 +480,7 @@ describe('AuditListComponent', () => {
     it('avisa cuando hay más eventos de los que se traen', async () => {
       TestBed.inject(CurrentUser).set(makeUser({ role: 'tenant_admin' }));
       harness = await RouterTestingHarness.create();
-      await harness.navigateByUrl('/auditoria', AuditListComponent);
+      await harness.navigateByUrl('/audit', AuditListComponent);
       for (let n = 0; n < 10; n++) {
         http.expectOne(page(n)).flush(
           gatewayAuditPage(
@@ -499,7 +497,7 @@ describe('AuditListComponent', () => {
     });
 
     it('un 403 se explica y ofrece ver la propia actividad, que carga sus eventos', async () => {
-      await open('tenant_admin', '/auditoria', null);
+      await open('tenant_admin', '/audit', null);
       http.expectOne(page(0)).flush(null, { status: 403, statusText: 'Forbidden' });
       await settle();
       expect(root().querySelector('.audit-notice.warn')?.textContent).toContain(
@@ -518,7 +516,7 @@ describe('AuditListComponent', () => {
     });
 
     it('un fallo del gateway conserva los filtros y se puede reintentar', async () => {
-      await open('tenant_admin', '/auditoria?accion=eliminacion', null);
+      await open('tenant_admin', '/audit?accion=eliminacion', null);
       http.expectOne(page(0)).flush(null, { status: 500, statusText: 'Server Error' });
       await settle();
       const retry = (Array.from(root().querySelectorAll('app-data-table button')) as HTMLButtonElement[]).find(
@@ -554,7 +552,7 @@ describe('AuditListComponent', () => {
     });
 
     it('exporta a CSV lo que dejan los filtros, no solo la página', async () => {
-      await open('tenant_admin', '/auditoria?accion=eliminacion');
+      await open('tenant_admin', '/audit?accion=eliminacion');
       button('Exportar CSV').click();
       await settle();
       expect(blobs.length).toBe(1);
@@ -566,7 +564,7 @@ describe('AuditListComponent', () => {
     it('con 50 eventos y páginas de 20 exporta los 50', async () => {
       await open(
         'tenant_admin',
-        '/auditoria',
+        '/audit',
         Array.from({ length: 50 }, (_, i) => auditLog({ description: `Evento ${i}` }))
       );
       button('Exportar CSV').click();
@@ -575,14 +573,14 @@ describe('AuditListComponent', () => {
     });
 
     it('con la lista vacía el botón está desactivado', async () => {
-      await open('tenant_admin', '/auditoria', []);
+      await open('tenant_admin', '/audit', []);
       expect((button('Exportar CSV') as HTMLButtonElement).disabled).toBeTrue();
     });
   });
 
   describe('seguridad y accesibilidad', () => {
     it('muestra como texto lo que trae el gateway, sin interpretarlo como HTML', async () => {
-      await open('tenant_admin', '/auditoria', [
+      await open('tenant_admin', '/audit', [
         auditLog({ actorEmail: '<img src=x onerror=alert(1)><b>negrita</b>@x.com' }),
       ]);
       expect(root().querySelector('app-data-table img')).toBeNull();
@@ -621,7 +619,7 @@ describe('AuditListComponent', () => {
   describe('fechas', () => {
     it('los eventos de hoy y de ayer se separan en el rango «24 horas»', async () => {
       const now = Date.now();
-      await open('tenant_admin', '/auditoria?rango=24h', [
+      await open('tenant_admin', '/audit?rango=24h', [
         auditLog({ id: 'a', createdAt: new Date(now - 3_600_000).toISOString() }),
         auditLog({ id: 'b', createdAt: new Date(now - 48 * 3_600_000).toISOString() }),
         auditLog({ id: 'c', createdAt: localIso(2020, 1, 1) }),

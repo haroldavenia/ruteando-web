@@ -169,7 +169,7 @@ export class ZoneFormComponent implements HasUnsavedChanges {
       () => {
         this.saved.set(true);
         void notify(this.injector, this.id === null ? t('Zona creada') : t('Zona guardada'));
-        void this.router.navigateByUrl('/zonas');
+        void this.router.navigateByUrl('/zones');
       },
       { 409: DUPLICATE_CODE }
     );

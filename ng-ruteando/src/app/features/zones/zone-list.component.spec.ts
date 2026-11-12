@@ -103,7 +103,7 @@ describe('ZoneListComponent', () => {
     setup();
     load([]);
     expect(root().textContent).toContain('Todavía no hay zonas');
-    expect(root().querySelector('a[href="/zonas/nueva"][empty-action]')).not.toBeNull();
+    expect(root().querySelector('a[href="/zones/new"][empty-action]')).not.toBeNull();
   });
 
   it('un listado de más de una página se pagina en el navegador', () => {

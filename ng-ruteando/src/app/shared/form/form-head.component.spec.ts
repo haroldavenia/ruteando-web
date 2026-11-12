@@ -6,7 +6,7 @@ import { FormHeadComponent } from './form-head.component';
 
 @Component({
   imports: [FormHeadComponent],
-  template: `<app-form-head title="Nuevo lugar" backLabel="Lugares" backLink="/lugares" />`,
+  template: `<app-form-head title="Nuevo lugar" backLabel="Lugares" backLink="/places" />`,
 })
 class HostComponent {}
 
@@ -26,7 +26,7 @@ describe('FormHeadComponent', () => {
     const link = render().querySelector('a.back') as HTMLAnchorElement;
 
     expect(link.textContent?.trim()).toBe('Lugares');
-    expect(link.getAttribute('href')).toBe('/lugares');
+    expect(link.getAttribute('href')).toBe('/places');
     expect(link.querySelector('mat-icon')?.getAttribute('aria-hidden')).toBe('true');
   });
 

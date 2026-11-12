@@ -299,7 +299,7 @@ describe('AuthService: operaciones de acceso', () => {
 
       expect(tokens.get()).toBe('');
       expect(tokens.getRefreshToken()).toBeNull();
-      expect(navigate).toHaveBeenCalledOnceWith(['/acceso']);
+      expect(navigate).toHaveBeenCalledOnceWith(['/access']);
     });
 
     it('si el gateway falla al cerrar, la sesión local se limpia igualmente', async () => {
@@ -310,7 +310,7 @@ describe('AuthService: operaciones de acceso', () => {
       await result;
 
       expect(tokens.get()).toBe('');
-      expect(navigate).toHaveBeenCalledOnceWith(['/acceso']);
+      expect(navigate).toHaveBeenCalledOnceWith(['/access']);
     });
 
     it('sin token de refresco no llama al gateway: limpia y navega', async () => {
@@ -319,7 +319,7 @@ describe('AuthService: operaciones de acceso', () => {
       controller.expectNone('/gateway/auth/logout');
       expect(tokens.get()).toBe('');
       expect(currentUser.isAuthenticated()).toBeFalse();
-      expect(navigate).toHaveBeenCalledOnceWith(['/acceso']);
+      expect(navigate).toHaveBeenCalledOnceWith(['/access']);
     });
 
     it('con el token de refresco ya caducado tampoco llama al gateway', async () => {
@@ -328,7 +328,7 @@ describe('AuthService: operaciones de acceso', () => {
       await ok(service.logout());
 
       controller.expectNone('/gateway/auth/logout');
-      expect(navigate).toHaveBeenCalledOnceWith(['/acceso']);
+      expect(navigate).toHaveBeenCalledOnceWith(['/access']);
     });
   });
 });

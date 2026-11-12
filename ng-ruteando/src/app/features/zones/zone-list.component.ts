@@ -34,7 +34,7 @@ export const ZONE_IN_USE = t('No se puede eliminar: la zona se usa en lugares, p
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-page-header [title]="'Zonas' | t" [subtitle]="state.countText('zona', 'zonas')">
-      <a mat-flat-button class="primary-action" routerLink="/zonas/nueva"
+      <a mat-flat-button class="primary-action" routerLink="/zones/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nueva zona' | t }}</a
       >
     </app-page-header>
@@ -46,7 +46,7 @@ export const ZONE_IN_USE = t('No se puede eliminar: la zona se usa en lugares, p
       [emptyMessage]="'Todavía no hay zonas' | t"
     >
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/zonas', row.id]" [attr.aria-label]="('Editar zona ' | t) + row.name">
+        <a mat-icon-button [routerLink]="['/zones', row.id]" [attr.aria-label]="('Editar zona ' | t) + row.name">
           <mat-icon aria-hidden="true">edit</mat-icon>
         </a>
         <button
@@ -58,7 +58,7 @@ export const ZONE_IN_USE = t('No se puede eliminar: la zona se usa en lugares, p
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/zonas/nueva">{{ 'Crear la primera zona' | t }}</a>
+      <a empty-action mat-stroked-button routerLink="/zones/new">{{ 'Crear la primera zona' | t }}</a>
     </app-data-table>
   `,
 })

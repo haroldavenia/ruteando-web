@@ -223,7 +223,7 @@ describe('ResourceListComponent', () => {
     expect(label.getBoundingClientRect().top).toBeGreaterThanOrEqual(content.getBoundingClientRect().top);
   });
 
-  it('sin conductores el diálogo lo explica y enlaza a /flota/conductores', async () => {
+  it('sin conductores el diálogo lo explica y enlaza a /fleet/drivers', async () => {
     loadWith(false);
     await click('Asignar conductor al vehículo Postman resource');
     http.expectOne('/gateway/users/drivers').flush([]);
@@ -231,7 +231,7 @@ describe('ResourceListComponent', () => {
     await wait();
 
     expect(overlay.textContent).toContain('No hay conductores creados');
-    expect(overlay.querySelector('a[href="/flota/conductores"]')).not.toBeNull();
+    expect(overlay.querySelector('a[href="/fleet/drivers"]')).not.toBeNull();
     expect(overlayButton('Asignar').disabled).toBeTrue();
   });
 

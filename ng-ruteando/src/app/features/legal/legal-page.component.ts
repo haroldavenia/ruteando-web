@@ -147,7 +147,7 @@ export class LegalPageComponent {
   private readonly data = toSignal(inject(ActivatedRoute).data, { initialValue: {} as Record<string, unknown> });
   private readonly doc = computed<LegalDoc>(() => {
     const doc = this.data()['doc'];
-    return LEGAL_DOCS.includes(doc as LegalDoc) ? (doc as LegalDoc) : 'privacidad';
+    return LEGAL_DOCS.includes(doc as LegalDoc) ? (doc as LegalDoc) : 'privacy';
   });
 
   /** Vuelve a donde estaba la persona (el acceso o la aplicación); si abrió el enlace directo no hay a dónde: va al inicio. */

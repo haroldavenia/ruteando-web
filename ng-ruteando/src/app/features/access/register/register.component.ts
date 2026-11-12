@@ -60,7 +60,7 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
           <button mat-stroked-button type="button" [disabled]="resending()" (click)="resend(sentTo)">
             {{ 'Reenviar correo' | t }}
           </button>
-          <a mat-button routerLink="/acceso">{{ 'Ir a iniciar sesión' | t }}</a>
+          <a mat-button routerLink="/access">{{ 'Ir a iniciar sesión' | t }}</a>
         </div>
       </div>
     } @else {
@@ -106,7 +106,7 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
         <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Crear cuenta' | t }}</button>
       </form>
       <p class="alt">
-        {{ '¿Ya tienes cuenta?' | t }} <a routerLink="/acceso">{{ 'Iniciar sesión' | t }}</a>
+        {{ '¿Ya tienes cuenta?' | t }} <a routerLink="/access">{{ 'Iniciar sesión' | t }}</a>
       </p>
     }
   `,

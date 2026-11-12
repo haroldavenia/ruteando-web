@@ -14,14 +14,14 @@ interface Target {
 }
 
 const TARGETS: Readonly<Record<string, Target>> = {
-  package: { base: '/paquetes', noun: t('paquete'), roles: OPERATIONS_ROLES },
-  journey: { base: '/jornadas', noun: t('jornada'), roles: OPERATIONS_ROLES },
-  place: { base: '/lugares', noun: t('lugar'), roles: ADMIN_ROLES },
-  settings: { base: '/configuraciones', noun: t('configuración'), roles: ADMIN_ROLES },
-  resource: { base: '/flota/vehiculos', noun: t('vehículo'), roles: ADMIN_ROLES },
-  resource_type: { base: '/flota/tipos', noun: t('tipo de vehículo'), roles: ADMIN_ROLES },
-  'resource-type': { base: '/flota/tipos', noun: t('tipo de vehículo'), roles: ADMIN_ROLES },
-  zone: { base: '/zonas', noun: t('zona'), roles: ADMIN_ROLES },
+  package: { base: '/packages', noun: t('paquete'), roles: OPERATIONS_ROLES },
+  journey: { base: '/journeys', noun: t('jornada'), roles: OPERATIONS_ROLES },
+  place: { base: '/places', noun: t('lugar'), roles: ADMIN_ROLES },
+  settings: { base: '/settings', noun: t('configuración'), roles: ADMIN_ROLES },
+  resource: { base: '/fleet/vehicles', noun: t('vehículo'), roles: ADMIN_ROLES },
+  resource_type: { base: '/fleet/types', noun: t('tipo de vehículo'), roles: ADMIN_ROLES },
+  'resource-type': { base: '/fleet/types', noun: t('tipo de vehículo'), roles: ADMIN_ROLES },
+  zone: { base: '/zones', noun: t('zona'), roles: ADMIN_ROLES },
 };
 
 export interface EntityTarget {

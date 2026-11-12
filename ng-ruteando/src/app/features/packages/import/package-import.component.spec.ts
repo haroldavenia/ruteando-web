@@ -88,7 +88,7 @@ describe('PackageImportComponent', () => {
 
     it('la cabecera ofrece volver a los paquetes sobre el título', () => {
       expect(root().querySelector('app-form-head h1')?.textContent).toBe('Importar paquetes');
-      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/paquetes');
+      expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/packages');
     });
 
     it('muestra los cuatro pasos con nombre accesible y, al empezar, el segundo como actual con el primero hecho', () => {
@@ -345,7 +345,7 @@ describe('PackageImportComponent', () => {
       });
       expect(root().querySelector('#result-title')).not.toBeNull();
       expect(resultSummary()).toContain('3 creados, 0 ya existían, 0 fallidos y 0 sin procesar');
-      expect(button('Ver los paquetes')?.getAttribute('href')).toBe('/paquetes');
+      expect(button('Ver los paquetes')?.getAttribute('href')).toBe('/packages');
     });
 
     it('muestra el progreso mientras importa y marca que hay cambios sin guardar', async () => {

@@ -169,9 +169,9 @@ describe('ShellComponent', () => {
         );
         expect(names).toEqual(['Vehículos', 'Tipos de vehículo', 'Conductores']);
         expect(entries.map((entry) => entry.getAttribute('href'))).toEqual([
-          '/flota/vehiculos',
-          '/flota/tipos',
-          '/flota/conductores',
+          '/fleet/vehicles',
+          '/fleet/types',
+          '/fleet/drivers',
         ]);
       });
     });
@@ -185,10 +185,10 @@ describe('ShellComponent', () => {
       });
 
       for (const [label, path, route, role] of [
-        ['Config.', '/configuraciones/abc', 'configuraciones/:id', 'tenant_admin'],
-        ['Jornadas', '/jornadas/abc', 'jornadas/:id', 'agent'],
-        ['Zonas', '/zonas/abc', 'zonas/:id', 'tenant_admin'],
-        ['Paquetes', '/paquetes/abc', 'paquetes/:id', 'agent'],
+        ['Config.', '/settings/abc', 'settings/:id', 'tenant_admin'],
+        ['Jornadas', '/journeys/abc', 'journeys/:id', 'agent'],
+        ['Zonas', '/zones/abc', 'zones/:id', 'tenant_admin'],
+        ['Paquetes', '/packages/abc', 'packages/:id', 'agent'],
       ] as const) {
         it(`la edición o el detalle en ${path} marca «${label}» como activa`, async () => {
           withRole(role);
@@ -199,7 +199,7 @@ describe('ShellComponent', () => {
 
       it('cualquier pantalla de la flota marca «Flota» como activa, y Inicio no', async () => {
         withRole('tenant_admin');
-        await navigate('/flota/vehiculos/abc', ['flota/vehiculos/:id']);
+        await navigate('/fleet/vehicles/abc', ['fleet/vehicles/:id']);
         expect(railActive()).toEqual(['Flota']);
       });
 
@@ -222,15 +222,15 @@ describe('ShellComponent', () => {
       withRole('tenant_admin');
       await navigate('/', []);
       expect(title()).toBe('Inicio');
-      await navigate('/zonas/abc', ['zonas/:id']);
+      await navigate('/zones/abc', ['zones/:id']);
       expect(title()).toBe('Zonas');
-      await navigate('/flota/tipos', ['flota/tipos']);
+      await navigate('/fleet/types', ['fleet/types']);
       expect(title()).toBe('Tipos de vehículo');
     });
 
     it('en «Sin permiso» la barra lo dice y ninguna entrada del riel queda como activa', async () => {
       withRole('agent');
-      await navigate('/sin-permiso', ['sin-permiso']);
+      await navigate('/forbidden', ['forbidden']);
       expect(title()).toBe('Sin permiso');
       expect(railActive()).toEqual([]);
     });
@@ -344,7 +344,7 @@ describe('ShellComponent', () => {
     it('la edición de un vehículo marca «Vehículos» como activa, y Inicio solo en /', async () => {
       withRole('tenant_admin');
       goNarrow();
-      await navigate('/flota/vehiculos/abc', ['flota/vehiculos/:id']);
+      await navigate('/fleet/vehicles/abc', ['fleet/vehicles/:id']);
       const active = Array.from(root().querySelectorAll('mat-sidenav a.active')).map((a) =>
         a.querySelector('[matListItemTitle]')!.textContent!.trim()
       );

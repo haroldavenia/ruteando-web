@@ -32,7 +32,7 @@ import { JOURNEY_STATUS_LABELS, journeyStatusLabel } from './journey-labels';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-page-header [title]="'Jornadas' | t" [subtitle]="state.countText('jornada', 'jornadas')">
-      <a mat-flat-button class="primary-action" routerLink="/jornadas/nueva"
+      <a mat-flat-button class="primary-action" routerLink="/journeys/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Planificar jornada' | t }}</a
       >
     </app-page-header>
@@ -46,7 +46,7 @@ import { JOURNEY_STATUS_LABELS, journeyStatusLabel } from './journey-labels';
       [searchPlaceholder]="'Buscar por nombre o configuración' | t"
     >
       <ng-template #rowActions let-row>
-        <a mat-icon-button [routerLink]="['/jornadas', row.id]" [attr.aria-label]="('Ver la jornada ' | t) + row.name">
+        <a mat-icon-button [routerLink]="['/journeys', row.id]" [attr.aria-label]="('Ver la jornada ' | t) + row.name">
           <mat-icon aria-hidden="true">visibility</mat-icon>
         </a>
         <button
@@ -58,7 +58,7 @@ import { JOURNEY_STATUS_LABELS, journeyStatusLabel } from './journey-labels';
           <mat-icon aria-hidden="true">delete</mat-icon>
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/jornadas/nueva">{{ 'Planificar la primera jornada' | t }}</a>
+      <a empty-action mat-stroked-button routerLink="/journeys/new">{{ 'Planificar la primera jornada' | t }}</a>
     </app-data-table>
   `,
 })
@@ -81,7 +81,7 @@ export class JourneyListComponent {
   });
 
   protected readonly columns: DataColumn<Journey>[] = [
-    { id: 'name', header: t('Nombre'), cell: (j) => j.name, link: (j) => ['/jornadas', j.id] },
+    { id: 'name', header: t('Nombre'), cell: (j) => j.name, link: (j) => ['/journeys', j.id] },
     {
       id: 'status',
       header: t('Estado'),

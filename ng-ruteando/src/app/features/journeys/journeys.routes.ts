@@ -9,12 +9,12 @@ export const JOURNEYS_ROUTES: Routes = [
     loadComponent: () => import('./journey-list.component').then((m) => m.JourneyListComponent),
   },
   {
-    path: 'nueva',
+    path: 'new',
     canDeactivate: [unsavedChangesGuard],
     loadComponent: () => import('./journey-form.component').then((m) => m.JourneyFormComponent),
   },
   {
-    path: ':id/rutas/:routeIndex',
+    path: ':id/routes/:routeIndex',
     loadComponent: () => import('./route-detail.component').then((m) => m.RouteDetailComponent),
   },
   {

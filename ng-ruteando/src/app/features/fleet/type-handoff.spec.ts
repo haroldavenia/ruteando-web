@@ -3,14 +3,14 @@ import { fleetReturnUrl, readHandoff, toHandoffState } from './type-handoff';
 describe('type-handoff', () => {
   describe('fleetReturnUrl', () => {
     it('acepta rutas internas de la flota, con o sin consulta', () => {
-      expect(fleetReturnUrl('/flota/vehiculos/nuevo')).toBe('/flota/vehiculos/nuevo');
-      expect(fleetReturnUrl('/flota/vehiculos/abc?x=1')).toBe('/flota/vehiculos/abc?x=1');
+      expect(fleetReturnUrl('/fleet/vehicles/new')).toBe('/fleet/vehicles/new');
+      expect(fleetReturnUrl('/fleet/vehicles/abc?x=1')).toBe('/fleet/vehicles/abc?x=1');
     });
 
     it('rechaza lo que no es de la flota', () => {
-      expect(fleetReturnUrl('/lugares/nuevo')).toBeNull();
+      expect(fleetReturnUrl('/places/new')).toBeNull();
       expect(fleetReturnUrl('/')).toBeNull();
-      expect(fleetReturnUrl('/flota')).toBeNull();
+      expect(fleetReturnUrl('/fleet')).toBeNull();
     });
 
     it('rechaza destinos externos o ambiguos', () => {
@@ -18,7 +18,7 @@ describe('type-handoff', () => {
         '//otro.invalid/flota/x',
         'https://otro.invalid/flota/x',
         '/\\otro.invalid',
-        '/flota/../acceso',
+        '/fleet/../access',
         // eslint-disable-next-line no-script-url -- la prueba comprueba justo que se rechaza
         'javascript:alert(1)',
         '',

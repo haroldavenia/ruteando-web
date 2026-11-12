@@ -28,8 +28,8 @@ export function safeReturnUrl(raw: string | null | undefined): string {
   if (url.origin !== ORIGIN) {
     return '/';
   }
-  // La ruta ya normalizada (`/a/../acceso` -> `/acceso`) no puede volver a las pantallas de acceso
-  if (url.pathname === '/acceso' || url.pathname.startsWith('/acceso/')) {
+  // La ruta ya normalizada (`/a/../access` -> `/access`) no puede volver a las pantallas de acceso
+  if (url.pathname === '/access' || url.pathname.startsWith('/access/')) {
     return '/';
   }
   return url.pathname + url.search + url.hash;

@@ -8,9 +8,9 @@ describe('FleetTabsComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'flota/vehiculos', children: [] },
-          { path: 'flota/tipos', children: [] },
-          { path: 'flota/conductores', children: [] },
+          { path: 'fleet/vehicles', children: [] },
+          { path: 'fleet/types', children: [] },
+          { path: 'fleet/drivers', children: [] },
         ]),
       ],
     });
@@ -23,25 +23,25 @@ describe('FleetTabsComponent', () => {
   const links = (root: HTMLElement) => Array.from(root.querySelectorAll('a')) as HTMLAnchorElement[];
 
   it('ofrece los tres listados de la flota, con su nombre y su ruta de siempre', async () => {
-    const root = await render('/flota/vehiculos');
+    const root = await render('/fleet/vehicles');
 
     expect(links(root).map((a) => [a.textContent?.trim(), a.getAttribute('href')])).toEqual([
-      ['Vehículos', '/flota/vehiculos'],
-      ['Tipos de vehículo', '/flota/tipos'],
-      ['Conductores', '/flota/conductores'],
+      ['Vehículos', '/fleet/vehicles'],
+      ['Tipos de vehículo', '/fleet/types'],
+      ['Conductores', '/fleet/drivers'],
     ]);
   });
 
   it('es una navegación con nombre accesible', async () => {
-    const root = await render('/flota/vehiculos');
+    const root = await render('/fleet/vehicles');
 
     expect(root.querySelector('nav')?.getAttribute('aria-label')).toBe('Secciones de la flota');
   });
 
   for (const [url, current] of [
-    ['/flota/vehiculos', 'Vehículos'],
-    ['/flota/tipos', 'Tipos de vehículo'],
-    ['/flota/conductores', 'Conductores'],
+    ['/fleet/vehicles', 'Vehículos'],
+    ['/fleet/types', 'Tipos de vehículo'],
+    ['/fleet/drivers', 'Conductores'],
   ]) {
     it(`en ${url} marca solo «${current}» como la página actual`, async () => {
       const root = await render(url);
@@ -53,7 +53,7 @@ describe('FleetTabsComponent', () => {
   }
 
   it('cada enlace es un objetivo de al menos 44px de alto', async () => {
-    const root = await render('/flota/vehiculos');
+    const root = await render('/fleet/vehicles');
     document.body.appendChild(root);
     try {
       for (const link of links(root)) {
@@ -65,7 +65,7 @@ describe('FleetTabsComponent', () => {
   });
 
   it('la barra no tiene desplazamiento vertical (un píxel de más en los enlaces lo mostraba)', async () => {
-    const root = await render('/flota/vehiculos');
+    const root = await render('/fleet/vehicles');
     document.body.appendChild(root);
     try {
       const nav = root.querySelector('nav') as HTMLElement;
@@ -78,7 +78,7 @@ describe('FleetTabsComponent', () => {
   });
 
   it('la pestaña actual se distingue por más que el color: lleva una línea inferior', async () => {
-    const root = await render('/flota/tipos');
+    const root = await render('/fleet/types');
     document.body.appendChild(root);
     try {
       const current = links(root)[1];

@@ -86,7 +86,7 @@ describe('aspecto común de las pantallas de acceso', () => {
       const password = root.querySelector('app-password-field')!.getBoundingClientRect();
       const button = (root.querySelector('button[type="submit"]') as HTMLElement).getBoundingClientRect();
       expect(link.textContent).toContain('¿Olvidaste tu contraseña?');
-      expect(link.getAttribute('href')).toBe('/acceso/recuperar');
+      expect(link.getAttribute('href')).toBe('/access/recover');
       expect(getComputedStyle(forgot).justifyContent).toBe('flex-end');
       expect(link.getBoundingClientRect().top).toBeGreaterThan(password.top);
       expect(link.getBoundingClientRect().bottom).toBeLessThanOrEqual(button.top + 1);
@@ -100,7 +100,7 @@ describe('aspecto común de las pantallas de acceso', () => {
       expect(style.marginTop).toBe('24px');
       expect(style.textAlign).toBe('center');
       expect(alt.textContent).toContain('¿No tienes cuenta?');
-      expect(alt.querySelector('a')?.getAttribute('href')).toBe('/acceso/registro');
+      expect(alt.querySelector('a')?.getAttribute('href')).toBe('/access/register');
     });
 
     it('los enlaces llevan el color de la marca y no el azul del navegador', () => {

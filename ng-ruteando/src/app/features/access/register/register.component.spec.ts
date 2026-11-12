@@ -59,8 +59,8 @@ describe('RegisterComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
-          { path: 'acceso/registro', component: RegisterComponent },
-          { path: 'acceso', component: RegisterComponent },
+          { path: 'access/register', component: RegisterComponent },
+          { path: 'access', component: RegisterComponent },
         ]),
         provideNoopAnimations(),
         { provide: API_BASE_URL, useValue: '/gateway' },
@@ -70,7 +70,7 @@ describe('RegisterComponent', () => {
     });
     controller = TestBed.inject(HttpTestingController);
     harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl('/acceso/registro');
+    await harness.navigateByUrl('/access/register');
     harness.detectChanges();
     root = harness.routeNativeElement as HTMLElement;
   });
@@ -158,7 +158,7 @@ describe('RegisterComponent', () => {
     });
 
     it('ofrece un enlace para ir a iniciar sesión', () => {
-      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/acceso');
+      expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/access');
     });
   });
 
@@ -323,6 +323,6 @@ describe('RegisterComponent', () => {
   });
 
   it('enlaza a iniciar sesión', () => {
-    expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/acceso');
+    expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/access');
   });
 });

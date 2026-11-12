@@ -47,7 +47,7 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
-      <a mat-flat-button class="primary-action" routerLink="/flota/vehiculos/nuevo"
+      <a mat-flat-button class="primary-action" routerLink="/fleet/vehicles/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Nuevo vehículo' | t }}</a
       >
     </app-page-header>
@@ -107,7 +107,7 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
             }
             <a
               mat-icon-button
-              [routerLink]="['/flota/vehiculos', row.id]"
+              [routerLink]="['/fleet/vehicles', row.id]"
               [attr.aria-label]="('Editar vehículo ' | t) + label(row)"
             >
               <mat-icon aria-hidden="true">edit</mat-icon>
@@ -144,7 +144,7 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
       <ng-template #rowActions let-row>
         <a
           mat-icon-button
-          [routerLink]="['/flota/vehiculos', row.id]"
+          [routerLink]="['/fleet/vehicles', row.id]"
           [attr.aria-label]="('Editar vehículo ' | t) + label(row)"
         >
           <mat-icon aria-hidden="true">edit</mat-icon>
@@ -187,7 +187,7 @@ import { AssignDriverDialogComponent } from './assign-driver-dialog.component';
           <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar' | t }}
         </button>
       </ng-template>
-      <a empty-action mat-stroked-button routerLink="/flota/vehiculos/nuevo">{{ 'Crear el primer vehículo' | t }}</a>
+      <a empty-action mat-stroked-button routerLink="/fleet/vehicles/new">{{ 'Crear el primer vehículo' | t }}</a>
     </app-data-table>
   `,
 })

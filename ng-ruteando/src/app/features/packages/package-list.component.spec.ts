@@ -115,10 +115,8 @@ describe('PackageListComponent', () => {
   it('con la lista vacía ofrece crear el primero', () => {
     load({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     expect(root().textContent).toContain('Todavía no hay paquetes');
-    expect(root().querySelector('[empty-action] a[href="/paquetes/nuevo"]')).not.toBeNull();
-    expect(root().querySelector('[empty-action] a[href="/paquetes/importar"]')?.textContent).toContain(
-      'Importar un CSV'
-    );
+    expect(root().querySelector('[empty-action] a[href="/packages/new"]')).not.toBeNull();
+    expect(root().querySelector('[empty-action] a[href="/packages/import"]')?.textContent).toContain('Importar un CSV');
   });
 
   it('el encabezado ofrece «Importar CSV», «Exportar CSV» y «Nuevo paquete»', () => {
@@ -130,7 +128,7 @@ describe('PackageListComponent', () => {
     expect(labels.some((l) => l.includes('Importar CSV'))).toBeTrue();
     expect(labels.some((l) => l.includes('Exportar CSV'))).toBeTrue();
     expect(labels.some((l) => l.includes('Nuevo paquete'))).toBeTrue();
-    expect(header.querySelector('a[href="/paquetes/importar"]')).not.toBeNull();
+    expect(header.querySelector('a[href="/packages/import"]')).not.toBeNull();
   });
 
   it('un estado desconocido se muestra con su clave', () => {

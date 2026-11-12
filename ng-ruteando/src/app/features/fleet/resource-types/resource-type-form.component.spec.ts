@@ -87,7 +87,7 @@ describe('ResourceTypeFormComponent', () => {
         (fixture.nativeElement as HTMLElement).querySelector('button[type="submit"]')?.hasAttribute('disabled')
       ).toBeTrue();
       respondWith(req, fx);
-      expect(navigate).toHaveBeenCalledWith('/flota/tipos', { state: undefined });
+      expect(navigate).toHaveBeenCalledWith('/fleet/types', { state: undefined });
     });
 
     it('un consumo negativo no se envía', () => {
@@ -135,7 +135,7 @@ describe('ResourceTypeFormComponent', () => {
       fixture.detectChanges();
 
       expect(root().textContent).toContain('El registro ya no existe');
-      expect(root().querySelector('a[href="/flota/tipos"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/fleet/types"]')).not.toBeNull();
       expect(root().querySelector('form')).toBeNull();
     });
   });
@@ -315,29 +315,29 @@ describe('ResourceTypeFormComponent', () => {
       const navigate = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
       fillAndSubmit();
       http.expectOne((r) => r.method === 'POST').flush({ id: 'nuevo-tipo' });
-      expect(navigate).toHaveBeenCalledWith('/flota/tipos', { state: undefined });
+      expect(navigate).toHaveBeenCalledWith('/fleet/types', { state: undefined });
     });
 
     it('con destino de vuelta y borrador, guarda y vuelve con el borrador y el tipo creado', () => {
-      setup(null, { volver: '/flota/vehiculos/nuevo', state: toHandoffState({ draft }) });
+      setup(null, { volver: '/fleet/vehicles/new', state: toHandoffState({ draft }) });
       const navigate = spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
       fillAndSubmit();
       http.expectOne((r) => r.method === 'POST').flush({ id: 'nuevo-tipo' });
-      expect(navigate).toHaveBeenCalledWith('/flota/vehiculos/nuevo', {
+      expect(navigate).toHaveBeenCalledWith('/fleet/vehicles/new', {
         state: toHandoffState({ draft, createdTypeId: 'nuevo-tipo' }),
       });
     });
 
     it('cancelar y la flecha de vuelta llevan al formulario de vehículo', () => {
-      setup(null, { volver: '/flota/vehiculos/nuevo', state: toHandoffState({ draft }) });
-      expect(root().querySelectorAll('a[href="/flota/vehiculos/nuevo"]').length).toBe(2);
+      setup(null, { volver: '/fleet/vehicles/new', state: toHandoffState({ draft }) });
+      expect(root().querySelectorAll('a[href="/fleet/vehicles/new"]').length).toBe(2);
       expect(root().textContent).toContain('Volver');
     });
 
     it('un destino que no es de la flota se ignora', () => {
       setup(null, { volver: '//otro.invalid/flota/x' });
       expect(root().querySelector('a[href*="otro.invalid"]')).toBeNull();
-      expect(root().querySelector('a[href="/flota/tipos"]')).not.toBeNull();
+      expect(root().querySelector('a[href="/fleet/types"]')).not.toBeNull();
     });
   });
 });

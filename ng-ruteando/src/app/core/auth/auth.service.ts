@@ -126,7 +126,7 @@ export class AuthService {
     return notified$.pipe(
       tap(() => {
         this.endSession();
-        void this.router.navigate(['/acceso']);
+        void this.router.navigate(['/access']);
       })
     );
   }

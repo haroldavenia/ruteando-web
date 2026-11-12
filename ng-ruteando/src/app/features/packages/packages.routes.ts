@@ -9,13 +9,13 @@ export const PACKAGES_ROUTES: Routes = [
     loadComponent: () => import('./package-list.component').then((m) => m.PackageListComponent),
   },
   {
-    path: 'nuevo',
+    path: 'new',
     canDeactivate: [unsavedChangesGuard],
     loadComponent: () => import('./package-form.component').then((m) => m.PackageFormComponent),
   },
   {
     // Antes de `:id`, que si no la tomaría por un identificador
-    path: 'importar',
+    path: 'import',
     canDeactivate: [unsavedChangesGuard],
     loadComponent: () => import('./import/package-import.component').then((m) => m.PackageImportComponent),
   },

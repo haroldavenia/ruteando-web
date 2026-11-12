@@ -135,7 +135,7 @@ describe('interceptores de autenticación y renovación de sesión', () => {
     expect(await second).toBe('b');
   });
 
-  it('si falla la renovación borra la sesión, no reintenta y envía a /acceso con returnUrl', async () => {
+  it('si falla la renovación borra la sesión, no reintenta y envía a /access con returnUrl', async () => {
     login();
     const result = call('/gateway/journeys');
 
@@ -148,7 +148,7 @@ describe('interceptores de autenticación y renovación de sesión', () => {
     expect(error.message).toBe('Tu sesión no es válida o ha caducado');
     expect(tokens.get()).toBe('');
     expect(tokens.getRefreshToken()).toBeNull();
-    expect(navigate).toHaveBeenCalledOnceWith(['/acceso'], { queryParams: { returnUrl: '/places' } });
+    expect(navigate).toHaveBeenCalledOnceWith(['/access'], { queryParams: { returnUrl: '/places' } });
     controller.expectNone('/gateway/journeys');
   });
 
@@ -160,7 +160,7 @@ describe('interceptores de autenticación y renovación de sesión', () => {
 
     const error = (await result.catch((e: unknown) => e)) as ApiError;
     expect(error.status).toBe(401);
-    expect(navigate).toHaveBeenCalledOnceWith(['/acceso'], { queryParams: { returnUrl: '/places' } });
+    expect(navigate).toHaveBeenCalledOnceWith(['/access'], { queryParams: { returnUrl: '/places' } });
   });
 
   it('si el reintento vuelve a dar 401 no refresca otra vez y trata la sesión como caducada', async () => {

@@ -115,10 +115,10 @@ export class ShellComponent {
   /** Nombre de la pantalla actual (la entrada del menú cuya ruta contiene la dirección), para la barra superior. */
   readonly pageTitle = computed(() => {
     const url = this.url().split(/[?#]/)[0];
-    if (url === '/sin-permiso') {
+    if (url === '/forbidden') {
       return t('Sin permiso');
     }
-    if (url === '/perfil') {
+    if (url === '/profile') {
       return t('Perfil');
     }
     const flat = this.items().flatMap((item) => item.children ?? [item]);

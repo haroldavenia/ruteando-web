@@ -6,16 +6,16 @@
   @case ('missing') {
     <h1>{{ 'Jornada' | t }}</h1>
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/jornadas">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/journeys">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <h1>{{ 'Jornada' | t }}</h1>
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/jornadas">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/journeys">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     @if (loader.record(); as journey) {
-      <app-form-head [title]="journey.name" [backLabel]="'Jornadas' | t" backLink="/jornadas" />
+      <app-form-head [title]="journey.name" [backLabel]="'Jornadas' | t" backLink="/journeys" />
 
       <section class="card" aria-labelledby="summary-title">
         <h2 id="summary-title">{{ 'Resumen' | t }}</h2>
@@ -94,7 +94,7 @@
           <ul>
             @for (packageId of journey.invalidPackageIds; track packageId) {
               <li>
-                <a [routerLink]="['/paquetes', packageId]">{{ packageId }}</a>
+                <a [routerLink]="['/packages', packageId]">{{ packageId }}</a>
               </li>
             }
           </ul>

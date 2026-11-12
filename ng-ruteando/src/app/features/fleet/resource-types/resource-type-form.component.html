@@ -1,7 +1,7 @@
 <app-form-head
   [title]="isNew ? ('Nuevo tipo de vehículo' | t) : ('Editar tipo de vehículo' | t)"
   [backLabel]="returnTo ? ('Volver' | t) : ('Tipos de vehículo' | t)"
-  [backLink]="returnTo ?? '/flota/tipos'"
+  [backLink]="returnTo ?? '/fleet/types'"
   [backState]="returnState"
 />
 @switch (loader.status()) {
@@ -10,11 +10,11 @@
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/flota/tipos">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/fleet/types">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/flota/tipos">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/fleet/types">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
@@ -211,7 +211,7 @@
 
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
-        <a mat-button [routerLink]="returnTo ?? '/flota/tipos'" [state]="returnState">{{ 'Cancelar' | t }}</a>
+        <a mat-button [routerLink]="returnTo ?? '/fleet/types'" [state]="returnState">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
           {{ 'Guardar' | t }}
         </button>

@@ -1,15 +1,15 @@
-<app-form-head [title]="isNew ? ('Nueva zona' | t) : ('Editar zona' | t)" [backLabel]="'Zonas' | t" backLink="/zonas" />
+<app-form-head [title]="isNew ? ('Nueva zona' | t) : ('Editar zona' | t)" [backLabel]="'Zonas' | t" backLink="/zones" />
 @switch (loader.status()) {
   @case ('loading') {
     <section class="card"><app-skeleton variant="form" [label]="'Cargando…' | t" /></section>
   }
   @case ('missing') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/zonas">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/zones">{{ 'Volver al listado' | t }}</a>
   }
   @case ('error') {
     <app-form-result [error]="loader.error()" />
-    <a mat-stroked-button routerLink="/zonas">{{ 'Volver al listado' | t }}</a>
+    <a mat-stroked-button routerLink="/zones">{{ 'Volver al listado' | t }}</a>
   }
   @default {
     <form class="card form-grid" [formGroup]="form" (ngSubmit)="save()" appFocusFirstInvalid novalidate>
@@ -60,7 +60,7 @@
 
       <app-form-result [error]="submit.error()" />
       <app-form-actions [dirty]="hasUnsavedChanges()">
-        <a mat-button routerLink="/zonas">{{ 'Cancelar' | t }}</a>
+        <a mat-button routerLink="/zones">{{ 'Cancelar' | t }}</a>
         <button mat-flat-button class="primary-action" type="submit" [disabled]="submit.submitting()">
           {{ 'Guardar' | t }}
         </button>

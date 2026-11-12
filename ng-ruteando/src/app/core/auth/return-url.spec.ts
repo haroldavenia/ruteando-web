@@ -7,7 +7,7 @@ describe('safeReturnUrl', () => {
       ['/journeys#detalle', '/journeys#detalle'],
       ['/places/abc123', '/places/abc123'],
       ['/', '/'],
-      ['/acceso-nuevo', '/acceso-nuevo'], // no es una ruta de /acceso
+      ['/acceso-nuevo', '/acceso-nuevo'], // no es una ruta de /access
       ['/%2F%2Fotro.example', '/%2F%2Fotro.example'], // codificado: sigue siendo una ruta interna
     ];
     for (const [input, expected] of accepted) {
@@ -50,12 +50,12 @@ describe('safeReturnUrl', () => {
 
   describe('no vuelve a las pantallas de acceso (da /)', () => {
     for (const input of [
-      '/acceso',
-      '/acceso/registro',
-      '/acceso?x=1',
-      '/acceso#a',
-      '/a/../acceso',
-      '/journeys/../acceso/recuperar',
+      '/access',
+      '/access/register',
+      '/access?x=1',
+      '/access#a',
+      '/a/../access',
+      '/journeys/../access/recover',
     ]) {
       it(input, () => expect(safeReturnUrl(input)).toBe('/'));
     }

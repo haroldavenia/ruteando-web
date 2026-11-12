@@ -9,7 +9,7 @@ export const SETTINGS_ROUTES: Routes = [
     loadComponent: () => import('./settings-list.component').then((m) => m.SettingsListComponent),
   },
   {
-    path: 'nuevo',
+    path: 'new',
     canDeactivate: [unsavedChangesGuard],
     loadComponent: () => import('./settings-form.component').then((m) => m.SettingsFormComponent),
   },
