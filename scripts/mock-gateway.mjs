@@ -480,6 +480,16 @@ function handle(method, path, query, body, headers) {
     if (!user || body?.password !== PASSWORD) return fail(401, 'UNAUTHORIZED', 'Invalid credentials', path);
     return { status: 200, body: openSession(user) };
   }
+  // Intercambio de identidad del SSO (contrato propuesto en openspec/changes/add-sso/design.md): el servidor ya verificó la identidad
+  // con el proveedor y pide la sesión de la persona con ese correo. Nunca crea cuentas: 404 si no existe, 403 si está inactiva.
+  if (path === '/auth/sso/exchange' && method === 'POST') {
+    if (!body?.provider || !body?.subject || !body?.email || body?.emailVerified !== true)
+      return fail(400, 'BAD_REQUEST', 'provider, subject, email and emailVerified=true are required', path);
+    const user = USERS.find((u) => u.email === String(body.email).toLowerCase());
+    if (!user) return fail(404, 'NOT_FOUND', 'No account for that email', path);
+    if (user.active === false) return fail(403, 'FORBIDDEN', 'Account disabled', path);
+    return { status: 200, body: openSession(user) };
+  }
   if (path === '/auth/register' && method === 'POST') {
     if (!body?.email || !body?.password) return fail(400, 'BAD_REQUEST', 'email and password are required', path);
     if (USERS.some((u) => u.email === body.email.toLowerCase()))

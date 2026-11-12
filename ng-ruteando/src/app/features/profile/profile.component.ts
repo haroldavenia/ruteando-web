@@ -15,6 +15,7 @@ import { MfaEnrollComponent, MfaEnrollment } from '../../shared/mfa/mfa-enroll.c
 import { mfaMethodHint, mfaMethodIcon, mfaMethodLabel } from '../../shared/mfa/mfa-labels';
 import { MfaStepUp, MfaStepUpComponent } from '../../shared/mfa/mfa-step-up.component';
 import { RecoveryCodesComponent } from '../../shared/mfa/recovery-codes.component';
+import { SsoAccountsComponent } from '../../shared/sso/sso-accounts.component';
 import { roleLabel } from '../../shared/ui/role-label';
 import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
@@ -50,6 +51,7 @@ const ORDER: readonly MfaMethod[] = ['totp', 'email', 'sms'];
     PageHeaderComponent,
     RecoveryCodesComponent,
     SkeletonComponent,
+    SsoAccountsComponent,
     StatusBadgeComponent,
     TranslatePipe,
   ],
@@ -180,6 +182,8 @@ const ORDER: readonly MfaMethod[] = ['totp', 'email', 'sms'];
         }
       }
     </section>
+
+    <app-sso-accounts />
 
     @if (codes(); as list) {
       <section class="card" aria-labelledby="codes-title">

@@ -6,6 +6,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 
 import { makeUser } from '../../../testing/session';
+import { dismissSsoRequests } from '../../../testing/sso';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { authInterceptor } from '../../core/api/auth.interceptor';
 import { errorInterceptor } from '../../core/api/error.interceptor';
@@ -84,6 +85,7 @@ describe('SecurityComponent', () => {
 
   afterEach(() => {
     localStorage.clear();
+    dismissSsoRequests(controller);
     controller.verify();
   });
 

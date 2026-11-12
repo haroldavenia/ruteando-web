@@ -27,6 +27,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/access/register/register.component').then((m) => m.RegisterComponent),
       },
       {
+        // Regreso del inicio de sesión único (#ticket=… o #error=…); sin guard: la persona puede traer una sesión abierta
+        path: 'sso',
+        loadComponent: () => import('./features/access/sso/sso-complete.component').then((m) => m.SsoCompleteComponent),
+      },
+      {
         path: 'verify-email',
         loadComponent: () =>
           import('./features/access/verify-email/verify-email.component').then((m) => m.VerifyEmailComponent),

@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { makeUser } from '../../../testing/session';
+import { dismissSsoRequests } from '../../../testing/sso';
 import { API_BASE_URL } from '../../core/api/api-config';
 import { authInterceptor } from '../../core/api/auth.interceptor';
 import { errorInterceptor } from '../../core/api/error.interceptor';
@@ -83,6 +84,7 @@ describe('ProfileComponent', () => {
 
   afterEach(() => {
     localStorage.clear();
+    dismissSsoRequests(controller);
     controller.verify();
   });
 

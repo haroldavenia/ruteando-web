@@ -220,15 +220,23 @@ function createMfa(env = process.env, overrides = {}) {
   const wrap = (fn) => (req, res) => fn(req, res).catch((err) => handleError(res, err));
 
   // ---------- login ----------
-  const loginHandler = wrap(async (req, res) => {
-    const out = await gateway.call('POST', '/auth/login', { body: req.body });
-    const session = out.json;
-    if (out.status !== 200 || !session?.user?.id || !session.accessToken) {
-      // Credenciales incorrectas u otro error: la respuesta del gateway, sin tocarla
-      return res.status(out.status).type(out.contentType).send(out.text);
-    }
+  /**
+   * Qué hacer con una sesión que el gateway acaba de abrir (por contraseña o por SSO): `null` si pasa tal cual, o `{ status, json }`
+   * con el reto de segundo factor, la activación obligatoria o el bloqueo por demasiados fallos. La sesión se retiene en el reto.
+   */
+  function afterLogin(session) {
     const user = session.user;
-    if (lockedOut(res, user)) return; // la sesión del gateway se descarta: nada llega al navegador
+    const state = failures.state(user.id);
+    if (state.blocked) {
+      return {
+        status: 429,
+        json: {
+          code: 'TOO_MANY_FAILURES',
+          message: 'Demasiados códigos erróneos. Inténtalo de nuevo en unos minutos.',
+          retryAfterSeconds: Math.ceil(state.retryAfterMs / 1000),
+        },
+      }; // la sesión del gateway se descarta: nada llega al navegador
+    }
     const policy = store.getPolicy(user.tenantId);
     const active = activeMethods(user, policy);
 
@@ -236,26 +244,40 @@ function createMfa(env = process.env, overrides = {}) {
       const methods = active.map((method) => ({ method, destination: destinationOf(user, method) }));
       if (store.recoveryCodesLeft(user.id) > 0) methods.push({ method: 'recovery', destination: null });
       const c = challenges.create({ session, mode: 'verify', methods: methods.map((m) => m.method) });
-      return res.json({ mfaRequired: true, challengeId: c.id, methods, expiresInSeconds: c.expiresInSeconds });
+      return {
+        status: 200,
+        json: { mfaRequired: true, challengeId: c.id, methods, expiresInSeconds: c.expiresInSeconds },
+      };
     }
     if (requiredFor(policy, user.role)) {
       const allowed = offered(policy);
       if (allowed.length === 0) {
-        return fail(
-          res,
-          503,
-          'MFA_UNAVAILABLE',
-          'El segundo factor es obligatorio pero ningún método está disponible.'
-        );
+        return {
+          status: 503,
+          json: {
+            code: 'MFA_UNAVAILABLE',
+            message: 'El segundo factor es obligatorio pero ningún método está disponible.',
+          },
+        };
       }
       const c = challenges.create({ session, mode: 'enroll', methods: allowed });
-      return res.json({
-        mfaEnrollRequired: true,
-        challengeId: c.id,
-        methods: allowed,
-        expiresInSeconds: c.expiresInSeconds,
-      });
+      return {
+        status: 200,
+        json: { mfaEnrollRequired: true, challengeId: c.id, methods: allowed, expiresInSeconds: c.expiresInSeconds },
+      };
     }
+    return null;
+  }
+
+  const loginHandler = wrap(async (req, res) => {
+    const out = await gateway.call('POST', '/auth/login', { body: req.body });
+    const session = out.json;
+    if (out.status !== 200 || !session?.user?.id || !session.accessToken) {
+      // Credenciales incorrectas u otro error: la respuesta del gateway, sin tocarla
+      return res.status(out.status).type(out.contentType).send(out.text);
+    }
+    const next = afterLogin(session);
+    if (next) return res.status(next.status).json(next.json);
     return res.status(200).type(out.contentType).send(out.text);
   });
 
@@ -629,6 +651,7 @@ function createMfa(env = process.env, overrides = {}) {
     codec,
     store,
     challenges,
+    afterLogin,
     /** Registra el login interceptado y `/mfa` en la aplicación; debe ir ANTES del proxy de `/gateway`. */
     mount(app) {
       app.post('/gateway/auth/login', express.json({ limit: '20kb' }), loginHandler, (err, req, res, next) =>

@@ -7,6 +7,7 @@ import { catchError, firstValueFrom, map, Observable, of, tap } from 'rxjs';
 
 import { API_BASE_URL } from '../api/api-config';
 import { MfaApi } from '../api/data/mfa.api';
+import { SsoApi } from '../api/data/sso.api';
 import { REFRESH_MARGIN_MS } from '../api/refresh.interceptor';
 import { linkErrors, loginErrors, registerErrors } from './auth-messages';
 import { CurrentUser } from './current-user';
@@ -23,6 +24,7 @@ import { TokenStorageService } from './token-storage.service';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly mfa = inject(MfaApi);
+  private readonly sso = inject(SsoApi);
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly tokens = inject(TokenStorageService);
   private readonly refresher = inject(SessionRefreshService);
@@ -51,17 +53,15 @@ export class AuthService {
   login(email: string, password: string): Observable<LoginResult> {
     return this.http
       .post<LoginResponse>(`${this.baseUrl}/auth/login`, { email, password }, { context: loginErrors() })
-      .pipe(
-        map((response): LoginResult => {
-          if ('mfaRequired' in response) {
-            return { kind: 'challenge', challenge: response };
-          }
-          if ('mfaEnrollRequired' in response) {
-            return { kind: 'enroll', enroll: response };
-          }
-          return { kind: 'session', user: this.startSession(response) };
-        })
-      );
+      .pipe(map((response) => this.toResult(response)));
+  }
+
+  /**
+   * Cierra el inicio de sesión único con el ticket del regreso del proveedor. Da lo mismo que `login`: la sesión, o el reto de segundo
+   * factor si la persona o su empresa lo piden (el SSO no lo sustituye).
+   */
+  completeSso(ticket: string): Observable<LoginResult> {
+    return this.sso.complete(ticket).pipe(map((response) => this.toResult(response)));
   }
 
   /** Supera el reto con el código de un método (o de recuperación) y, solo entonces, abre la sesión. */
@@ -145,6 +145,16 @@ export class AuthService {
     } catch {
       this.endSession();
     }
+  }
+
+  private toResult(response: LoginResponse): LoginResult {
+    if ('mfaRequired' in response) {
+      return { kind: 'challenge', challenge: response };
+    }
+    if ('mfaEnrollRequired' in response) {
+      return { kind: 'enroll', enroll: response };
+    }
+    return { kind: 'session', user: this.startSession(response) };
   }
 
   private startSession(session: SessionResponse): UserProfile {
