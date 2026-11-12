@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
+import { NO_SSO } from '../../../testing/sso';
+import { SsoApi } from '../../core/api/data/sso.api';
 import { AuthService } from '../../core/auth/auth.service';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { LoginComponent } from './login/login.component';
@@ -41,6 +43,7 @@ describe('aspecto común de las pantallas de acceso', () => {
         providers: [
           provideRouter([]),
           provideNoopAnimations(),
+          { provide: SsoApi, useValue: NO_SSO },
           { provide: AuthService, useValue: { resendVerification: () => undefined } },
         ],
       });

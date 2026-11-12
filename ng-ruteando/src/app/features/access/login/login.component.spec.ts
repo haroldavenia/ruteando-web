@@ -7,6 +7,7 @@ import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { makeSession } from '../../../../testing/session';
+import { dismissSsoRequests } from '../../../../testing/sso';
 import { API_BASE_URL } from '../../../core/api/api-config';
 import { authInterceptor } from '../../../core/api/auth.interceptor';
 import { errorInterceptor } from '../../../core/api/error.interceptor';
@@ -65,6 +66,7 @@ describe('LoginComponent', () => {
 
   afterEach(() => {
     localStorage.clear();
+    dismissSsoRequests(controller);
     controller.verify();
   });
 

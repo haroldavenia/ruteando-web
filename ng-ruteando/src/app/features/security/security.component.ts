@@ -21,6 +21,7 @@ import { mfaMethodHint, mfaMethodIcon, mfaMethodLabel } from '../../shared/mfa/m
 import { roleLabel } from '../../shared/ui/role-label';
 import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
+import { SsoSettingsComponent } from './sso-settings.component';
 
 const METHODS: readonly MfaMethod[] = ['totp', 'email', 'sms'];
 const ROLES: readonly UserRole[] = ['super_admin', 'tenant_admin', 'agent', 'driver'];
@@ -41,6 +42,7 @@ const ROLES: readonly UserRole[] = ['super_admin', 'tenant_admin', 'agent', 'dri
     FormResultComponent,
     PageHeaderComponent,
     SkeletonComponent,
+    SsoSettingsComponent,
     StatusBadgeComponent,
     TranslatePipe,
   ],
@@ -165,6 +167,7 @@ const ROLES: readonly UserRole[] = ['super_admin', 'tenant_admin', 'agent', 'dri
         }
       </section>
     }
+    <app-sso-settings />
   `,
   styles: `
     .muted {

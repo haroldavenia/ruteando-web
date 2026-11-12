@@ -49,6 +49,13 @@ if (!mfa.enabled) {
 }
 const mfaApp = require('express')();
 mfa.mount(mfaApp);
+// SSO (change add-sso): mismo patrón; el regreso del proveedor (/gateway/sso/<proveedor>/callback) entra por el puerto de `ng serve`,
+// así que SSO_REDIRECT_BASE_URL debe ser http://localhost:4200 y esa dirección debe estar registrada en el proveedor.
+const sso = require('../server/sso').createSso(process.env, { mfa });
+if (!sso.enabled) {
+  console.warn(`[proxy /gateway/sso] SSO desactivado: ${sso.reason}.`);
+}
+sso.mount(mfaApp);
 mfaApp
   .listen(mfaPort, '127.0.0.1')
   .on('error', (err) =>
@@ -62,6 +69,17 @@ module.exports = {
   // Con el módulo apagado el login tampoco se desvía: sigue por /gateway como siempre
   ...(mfa.enabled ? { '/gateway/auth/login': { target: mfaTarget, changeOrigin: false } } : {}),
   '/gateway/mfa': { target: mfaTarget, changeOrigin: false },
+  '/gateway/sso': { target: mfaTarget, changeOrigin: false },
+  // Rutas solo de servidor (el intercambio del SSO entrega sesiones): el navegador no las alcanza (ver server/gateway-proxy.js)
+  '/gateway/auth/sso': {
+    target: 'http://127.0.0.1:9',
+    bypass(req, res) {
+      res.statusCode = 404;
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.end(JSON.stringify({ message: 'Not found' }));
+      return false;
+    },
+  },
   '/gateway': {
     // Con variables ausentes se usa un destino ficticio; `bypass` responde 503 antes de reenviar
     target: target || 'http://127.0.0.1:9',

@@ -19,6 +19,34 @@ const { gatewayConfig, startMockGateway, MOCK_WARNING } = require('./gateway-mod
 
 const DEFAULT_TIMEOUT_MS = 30000;
 
+/**
+ * Rutas del gateway que SOLO puede llamar este servidor, nunca el navegador: el proxy añade la clave de API a todo lo que reenvía, así
+ * que `POST /auth/sso/exchange` (entrega una sesión a quien diga un correo) quedaría abierto a cualquiera. Se normaliza antes de
+ * comparar (mayúsculas, `%2F`, barras repetidas, barras invertidas) y se rechazan los segmentos `.` y `..`.
+ */
+function isServerOnlyPath(url) {
+  let p = String(url).split(/[?#]/)[0];
+  // Decodifica hasta que no cambie (`%252f`); si aún queda un `%` es una codificación rara: no se reenvía
+  for (let i = 0; i < 5; i++) {
+    let next;
+    try {
+      next = decodeURIComponent(p);
+    } catch (err) {
+      return true; // codificación inválida
+    }
+    if (next === p) break;
+    p = next;
+  }
+  if (p.includes('%')) return true;
+  p = p
+    .toLowerCase()
+    .replace(/\\/g, '/')
+    .replace(/;[^/]*/g, '') // parámetros de ruta (`/auth;x=1/sso`)
+    .replace(/\/+/g, '/');
+  // El segmento `auth/sso` en cualquier posición (el gateway no tiene rutas del navegador con ese nombre) y los segmentos `.` y `..`
+  return /(^|\/)\.\.?(\/|$)/.test(p) || /(^|\/)auth\/sso(\/|$)/.test(p);
+}
+
 /** Carga ../.env si existe. No pisa las variables que ya estén definidas en el entorno. */
 function loadEnvFile() {
   const file = path.join(__dirname, '..', '.env');
@@ -67,7 +95,7 @@ function createGatewayProxy(env) {
     };
   }
 
-  return createProxyMiddleware({
+  const proxy = createProxyMiddleware({
     target: target,
     changeOrigin: true,
     // Montado con app.use('/gateway', ...) Express ya recorta el prefijo de req.url; si no, se quita aquí
@@ -94,6 +122,10 @@ function createGatewayProxy(env) {
       },
     },
   });
+  return function gatewayProxy(req, res, next) {
+    if (isServerOnlyPath(req.url)) return sendJson(res, 404, 'Not found');
+    return proxy(req, res, next);
+  };
 }
 
-module.exports = { createGatewayProxy, loadEnvFile };
+module.exports = { createGatewayProxy, isServerOnlyPath, loadEnvFile };

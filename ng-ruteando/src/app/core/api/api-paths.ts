@@ -11,6 +11,9 @@ const PUBLIC_PATHS = [
   '/mfa/login/send',
   '/mfa/login/verify',
   '/mfa/login/complete',
+  // Inicio de sesión único: la lista de proveedores y el canje del ticket del regreso se piden sin sesión
+  '/sso/providers',
+  '/sso/complete',
 ];
 const PUBLIC_PREFIXES = ['/invitations/accept/'];
 

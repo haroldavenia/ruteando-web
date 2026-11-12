@@ -12,6 +12,7 @@ var logger = require('morgan');
 
 var gatewayProxy = require('./gateway-proxy');
 var createMfa = require('./mfa').createMfa;
+var createSso = require('./sso').createSso;
 var securityHeaders = require('./security-headers').securityHeaders;
 gatewayProxy.loadEnvFile(); // carga ../.env (si existe) antes de leer la configuración
 
@@ -47,6 +48,15 @@ if (!mfa.enabled) {
   console.log(('Segundo factor desactivado: ' + mfa.reason + '.').yellow);
 }
 mfa.mount(app);
+// Inicio de sesión único (change add-sso): Google, GitHub, Apple y OIDC por empresa. Apagado sin SSO_ENABLED_PROVIDERS (o sin
+// SSO_REDIRECT_BASE_URL y MFA_SECRET_KEY); entrega la sesión por el mismo segundo paso que el login. Antes del proxy.
+var sso = createSso(process.env, { mfa: mfa });
+if (!sso.enabled) {
+  console.log(('SSO desactivado: ' + sso.reason + '.').yellow);
+} else {
+  console.log(('SSO activo: ' + sso.providers.join(', ') + '.').green);
+}
+sso.mount(app);
 // Proxy del gateway: antes del estático y del comodín del cliente
 app.use('/gateway', gatewayProxy.createGatewayProxy());
 

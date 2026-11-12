@@ -16,6 +16,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
+import { SsoButtonsComponent } from '../sso/sso-buttons.component';
 import { MfaEnrollStepComponent } from './mfa-enroll-step.component';
 import { MfaVerifyStepComponent } from './mfa-verify-step.component';
 
@@ -34,6 +35,7 @@ import { MfaVerifyStepComponent } from './mfa-verify-step.component';
     MfaEnrollStepComponent,
     MfaVerifyStepComponent,
     PasswordFieldComponent,
+    SsoButtonsComponent,
     TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,6 +77,7 @@ import { MfaVerifyStepComponent } from './mfa-verify-step.component';
           }
           <button mat-flat-button type="submit" [disabled]="loading()">{{ 'Iniciar sesión' | t }}</button>
         </form>
+        <app-sso-buttons [returnUrl]="returnUrl" />
         <p class="alt">
           {{ '¿No tienes cuenta?' | t }} <a routerLink="/access/register">{{ 'Crear cuenta' | t }}</a>
         </p>
@@ -93,6 +96,7 @@ export class LoginComponent {
     password: ['', Validators.required],
   });
   private readonly formDirective = viewChild(FormGroupDirective);
+  protected readonly returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   /** Primer paso (credenciales), o el reto de segundo factor que el servidor devolvió. */

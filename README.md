@@ -91,6 +91,47 @@ Twilio es quien genera, envía y comprueba el código. El número de teléfono s
 9. **CSP**: empieza con `CSP_MODE=report-only`; pasa a `enforce` solo tras recorrer la aplicación sin violaciones.
 10. **Comprobación final**: con una sesión iniciada, `GET /gateway/mfa/status` debe mostrar `methods.sms.available: true` (y el de correo también). Activa un método con una persona real de cada país objetivo antes de exigirlo en **Seguridad**.
 
+## Inicio de sesión único (opcional)
+
+Entrar con Google, GitHub, Apple o con el proveedor OpenID Connect de la empresa. Apagado por defecto: solo se ofrecen los proveedores de `SSO_ENABLED_PROVIDERS` que tengan sus credenciales (y hacen falta `SSO_REDIRECT_BASE_URL` y `MFA_SECRET_KEY`). La sesión sigue siendo del gateway: el servidor identifica a la persona con el proveedor y se la pide con `POST /auth/sso/exchange` (contrato en `openspec/changes/add-sso/design.md`); nunca crea cuentas, y el segundo factor se sigue pidiendo.
+
+### Variables
+
+| Variable | Qué es |
+|---|---|
+| `SSO_ENABLED_PROVIDERS` | Lista separada por comas: `google`, `github`, `apple`, `enterprise` |
+| `SSO_REDIRECT_BASE_URL` | Dirección pública de la aplicación, sin barra final (`https://ruteando.example.com`; en `ng serve`, `http://localhost:4200`) |
+| `SSO_GOOGLE_CLIENT_ID`, `SSO_GOOGLE_CLIENT_SECRET` | Cliente OAuth de Google Cloud («Aplicación web») |
+| `SSO_GITHUB_CLIENT_ID`, `SSO_GITHUB_CLIENT_SECRET` | OAuth App de GitHub |
+| `SSO_APPLE_CLIENT_ID`, `SSO_APPLE_TEAM_ID`, `SSO_APPLE_KEY_ID`, `SSO_APPLE_PRIVATE_KEY` | Services ID, equipo, clave y su PEM (con `\n` en una sola línea) de «Sign in with Apple» |
+| `SSO_DB_PATH` | Fichero SQLite de identidades y proveedores de empresa (`data/sso.sqlite`; en producción, un volumen persistente) |
+
+En cada proveedor se registra la dirección de regreso `<SSO_REDIRECT_BASE_URL>/gateway/sso/<proveedor>/callback` (`google`, `github`, `apple`; la de cada empresa aparece en **Seguridad**). El proveedor de empresa (emisor, cliente, secreto y dominios de correo) lo da de alta el administrador en **Seguridad**; el secreto se guarda cifrado con `MFA_SECRET_KEY`.
+
+### Desarrollo (sin cuentas reales)
+
+```
+node scripts/mock-oidc-provider.cjs          # proveedor OIDC simulado en :4030
+# .env:
+GATEWAY_MODE=mock
+MFA_SECRET_KEY=<la de siempre>
+SSO_ENABLED_PROVIDERS=google
+SSO_REDIRECT_BASE_URL=http://localhost:4200
+SSO_ALLOW_INSECURE=true
+SSO_GOOGLE_ISSUER=http://127.0.0.1:4030
+SSO_GOOGLE_CLIENT_ID=mock
+SSO_GOOGLE_CLIENT_SECRET=mock
+```
+
+Con `pnpm start` y «Continuar con Google» el proveedor simulado pide un correo: escribe uno del gateway simulado (`admin@example.invalid`). `SSO_ALLOW_INSECURE` y `SSO_GOOGLE_ISSUER` solo existen para esto: no las uses fuera de tu máquina.
+
+### Producción
+
+1. `SSO_REDIRECT_BASE_URL` con el dominio público y HTTPS (la cookie del flujo lleva `Secure` con HTTPS).
+2. `SSO_DB_PATH` en un volumen persistente y una sola instancia (flujos y tickets viven en memoria).
+3. El gateway debe ofrecer `POST /auth/sso/exchange`.
+4. Si usas el SSO de empresa, el proveedor debe ser `https` con nombre público (no se admiten IP ni `localhost`).
+
 ## Con Docker (desarrollo)
 
 Sin instalar Node ni copiar `.env`: `docker compose up` (o `pnpm run docker:dev`) levanta el gateway simulado y `ng serve` en http://localhost:4200 (usuarios y contraseña como en la sección anterior). La primera vez instala las dependencias en volúmenes de Docker y tarda unos minutos; después solo reinstala si cambia el `pnpm-lock.yaml`. Tras la migración a pnpm (que cambia `Dockerfile.dev`), reconstruye las imágenes una vez: `docker compose --profile prod-like --profile test build` (o `docker compose up --build`); si una imagen vieja se queda con `pnpm: not found`, es eso. Los volúmenes con `node_modules` de npm se reinstalan solos (el hash del lock cambió); si algo queda raro, `docker compose down -v`. El código se monta desde el equipo y recarga al guardar.

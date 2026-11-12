@@ -221,3 +221,31 @@ test('los registros del servidor no contienen la clave ni los tokens', async () 
     assert.ok(!server.log().includes(TOKEN), 'el registro contiene un token');
   }
 });
+
+test('las rutas solo de servidor (intercambio del SSO) no se alcanzan desde el navegador', async () => {
+  const before = received.length;
+  for (const p of [
+    '/gateway/auth/sso/exchange',
+    '/gateway/AUTH/SSO/exchange',
+    '/gateway/auth/sso%2Fexchange',
+    '/gateway//auth//sso/exchange',
+    '/gateway/auth/%73so/exchange',
+    '/gateway/places/../auth/sso/exchange',
+    '/gateway/auth/sso/exchange?x=1',
+    '/gateway/auth/sso%252Fexchange',
+    '/gateway/auth%252Fsso/exchange',
+    '/gateway/auth;x=1/sso/exchange',
+    '/gateway/auth/sso;x=1/exchange',
+    '/gateway/auth/sso%2525252fexchange',
+  ]) {
+    const res = await fetch(proxied.base + p, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: 'google', subject: 's', email: 'admin@x.invalid', emailVerified: true }),
+    });
+    assert.equal(res.status, 404, p);
+  }
+  assert.equal(received.length, before, 'ninguna llegó al gateway');
+  const ok = await fetch(proxied.base + '/gateway/auth/login', { method: 'POST' });
+  assert.equal(ok.status, 200, 'el resto de /auth sigue pasando');
+});
