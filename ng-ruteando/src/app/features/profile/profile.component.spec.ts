@@ -146,13 +146,14 @@ describe('ProfileComponent', () => {
     expect(root.querySelector('app-recovery-codes')).toBeNull();
   });
 
-  it('desactivar pide un código de otro método activo y, si no vale, el método sigue activo', async () => {
+  it('desactivar pide un código de un método activo (también el que se quita) y, si no vale, el método sigue activo', async () => {
     await open(status({ totp: { active: true }, email: { active: true } }));
     buttonIn(row('Aplicación autenticadora'), 'Desactivar')!.click();
     fixture.detectChanges();
 
     expect(root.querySelector('.panel h3')?.textContent).toBe('Desactivar Aplicación autenticadora');
-    // sin el método que se quita, confirma el correo (o un código de recuperación)
+    // se confirma con la propia aplicación, con el correo o con un código de recuperación
+    expect(root.querySelector('.panel')?.textContent).toContain('Aplicación autenticadora');
     expect(root.querySelector('.panel')?.textContent).toContain('Correo electrónico');
     expect(root.querySelector('.panel')?.textContent).toContain('Código de recuperación');
 
@@ -167,16 +168,17 @@ describe('ProfileComponent', () => {
     expect(badge('Aplicación autenticadora')).toBe('Activo');
   });
 
-  it('desactivar con un código válido manda el método de confirmación y refresca el estado', async () => {
+  it('desactivar con el código de la propia aplicación manda el método de confirmación y refresca el estado', async () => {
     await open(status({ totp: { active: true } }));
     buttonIn(row('Aplicación autenticadora'), 'Desactivar')!.click();
     fixture.detectChanges();
-    // solo queda confirmar con un código de recuperación
-    type('abcde-fghjk');
+    // con solo la aplicación activa, su propio código autoriza quitarla (es lo que espera la persona)
+    expect(root.querySelector('.panel')?.textContent).toContain('código de tu aplicación autenticadora');
+    type('123 456');
     submit();
 
     const req = controller.expectOne('/gateway/mfa/methods/totp');
-    expect(req.request.body).toEqual({ via: 'recovery', code: 'abcdefghjk' });
+    expect(req.request.body).toEqual({ via: 'totp', code: '123456' });
     req.flush({ active: false });
     await settle();
     controller.expectOne(STATUS_URL).flush(status());
@@ -221,13 +223,37 @@ describe('ProfileComponent', () => {
     expect(noticeText()).toBe('Códigos de recuperación nuevos generados');
   });
 
-  it('con un método por correo, confirmar envía primero el código y lo anuncia', async () => {
-    await open(status({ email: { active: true } }));
-    buttonIn(row('Correo electrónico'), 'Desactivar')!.click();
-    fixture.detectChanges();
-    // el único método es el que se quita: solo cabe un código de recuperación
-    expect(buttonIn(root.querySelector('.panel')!, 'Enviar código')).toBeUndefined();
-  });
+  for (const [method, name, destination] of [
+    ['email', 'Correo electrónico', 'p•••@example.invalid'],
+    ['sms', 'Mensaje de texto (SMS)', '+57•••••4567'],
+  ] as const) {
+    it(`desactivar ${method} siendo el único método: se pide el código a ese mismo método y se confirma con él`, async () => {
+      await open(status({ [method]: { active: true, destination } }));
+      buttonIn(row(name), 'Desactivar')!.click();
+      fixture.detectChanges();
+      const panel = root.querySelector('.panel')!;
+
+      // el método que se quita sigue valiendo para confirmar: hay que enviar el código a su destino
+      expect(buttonIn(panel, 'Enviar código')).toBeDefined();
+      buttonIn(panel, 'Enviar código')!.click();
+      const send = controller.expectOne('/gateway/mfa/session/send');
+      expect(send.request.body).toEqual({ via: method });
+      send.flush({ sent: true, method, destination, expiresInSeconds: 300 });
+      await settle();
+      expect(panel.textContent).toContain(destination);
+
+      type('654321');
+      submit();
+      const req = controller.expectOne(`/gateway/mfa/methods/${method}`);
+      expect(req.request.method).toBe('DELETE');
+      expect(req.request.body).toEqual({ via: method, code: '654321' });
+      req.flush({ active: false });
+      await settle();
+      controller.expectOne(STATUS_URL).flush(status());
+      await settle();
+      expect(badge(name)).toBe('Sin activar');
+    });
+  }
 
   it('si el servidor no tiene activado el segundo factor lo explica y no ofrece controles', async () => {
     await open({ error: { code: 'MFA_DISABLED' }, status: 503 });

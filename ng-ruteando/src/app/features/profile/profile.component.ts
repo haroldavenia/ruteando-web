@@ -139,7 +139,7 @@ const ORDER: readonly MfaMethod[] = ['totp', 'email', 'sms'];
               @case ('disable') {
                 <h3>{{ 'Desactivar {0}' | t: [label(p.method)] }}</h3>
                 <app-mfa-step-up
-                  [methods]="otherActive(p.method)"
+                  [methods]="activeMethods()"
                   [hasRecovery]="s.recoveryCodesLeft > 0"
                   [confirmLabel]="'Desactivar' | t"
                   [busy]="busy()"
@@ -320,11 +320,6 @@ export class ProfileComponent implements OnInit {
         this.loadError.set(err.message);
       },
     });
-  }
-
-  /** Métodos activos distintos del que se quiere quitar: con ellos (o un código de recuperación) se confirma. */
-  protected otherActive(method: MfaMethod): MfaMethod[] {
-    return this.activeMethods().filter((m) => m !== method);
   }
 
   protected open(panel: Panel): void {
