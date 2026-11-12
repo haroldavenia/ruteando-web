@@ -19,6 +19,8 @@ POST /api/v1/auth/sso/exchange        (cabecera X-Api-Key, de servidor a servido
 400  faltan campos o emailVerified no es true
 ```
 
+**El intercambio es solo de servidor.** El proxy `/gateway` añade la clave de API a todo lo que reenvía, así que sin protección cualquiera podría pedir una sesión con un correo: `server/gateway-proxy.js` y `proxy.conf.js` responden 404 a `/auth/sso/**` (normalizando mayúsculas, codificaciones, barras y `..`). El gateway real debería además exigir una credencial distinta de la clave de API que usa el proxy (o restringir el origen), y así no depender de este filtro.
+
 Se descartó la contraseña técnica por persona (frágil y un riesgo de seguridad) y que el gateway valide el `id_token` (equivale a la anterior en cambios del gateway y duplica la validación). Está implementado en `scripts/mock-gateway.mjs`; **hay que pedirlo al equipo del gateway real**: sin él, un `404` genérico se mostraría como «No hay una cuenta con ese correo».
 
 **Entrega de la sesión: ticket de un solo uso.** El regreso del proveedor es una navegación del navegador, así que no puede llevar tokens. El servidor guarda la sesión del gateway en memoria (como los retos del 2FA), redirige a `/access/sso#ticket=…` (el fragmento no viaja en peticiones ni en `Referer`) y el cliente lo canjea en `POST /gateway/sso/complete`, que responde exactamente lo que respondería el login: sesión, `mfaRequired` o `mfaEnrollRequired`. **El SSO no sustituye al segundo factor.**
@@ -40,4 +42,5 @@ Se descartó la contraseña técnica por persona (frágil y un riesgo de segurid
 - El gateway real no ofrece el intercambio: hasta entonces solo funciona con el simulado.
 - Los tres proveedores externos (Google, GitHub, Apple) y un proveedor de empresa real no se han probado: las pruebas usan un proveedor OIDC simulado y `fetch` simulado.
 - Las llamadas salientes (descubrimiento, JWKS, canje del código) resuelven el nombre y conectan solo a direcciones públicas (`safe-fetch.js`, la comprobación va en el `lookup` de la conexión: sin *DNS rebinding*); solo se relaja con `SSO_ALLOW_INSECURE`.
+- El dominio de una empresa no se prueba (p. ej. con un registro DNS): quien administra una empresa puede afirmar, con su proveedor, el correo de cualquier persona de su empresa. Un `super_admin` no puede entrar por el SSO de una empresa (`ROLE_NOT_ALLOWED`); lo demás equivale a lo que ya puede hacer un administrador.
 - «Cerrar sesión» no cierra la sesión del proveedor.

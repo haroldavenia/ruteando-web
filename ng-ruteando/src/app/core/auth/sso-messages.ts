@@ -20,6 +20,8 @@ export function ssoErrorMessage(code: string | null): string {
     case 'WRONG_TENANT':
     case 'WRONG_DOMAIN':
       return t('Ese correo no pertenece a la empresa de este proveedor');
+    case 'ROLE_NOT_ALLOWED':
+      return t('Este rol no puede entrar con el SSO de una empresa');
     case 'IDENTITY_MISMATCH':
       return t('Esa cuenta del proveedor ya está vinculada a otra persona');
     case 'NO_PROVIDER':

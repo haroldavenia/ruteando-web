@@ -19,6 +19,22 @@ const { gatewayConfig, startMockGateway, MOCK_WARNING } = require('./gateway-mod
 
 const DEFAULT_TIMEOUT_MS = 30000;
 
+/**
+ * Rutas del gateway que SOLO puede llamar este servidor, nunca el navegador: el proxy añade la clave de API a todo lo que reenvía, así
+ * que `POST /auth/sso/exchange` (entrega una sesión a quien diga un correo) quedaría abierto a cualquiera. Se normaliza antes de
+ * comparar (mayúsculas, `%2F`, barras repetidas, barras invertidas) y se rechazan los segmentos `.` y `..`.
+ */
+function isServerOnlyPath(url) {
+  let p;
+  try {
+    p = decodeURIComponent(String(url).split(/[?#]/)[0]);
+  } catch (err) {
+    return true; // codificación inválida: no se reenvía
+  }
+  p = p.toLowerCase().replace(/\\/g, '/').replace(/\/+/g, '/');
+  return /(^|\/)\.\.?(\/|$)/.test(p) || /^(\/gateway)?\/auth\/sso(\/|$)/.test(p);
+}
+
 /** Carga ../.env si existe. No pisa las variables que ya estén definidas en el entorno. */
 function loadEnvFile() {
   const file = path.join(__dirname, '..', '.env');
@@ -67,7 +83,7 @@ function createGatewayProxy(env) {
     };
   }
 
-  return createProxyMiddleware({
+  const proxy = createProxyMiddleware({
     target: target,
     changeOrigin: true,
     // Montado con app.use('/gateway', ...) Express ya recorta el prefijo de req.url; si no, se quita aquí
@@ -94,6 +110,10 @@ function createGatewayProxy(env) {
       },
     },
   });
+  return function gatewayProxy(req, res, next) {
+    if (isServerOnlyPath(req.url)) return sendJson(res, 404, 'Not found');
+    return proxy(req, res, next);
+  };
 }
 
-module.exports = { createGatewayProxy, loadEnvFile };
+module.exports = { createGatewayProxy, isServerOnlyPath, loadEnvFile };

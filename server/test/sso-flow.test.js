@@ -14,6 +14,7 @@ const KEY = crypto.randomBytes(32).toString('base64');
 const USERS = {
   'ada@x.invalid': { id: 'u-ada', email: 'ada@x.invalid', role: 'tenant_admin', tenantId: 't1' },
   'ana@x.invalid': { id: 'u-ana', email: 'ana@x.invalid', role: 'agent', tenantId: 't1' },
+  'sup@corp.example': { id: 'u-sup', email: 'sup@corp.example', role: 'super_admin', tenantId: 't2' },
   'olga@corp.example': { id: 'u-olga', email: 'olga@corp.example', role: 'agent', tenantId: 't2' },
   'ben@corp.example': { id: 'u-ben', email: 'ben@corp.example', role: 'tenant_admin', tenantId: 't2' },
   'off@x.invalid': { id: 'u-off', email: 'off@x.invalid', role: 'agent', tenantId: 't1', active: false },
@@ -400,6 +401,13 @@ test('SSO empresarial: alta validada, dominio por correo, empresa y dominio comp
   });
   assert.equal(errorOf(liar.hash), 'EMAIL_NOT_VERIFIED');
 
+  // un super_admin de la empresa no entra por el proveedor que ella misma controla
+  const sup = await browserFlow(ctx, 'enterprise', {
+    identity: { email: 'sup@corp.example', sub: 'o4', email_verified: true },
+    query: '?email=olga@corp.example',
+  });
+  assert.equal(errorOf(sup.hash), 'ROLE_NOT_ALLOWED');
+
   // al borrarlo se van el proveedor, los dominios y las identidades
   assert.equal((await json(ctx.base, '/gateway/sso/enterprise', { method: 'DELETE', token: admin })).status, 200);
   assert.equal(ctx.sso.store.domainOwner('corp.example'), null);
@@ -527,6 +535,13 @@ test('llamadas salientes: solo a direcciones públicas (SSRF, también por DNS)'
     'fd00::1',
     '::ffff:127.0.0.1',
     '::ffff:10.0.0.1',
+    '::ffff:7f00:1',
+    '::ffff:a00:1',
+    '::127.0.0.1',
+    '64:ff9b::7f00:1',
+    '2002:7f00:1::1',
+    '2001:0:4136:e378:8000:63bf:3fff:fdd2',
+    '2001:db8::1',
     'ff02::1',
     '224.0.0.1',
     'no-es-ip',

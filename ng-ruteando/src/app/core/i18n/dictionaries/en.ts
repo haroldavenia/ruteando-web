@@ -1185,4 +1185,5 @@ export const EN: Readonly<Record<string, string>> = {
   'Ya no podrás entrar con esta cuenta. Podrás vincularla de nuevo al volver a entrar con ella.':
     'You will no longer be able to sign in with this account. You can link it again by signing in with it.',
   'Cuenta desvinculada: {0}': 'Account unlinked: {0}',
+  'Este rol no puede entrar con el SSO de una empresa': 'This role cannot sign in with a company SSO',
 };

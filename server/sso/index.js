@@ -271,6 +271,8 @@ function createSso(env = process.env, overrides = {}) {
       if (!ex.session) return failTo(res, ex.code);
       const user = ex.session.user;
       if (flow.tenantId && user.tenantId !== flow.tenantId) return failTo(res, 'WRONG_TENANT', user);
+      // El administrador de una empresa controla su proveedor: con él podría afirmar el correo de un super_admin de su empresa
+      if (flow.tenantId && user.role === 'super_admin') return failTo(res, 'ROLE_NOT_ALLOWED', user);
       if (!store.getPolicy(user.tenantId).enabled) return failTo(res, 'SSO_DISABLED', user);
       // Una identidad ya enlazada a otra persona no se reasigna sola (el correo pudo cambiar de dueño en el proveedor)
       const linked = store.getIdentity(key, identity.subject);

@@ -27,14 +27,22 @@ function isPrivateV4(ip) {
   );
 }
 
-/** `true` si la dirección IP no es una dirección pública de Internet. */
+/**
+ * `true` si la dirección IP no es una dirección pública de Internet. En IPv6 solo se admite el unicast global (2000::/3), lo que deja
+ * fuera de golpe `::`, `::1`, las IPv4 incrustadas (`::ffff:a.b.c.d` en cualquier notación, `::a.b.c.d`, NAT64 `64:ff9b::/96`), ULA,
+ * enlace local y multidifusión; y dentro de él se quitan Teredo y los protocolos IETF (2001::/23), 6to4 (2002::/16, lleva una IPv4
+ * dentro) y documentación (2001:db8::/32).
+ */
 function isPrivateAddress(ip) {
   if (net.isIPv4(ip)) return isPrivateV4(ip);
   if (!net.isIPv6(ip)) return true;
-  const v6 = ip.toLowerCase();
-  const mapped = v6.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
-  if (mapped) return isPrivateV4(mapped[1]);
-  return v6 === '::' || v6 === '::1' || /^f[cd]/.test(v6) || /^fe[89ab]/.test(v6) || v6.startsWith('ff');
+  const groups = ip.toLowerCase().split(':');
+  const first = parseInt(groups[0] || '0', 16);
+  const second = parseInt(groups[1] || '0', 16);
+  if (first < 0x2000 || first > 0x3fff) return true;
+  if (first === 0x2002) return true;
+  if (first === 0x2001 && (second < 0x0200 || second === 0x0db8)) return true;
+  return false;
 }
 
 /** `lookup` de `https.request`: resuelve y deja pasar solo si TODAS las direcciones son públicas. */

@@ -70,6 +70,16 @@ module.exports = {
   ...(mfa.enabled ? { '/gateway/auth/login': { target: mfaTarget, changeOrigin: false } } : {}),
   '/gateway/mfa': { target: mfaTarget, changeOrigin: false },
   '/gateway/sso': { target: mfaTarget, changeOrigin: false },
+  // Rutas solo de servidor (el intercambio del SSO entrega sesiones): el navegador no las alcanza (ver server/gateway-proxy.js)
+  '/gateway/auth/sso': {
+    target: 'http://127.0.0.1:9',
+    bypass(req, res) {
+      res.statusCode = 404;
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.end(JSON.stringify({ message: 'Not found' }));
+      return false;
+    },
+  },
   '/gateway': {
     // Con variables ausentes se usa un destino ficticio; `bypass` responde 503 antes de reenviar
     target: target || 'http://127.0.0.1:9',
