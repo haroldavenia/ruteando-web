@@ -16,6 +16,8 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = Number(process.env.MOCK_GATEWAY_PORT ?? 4010);
+// Sin MOCK_GATEWAY_HOST escucha en todas las interfaces (Docker lo necesita); dentro del servidor (gateway-mode.js) se acota a loopback.
+const HOST = process.env.MOCK_GATEWAY_HOST || undefined;
 const LATENCY = Number(process.env.MOCK_GATEWAY_LATENCY_MS ?? 120);
 // Contraseña de los tres usuarios: `demo1234` salvo que se defina MOCK_GATEWAY_PASSWORD (obligatorio cambiarla si el simulado
 // queda accesible desde fuera, p. ej. con GATEWAY_MODE=mock en un servidor público).
@@ -724,7 +726,7 @@ server.on('error', (err) => {
   console.log(`El puerto ${PORT} ya está en uso: se reutiliza el gateway falso que hay en él.`);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, HOST, () => {
   const credentials =
     PASSWORD === DEFAULT_PASSWORD ? `contraseña ${PASSWORD}` : 'contraseña definida con MOCK_GATEWAY_PASSWORD';
   console.log(

@@ -28,6 +28,8 @@ function gatewayConfig(env) {
  * si el puerto ya estaba ocupado por otro simulado, lo reutiliza.
  */
 function startMockGateway() {
+  // El simulado acepta cualquier X-Api-Key: dentro del servidor solo debe alcanzarlo el propio proceso (proxy y cliente del 2FA)
+  process.env.MOCK_GATEWAY_HOST = process.env.MOCK_GATEWAY_HOST || '127.0.0.1';
   return import('../scripts/mock-gateway.mjs');
 }
 
