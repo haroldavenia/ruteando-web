@@ -94,6 +94,24 @@ test('con la clave: /gateway/mfa existe, nunca devuelve la página de la aplicac
   );
 });
 
+test('con el 2FA activo, ninguna variante de la ruta del login llega al gateway (no se salta el segundo factor)', async () => {
+  const server = await startMock({ MFA_SECRET_KEY: crypto.randomBytes(32).toString('base64') });
+  for (const p of [
+    '/gateway//auth/login',
+    '/gateway/auth//login',
+    '/gateway/auth/%6cogin',
+    '/gateway/auth/login;x=1',
+    '/gateway/auth%2Flogin',
+  ]) {
+    const res = await json(server, 'POST', p, { body: credentials });
+    assert.equal(res.status, 404, p);
+    assert.ok(!res.text.includes('accessToken'), p);
+  }
+  // La ruta exacta sigue siendo la del módulo y el resto de /auth no se toca
+  assert.equal((await json(server, 'POST', '/gateway/auth/login', { body: credentials })).status, 200);
+  assert.equal((await json(server, 'POST', '/gateway/auth/forgot-password', { body: credentials })).status, 200);
+});
+
 test('de punta a punta por el servidor real: activar TOTP y luego el login ya no entrega tokens hasta verificar', async () => {
   const server = await startMock({ MFA_SECRET_KEY: crypto.randomBytes(32).toString('base64') });
   const first = await json(server, 'POST', '/gateway/auth/login', { body: credentials });

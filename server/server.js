@@ -58,7 +58,8 @@ if (!sso.enabled) {
 }
 sso.mount(app);
 // Proxy del gateway: antes del estático y del comodín del cliente
-app.use('/gateway', gatewayProxy.createGatewayProxy());
+// Con el segundo factor activo, el login solo entra por la ruta exacta que atiende mfa.mount (el proxy descarta las variantes)
+app.use('/gateway', gatewayProxy.createGatewayProxy(undefined, { blockLogin: mfa.enabled }));
 
 // /api y /auth no son rutas del cliente: una URL de API mal escrita no debe devolver la página de la aplicación
 app.use(['/api', '/auth'], function (req, res) {

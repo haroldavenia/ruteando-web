@@ -24,7 +24,7 @@ const DEFAULT_TIMEOUT_MS = 30000;
  * que `POST /auth/sso/exchange` (entrega una sesión a quien diga un correo) quedaría abierto a cualquiera. Se normaliza antes de
  * comparar (mayúsculas, `%2F`, barras repetidas, barras invertidas) y se rechazan los segmentos `.` y `..`.
  */
-function isServerOnlyPath(url) {
+function normalizedPath(url) {
   let p = String(url).split(/[?#]/)[0];
   // Decodifica hasta que no cambie (`%252f`); si aún queda un `%` es una codificación rara: no se reenvía
   for (let i = 0; i < 5; i++) {
@@ -32,19 +32,33 @@ function isServerOnlyPath(url) {
     try {
       next = decodeURIComponent(p);
     } catch (err) {
-      return true; // codificación inválida
+      return null; // codificación inválida
     }
     if (next === p) break;
     p = next;
   }
-  if (p.includes('%')) return true;
-  p = p
+  if (p.includes('%')) return null;
+  return p
     .toLowerCase()
     .replace(/\\/g, '/')
     .replace(/;[^/]*/g, '') // parámetros de ruta (`/auth;x=1/sso`)
     .replace(/\/+/g, '/');
+}
+
+function isServerOnlyPath(url) {
+  const p = normalizedPath(url);
   // El segmento `auth/sso` en cualquier posición (el gateway no tiene rutas del navegador con ese nombre) y los segmentos `.` y `..`
-  return /(^|\/)\.\.?(\/|$)/.test(p) || /(^|\/)auth\/sso(\/|$)/.test(p);
+  return p === null || /(^|\/)\.\.?(\/|$)/.test(p) || /(^|\/)auth\/sso(\/|$)/.test(p);
+}
+
+/**
+ * `true` si la ruta, una vez normalizada, es la del login (`//auth/login`, `/auth/%6cogin`...). Con el segundo factor activo el login lo
+ * atiende `server/mfa` ANTES del proxy, pero solo con la ruta exacta: cualquier variante que llegue aquí se saltaría el segundo factor
+ * (el gateway normaliza la ruta y entrega la sesión), así que el proxy no la reenvía.
+ */
+function isLoginPath(url) {
+  const p = normalizedPath(url);
+  return p !== null && /(^|\/)auth\/login\/?$/.test(p);
 }
 
 /** Carga ../.env si existe. No pisa las variables que ya estén definidas en el entorno. */
@@ -63,7 +77,8 @@ function sendJson(res, status, message) {
   res.end(JSON.stringify({ message }));
 }
 
-function createGatewayProxy(env) {
+/** `options.blockLogin`: el segundo factor está activo y atiende el login por su cuenta (ver `isLoginPath`). */
+function createGatewayProxy(env, options = {}) {
   const source = env || process.env;
   const config = gatewayConfig(source);
   const target = config.target;
@@ -123,9 +138,11 @@ function createGatewayProxy(env) {
     },
   });
   return function gatewayProxy(req, res, next) {
-    if (isServerOnlyPath(req.url)) return sendJson(res, 404, 'Not found');
+    if (isServerOnlyPath(req.url) || (options.blockLogin && isLoginPath(req.url))) {
+      return sendJson(res, 404, 'Not found');
+    }
     return proxy(req, res, next);
   };
 }
 
-module.exports = { createGatewayProxy, isServerOnlyPath, loadEnvFile };
+module.exports = { createGatewayProxy, isServerOnlyPath, isLoginPath, loadEnvFile };
