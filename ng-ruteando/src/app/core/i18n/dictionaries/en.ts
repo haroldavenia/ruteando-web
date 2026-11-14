@@ -751,7 +751,7 @@ export const EN: Readonly<Record<string, string>> = {
   'Estancia en cada parada': 'Stay at each stop',
   'Estancia en cada parada (opcional)': 'Stay at each stop (optional)',
   'Sin definir': 'Undefined',
-  'Estancia': 'Stay',
+  'Estancia (minutos)': 'Stay (minutes)',
   'Así quedará': 'This is how it will look',
   'Escribe un valor válido': 'Enter a valid value',
   'Escribe un valor mayor que 0': 'Enter a value greater than 0',

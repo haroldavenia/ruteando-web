@@ -5,7 +5,7 @@ import { FormGroup } from '@angular/forms';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
-import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
+import { Fixture, respondWith } from '../../../testing/api-testing';
 import places from '../../../testing/fixtures/gateway/get__places.json';
 import resources from '../../../testing/fixtures/gateway/get__resources.json';
 import get from '../../../testing/fixtures/gateway/get__settings__id.json';
@@ -155,13 +155,15 @@ describe('SettingsFormComponent', () => {
 
         expect(sentence()).toContain(`Planificará ${routes} ${routes === 1 ? 'ruta' : 'rutas'}`);
         expect(sentence()).toContain('desde Postman depot');
+        // Con rutas fijas no hay flota ni peso y volumen: el resumen no los nombra
+        expect(sentence()).not.toMatch(/vehículo|peso/);
+
+        set({ restrictionType: 'resource_vs_time', shiftDurationMin: 90 });
+        expect(sentence()).toContain('rutas con turnos de 1 h 30 min');
         expect(sentence()).toContain(
           `con ${body.resourceIds.length} ${body.resourceIds.length === 1 ? 'vehículo' : 'vehículos'}`
         );
         expect(sentence()).toMatch(/, evaluando peso\.$/);
-
-        set({ restrictionType: 'resource_vs_time', shiftDurationMin: 90 });
-        expect(sentence()).toContain('rutas con turnos de 1 h 30 min');
       });
 
       it('no cambia lo que se envía: el resumen es solo texto', () => {
@@ -200,13 +202,15 @@ describe('SettingsFormComponent', () => {
       expect(optionTexts('mat-select[formcontrolname="resourceIds"]')).toContain('Postman resource');
     });
 
-    it('envía el cuerpo del ejemplo real sin la llegada vacía', () => {
+    it('envía el cuerpo del ejemplo real sin la llegada vacía y, con rutas fijas, sin flota', () => {
       fillFixed();
       spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
       submit();
 
       const req = http.expectOne((r) => r.method === 'POST' && r.url === '/gateway/settings');
-      expectSameContract(req, fx(create));
+      const { resourceIds: _fleet, ...example } = fx(create).request.body as Record<string, unknown>;
+      expect(req.request.method).toBe(fx(create).request.method);
+      expect(req.request.body).toEqual(example);
       expect('placeEndId' in req.request.body).toBeFalse();
       respondWith(req, fx(create));
     });
@@ -217,6 +221,43 @@ describe('SettingsFormComponent', () => {
         expect(field('fixedRoutes')).not.toBeNull();
         expect(field('shiftStart')).toBeNull();
         expect(form().controls['shiftDurationMin'].disabled).toBeTrue();
+      });
+
+      it('rutas fijas oculta la flota y los interruptores de peso y volumen, y deja la zona del itinerario', () => {
+        set({ restrictionType: 'fixed_routes' });
+        const titles = Array.from(root().querySelectorAll('form section.form-section h2')).map((h) =>
+          h.textContent?.trim()
+        );
+        expect(titles).not.toContain('Flota');
+        expect(field('resourceIds')).toBeNull();
+        expect(field('evaluateWeight')).toBeNull();
+        expect(field('evaluateVolume')).toBeNull();
+        expect(field('evaluateItineraryZone')).not.toBeNull();
+        expect(form().controls['resourceIds'].disabled).toBeTrue();
+      });
+
+      it('con rutas fijas se guarda sin vehículos, peso ni volumen y el resumen no los nombra', () => {
+        set({ restrictionType: 'fixed_routes', resourceIds: body.resourceIds });
+        fillFixed();
+        set({ resourceIds: [] });
+        expect(root().querySelector('.summary')?.textContent).not.toMatch(/vehículo|peso|volumen/);
+        spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
+        submit();
+
+        const req = http.expectOne((r) => r.method === 'POST' && r.url === '/gateway/settings');
+        for (const key of ['resourceIds', 'evaluateWeight', 'evaluateVolume']) {
+          expect(key in req.request.body)
+            .withContext(key)
+            .toBeFalse();
+        }
+        respondWith(req, fx(create));
+      });
+
+      it('la estancia pide el valor en minutos', () => {
+        set({ typeLengthOfStay: 'fixed' });
+        expect(
+          root().querySelector('mat-form-field:has([formcontrolname="lengthOfStay"]) mat-label')?.textContent
+        ).toContain('Estancia (minutos)');
       });
 
       for (const type of ['resource_vs_time', 'time_windows']) {
@@ -316,7 +357,8 @@ describe('SettingsFormComponent', () => {
 
     it('envía las casillas marcadas y el lugar de llegada elegido', () => {
       fillFixed();
-      set({ evaluateWeight: true, evaluateItineraryZone: true, placeEndId: body.placeStartId });
+      set({ restrictionType: 'resource_vs_time', evaluateWeight: true, evaluateItineraryZone: true });
+      set({ placeEndId: body.placeStartId });
       submit();
       const req = http.expectOne((r) => r.method === 'POST');
       expect(req.request.body).toEqual(
