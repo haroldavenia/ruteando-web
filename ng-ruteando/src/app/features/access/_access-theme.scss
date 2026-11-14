@@ -184,6 +184,13 @@
     text-align: center;
   }
 
+  // Aviso de consentimiento del registro (términos, privacidad y SMS)
+  :where(.consent) {
+    margin: 0 0 16px;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-small);
+  }
+
   // Enlaces con el color de la marca (el del navegador es un azul fuera del tema); los botones de Material conservan el suyo
   :where(a) {
     border-radius: 4px;

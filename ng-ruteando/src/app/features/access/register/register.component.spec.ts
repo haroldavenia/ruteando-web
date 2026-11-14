@@ -322,6 +322,13 @@ describe('RegisterComponent', () => {
     requests[0].flush(registerFx.response.body);
   });
 
+  it('avisa de que crear la cuenta acepta términos, privacidad y SMS, con los tres enlaces en pestaña nueva', () => {
+    const links = Array.from(root.querySelectorAll<HTMLAnchorElement>('p.consent a'));
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/legal/privacy', '/legal/terms', '/legal/sms']);
+    expect(links.every((a) => a.target === '_blank' && a.rel.includes('noopener'))).toBeTrue();
+    expect(root.querySelector('p.consent')?.textContent).toContain('Al crear tu cuenta aceptas');
+  });
+
   it('enlaza a iniciar sesión', () => {
     expect(Array.from(root.querySelectorAll('a')).map((a) => a.getAttribute('href'))).toContain('/access');
   });

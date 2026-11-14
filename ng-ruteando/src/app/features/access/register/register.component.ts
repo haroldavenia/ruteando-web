@@ -16,6 +16,7 @@ import { firstErrorMessage } from '../../../shared/form/access.messages';
 import { FocusFirstInvalidDirective } from '../../../shared/form/focus-first-invalid.directive';
 import { FormResultComponent } from '../../../shared/form/form-result.component';
 import { PasswordFieldComponent } from '../../../shared/form/password-field.component';
+import { LEGAL_DOCS, legalTitle } from '../../legal/legal-docs';
 import { matchesSibling, revalidateOnPasswordChange } from '../shared/form-utils';
 
 interface TextField {
@@ -99,6 +100,18 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
           autocomplete="new-password"
           [messages]="{ required: ('Confirma tu contraseña' | t) }"
         />
+        <p class="consent">
+          {{
+            'Al crear tu cuenta aceptas los términos, la política de privacidad y los mensajes SMS de verificación. Léelos aquí:'
+              | t
+          }}
+          @for (doc of legalDocs; track doc; let last = $last) {
+            <a [routerLink]="['/legal', doc]" target="_blank" rel="noopener">{{ title(doc) }}</a>
+            @if (!last) {
+              <span aria-hidden="true"> · </span>
+            }
+          }
+        </p>
         <app-form-result [error]="error()" />
         @if (loading()) {
           <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Creando la cuenta' | t" />
@@ -165,6 +178,8 @@ export class RegisterComponent {
   protected readonly resendDone = signal(false);
   protected readonly resendError = signal<string | null>(null);
   protected readonly resendMessage = RESEND_NEUTRAL;
+  protected readonly legalDocs = LEGAL_DOCS;
+  protected title = legalTitle;
 
   constructor() {
     revalidateOnPasswordChange(this.form, 'password', 'confirm');

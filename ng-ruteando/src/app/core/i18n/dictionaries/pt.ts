@@ -37,6 +37,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Tu primera jornada, en': 'Sua primeira jornada, em',
   'minutos': 'minutos',
   'Crea tu cuenta': 'Crie sua conta',
+  'Al crear tu cuenta aceptas los términos, la política de privacidad y los mensajes SMS de verificación. Léelos aquí:':
+    'Ao criar sua conta, você aceita os termos, a política de privacidade e as mensagens SMS de verificação. Leia aqui:',
   'Tus datos y los de tu empresa': 'Seus dados e os da sua empresa',
   'Verifica tu correo': 'Verifique seu e-mail',
   'Abre el enlace que te enviamos': 'Abra o link que enviamos',

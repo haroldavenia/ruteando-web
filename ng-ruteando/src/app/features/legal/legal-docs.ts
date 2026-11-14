@@ -12,7 +12,7 @@ export const LEGAL_INFO = {
   /** Correo al que escribir por privacidad y soporte. Vacío = el documento remite a quien administra la empresa. */
   contactEmail: '',
   /** Fecha de la última revisión del contenido (AAAA-MM-DD). */
-  updated: '2026-11-11',
+  updated: '2026-11-13',
 };
 
 /** Nombre corto de cada documento: el pie del acceso, el título de la página y la navegación entre ellos. */

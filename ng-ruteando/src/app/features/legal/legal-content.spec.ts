@@ -23,6 +23,12 @@ describe('contenido legal', () => {
     });
   }
 
+  it('los términos nombran a Hanoit, LLC como titular del servicio en los tres idiomas', () => {
+    for (const lang of LANGUAGES) {
+      expect(LEGAL[lang].terms.intro).withContext(lang).toContain('Hanoit, LLC');
+    }
+  });
+
   it('el cierre de contacto usa el marcador {email} solo cuando hay correo', () => {
     for (const lang of LANGUAGES) {
       expect(LEGAL_CONTACT[lang].withEmail).toContain('{email}');
