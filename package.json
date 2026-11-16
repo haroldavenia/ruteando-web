@@ -14,7 +14,7 @@
     "express": "^4.22.3",
     "http-proxy-middleware": "4.2.1",
     "morgan": "^1.12.1",
-    "nodemailer": "^10.4.0"
+    "nodemailer": "^10.5.0"
   },
   "scripts": {
     "start": "node server/server.js",
@@ -36,7 +36,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-simple-import-sort": "^14.0.0",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "typescript-eslint": "^8.72.2"
   }
 }
