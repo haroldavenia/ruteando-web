@@ -81,7 +81,7 @@ gsw-base.json` (para comparar en 6.7) |
 - [x] 6.8 (**89**, FCP 1,1 s, LCP 1,1 s, TBT 370 ms; base 87 y 89 con la misma versión, 13.6.0; Lighthouse falla con `NO_NAVSTART` en 4 de 5 intentos con Chrome 157, pero la medida válida es comparable) Lighthouse móvil de `/access` en producción: ≥ 73 (FCP/LCP no peor que la base)
 - [x] 6.9 (con Node 26: `web` sirve :4200 y `/gateway` responde 401 del simulado; `test` con Chromium 156 **falló 3 pruebas de `fleet-lists.spec.ts` la primera vez** —las mismas de la base—, y pasó 2222 de 2225 tras el arreglo; `prod-like` compila y sirve :3000: `/access` 200, `ngsw.json` 200, `/gateway` 401, `/api/x` 404) Docker (Linux): `docker compose up` sirve :4200 y proxifica `/gateway`; perfiles `test` (Chromium) y `prod-like` (:3000) en verde
 - [x] 6.10 (Node 22.23.5: instalación sin avisos de engine, servidor 135/135, compilación 561,15 kB y `test:ci` 2222 de 2225; Node 24.16.0: instalación, servidor 135/135 y compilación; no se probaron exactamente 22.22.3 ni 24.15.0 —los mínimos literales—, pero ambos están dentro del rango) Mínimos de Node: compilar y correr las pruebas del servidor con 22.22.3 y 24.15 (los mínimos de `engines`), además de 26
-- [ ] 6.11 CI del pull request en verde (Linux, Chrome de GitHub, Node 26)
+- [x] 6.11 CI del pull request en verde (Linux, Chrome de GitHub, Node 26): PR 60 con `Auditoría`, `Frontend` (2 min 29 s), `Servidor` y `Specs` en verde
 
 ## 7. Después del merge (manual, fuera del repositorio)
 
