@@ -57,10 +57,10 @@ gsw-base.json` (para comparar en 6.7) |
 
 ## 4. Menores y parches
 
-- [ ] 4.1 `nodemailer ^10.6.0`, `http-proxy-middleware 4.2.2` (exacto, como hoy) y cualquier otro menor que `pnpm outdated -r` marque dentro de rango
-- [ ] 4.2 `pnpm run test:server` y `pnpm audit --prod --audit-level=high` limpios
-- [ ] 4.3 Opcional: `jasmine-core ~5.13` y `@types/jasmine ~5.1` solo si `test:ci` mantiene la misma salida (si no, se queda como está)
-- [ ] 4.4 Commit «chore(deps): parches y menores del servidor»
+- [x] 4.1 (`nodemailer ^10.6.0` y `http-proxy-middleware 4.2.2`; `pnpm outdated -r` ya solo lista lo que se decidió no subir: ESLint 10, `@eslint/js` 10, Express 5, `@types/express` 5, `@types/jasmine` 7, `@types/node` 26) `nodemailer ^10.6.0`, `http-proxy-middleware 4.2.2` (exacto, como hoy) y cualquier otro menor que `pnpm outdated -r` marque dentro de rango
+- [x] 4.2 (135 de 135 y sin vulnerabilidades) `pnpm run test:server` y `pnpm audit --prod --audit-level=high` limpios
+- [x] 4.3 (nada que hacer: `main` ya trae `jasmine-core ~5.13.0` por el PR 56/58; `@types/jasmine` se queda en 5.1) Opcional: `jasmine-core ~5.13` y `@types/jasmine ~5.1` solo si `test:ci` mantiene la misma salida (si no, se queda como está)
+- [x] 4.4 Commit «chore(deps): parches y menores del servidor»
 
 ## 5. Dependabot y documentación
 
