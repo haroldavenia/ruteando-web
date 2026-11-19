@@ -14,8 +14,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   host: { class: 'pitch-card' },
   template: `
     <p class="title">
-      {{ 'Planifica y sigue tus' | t }} <span class="accent">{{ 'rutas' | t }}</span
-      >.
+      {{ 'Planifica y sigue tus' | t }} <span class="accent">{{ 'rutas' | t }}</span>.
     </p>
     <ul>
       <li>

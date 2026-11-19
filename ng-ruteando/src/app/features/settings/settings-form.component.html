@@ -95,8 +95,7 @@
           </mat-form-field>
           @if (placesLoaded() && places().length === 0) {
             <p class="hint">
-              {{ 'Todavía no hay lugares. Primero' | t }} <a routerLink="/places/new">{{ 'crea un lugar' | t }}</a
-              >.
+              {{ 'Todavía no hay lugares. Primero' | t }} <a routerLink="/places/new">{{ 'crea un lugar' | t }}</a>.
             </p>
           }
           @if (placesTruncated()) {
@@ -118,8 +117,7 @@
           @if (vehiclesLoaded() && vehicles().length === 0) {
             <p class="hint">
               {{ 'Todavía no hay vehículos. Primero' | t }}
-              <a routerLink="/fleet/vehicles/new">{{ 'crea un vehículo' | t }}</a
-              >.
+              <a routerLink="/fleet/vehicles/new">{{ 'crea un vehículo' | t }}</a>.
             </p>
           }
           @if (vehiclesTruncated()) {

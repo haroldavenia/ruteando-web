@@ -142,8 +142,7 @@ const ROLES: readonly UserRole[] = ['super_admin', 'tenant_admin', 'agent', 'dri
               @for (u of users(); track u.id) {
                 <tr>
                   <td>
-                    <strong>{{ fullName(u) }}</strong
-                    ><br /><span class="muted">{{ u.email }}</span>
+                    <strong>{{ fullName(u) }}</strong><br /><span class="muted">{{ u.email }}</span>
                   </td>
                   <td>{{ roleName(u.role) }}</td>
                   <td>

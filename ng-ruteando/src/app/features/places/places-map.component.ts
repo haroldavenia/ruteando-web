@@ -51,8 +51,7 @@ import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
         <li>
           <span class="pin" [style.background]="item.color" [style.color]="item.ink" aria-hidden="true">{{
             item.letter
-          }}</span
-          >{{ item.label }}
+          }}</span>{{ item.label }}
         </li>
       }
     </ul>

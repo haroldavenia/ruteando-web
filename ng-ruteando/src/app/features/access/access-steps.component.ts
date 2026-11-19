@@ -13,8 +13,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   host: { class: 'pitch-card' },
   template: `
     <p class="title">
-      {{ 'Tu primera jornada, en' | t }} <span class="accent">{{ 'minutos' | t }}</span
-      >.
+      {{ 'Tu primera jornada, en' | t }} <span class="accent">{{ 'minutos' | t }}</span>.
     </p>
     <ol>
       <li class="now">
