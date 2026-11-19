@@ -50,10 +50,10 @@ gsw-base.json` (para comparar en 6.7) |
 
 ## 3. Lint y formato
 
-- [ ] 3.1 En la raíz: `angular-eslint ^22.8.0`, `typescript-eslint ^8.73.0`, (`prettier ^3.10.1` ya está en `main`); ESLint y `@eslint/js` se quedan en 9.x (motivo en `design.md`)
-- [ ] 3.2 `pnpm lint` y `pnpm format`: 0 errores y 0 avisos; arreglar reglas nuevas con `lint:fix`/`format:fix` o a mano (un `eslint-disable` lleva siempre su motivo)
-- [ ] 3.3 `node scripts/i18n-check.mjs` (con y sin `--spanish`) y `node scripts/icon-names.mjs`
-- [ ] 3.4 Commit «chore(lint): angular-eslint 22 y typescript-eslint 8.73»
+- [x] 3.1 (`angular-eslint 22.8.0` y `typescript-eslint 8.73.0` instalados; ESLint sigue en 9.39.5, que `pnpm` marca como «deprecated» porque ya hay 10, pero 10 está bloqueado por `eslint-plugin-import`) En la raíz: `angular-eslint ^22.8.0`, `typescript-eslint ^8.73.0`, (`prettier ^3.10.1` ya está en `main`); ESLint y `@eslint/js` se quedan en 9.x (motivo en `design.md`)
+- [x] 3.2 (`angular-eslint` 22 estrena `prefer-on-push-component-change-detection`: marcó 19 componentes anfitriones de pruebas con `Eager`; se apagó solo en el bloque `**/*.spec.ts` de `eslint.config.js`, con su motivo; en el código de la aplicación no marcó nada) `pnpm lint` y `pnpm format`: 0 errores y 0 avisos; arreglar reglas nuevas con `lint:fix`/`format:fix` o a mano (un `eslint-disable` lleva siempre su motivo)
+- [x] 3.3 `node scripts/i18n-check.mjs` (con y sin `--spanish`) y `node scripts/icon-names.mjs`
+- [x] 3.4 Commit «chore(lint): angular-eslint 22 y typescript-eslint 8.73»
 
 ## 4. Menores y parches
 
