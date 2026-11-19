@@ -30,10 +30,10 @@ gsw-base.json` (para comparar en 6.7) |
 
 ## 1. Node 26
 
-- [ ] 1.1 `ng-ruteando/.nvmrc` a `26` y `engines.node` de `package.json` (raíz) a `^22.22.3 || ^24.15.0 || >=26.0.0`
-- [ ] 1.2 `Dockerfile.dev` a `node:26-bookworm-slim`; reconstruir la imagen
-- [ ] 1.3 Con Node 26 y las dependencias actuales (Angular 21): `pnpm install --frozen-lockfile`, `pnpm run test:server` (2FA y SSO usan `node:sqlite`) y `pnpm run build:web`
-- [ ] 1.4 Commit «chore: Node 26 como versión de desarrollo»
+- [x] 1.1 `ng-ruteando/.nvmrc` a `26` y `engines.node` de `package.json` (raíz) **y de `ng-ruteando/package.json`** a `^22.22.3 || ^24.15.0 || >=26.0.0`
+- [x] 1.2 `Dockerfile.dev` a `node:26-bookworm-slim`; **Node 25+ ya no trae Corepack** (la construcción falló con `corepack: not found`, exit 127): se instala con `npm install -g corepack@0.36.0` antes de `corepack enable`. Imagen reconstruida y comprobada: Node 26.13.1 y, con el `package.json` montado, pnpm 10.34.9 (sin él, Corepack baja la 12.21.0: es un artefacto de la prueba, en uso real el código va montado)
+- [x] 1.3 Con Node 26.13.1 y las dependencias actuales (Angular 21): `pnpm install --frozen-lockfile` OK, `pnpm run test:server` **135 de 135** (2FA y SSO con `node:sqlite`) y `pnpm run build:web` OK con las mismas cifras que la base (634,27 kB, 32 rutas, 0 avisos de compilación). Ruido nuevo solo en consola: `DEP0205 module.register() is deprecated` (herramientas de Angular 21; ver si desaparece con 22) y `ExperimentalWarning: localStorage is not available` durante el prerenderizado (en Node 26 `typeof localStorage` vale `undefined`, así que la guarda de `i18n.ts` sigue funcionando; el servidor de producción sirve la versión de cliente, no SSR)
+- [x] 1.4 Commit «chore: Node 26 como version de desarrollo»
 
 ## 2. Angular 22 y TypeScript 6
 
@@ -65,7 +65,7 @@ gsw-base.json` (para comparar en 6.7) |
 ## 5. Dependabot y documentación
 
 - [ ] 5.1 `.github/dependabot.yml`: ignorar `typescript` (mayores y menores ≥ 6.1 hasta que Angular lo admita), `eslint` y `@eslint/js` (mayores), `angular-eslint` (mayores: acompañan a Angular), `@types/node` (mayores: siguen al mínimo de Node), cada uno con su motivo en un comentario; mantener los ignores de Angular y Jasmine
-- [ ] 5.2 `CLAUDE.md`, `README.md`, `ng-ruteando/README.md`: «Angular 21.2» → 22.3, «Node ^20.19 || ^22.12 || >=24» y `.nvmrc` = 26, TypeScript 6.0, mínimos nuevos de Node
+- [ ] 5.2 `CLAUDE.md`, `README.md`, `ng-ruteando/README.md`: «Angular 21.2» → 22.3, «Node ^20.19 || ^22.12 || >=24» y `.nvmrc` = 26, TypeScript 6.0, mínimos nuevos de Node; **Corepack ya no viene con Node 25+** (`npm install -g corepack` o `npm install -g pnpm@10.34.9`; el README dice «viene con Node 20 a 24»)
 - [ ] 5.3 Habilidades de `.claude/` (`angular-ruteando`, `convenciones-codigo-ruteando`, `references/angular-21-standalone-ssr.md`) y specs vigentes (`continuous-integration`, `frontend-platform`) que citen las versiones viejas; `npx --yes @fission-ai/openspec@1.14.3 validate --specs --strict` y `validate upgrade-angular-22-node-26`
 - [ ] 5.4 Commit «docs: versiones de Angular 22, Node 26 y TypeScript 6»
 
@@ -85,7 +85,7 @@ gsw-base.json` (para comparar en 6.7) |
 
 ## 7. Después del merge (manual, fuera del repositorio)
 
-- [ ] 7.1 Render: variable `NODE_VERSION` (26 si lo ofrece, si no 24.22.3) y redeploy; comprobar `/healthCheck` y el 2FA (el almacén `node:sqlite` necesita Node ≥ 22.13)
+- [ ] 7.1 Render: variable `NODE_VERSION` (26 si lo ofrece, si no 24.22.3) y redeploy; **con Node 26 no hay Corepack: comprobar cómo instala pnpm el build de Render** (si usa `corepack enable`, fallará); comprobar `/healthCheck` y el 2FA (el almacén `node:sqlite` necesita Node ≥ 22.13)
 - [ ] 7.2 Coolify (si se usa): versión de Node/Nixpacks
 - [ ] 7.3 Tag de versión y release a cargo de quien mantiene (¿v1.22.0?); registrar el trabajo en la hoja de seguimiento
 - [ ] 7.4 Archivar este change cuando 6.11 y 7.x estén hechos
