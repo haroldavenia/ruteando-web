@@ -36,6 +36,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Tu primera jornada, en': 'Your first journey, in',
   'minutos': 'minutes',
   'Crea tu cuenta': 'Create your account',
+  'Al crear tu cuenta aceptas los términos, la política de privacidad y los mensajes SMS de verificación. Léelos aquí:':
+    'By creating your account you accept the terms, the privacy policy and the verification SMS messages. Read them here:',
   'Tus datos y los de tu empresa': "Your details and your company's",
   'Verifica tu correo': 'Verify your email',
   'Abre el enlace que te enviamos': 'Open the link we sent you',
@@ -751,7 +753,7 @@ export const EN: Readonly<Record<string, string>> = {
   'Estancia en cada parada': 'Stay at each stop',
   'Estancia en cada parada (opcional)': 'Stay at each stop (optional)',
   'Sin definir': 'Undefined',
-  'Estancia': 'Stay',
+  'Estancia (minutos)': 'Stay (minutes)',
   'Así quedará': 'This is how it will look',
   'Escribe un valor válido': 'Enter a valid value',
   'Escribe un valor mayor que 0': 'Enter a value greater than 0',

@@ -201,6 +201,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
   /** La configuración que se está escribiendo, en una frase: solo da formato a lo que hay en el formulario. */
   protected readonly summary = computed(() => {
     const value = this.value();
+    const fixed = value.restrictionType === FIXED_ROUTES;
     const placeName = (id: string): string | null => this.places().find((place) => place.id === id)?.name ?? null;
     return describeSettings({
       restrictionType: value.restrictionType,
@@ -209,9 +210,9 @@ export class SettingsFormComponent implements HasUnsavedChanges {
       shiftDurationMin: value.shiftDurationMin,
       placeStartName: value.placeStartId ? placeName(value.placeStartId) : null,
       placeEndName: value.placeEndId ? placeName(value.placeEndId) : null,
-      vehicleCount: value.resourceIds.length,
-      evaluateWeight: value.evaluateWeight,
-      evaluateVolume: value.evaluateVolume,
+      vehicleCount: fixed ? 0 : value.resourceIds.length,
+      evaluateWeight: !fixed && value.evaluateWeight,
+      evaluateVolume: !fixed && value.evaluateVolume,
       evaluateItineraryZone: value.evaluateItineraryZone,
     });
   });
@@ -220,6 +221,8 @@ export class SettingsFormComponent implements HasUnsavedChanges {
   protected readonly restriction = signal('');
   protected readonly stay = signal(NO_STAY);
   protected readonly showFixedRoutes = computed(() => this.restriction() === FIXED_ROUTES);
+  /** Con rutas fijas no hay flota ni peso y volumen que evaluar: la sección y los dos interruptores se ocultan. */
+  protected readonly showFleet = computed(() => this.restriction() !== FIXED_ROUTES);
   protected readonly showShift = computed(() => this.restriction() !== '' && this.restriction() !== FIXED_ROUTES);
   protected readonly showStayValue = computed(() => this.stay() === FIXED_STAY);
 
@@ -285,6 +288,9 @@ export class SettingsFormComponent implements HasUnsavedChanges {
       restrictionType,
       typeLengthOfStay,
       fixedRoutes,
+      resourceIds,
+      evaluateWeight,
+      evaluateVolume,
       shiftStart,
       shiftDurationMin,
       breakDurationMin,
@@ -295,6 +301,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     const toggle = (controls: AbstractControl[], on: boolean) =>
       controls.forEach((c) => (on ? c.enable({ emitEvent: false }) : c.disable({ emitEvent: false })));
     toggle([fixedRoutes], restrictionType.value === FIXED_ROUTES);
+    toggle([resourceIds, evaluateWeight, evaluateVolume], restrictionType.value !== FIXED_ROUTES);
     toggle(
       [shiftStart, shiftDurationMin, breakDurationMin],
       restrictionType.value !== '' && restrictionType.value !== FIXED_ROUTES
@@ -335,9 +342,9 @@ export class SettingsFormComponent implements HasUnsavedChanges {
       description: value.description.trim(),
       routeTopology: value.routeTopology,
       restrictionType: value.restrictionType,
-      resourceIds: value.resourceIds,
       placeStartId: value.placeStartId,
     };
+    const fleet = fixed ? {} : { resourceIds: value.resourceIds };
     const shift = {
       shiftStartUtc: toUtcIso(value.shiftStart, this.anchorDate),
       shiftDurationSec: minutesToSeconds(value.shiftDurationMin as number),
@@ -349,10 +356,11 @@ export class SettingsFormComponent implements HasUnsavedChanges {
         ? // En el alta solo se envía lo que aplica y lo que se aparta del valor por defecto
           this.api.create({
             ...required,
+            ...fleet,
             ...(value.placeEndId ? { placeEndId: value.placeEndId } : {}),
             ...(fixed ? { fixedRoutes: value.fixedRoutes } : shift),
-            ...(value.evaluateWeight ? { evaluateWeight: true } : {}),
-            ...(value.evaluateVolume ? { evaluateVolume: true } : {}),
+            ...(!fixed && value.evaluateWeight ? { evaluateWeight: true } : {}),
+            ...(!fixed && value.evaluateVolume ? { evaluateVolume: true } : {}),
             ...(value.evaluateItineraryZone ? { evaluateItineraryZone: true } : {}),
             ...(hasStayType
               ? { typeLengthOfStay: value.typeLengthOfStay, ...(stayFixed ? { lengthOfStay: value.lengthOfStay } : {}) }
@@ -362,9 +370,10 @@ export class SettingsFormComponent implements HasUnsavedChanges {
             this.id,
             buildSettingsUpdateBody(record, {
               ...required,
+              ...fleet,
               placeEndId: value.placeEndId || value.placeStartId,
-              evaluateWeight: value.evaluateWeight,
-              evaluateVolume: value.evaluateVolume,
+              evaluateWeight: !fixed && value.evaluateWeight,
+              evaluateVolume: !fixed && value.evaluateVolume,
               evaluateItineraryZone: value.evaluateItineraryZone,
               // Las secciones que no aplican se envían como null para no dejar valores obsoletos
               fixedRoutes: fixed ? value.fixedRoutes : null,

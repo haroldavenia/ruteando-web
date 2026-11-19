@@ -116,7 +116,8 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
       ],
     },
     terms: {
-      intro: 'Al usar Ruteando aceptas estos términos. Si no estás de acuerdo con ellos, no uses la aplicación.',
+      intro:
+        'Ruteando es un servicio de Hanoit, LLC. Al usar Ruteando aceptas estos términos. Si no estás de acuerdo con ellos, no uses la aplicación.',
       sections: [
         {
           heading: 'El servicio',
@@ -289,7 +290,8 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
       ],
     },
     terms: {
-      intro: 'By using Ruteando you accept these terms. If you do not agree with them, do not use the application.',
+      intro:
+        'Ruteando is a service by Hanoit, LLC. By using Ruteando you accept these terms. If you do not agree with them, do not use the application.',
       sections: [
         {
           heading: 'The service',
@@ -462,7 +464,8 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
       ],
     },
     terms: {
-      intro: 'Ao usar o Ruteando aceita estes termos. Se não concordar com eles, não use a aplicação.',
+      intro:
+        'O Ruteando é um serviço da Hanoit, LLC. Ao usar o Ruteando aceita estes termos. Se não concordar com eles, não use a aplicação.',
       sections: [
         {
           heading: 'O serviço',

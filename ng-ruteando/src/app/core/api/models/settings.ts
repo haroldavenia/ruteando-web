@@ -50,7 +50,8 @@ export interface SettingsInput {
   description: string;
   routeTopology: string;
   restrictionType: string;
-  resourceIds: string[];
+  /** Con `fixed_routes` no se envía: las rutas fijas no asignan flota. */
+  resourceIds?: string[];
   placeStartId: string;
   placeEndId?: string;
   fixedRoutes?: number | null;

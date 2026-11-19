@@ -104,34 +104,38 @@
           }
         </section>
 
-        <section class="form-section">
-          <h2><mat-icon aria-hidden="true" fontIcon="local_shipping" />{{ 'Flota' | t }}</h2>
-          <mat-form-field>
-            <mat-label>{{ 'Vehículos' | t }}</mat-label>
-            <mat-select formControlName="resourceIds" multiple>
-              @for (vehicle of vehicles(); track vehicle.id) {
-                <mat-option [value]="vehicle.id">{{ vehicleLabel(vehicle) }}</mat-option>
-              }
-            </mat-select>
-            <mat-error>{{ error('resourceIds') }}</mat-error>
-          </mat-form-field>
-          @if (vehiclesLoaded() && vehicles().length === 0) {
-            <p class="hint">
-              {{ 'Todavía no hay vehículos. Primero' | t }}
-              <a routerLink="/fleet/vehicles/new">{{ 'crea un vehículo' | t }}</a
-              >.
-            </p>
-          }
-          @if (vehiclesTruncated()) {
-            <p class="hint" role="status">{{ 'Se muestran solo los primeros {0} vehículos.' | t: [selectLimit] }}</p>
-          }
-        </section>
+        @if (showFleet()) {
+          <section class="form-section">
+            <h2><mat-icon aria-hidden="true" fontIcon="local_shipping" />{{ 'Flota' | t }}</h2>
+            <mat-form-field>
+              <mat-label>{{ 'Vehículos' | t }}</mat-label>
+              <mat-select formControlName="resourceIds" multiple>
+                @for (vehicle of vehicles(); track vehicle.id) {
+                  <mat-option [value]="vehicle.id">{{ vehicleLabel(vehicle) }}</mat-option>
+                }
+              </mat-select>
+              <mat-error>{{ error('resourceIds') }}</mat-error>
+            </mat-form-field>
+            @if (vehiclesLoaded() && vehicles().length === 0) {
+              <p class="hint">
+                {{ 'Todavía no hay vehículos. Primero' | t }}
+                <a routerLink="/fleet/vehicles/new">{{ 'crea un vehículo' | t }}</a
+                >.
+              </p>
+            }
+            @if (vehiclesTruncated()) {
+              <p class="hint" role="status">{{ 'Se muestran solo los primeros {0} vehículos.' | t: [selectLimit] }}</p>
+            }
+          </section>
+        }
 
         <section class="form-section">
           <h2><mat-icon aria-hidden="true" fontIcon="tune" />{{ 'Qué evalúa la planificación' | t }}</h2>
           <div class="toggles" role="group" [attr.aria-label]="'Qué evalúa la planificación' | t">
-            <mat-slide-toggle formControlName="evaluateWeight">{{ 'Evaluar peso' | t }}</mat-slide-toggle>
-            <mat-slide-toggle formControlName="evaluateVolume">{{ 'Evaluar volumen' | t }}</mat-slide-toggle>
+            @if (showFleet()) {
+              <mat-slide-toggle formControlName="evaluateWeight">{{ 'Evaluar peso' | t }}</mat-slide-toggle>
+              <mat-slide-toggle formControlName="evaluateVolume">{{ 'Evaluar volumen' | t }}</mat-slide-toggle>
+            }
             <mat-slide-toggle formControlName="evaluateItineraryZone">{{
               'Evaluar zona del itinerario' | t
             }}</mat-slide-toggle>
@@ -151,7 +155,7 @@
           </mat-form-field>
           @if (showStayValue()) {
             <mat-form-field>
-              <mat-label>{{ 'Estancia' | t }}</mat-label>
+              <mat-label>{{ 'Estancia (minutos)' | t }}</mat-label>
               <input matInput type="number" step="any" min="0" formControlName="lengthOfStay" autocomplete="off" />
               <mat-error>{{ error('lengthOfStay') }}</mat-error>
             </mat-form-field>

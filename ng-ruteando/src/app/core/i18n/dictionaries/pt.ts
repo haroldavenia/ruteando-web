@@ -37,6 +37,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Tu primera jornada, en': 'Sua primeira jornada, em',
   'minutos': 'minutos',
   'Crea tu cuenta': 'Crie sua conta',
+  'Al crear tu cuenta aceptas los términos, la política de privacidad y los mensajes SMS de verificación. Léelos aquí:':
+    'Ao criar sua conta, você aceita os termos, a política de privacidade e as mensagens SMS de verificação. Leia aqui:',
   'Tus datos y los de tu empresa': 'Seus dados e os da sua empresa',
   'Verifica tu correo': 'Verifique seu e-mail',
   'Abre el enlace que te enviamos': 'Abra o link que enviamos',
@@ -754,7 +756,7 @@ export const PT: Readonly<Record<string, string>> = {
   'Estancia en cada parada': 'Permanência em cada parada',
   'Estancia en cada parada (opcional)': 'Permanência em cada parada (opcional)',
   'Sin definir': 'Indefinido',
-  'Estancia': 'Permanência',
+  'Estancia (minutos)': 'Permanência (minutos)',
   'Así quedará': 'Assim ficará',
   'Escribe un valor válido': 'Informe um valor válido',
   'Escribe un valor mayor que 0': 'Informe um valor maior que 0',
