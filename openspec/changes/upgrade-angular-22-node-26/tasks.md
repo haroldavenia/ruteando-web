@@ -85,8 +85,8 @@ gsw-base.json` (para comparar en 6.7) |
 
 ## 7. Después del merge (manual, fuera del repositorio)
 
-- [ ] 7.1 Render: variable `NODE_VERSION` (26 si lo ofrece, si no 24.22.3) y redeploy; **con Node 26 no hay Corepack: comprobar cómo instala pnpm el build de Render** (si usa `corepack enable`, fallará); comprobar `/healthCheck` y el 2FA (el almacén `node:sqlite` necesita Node ≥ 22.13)
-- [ ] 7.2 Coolify (si se usa): versión de Node/Nixpacks
+- [ ] 7.1 (al hacer push a `main` Render actualiza el servidor de prueba por sí solo; confirmar que el auto-deploy esté activo) Render: variable `NODE_VERSION` (26 si lo ofrece, si no 24.22.3) y redeploy; **con Node 26 no hay Corepack: comprobar cómo instala pnpm el build de Render** (si usa `corepack enable`, fallará); comprobar `/healthCheck` y el 2FA (el almacén `node:sqlite` necesita Node ≥ 22.13)
+- [x] 7.2 Coolify: no aplica (la persona confirmó el 2026-11-19 que ahora solo se monta en Render; no se está haciendo nada en Coolify)
 - [ ] 7.3 Tag de versión y release a cargo de quien mantiene (¿v1.22.0?); registrar el trabajo en la hoja de seguimiento
 - [ ] 7.4 Archivar este change cuando 6.11 y 7.x estén hechos
 
