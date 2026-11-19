@@ -74,6 +74,9 @@ describe('Listados de flota', () => {
   const csvText = async (blob: Blob) =>
     new TextDecoder('utf-8', { ignoreBOM: true }).decode(await blob.arrayBuffer()).replace(/^\uFEFF/, '');
 
+  // La vista por defecto es «tarjetas»; otras pruebas (auditoría) dejan guardada la tabla y, con el orden aleatorio de Jasmine, rompían estas
+  beforeEach(() => localStorage.removeItem('ruteando-list-view'));
+
   afterEach(() => http.verify());
 
   describe('conductores', () => {
