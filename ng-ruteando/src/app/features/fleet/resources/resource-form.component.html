@@ -46,8 +46,7 @@
         @if (typesLoaded() && types().length === 0) {
           <p class="hint">
             {{ 'Todavía no hay tipos de vehículo. Primero' | t }}
-            <a routerLink="/fleet/types">{{ 'crea un tipo' | t }}</a
-            >.
+            <a routerLink="/fleet/types">{{ 'crea un tipo' | t }}</a>.
           </p>
         }
         @if (typesTruncated()) {
@@ -68,8 +67,7 @@
         @if (placesLoaded() && places().length === 0) {
           <p class="hint">
             {{ 'Todavía no hay lugares que usar como depósito. Primero' | t }}
-            <a routerLink="/places/new">{{ 'crea un lugar' | t }}</a
-            >.
+            <a routerLink="/places/new">{{ 'crea un lugar' | t }}</a>.
           </p>
         }
         @if (placesTruncated()) {

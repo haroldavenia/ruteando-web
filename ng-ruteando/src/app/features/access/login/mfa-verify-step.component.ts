@@ -113,8 +113,9 @@ const DEAD_CHALLENGE = ['CHALLENGE_EXPIRED', 'TOO_MANY_ATTEMPTS', 'TOO_MANY_FAIL
         <p class="alt">
           {{ 'Usar otro método:' | t }}
           @for (m of others(); track m.method; let last = $last) {
-            <button type="button" class="link" (click)="select(m.method)">{{ label(m.method) }}</button
-            >{{ last ? '' : ' · ' }}
+            <button type="button" class="link" (click)="select(m.method)">{{ label(m.method) }}</button>{{
+              last ? '' : ' · '
+            }}
           }
         </p>
       }

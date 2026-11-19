@@ -21,8 +21,7 @@
       @if (settingsLoaded() && settings().length === 0) {
         <p class="hint">
           {{ 'Todavía no hay configuraciones. Primero' | t }}
-          <a routerLink="/settings/new">{{ 'crea una configuración' | t }}</a
-          >.
+          <a routerLink="/settings/new">{{ 'crea una configuración' | t }}</a>.
         </p>
       }
       @if (settingsTruncated()) {
@@ -34,8 +33,7 @@
       <h2><span class="step-num" aria-hidden="true">2</span>{{ 'Paquetes' | t }}</h2>
       @if (picker.isEmpty()) {
         <p class="hint">
-          {{ 'Todavía no hay paquetes. Primero' | t }} <a routerLink="/packages/new">{{ 'crea un paquete' | t }}</a
-          >.
+          {{ 'Todavía no hay paquetes. Primero' | t }} <a routerLink="/packages/new">{{ 'crea un paquete' | t }}</a>.
         </p>
       }
       <app-package-picker #picker [(selectedIds)]="selectedIds" />

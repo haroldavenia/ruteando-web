@@ -50,8 +50,7 @@ export interface MfaStepUp {
               [attr.aria-pressed]="m === via()"
               (click)="choose(m)"
             >
-              <mat-icon aria-hidden="true">{{ icon(m) }}</mat-icon
-              >{{ label(m) }}
+              <mat-icon aria-hidden="true">{{ icon(m) }}</mat-icon>{{ label(m) }}
             </button>
           }
         </div>

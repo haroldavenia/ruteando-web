@@ -9,8 +9,9 @@
       aria-controls="audit-panel-body"
       (click)="toggle()"
     >
-      <mat-icon aria-hidden="true">{{ open() ? 'expand_less' : 'expand_more' }}</mat-icon
-      >{{ open() ? ('Ocultar resumen' | t) : ('Mostrar resumen' | t) }}
+      <mat-icon aria-hidden="true">{{ open() ? 'expand_less' : 'expand_more' }}</mat-icon>{{
+        open() ? ('Ocultar resumen' | t) : ('Mostrar resumen' | t)
+      }}
     </button>
   </div>
 

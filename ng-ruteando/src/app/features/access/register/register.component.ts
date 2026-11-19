@@ -52,8 +52,9 @@ const RESEND_NEUTRAL = t('Si el correo existe, recibirás instrucciones de verif
         <span class="state-icon"><mat-icon aria-hidden="true">mark_email_read</mat-icon></span>
         <h1>{{ 'Revisa tu correo' | t }}</h1>
         <p>
-          {{ 'Hemos enviado un enlace de verificación a' | t }} <strong>{{ sentTo }}</strong
-          >{{ '. Ábrelo para activar tu cuenta.' | t }}
+          {{ 'Hemos enviado un enlace de verificación a' | t }} <strong>{{ sentTo }}</strong>{{
+            '. Ábrelo para activar tu cuenta.' | t
+          }}
         </p>
         <app-form-result [error]="resendError()" [success]="resendDone() ? resendMessage : null" />
         <div class="actions">

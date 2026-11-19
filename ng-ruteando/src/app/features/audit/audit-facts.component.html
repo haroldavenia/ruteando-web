@@ -12,8 +12,7 @@
       <span class="audit-fact-text">
         <b>
           @for (part of personParts(); track $index) {
-            <ng-container>{{ part }}</ng-container
-            ><wbr />
+            <ng-container>{{ part }}</ng-container><wbr />
           }
         </b>
         @if (actor().role; as role) {
