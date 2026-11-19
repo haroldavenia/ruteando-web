@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
@@ -6,6 +6,7 @@ import { FormHeadComponent } from './form-head.component';
 
 @Component({
   imports: [FormHeadComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<app-form-head title="Nuevo lugar" backLabel="Lugares" backLink="/places" />`,
 })
 class HostComponent {}

@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FormActionsComponent } from './form-actions.component';
 
 @Component({
   imports: [FormActionsComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-form-actions [dirty]="dirty()">
       <a href="/x">Cancelar</a>

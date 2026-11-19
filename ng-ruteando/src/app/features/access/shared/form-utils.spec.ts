@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { firstErrorMessage } from '../../../shared/form/access.messages';
 import { matchesSibling, PASSWORD_MIN_LENGTH, revalidateOnPasswordChange } from './form-utils';
 
-@Component({ template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 class HostComponent {
   form = new FormGroup({
     password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),

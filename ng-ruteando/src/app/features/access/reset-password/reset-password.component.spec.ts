@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -19,7 +19,7 @@ import { refreshInterceptor } from '../../../core/api/refresh.interceptor';
 import { CurrentUser } from '../../../core/auth/current-user';
 import { ResetPasswordComponent } from './reset-password.component';
 
-@Component({ template: 'access' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: 'access' })
 class AccesoComponent {}
 
 const fx = (f: unknown) => f as unknown as Fixture;

@@ -44,6 +44,13 @@
 | `@angular/animations` | Solo `provideAnimationsAsync` en `app.config.ts` | Comprobar que Material 22 no exija cambiarlo; no quitarlo en esta subida. |
 | Material 22: `sidenav` marca el contenido como `inert` al abrirse, y cambios en `menu`, `list`, `sort`, `select`, `aria` | Posible en el shell (menú móvil), selects, menús | Probar en navegador: menú desplegable bajo 960 px, foco y tabulación del sidenav, selects con búsqueda, menú de usuario. |
 
+## Hallazgos de la ejecución (2026-11-19)
+
+- **`ng update` es ruidoso**: añade `withXhr()` a todos los `provideHttpClient()` de los specs, `$safeNavigationMigration()` a plantillas con `?.` y suprime los diagnósticos nuevos en `tsconfig`. Con este código nada de eso hacía falta; se revirtió y quedó solo lo que sí aporta (ver tareas 2.1).
+- **Angular 22 pesa menos, Material 22 pesa más si se importa mal**: sin el provider de `form-field` en la raíz el bundle inicial baja de 634 a 561 kB; con él sube a 719 kB.
+- **Node 26 ya no trae Corepack** (Node 25+): `Dockerfile.dev` lo instala con npm; el README y Render deben tenerlo en cuenta.
+- **Lighthouse 12 falla con Chrome 157** (`NO_NAVSTART`); se mide con 13.6.0, cuya puntuación no es comparable con la de 2026-11-02 (73).
+
 ## TypeScript 6: qué revisar
 
 - `tsconfig.json` ya usa `moduleResolution: "bundler"`, `target`/`module: ES2022`, `strict` y `esModuleInterop` (nada deprecado). Revisar que no queden `baseUrl`, `target: ES5` ni `moduleResolution: node10`.

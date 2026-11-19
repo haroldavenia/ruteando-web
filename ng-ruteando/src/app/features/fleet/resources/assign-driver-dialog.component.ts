@@ -10,6 +10,7 @@ import { UsersApi } from '../../../core/api/data/users.api';
 import { User } from '../../../core/api/models';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { messageFor } from '../../../shared/data/api-messages';
+import { OUTLINED_FIELDS_PROVIDER } from '../../../shared/form/outlined-fields';
 import { SkeletonComponent } from '../../../shared/ui/skeleton.component';
 import { driverName } from '../fleet-labels';
 
@@ -32,6 +33,7 @@ export interface AssignDriverData {
     TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [OUTLINED_FIELDS_PROVIDER],
   template: `
     <h2 mat-dialog-title>{{ 'Asignar conductor a {0}' | t: [data.vehicle] }}</h2>
     <mat-dialog-content>

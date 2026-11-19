@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -7,7 +7,7 @@ import { makeUser } from '../../../testing/session';
 import { authGuard, guestGuard, roleGuard } from './auth.guards';
 import { CurrentUser } from './current-user';
 
-@Component({ template: '<p id="pagina">contenido</p>' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: '<p id="pagina">contenido</p>' })
 class PaginaComponent {}
 
 describe('guards de acceso', () => {

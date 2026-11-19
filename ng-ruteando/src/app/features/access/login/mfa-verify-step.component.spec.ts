@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -30,6 +30,7 @@ const RECOVERY = { method: 'recovery', destination: null } as const;
 
 @Component({
   imports: [MfaVerifyStepComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<app-mfa-verify-step
     [challenge]="challenge()"
     (verified)="verified = verified + 1"

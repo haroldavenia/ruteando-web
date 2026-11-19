@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
@@ -15,6 +15,7 @@ const wait = (ms = 20) => new Promise((resolve) => setTimeout(resolve, ms));
 
 @Component({
   imports: [MfaEnrollComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<app-mfa-enroll [methods]="methods()" [challengeId]="challengeId()" (enrolled)="done.push($event)" />`,
 })
 class HostComponent {

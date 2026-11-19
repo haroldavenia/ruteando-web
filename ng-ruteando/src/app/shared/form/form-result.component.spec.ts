@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FormResultComponent } from './form-result.component';
 
 @Component({
   imports: [FormResultComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<app-form-result [error]="error()" [success]="success()" />`,
 })
 class HostComponent {

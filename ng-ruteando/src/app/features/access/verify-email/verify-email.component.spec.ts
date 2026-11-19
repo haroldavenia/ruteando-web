@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectionStrategy, Component, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -17,7 +17,7 @@ import { refreshInterceptor } from '../../../core/api/refresh.interceptor';
 import { CurrentUser } from '../../../core/auth/current-user';
 import { VerifyEmailComponent } from './verify-email.component';
 
-@Component({ template: 'inicio' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: 'inicio' })
 class InicioComponent {}
 
 const fx = (f: unknown) => f as unknown as Fixture;
