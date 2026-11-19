@@ -49,6 +49,7 @@
 - **`ng update` es ruidoso**: añade `withXhr()` a todos los `provideHttpClient()` de los specs, `$safeNavigationMigration()` a plantillas con `?.` y suprime los diagnósticos nuevos en `tsconfig`. Con este código nada de eso hacía falta; se revirtió y quedó solo lo que sí aporta (ver tareas 2.1).
 - **Angular 22 pesa menos, Material 22 pesa más si se importa mal**: sin el provider de `form-field` en la raíz el bundle inicial baja de 634 a 561 kB; con él sube a 719 kB.
 - **Node 26 ya no trae Corepack** (Node 25+): `Dockerfile.dev` lo instala con npm; el README y Render deben tenerlo en cuenta.
+- **La prueba intermitente era contaminación entre pruebas, y ya estaba en Angular 21**: la vista por defecto de las listas es «tarjetas» salvo que `localStorage` guarde `ruteando-list-view = table`, y los specs de auditoría la dejan guardada; con el orden aleatorio de Jasmine, a veces `fleet-lists.spec.ts` (vista de tarjetas de vehículos, 3 pruebas) corría después y fallaba (1 de 4 corridas en la base, y en Docker). Arreglo: `beforeEach(() => localStorage.removeItem('ruteando-list-view'))`, como ya hacía `resource-list.component.spec.ts`. Tras él: 4 corridas locales y 1 en Docker sin fallos.
 - **Lighthouse 12 falla con Chrome 157** (`NO_NAVSTART`); se mide con 13.6.0, cuya puntuación no es comparable con la de 2026-11-02 (73).
 
 ## TypeScript 6: qué revisar
