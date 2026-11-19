@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,7 @@ import { ActionTitleDirective } from './action-title.directive';
 
 @Component({
   imports: [MatButtonModule, MatIconModule, ActionTitleDirective],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <button id="dinamico" mat-icon-button type="button" [attr.aria-label]="'Editar lugar ' + name()">
       <mat-icon fontIcon="edit" />

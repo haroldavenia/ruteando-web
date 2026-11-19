@@ -6,15 +6,15 @@
   "license": "MIT",
   "packageManager": "pnpm@10.34.9",
   "engines": {
-    "node": "^22.13.0 || >=24.0.0"
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
   },
   "dependencies": {
     "colors": "^1.4.0",
     "compression": "^1.8.2",
     "express": "^4.22.3",
-    "http-proxy-middleware": "4.2.1",
+    "http-proxy-middleware": "4.2.2",
     "morgan": "^1.12.1",
-    "nodemailer": "^10.5.0"
+    "nodemailer": "^10.6.0"
   },
   "scripts": {
     "start": "node server/server.js",
@@ -31,12 +31,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
-    "angular-eslint": "^21.4.0",
+    "angular-eslint": "^22.8.0",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "prettier": "^3.10.1",
-    "typescript-eslint": "^8.72.2"
+    "typescript-eslint": "^8.73.0"
   }
 }

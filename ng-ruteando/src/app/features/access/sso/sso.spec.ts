@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
@@ -17,10 +17,14 @@ import { SsoButtonsComponent } from './sso-buttons.component';
 import { SsoCompleteComponent } from './sso-complete.component';
 import { rememberSsoReturn, takeSsoReturn } from './sso-return';
 
-@Component({ template: 'destino' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: 'destino' })
 class DestinoComponent {}
 
-@Component({ imports: [SsoButtonsComponent], template: '<app-sso-buttons returnUrl="/journeys" />' })
+@Component({
+  imports: [SsoButtonsComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: '<app-sso-buttons returnUrl="/journeys" />',
+})
 class HostComponent {}
 
 const KEY = 'ruteando-sso-return';

@@ -29,6 +29,7 @@ import { TranslatePipe } from '../core/i18n/translate.pipe';
 import { InstallService } from '../core/pwa/install.service';
 import { BrandComponent } from '../shared/brand/brand.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { OUTLINED_FIELDS_PROVIDER } from '../shared/form/outlined-fields';
 import { MfaReminderComponent } from '../shared/mfa/mfa-reminder.component';
 import { ActionTitleDirective } from '../shared/ui/action-title.directive';
 import { LanguageToggleComponent } from '../shared/ui/language-toggle.component';
@@ -60,6 +61,7 @@ import { NavRailComponent } from './nav-rail.component';
     TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [OUTLINED_FIELDS_PROVIDER],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })

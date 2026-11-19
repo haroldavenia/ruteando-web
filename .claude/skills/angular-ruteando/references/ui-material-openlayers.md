@@ -6,18 +6,18 @@
 
 | Angular | `@angular/material` y `@angular/cdk` | Tema |
 |---|---|---|
-| 21 (`ng-ruteando`) | `21.2.x` | M3 (`mat.theme`), ya aplicado en `src/styles.scss` |
+| 22 (`ng-ruteando`) | `22.3.x` | M3 (`mat.theme`), ya aplicado en `src/styles.scss` |
 | 19 | `19.x` | M3 estable (`mat.theme` desde 19.2; antes `define-theme`) |
 
 Instalar: `pnpm exec ng add @angular/material` (pregunta tema, tipografía y animaciones). Material y CDK van con la misma versión mayor y menor que `@angular/core`.
 
 ## Qué hay declarado hoy
 
-`ng-ruteando` ya usa Angular Material 21.2 con tema M3 y un shell (barra superior y menú lateral). `bootstrap`, `@popperjs/core` y `@ng-bootstrap/ng-bootstrap` ya se retiraron. Se mantienen `ol`, `jspdf` y `@faker-js/faker` (aún sin uso).
+`ng-ruteando` ya usa Angular Material 22.3 con tema M3 y un shell (barra superior y menú lateral). `bootstrap`, `@popperjs/core` y `@ng-bootstrap/ng-bootstrap` ya se retiraron. Se mantienen `ol`, `jspdf` y `@faker-js/faker` (aún sin uso).
 
 ## Tema
 
-`ng-ruteando` (Angular 21, M3), en `src/styles.scss`, definido **una sola vez**:
+`ng-ruteando` (Angular 22, M3), en `src/styles.scss`, definido **una sola vez**:
 ```scss
 @use '@angular/material' as mat;
 html {

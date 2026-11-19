@@ -4,6 +4,7 @@ import { Data, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { BrandComponent } from '../../shared/brand/brand.component';
 import { RouteBackdropComponent } from '../../shared/brand/route-backdrop.component';
+import { OUTLINED_FIELDS_PROVIDER } from '../../shared/form/outlined-fields';
 import { LanguageToggleComponent } from '../../shared/ui/language-toggle.component';
 import { ThemeToggleComponent } from '../../shared/ui/theme-toggle.component';
 import { LegalLinksComponent } from '../legal/legal-links.component';
@@ -31,6 +32,7 @@ import { AccessStepsComponent } from './access-steps.component';
     TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [OUTLINED_FIELDS_PROVIDER],
   templateUrl: './access-layout.component.html',
   styleUrl: './access-layout.component.scss',
 })

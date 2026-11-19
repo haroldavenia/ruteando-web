@@ -6,7 +6,6 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { NO_SSO } from '../../../testing/sso';
 import { SsoApi } from '../../core/api/data/sso.api';
 import { AuthService } from '../../core/auth/auth.service';
-import { OUTLINED_FIELDS_PROVIDER } from '../../shared/form/outlined-fields';
 import { AccessLayoutComponent } from './access-layout.component';
 
 describe('AccessLayoutComponent', () => {
@@ -49,7 +48,6 @@ describe('AccessLayoutComponent', () => {
           },
         ]),
         provideNoopAnimations(),
-        OUTLINED_FIELDS_PROVIDER,
         { provide: SsoApi, useValue: NO_SSO },
         { provide: AuthService, useValue: {} },
       ],

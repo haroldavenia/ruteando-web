@@ -105,6 +105,9 @@ module.exports = tseslint.config(
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',
+      // Los componentes anfitriones de las pruebas llevan `changeDetection: Eager` (lo fijó la migración de Angular 22):
+      // se mantiene la detección de cambios de antes en los specs; la regla vale para el código de la aplicación.
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
     },
   }
 );

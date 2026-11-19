@@ -4,6 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ApplicationRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
@@ -41,6 +42,10 @@ describe('ShellComponent', () => {
 
   it('se crea', () => {
     expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  it('provee campos con contorno a todo el área privada (el token no está en la raíz para no cargar form-field en el arranque)', () => {
+    expect(fixture.debugElement.injector.get(MAT_FORM_FIELD_DEFAULT_OPTIONS).appearance).toBe('outline');
   });
 
   it('los botones de icono de la barra (menú y cuenta) llevan título con lo que hacen', () => {

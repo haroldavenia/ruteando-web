@@ -1,6 +1,6 @@
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, inject, isDevMode, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
-import { provideClientHydration } from '@angular/platform-browser';
+import { provideClientHydration, withNoIncrementalHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
@@ -12,20 +12,18 @@ import { authInterceptor } from './core/api/auth.interceptor';
 import { errorInterceptor } from './core/api/error.interceptor';
 import { refreshInterceptor } from './core/api/refresh.interceptor';
 import { AuthService } from './core/auth/auth.service';
-import { OUTLINED_FIELDS_PROVIDER } from './shared/form/outlined-fields';
 import { MAP_CONFIG } from './shared/map/map-config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: API_BASE_URL, useValue: environment.apiUrl },
     { provide: MAP_CONFIG, useValue: environment.map },
-    OUTLINED_FIELDS_PROVIDER,
-    // Se conserva zone.js (Angular 21 usa zoneless por defecto); pasar a zoneless queda fuera de este change
+    // Se conserva zone.js (Angular usa zoneless por defecto en proyectos nuevos); pasar a zoneless queda fuera de este change
     provideZoneChangeDetection(),
     provideRouter(routes),
-    provideClientHydration(),
+    provideClientHydration(withNoIncrementalHydration()),
     // Orden: token -> renovación de sesión -> errores (la renovación ve ya los ApiError)
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, refreshInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, refreshInterceptor, errorInterceptor])),
     provideAnimationsAsync(),
     // Solo en la compilación de producción (en `ng serve` no hay ngsw-worker.js) y, por dentro, solo en el navegador
     provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode(), registrationStrategy: 'registerWhenStable:30000' }),

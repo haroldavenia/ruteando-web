@@ -1,16 +1,18 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { PageHeaderComponent } from './page-header.component';
 
 @Component({
   imports: [PageHeaderComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<app-page-header title="Vehículos"><button type="button">Nuevo vehículo</button></app-page-header>`,
 })
 class HostComponent {}
 
 @Component({
   imports: [PageHeaderComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<app-page-header title="Vehículos" subtitle="Tu flota de reparto" />`,
 })
 class SubtitleHostComponent {}

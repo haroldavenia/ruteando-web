@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,6 +8,7 @@ import { OUTLINED_FIELDS_PROVIDER } from './outlined-fields';
 
 @Component({
   imports: [MatFormFieldModule, MatInputModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<mat-form-field><mat-label>Nombre</mat-label><input matInput /></mat-form-field>`,
 })
 class HostComponent {}

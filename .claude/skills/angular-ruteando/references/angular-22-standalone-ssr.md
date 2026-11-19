@@ -1,9 +1,9 @@
-# ng-ruteando: Angular 21 standalone + SSR
+# ng-ruteando: Angular 22 standalone + SSR
 
-## Estado actual (verificado tras `upgrade-angular-21-ng-ruteando`)
+## Estado actual (verificado tras `upgrade-angular-22-node-26`)
 
-- `@angular/* ^21.2` (core 21.2.25), `@angular/ssr ^21.2.27`, CDK y Material `21.2.14`, `rxjs ~7.8`, `zone.js ~0.15.1`, `typescript ~5.9.3`, CLI/devkit `^21.2.27`.
-- **Node:** `^20.19.0 || ^22.12.0 || >=24.0.0` (campo `engines`; `.nvmrc` = 22). Verificado con 20.20.2, 22.23.3 y 24.16.0. Con Node 18 pnpm avisa con «Unsupported engine».
+- `@angular/* ^22.3` (core 22.3.0), `@angular/ssr ^22.3`, CDK y Material `22.3.0`, `rxjs ~7.8`, `zone.js ~0.16.3`, `typescript ~6.0.3` (Angular 22 exige `>=6.0 <6.1`), CLI/devkit `^22.3`.
+- **Node:** `^22.22.3 || ^24.15.0 || >=26.0.0` (campo `engines` de los dos `package.json`; `.nvmrc` = 26). Verificado con 26.13.1; los mínimos (22.22.3 y 24.15) se comprueban en la tarea 6.10 del change. Node 25+ no trae Corepack.
 - **Gestor de paquetes:** pnpm (antes npm; el fallo de npm 10.9 con `edgesOut` ya no aplica). Un solo `pnpm-lock.yaml` en la raíz.
 - Builder `@angular-devkit/build-angular:application` (esbuild), `browser: src/main.ts`, `server: src/main.server.ts`, `prerender: true`, `ssr.entry: server.ts`. Estilos `src/styles.scss`.
 - Budgets: initial 500kb/1mb, `anyComponentStyle` 2kb/4kb. Bundle inicial tras el tema M3: ~448 kB brutos.
@@ -14,7 +14,7 @@
 
 ## Zone.js y detección de cambios
 
-Angular 21 es zoneless por defecto en proyectos nuevos; este proyecto **conserva zone.js** con `provideZoneChangeDetection()` en `app.config.ts` (compartido por navegador y servidor). Pasar a zoneless es una decisión futura, no parte de la subida de versión.
+Angular es zoneless por defecto en proyectos nuevos; este proyecto **conserva zone.js** con `provideZoneChangeDetection()` en `app.config.ts` (compartido por navegador y servidor). Pasar a zoneless es una decisión futura, no parte de la subida de versión.
 
 ## SSR
 
@@ -48,7 +48,7 @@ export const appConfig: ApplicationConfig = {
 - Signals para el estado local (`signal`, `computed`) y `toSignal` para observables; `input()`/`output()` están estables.
 - `prerender: true` pre-renderiza rutas estáticas: las rutas con auth no deben prerenderizarse.
 - Guarda APIs del navegador (`window`, `localStorage`) con `PLATFORM_ID` o `afterNextRender`.
-- No añadir Bootstrap ni ng-bootstrap; la UI es `@angular/material` y `@angular/cdk` 21.2 con tema M3.
+- No añadir Bootstrap ni ng-bootstrap; la UI es `@angular/material` y `@angular/cdk` 22.3 con tema M3.
 
 ## Migrar versiones en este repo (lecciones)
 

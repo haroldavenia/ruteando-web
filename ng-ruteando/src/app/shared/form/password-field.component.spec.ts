@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, Validators } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
@@ -9,6 +9,7 @@ import { PasswordFieldComponent } from './password-field.component';
 
 @Component({
   imports: [PasswordFieldComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<app-password-field
     [control]="control"
     label="Contraseña"

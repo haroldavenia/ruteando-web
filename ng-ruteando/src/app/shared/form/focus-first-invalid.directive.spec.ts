@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -7,6 +7,7 @@ import { FormResultComponent } from './form-result.component';
 
 @Component({
   imports: [ReactiveFormsModule, FocusFirstInvalidDirective, FormResultComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <form [formGroup]="form" appFocusFirstInvalid (ngSubmit)="submitted = true">
       <input id="a" formControlName="a" />
