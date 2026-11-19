@@ -20,7 +20,7 @@ El objetivo es dejar **todo en las últimas versiones estables que sean compatib
 - Cambios de código que exige Angular 22 (ver `design.md`): quitar `withFetch()` (deprecado), revisar `paramsInheritanceStrategy` (ahora `'always'`), los diagnósticos nuevos de plantillas (`nullishCoalescingNotNullable`, `optionalChainNotNullable`) y los cambios de Material 22 (sidenav inerte, menú, lista, ordenación, select).
 - `dependabot.yml`: ignorar lo que no se puede subir todavía (TypeScript ≥ 6.1, ESLint 10, etc.) para que no vuelva a abrir PR que fallan.
 - Documentación: `CLAUDE.md`, `README.md`, `ng-ruteando/README.md`, habilidades de `.claude/` y specs vigentes que citan «Angular 21.2», «Node 22» o «TypeScript 5.9».
-- **Sin cambios de comportamiento** de la aplicación: por eso `skip_specs: true`.
+- **Sin cambios de comportamiento** de la aplicación. El spec vigente `frontend-platform` sí cambia (Angular 21.x → 22.x y un requisito nuevo de TypeScript y `engines`): va en el delta de `specs/frontend-platform/`.
 
 ## Fuera de alcance (cada uno es otro change, con su motivo en `design.md`)
 

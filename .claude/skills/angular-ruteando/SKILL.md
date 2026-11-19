@@ -1,9 +1,9 @@
 ---
 name: angular-ruteando
-description: Experto en Angular 21 para el repo ruteando-web (planificación de rutas). Úsalo al crear, modificar o depurar código Angular en ng-ruteando/, al añadir UI con Angular Material, mapas con OpenLayers, PDFs, auth JWT, SSR, o al revisar la subida de versión de Angular.
+description: Experto en Angular 22 para el repo ruteando-web (planificación de rutas). Úsalo al crear, modificar o depurar código Angular en ng-ruteando/, al añadir UI con Angular Material, mapas con OpenLayers, PDFs, auth JWT, SSR, o al revisar la subida de versión de Angular.
 ---
 
-# Angular 21 en ruteando-web
+# Angular 22 en ruteando-web
 
 Skill para trabajar en el repo con criterio de versión. **Hay un único proyecto Angular (`ng-ruteando/`); la app AngularJS anterior se eliminó y solo existe en el historial de git (último commit con ella: `19b1cb4`).** Responde y comenta en español; identificadores en inglés.
 
@@ -11,12 +11,12 @@ Skill para trabajar en el repo con criterio de versión. **Hay un único proyect
 
 | Si el fichero está en... | Proyecto | Angular real hoy | Estilo | Referencia |
 |---|---|---|---|---|
-| `ng-ruteando/` | Único frontend Angular; `server/server.js` publica su compilación de navegador | **21.2** | Standalone por defecto, builder `application`, strict, SCSS, Material M3, zone.js conservado | `references/angular-21-standalone-ssr.md` |
+| `ng-ruteando/` | Único frontend Angular; `server/server.js` publica su compilación de navegador | **22.3** | Standalone por defecto, builder `application`, strict, SCSS, Material M3, zone.js conservado | `references/angular-22-standalone-ssr.md` |
 | API del gateway | Consumo desde `ng-ruteando` | n/a | `core/api`, `core/auth`, `core/geo` | `references/gateway-api.md` |
 
-Antes de escribir código, confirma versión con `grep '"@angular/core"' <proyecto>/package.json`. **No asumas la versión**: `ng-ruteando` está en 21.2. El proyecto Angular 17.0 anterior se eliminó en el change `consolidate-ng-ruteando`.
+Antes de escribir código, confirma versión con `grep '"@angular/core"' <proyecto>/package.json`. **No asumas la versión**: `ng-ruteando` está en 22.3. El proyecto Angular 17.0 anterior se eliminó en el change `consolidate-ng-ruteando`.
 
-Escribe código compatible con la versión instalada en el proyecto que edites (21.2 en `ng-ruteando`). Node soportado: `^20.19 || ^22.12 || >=24` (`.nvmrc` = 22).
+Escribe código compatible con la versión instalada en el proyecto que edites (22.3 en `ng-ruteando`). Node soportado: `^22.22.3 || ^24.15 || >=26` (`.nvmrc` = 26).
 
 ## 2. Reglas comunes
 
@@ -49,7 +49,7 @@ El frontend consume el **HanoIT Gateway** a través del proxy `/gateway` (la cla
 
 ## 5. Matriz de APIs por versión
 
-| Característica | 17.0 (referencia histórica) | 21.2 (`ng-ruteando`, verificado) |
+| Característica | 17.0 (referencia histórica) | 22.3 (`ng-ruteando`, verificado) |
 |---|---|---|
 | Standalone | Opt-in (`standalone: true`) | **Por defecto** (no se escribe) |
 | Control flow `@if/@for` | Estable en 17 | Estable; se usa en el shell |
@@ -59,14 +59,14 @@ El frontend consume el **HanoIT Gateway** a través del proxy `/gateway` (la cla
 | SSR | `@angular/ssr` + `CommonEngine` | `CommonEngine` de `@angular/ssr/node` con `allowedHosts` obligatorio (variable `NG_ALLOWED_HOSTS`) |
 | Tema Material | M2 | M3 con `mat.theme(...)` |
 | TypeScript | 5.2.x | ~5.9 |
-| Node | 18.13+ | `^20.19 \|\| ^22.12 \|\| >=24` (`.nvmrc` = 22) |
+| Node | 18.13+ | `^22.22.3 \|\| ^24.15 \|\| >=26` (`.nvmrc` = 26) |
 | `ng test` | Karma + Jasmine | Karma + Jasmine (`pnpm run test:ci`, Chrome sin interfaz) |
 
 Para APIs de las versiones intermedias (`@let`, `@defer`, `httpResource`, `linkedSignal`) verifica en `pnpm exec ng version` y en la documentación oficial antes de usarlas: estas cifras envejecen.
 
 ## 6. UI
 
-Ver `references/ui-material-openlayers.md`. Resumen: UI con **Angular Material + CDK** alineado con la versión de Angular (`ng-ruteando`: Material 21.2 con tema M3, ya aplicado). No uses Bootstrap ni ng-bootstrap ni los mezcles. `ng-ruteando` tiene un shell Material moderno y todas las pantallas de negocio sobre el sistema de interfaz común (`shared/ui/`). Mapas con OpenLayers (`ol` ^10.5, teselas OSM, sin tokens Mapbox: el commit `1b42631` los eliminó). PDFs: `jspdf` se retiró de las dependencias por no usarse (arrastraba `dompurify` con vulnerabilidades altas); al hacer la exportación a PDF hay que volver a añadirlo con la versión vigente y cargarlo bajo demanda.
+Ver `references/ui-material-openlayers.md`. Resumen: UI con **Angular Material + CDK** alineado con la versión de Angular (`ng-ruteando`: Material 22.3 con tema M3, ya aplicado). No uses Bootstrap ni ng-bootstrap ni los mezcles. `ng-ruteando` tiene un shell Material moderno y todas las pantallas de negocio sobre el sistema de interfaz común (`shared/ui/`). Mapas con OpenLayers (`ol` ^10.5, teselas OSM, sin tokens Mapbox: el commit `1b42631` los eliminó). PDFs: `jspdf` se retiró de las dependencias por no usarse (arrastraba `dompurify` con vulnerabilidades altas); al hacer la exportación a PDF hay que volver a añadirlo con la versión vigente y cargarlo bajo demanda.
 
 ## 7. Trampas conocidas (lee `references/gotchas.md`)
 

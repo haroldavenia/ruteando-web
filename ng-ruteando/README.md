@@ -1,11 +1,11 @@
 # ng-ruteando
 
-Frontend Angular 21 de Ruteando (standalone, SCSS, Angular Material M3, SSR). Es el destino de la migración desde la app AngularJS de `master/`.
+Frontend Angular 22 de Ruteando (standalone, SCSS, Angular Material M3, SSR). Es el destino de la migración desde la app AngularJS de `master/`.
 
 ## Requisitos
 
-- Node `^20.19 || ^22.12 || >=24` (campo `engines`; `.nvmrc` = 22, usa `nvm use`). Con una versión fuera de rango, pnpm avisa («Unsupported engine»).
-- pnpm 10 (la versión exacta está en `packageManager` del `package.json` de la raíz; `corepack enable`). El repositorio es un workspace con un solo `pnpm-lock.yaml` en la raíz: `pnpm install --frozen-lockfile` (desde la raíz o desde aquí) instala el frontend y el servidor.
+- Node `^22.22.3 || ^24.15 || >=26` (campo `engines`; `.nvmrc` = 26, usa `nvm use`) y TypeScript `~6.0`. Con una versión fuera de rango, pnpm avisa («Unsupported engine»).
+- pnpm 10 (la versión exacta está en `packageManager` del `package.json` de la raíz; `corepack enable`; Node 25+ ya no lo trae: `npm install -g corepack`). El repositorio es un workspace con un solo `pnpm-lock.yaml` en la raíz: `pnpm install --frozen-lockfile` (desde la raíz o desde aquí) instala el frontend y el servidor.
 
 ## Comandos
 

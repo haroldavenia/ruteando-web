@@ -31,6 +31,25 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: '@types/jasmine'
         update-types: ['version-update:semver-major']
+      # TypeScript lo fija Angular: la 22 acepta `>=6.0 <6.1` (parches sí; la 6.1 y la 7, el compilador nativo, no)
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      # ESLint 10: `eslint-plugin-import` (la última, 2.32) solo admite hasta ESLint 9, y `@eslint/js` 10 exige ESLint 10
+      - dependency-name: eslint
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@eslint/js'
+        update-types: ['version-update:semver-major']
+      # angular-eslint acompaña a Angular: su versión mayor sube con `ng update`, no por separado
+      - dependency-name: angular-eslint
+        update-types: ['version-update:semver-major']
+      # Los tipos de Node siguen al mínimo que se soporta (`engines`: 22), no a la última versión de Node
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      # Express 5 cambia la sintaxis de rutas (`*` -> `/{*splat}`) y el 2FA y el SSO viven en esas rutas: es un change aparte
+      - dependency-name: express
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/express'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions
     directory: /

@@ -4,8 +4,8 @@ Aplicación web de planificación de rutas. El frontend es Angular (`ng-ruteando
 
 ## Requisitos
 
-- Node `^20.19 || ^22.12 || >=24` para el frontend y `^22.13 || >=24` para el servidor (usa `node:sqlite`); en `ng-ruteando/.nvmrc` está la 22: `nvm use`.
-- pnpm 10 (la versión exacta está en `packageManager` de `package.json`): `corepack enable` (viene con Node 20 a 24) o `npm install -g pnpm`; con pnpm 10 instalado, descarga solo la versión que pide el proyecto.
+- Node `^22.22.3 || ^24.15 || >=26` para el frontend y el servidor (el servidor usa `node:sqlite`); en `ng-ruteando/.nvmrc` está la 26: `nvm use`.
+- pnpm 10 (la versión exacta está en `packageManager` de `package.json`): `corepack enable` (viene con Node hasta la 24; desde la 25 se instala con `npm install -g corepack`) o `npm install -g pnpm`; con pnpm 10 instalado, descarga solo la versión que pide el proyecto.
 - Dirección y clave de API del HanoIT Gateway.
 
 ## Puesta en marcha
@@ -80,7 +80,7 @@ Twilio es quien genera, envía y comprueba el código. El número de teléfono s
 
 ### Producción
 
-1. **Requisitos**: Node `^22.13 || >=24` (usa `node:sqlite`) y **una sola instancia** del servidor (los retos de acceso viven en memoria).
+1. **Requisitos**: Node `^22.22.3 || ^24.15 || >=26` (usa `node:sqlite`) y **una sola instancia** del servidor (los retos de acceso viven en memoria).
 2. `MFA_SECRET_KEY`: una clave nueva y propia (no la de Docker). Guárdala: si se pierde o cambia, los TOTP activos dejan de valer.
 3. `MFA_DB_PATH` en un **volumen persistente** con copia de seguridad.
 4. **Correo**: `SMTP_HOST`, `SMTP_PORT` y `SMTP_FROM` de tu proveedor, con `SMTP_USER` y `SMTP_PASS`. Puerto 587 con `SMTP_SECURE=false` (STARTTLS) o 465 con `SMTP_SECURE=true`. Sin usuario el servidor no negocia TLS: no lo dejes así fuera de Mailpit. `SMTP_FROM` debe ser un remitente de un dominio que controles (con SPF/DKIM) para que los códigos no caigan en spam.

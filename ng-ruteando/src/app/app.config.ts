@@ -18,7 +18,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     { provide: API_BASE_URL, useValue: environment.apiUrl },
     { provide: MAP_CONFIG, useValue: environment.map },
-    // Se conserva zone.js (Angular 21 usa zoneless por defecto); pasar a zoneless queda fuera de este change
+    // Se conserva zone.js (Angular usa zoneless por defecto en proyectos nuevos); pasar a zoneless queda fuera de este change
     provideZoneChangeDetection(),
     provideRouter(routes),
     provideClientHydration(withNoIncrementalHydration()),
