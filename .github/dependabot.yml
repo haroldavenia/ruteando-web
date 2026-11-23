@@ -1,28 +1,13 @@
 version: 2
-<<<<<<< HEAD
-updates:
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly
-    commit-message:
-      prefix: ci
-=======
 
 # Revisión semanal de dependencias. Los pull requests de Dependabot pasan por el mismo CI.
 # El ecosistema `npm` también cubre pnpm: con un workspace (pnpm-workspace.yaml) basta UNA entrada en la raíz;
 # actualiza servidor y ng-ruteando sobre el único pnpm-lock.yaml (una entrada por carpeta duplicaba los pull requests).
 updates:
->>>>>>> 4bcc752af1377e528ef13e04eb0d09cefe5dd0f7
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
-<<<<<<< HEAD
-    commit-message:
-      prefix: build
-  # Tras ADR-0002 añadir una entrada por servicio (p. ej. /services/serviciobd).
-=======
       day: monday
     open-pull-requests-limit: 5
     commit-message:
@@ -74,4 +59,3 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: chore(ci)
->>>>>>> 4bcc752af1377e528ef13e04eb0d09cefe5dd0f7

@@ -20,6 +20,18 @@ module.exports = tseslint.config(
       'qa-visual/**',
       '.claude/**',
       'openspec/**',
+      // Línea AngularJS de Hanoit (rama `angularjs-main`): no es código de esta aplicación
+      'master/**',
+      'tests/**',
+      'tools/**',
+      'docs/**',
+      'specs/**',
+      'config/**',
+      '.agents/**',
+      '.cursor/**',
+      'playwright.config.mjs',
+      'karma.conf.cjs',
+      'eslint.config.mjs',
     ],
   },
 

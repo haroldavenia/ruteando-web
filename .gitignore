@@ -2,18 +2,6 @@ node_modules
 start_server.sh
 cosas
 .idea/*
-<<<<<<< HEAD
-app
-!ruteando-ng/src/app/
-vendor
-# SDD
-.env
-reports/
-coverage/
-test-results/
-.tmp/
-playwright-report/
-=======
 .env
 .claude/settings.local.json
 
@@ -22,4 +10,10 @@ package-lock.json
 
 # Almacén SQLite del segundo factor (política, factores y códigos de recuperación)
 /data/
->>>>>>> 4bcc752af1377e528ef13e04eb0d09cefe5dd0f7
+
+# Salidas de pruebas y cobertura del arnés
+reports/
+coverage/
+test-results/
+.tmp/
+playwright-report/
