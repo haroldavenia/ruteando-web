@@ -1,0 +1,21 @@
+{
+  "name": "PUT /api/v1/assigned-services/{id}",
+  "request": {
+    "method": "PUT",
+    "url": "/api/v1/assigned-services/{assigned_service_id}",
+    "body": {
+      "state": "ACTIVO"
+    }
+  },
+  "response": {
+    "status": 202,
+    "body": {
+      "id": "6acb99b50d4a57e6b309af60",
+      "vehicle": null,
+      "route": null,
+      "driver": null,
+      "state": "ACTIVO",
+      "executionDate": null
+    }
+  }
+}

@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+.progress-text {
+  margin: 0 0 8px;
+  font: var(--mat-sys-title-small);
+}
+
+.bar {
+  height: 8px;
+  max-width: 360px;
+  overflow: hidden;
+  background: var(--mat-sys-surface-container-highest);
+  border-radius: 4px;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--app-brand-gradient);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: baseline;
+  margin-top: 16px;
+}
+
+.count {
+  margin: 0 0 8px;
+  min-height: 1.5em;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+// La tabla toma su aspecto de `table.grid` (sistema de interfaz); aquí solo el alineado y que la cabecera no se parta
+td {
+  vertical-align: middle;
+}
+
+thead th {
+  white-space: nowrap;
+}
+
+// El número de la parada, en el color de su ruta en el mapa (el color no es lo único: el número es el texto)
+.seq {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 14px;
+  background: var(--route-color, var(--mat-sys-primary));
+  color: var(--seq-text, #fff);
+  font: var(--mat-sys-label-large);
+  font-weight: 700;
+}
+
+.name,
+.address {
+  display: block;
+}
+
+.address {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+.actions {
+  white-space: nowrap;
+}

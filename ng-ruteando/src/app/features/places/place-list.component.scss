@@ -1,0 +1,36 @@
+h2 {
+  margin: 0 0 12px;
+  font: var(--mat-sys-title-medium);
+  font-weight: 700;
+}
+
+.sticky {
+  --app-map-height: 320px;
+}
+
+@media (min-width: 1100px) {
+  .sticky {
+    --app-map-height: clamp(360px, 62vh, 640px);
+  }
+}
+
+// Ficha del lugar elegido en el mapa: lo nombra y lleva a editarlo
+.ficha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.ficha-text {
+  display: grid;
+  flex: 1 1 10rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ficha-text span {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}

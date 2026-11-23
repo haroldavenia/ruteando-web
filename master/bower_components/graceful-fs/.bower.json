@@ -1,0 +1,14 @@
+{
+  "name": "graceful-fs",
+  "homepage": "https://github.com/isaacs/node-graceful-fs",
+  "version": "4.2.11",
+  "_release": "4.2.11",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.2.11",
+    "commit": "8a00dc0ce1efc11c544bb7d8673458b5c4d29e15"
+  },
+  "_source": "https://github.com/isaacs/node-graceful-fs.git",
+  "_target": "^4.2.10",
+  "_originalSource": "graceful-fs"
+}

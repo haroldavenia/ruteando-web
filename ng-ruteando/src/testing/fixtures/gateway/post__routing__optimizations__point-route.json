@@ -1,0 +1,346 @@
+{
+  "name": "POST /api/v1/routing/optimizations/point-route",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/routing/optimizations/point-route",
+    "body": {
+      "nameJourney": "prueba-postman",
+      "cargoInput": [
+        {
+          "id": "1",
+          "latitude": 4.60872,
+          "longitude": -74.07728,
+          "weight": 1,
+          "volume": 1,
+          "unloadingTime": 0,
+          "startTimeOfDelivery": "08:00:00",
+          "endTimeOfDelivery": "18:00:00"
+        },
+        {
+          "id": "2",
+          "latitude": 4.72218,
+          "longitude": -74.18812,
+          "weight": 1,
+          "volume": 1,
+          "unloadingTime": 0,
+          "startTimeOfDelivery": "08:00:00",
+          "endTimeOfDelivery": "18:00:00"
+        }
+      ],
+      "configuration": {
+        "startTime": "08:00:00",
+        "maxiumTime": 0,
+        "backToDepot": false
+      },
+      "numberOfRoutes": 1,
+      "transport": [
+        {
+          "id": 1,
+          "initialLatitude": 4.78494,
+          "initialLongitude": -74.1259,
+          "shiftStartTime": "08:00:00",
+          "shiftEndTime": "18:00:00"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "cargo": [
+        {
+          "id": "1",
+          "latitude": 4.60872,
+          "longitude": -74.07728,
+          "weight": 1,
+          "volume": 1,
+          "unloadingTime": 0,
+          "status": null,
+          "status_message": null,
+          "startTimeOfDelivery": "08:00:00",
+          "endTimeOfDelivery": "18:00:00",
+          "city": null,
+          "receiver": null,
+          "sender": null,
+          "zone": null,
+          "guideNumber": null,
+          "pieceNumber": null
+        },
+        {
+          "id": "2",
+          "latitude": 4.72218,
+          "longitude": -74.18812,
+          "weight": 1,
+          "volume": 1,
+          "unloadingTime": 0,
+          "status": null,
+          "status_message": null,
+          "startTimeOfDelivery": "08:00:00",
+          "endTimeOfDelivery": "18:00:00",
+          "city": null,
+          "receiver": null,
+          "sender": null,
+          "zone": null,
+          "guideNumber": null,
+          "pieceNumber": null
+        }
+      ],
+      "duration": 2081,
+      "routeInstructions": [
+        [
+          11,
+          "Calle 18A",
+          17,
+          0,
+          4,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Carrera 15 Bis",
+          41,
+          1,
+          7,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Calle 19",
+          551,
+          2,
+          56,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Avenida Calle 19",
+          104,
+          3,
+          23,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Carrera 10",
+          697,
+          4,
+          46,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "",
+          204,
+          5,
+          24,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Calle 26",
+          2740,
+          6,
+          176,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Avenida Calle 26",
+          2700,
+          7,
+          180,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Carrera 66A",
+          396,
+          8,
+          43,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Calle 44",
+          418,
+          9,
+          39,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "Avenida Carrera 68",
+          4119,
+          10,
+          272,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "",
+          169,
+          11,
+          15,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "Avenida Calle 80",
+          4571,
+          12,
+          230,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Avenida Calle 80",
+          2760,
+          13,
+          144,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "Autopista Medellín",
+          4481,
+          14,
+          262,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          7,
+          "",
+          296,
+          15,
+          26,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "",
+          21,
+          16,
+          3,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Vía Siberia - Funza",
+          91,
+          17,
+          5,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Vía Siberia - Funza",
+          2245,
+          18,
+          169,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          6,
+          "Vía Siberia - Funza",
+          3416,
+          19,
+          283,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          0,
+          "Vía Funza - Siberia",
+          86,
+          20,
+          20,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          2,
+          "",
+          185,
+          21,
+          44,
+          "0m",
+          "right",
+          "driving"
+        ],
+        [
+          15,
+          "",
+          0,
+          22,
+          0,
+          "0m",
+          "right",
+          "driving"
+        ]
+      ],
+      "route_geometry": "edc[neccMQZm@_@OKxAaCDIDGFIHMDIDGn@_A~@uAJOLQr@eAt@gAFKDINSl@}@DEDGDIHMFIDGj@y@PWPWLS[GQZGJIJm@z@EFGFIEc@U}BiAmBaAiB}@MIECQIMGiAk@o@_@ICIEAAKGMGgCkAEAKGMGi@SwB}@SIAAUMQOCAAAaAm@IEKQEI?AAGAM@I@G@EDEFG@ADCDCDAF?F@DDDFFHBJ?FAHSf@qAxA{@d@IDIDaA^_Bn@SH[Le@Tm@Zc@Ts@`@OHMJQLu@j@aAt@YRs@b@aCxAcAl@sDvBm@^s@`@WPw@f@eBbAQH[R[PGDEBSLkAp@cAl@wBtAk@^aA|@KJc@`@{@r@_GtD{BtAmCzA}DtBMHwAz@_CtAwBxAkBlAcBdAs@^c@To@V]Jg@NQF[JSJCBMHWPKHQNGHIDUPs@b@uDzBMHWRWTWV[^ORKNA@OTMVCDKVCDUh@Of@kD|La@rA]nAEPCHCJIXa@vAs@hCELGROZ]n@]h@UZUZUXQNa@^MJo@d@QNwBlAg@Xs@^sBjAaCpAsDrB_B|@cAh@_DdBsBjAm@\\gAn@eAj@yBlA}DxB_CnAcGfD]R[NkAn@iBdAqEdCoGlD}A|@k@XMBG@E?ICGCGGKKQQIIOK_BaA{A_AUO{CkBoAu@MKOIEFCFCBGJwCtEWd@MPKNEFq@hAMRkBxCKJEDI@G?K@IIc@[YQi@_@}@m@}@o@s@i@QQQSUSUWMM[YQQQMmA}@sA_Aa@YYQa@SUMOI]Sa@WyCsByDoCgAw@u@g@u@k@{@s@s@k@s@k@qBwAc@[kCmBSM[UYW][cAgAUS]]WWYSa@YWO]Qg@[eBaAgCuA_BaA[Om@a@_@YaD{BQM_@]IGcCoBqDeCMIa@WYQGGQKKGWMYO}As@e@U]QsAm@aCeAcAg@yBgASKw@_@eAi@{@a@eB}@k@Uy@_@g@SUMQIOGcAi@]QkAm@kAk@i@[[S_@WQOQQCCIKMO]c@sBmCQWEGeAyAgBeCaBcC_EmFaBwBmA{A{BwCC]AO@MDOFKJMNIRELAJBJBLHHNBP?JCLENEPMJcD|B_BlAq@b@uBvAwG|EiBpAaChBMJ_@V_HdFkHlF{AhAo@b@UNsCvBeAx@yBpB}@|@}@bAUXQVS\\MTQXkD~GQ^o@fBUp@IVIVGPQ`@MZ]t@]t@c@bAQ`@u@bBKVKVEJIRm@rAk@pACHKTaAxBk@jAYl@{@|AKPYd@QXMP_@l@MPa@l@a@h@KPMPa@f@[b@q@~@m@v@sBlCyAlBy@dAm@x@SXY`@OVMROZWd@Ub@a@~@O\\Qf@CHe@xA[|@m@fBM\\IRSl@q@nBu@zByAjEq@hBa@fAy@xBYp@IRUd@}@dB]j@[b@e@n@e@j@OPg@j@o@n@w@x@IJi@h@MN{@|@m@n@uBxBCBaCdCcBdBu@t@g@d@a@\\KH[ZQPeA|@OLu@l@o@b@{@j@u@b@KFSLu@d@gF~CuAz@e@ZMHe@Xa@VoBnAs@b@UNIDg@\\eF`DqCjBkAt@YP{BvAgAp@aAl@aAj@sA|@u@f@OJi@^{ChCk@b@]X}ChCm@f@oAbAyFpE[TYTEBIFKDKDMBWB]Dc@B]BM@MBKDMDKHIHILELIPIXELO\\KTGNQVGHGHOL]Zo@h@{CfCcAz@[XMLIHIJq@bAu@~@WZWZm@f@i@b@sBbBUPe@^gBtAuC~BWRaBpAgDnCUPGDgBxA[VMHEDA@wAhA[VYTeA|@yGhF}@x@qC`CIDcAz@_At@a@Zm@d@KJoCxB_At@mB~Aa@ZOJWRw@p@kBzAiDlCGFiCvBkB~AQL{DzC]Vq@j@uHhGs@f@m@j@eDpCaAv@uBbBa@^a@\\_@\\_@\\_@^_@^_@^_@^WZED]`@_@`@[b@]b@kAbB]f@oAjBs@bAgBhCKL_CjDU\\{@lAiCtDWXqChE[b@[^kAxAeE`GGJUZKPILE?KBKHGJEJ?L?DDNFJLFLDNAD?R@RDRD^Pj@^hBfAfAt@RNzBxA~BvA|@j@bAn@j@\\nBrAx@f@tAv@hAr@nAz@~A`AxDfCFBFDJJ|AhAt@v@^d@Vd@Xl@Rh@\\x@l@bBbAfCvBzDtBhDxAbCxCfFh@z@zBtDvA`Cv@xAL`@L^P\\JPv@lAHLJPr@dANTtAvAJLv@hA|AbCzAdCR\\hBtCjB|C`A~AhA~AhGxGVVdCjCdBfBfHtHJLrE~ElAlAJJx@~@`AfAnBzBjBrBhBrBjArAJHpCtCLLzBxB~DxDjAjAfBhBNNnAxAtChC\\ZnEjE`A`AnBlBfAdATRp@r@LNvAxA\\^PGUSKM}@}@BEd@c@PIn@OPILMZId@IVOTUVY",
+      "route_name": [
+        "Avenida Calle 80, Vía Siberia - Funza"
+      ],
+      "route_summary": {
+        "endPoint": "",
+        "startPoint": "Calle 18A",
+        "totalDistance": 30316.9,
+        "totalTime": 2081
+      },
+      "status": "200",
+      "status_message": "Found route between points",
+      "transport": null,
+      "via_points": [
+        [
+          4.60883,
+          -74.077204
+        ],
+        [
+          4.723422,
+          -74.192329
+        ]
+      ]
+    }
+  }
+}

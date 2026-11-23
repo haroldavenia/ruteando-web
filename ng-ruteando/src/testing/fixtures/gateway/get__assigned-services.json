@@ -1,0 +1,21 @@
+{
+  "name": "GET /api/v1/assigned-services",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/assigned-services",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": [
+      {
+        "id": "6acb99b50d4a57e6b309af60",
+        "vehicle": null,
+        "route": null,
+        "driver": null,
+        "state": "ACTIVO",
+        "executionDate": null
+      }
+    ]
+  }
+}

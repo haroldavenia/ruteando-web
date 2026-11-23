@@ -1,0 +1,214 @@
+// Listados (`DataTableComponent`): búsqueda, densidad, chips de estado, filas, selección y tarjetas. Va aquí y no en la hoja del
+// componente para no gastar su presupuesto de estilos; todo cuelga de `app-data-table`, así que no se filtra al resto.
+
+app-data-table {
+  --app-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Roboto Mono', monospace;
+
+  // Barra superior: búsqueda ancha (de 44px, con la pista `/`) y los alternadores de vista y densidad
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    padding: 16px 20px 8px;
+  }
+
+  .filter {
+    --mat-form-field-container-height: 44px;
+    --mat-form-field-container-vertical-padding: 10px;
+    flex: 1 1 16rem;
+  }
+
+  .filter input {
+    text-overflow: ellipsis;
+  }
+
+  .slash {
+    margin-inline-end: 12px;
+    padding: 1px 8px;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 6px;
+    color: var(--mat-sys-on-surface-variant);
+    font: 600 12px var(--app-font-mono);
+  }
+
+  .seg {
+    display: inline-flex;
+    overflow: hidden;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 12px;
+  }
+
+  .seg button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--mat-sys-on-surface-variant);
+    cursor: pointer;
+  }
+
+  .seg button[aria-pressed='true'] {
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+
+  .seg button:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: -2px;
+  }
+
+  // Chips de estado con recuento
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 4px 20px 8px;
+  }
+
+  .chip {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 999px;
+    background: var(--mat-sys-surface);
+    color: var(--mat-sys-on-surface);
+    font: var(--mat-sys-label-large);
+    cursor: pointer;
+  }
+
+  .chip b {
+    font: 700 13px var(--app-font-mono);
+  }
+
+  .chip.on {
+    border-color: transparent;
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+
+  .chip:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+
+  .scope {
+    margin: 0;
+    padding: 0 20px 8px;
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-medium);
+  }
+
+  // Tabla: cabecera en mayúsculas pequeñas y monoespaciada, filas de 56px (44px compactas)
+  th.mat-mdc-header-cell {
+    background: var(--mat-sys-surface-container);
+    color: var(--mat-sys-on-surface-variant);
+    font: 600 12px var(--app-font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  tr.mat-mdc-row {
+    --mat-table-row-item-container-height: 56px;
+  }
+
+  .compact tr.mat-mdc-row {
+    --mat-table-row-item-container-height: 44px;
+  }
+
+  td.cell-id {
+    color: var(--mat-sys-on-surface-variant);
+    font: 500 13px var(--app-font-mono);
+  }
+
+  td.cell-strong {
+    font-weight: 600;
+  }
+
+  td.cell-muted {
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  // Las filas elegidas se tiñen celda a celda: la columna fija lleva su propio fondo y así se ve igual que el resto
+  tr.mat-mdc-row.selected,
+  tr.mat-mdc-row.selected td {
+    background: color-mix(in srgb, var(--mat-sys-primary) 9%, var(--mat-sys-surface-container-low));
+  }
+
+  .select-cell {
+    width: 56px;
+  }
+
+  // Apiladas, la casilla es la primera línea de la tarjeta y ocupa su ancho, y la densidad compacta aprieta la tarjeta
+  @container stack (max-width: 839.98px) {
+    td.select-cell {
+      grid-column: 1 / -1;
+      width: auto;
+    }
+
+    .compact tbody tr.mat-mdc-row {
+      gap: 2px 12px;
+      padding-block: 6px;
+    }
+  }
+
+  // Las acciones de una fila aparecen al pasar el cursor o al enfocar (con ratón y en una tabla; apiladas o con pantalla táctil, siempre)
+  @media (hover: hover) and (pointer: fine) {
+    @container stack (min-width: 840px) {
+      td.actions > * {
+        opacity: 0;
+      }
+
+      tr.mat-mdc-row:hover td.actions > *,
+      tr.mat-mdc-row:focus-within td.actions > *,
+      tr.mat-mdc-row.selected td.actions > *,
+      td.actions .mat-mdc-menu-trigger[aria-expanded='true'] {
+        opacity: 1;
+      }
+    }
+  }
+
+  // Tarjetas (vehículos): una rejilla que llena el ancho
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(17rem, 100%), 1fr));
+    gap: 16px;
+    padding: 8px 20px 20px;
+  }
+
+  // Barra de la selección: pegada al pie de la ventana mientras la tarjeta se ve (con `clip` la tarjeta no es un contenedor de
+  // desplazamiento y `sticky` cuenta con la página)
+  .card.flush {
+    overflow: clip;
+  }
+
+  .selbar {
+    position: sticky;
+    bottom: 16px;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    align-items: center;
+    margin: 12px 16px 16px;
+    padding: 6px 8px 6px 20px;
+    border-radius: 16px;
+    background: var(--mat-sys-inverse-surface);
+    color: var(--mat-sys-inverse-on-surface);
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.25);
+    --mat-button-text-label-text-color: var(--mat-sys-inverse-primary);
+    --mat-button-text-state-layer-color: var(--mat-sys-inverse-primary);
+    --mat-button-text-ripple-color: color-mix(in srgb, var(--mat-sys-inverse-primary) 20%, transparent);
+  }
+
+  .selbar .count {
+    margin-inline-end: auto;
+    font: var(--mat-sys-label-large);
+  }
+}

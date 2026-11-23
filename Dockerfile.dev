@@ -1,0 +1,18 @@
+# Imagen de DESARROLLO (no es la de producción). El código se monta desde el equipo y las dependencias viven en volúmenes
+# (ver compose.yaml), así que la imagen solo trae Node.
+FROM node:26-bookworm-slim AS dev
+WORKDIR /app
+ENV NG_CLI_ANALYTICS=false \
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
+    npm_config_store_dir=/pnpm-store
+# pnpm con la versión exacta de `packageManager` (package.json), descargada ya en la imagen para no depender de la red al arrancar.
+# Node 25 en adelante ya no trae Corepack: se instala con npm (versión fijada).
+COPY package.json /tmp/pm/package.json
+RUN npm install -g corepack@0.36.0 && corepack enable && cd /tmp/pm && corepack install && rm -rf /tmp/pm
+
+# Pruebas del frontend: Karma necesita un Chrome. Chromium de Debian; los flags sin interfaz y sin sandbox ya están en karma.conf.js
+FROM dev AS test
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends chromium \
+    && rm -rf /var/lib/apt/lists/*
+ENV CHROME_BIN=/usr/bin/chromium

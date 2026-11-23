@@ -1,0 +1,10 @@
+ClassyLoader is a jQuery plugin that lets your add beautiful and animated loaders to your website.
+
+You can find documentation and examples here: https://0x16a.com/classyloader
+
+@name ClassyLoader
+@package jQuery plugin
+@author Andrew Kozlov <1607kab@gmail.com>
+@website https://0x16a.com/
+@version 1.2.3
+@license MIT https://0x16a.com/classyloader/LICENSE-MIT

@@ -1,0 +1,76 @@
+// Estilos de las tarjetas de «quién, cuándo y sobre qué» del detalle. Van en la hoja del componente (sin encapsulación) y solo se
+// cargan con Auditoría. Solo tokens del tema (claro y oscuro).
+
+app-audit-facts {
+  --app-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Roboto Mono', monospace;
+
+  display: block;
+
+  code {
+    font: 500 0.86em var(--app-font-mono);
+    overflow-wrap: anywhere;
+  }
+}
+
+.audit-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  gap: 10px;
+  margin: 0 0 20px;
+}
+
+.audit-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 14px;
+  background: var(--mat-sys-surface-container-low);
+
+  dt {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-medium);
+  }
+
+  dd {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    min-width: 0;
+    margin: 0;
+  }
+
+  small {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-body-small);
+  }
+}
+
+.audit-fact-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.audit-avatar,
+.audit-fact-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font: var(--mat-sys-label-large);
+  font-weight: 800;
+}
+
+.audit-fact-icon {
+  border-radius: 12px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}

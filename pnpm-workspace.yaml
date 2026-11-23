@@ -1,0 +1,11 @@
+packages:
+  - ng-ruteando
+
+# pnpm 10 no ejecuta los scripts de instalación de las dependencias salvo que se aprueben. Aquí ninguna los necesita:
+# esbuild, lmdb, @parcel/watcher y msgpackr-extract traen su binario como paquete opcional por plataforma (verificado:
+# pruebas, compilación, `ng serve` y el servidor sin ellos). Si una dependencia nueva los pide, `pnpm approve-builds`.
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - lmdb
+  - msgpackr-extract

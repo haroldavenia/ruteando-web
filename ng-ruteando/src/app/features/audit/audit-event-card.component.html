@@ -1,0 +1,14 @@
+<button type="button" class="audit-event" [attr.aria-label]="label()" (click)="opened.emit(log())">
+  <span class="audit-event-head">
+    <app-status-badge [label]="action()" [tone]="tone()" />
+    <time [attr.datetime]="log().createdAt" [attr.title]="exact()">{{ relative() }}</time>
+  </span>
+  <span class="audit-event-meta">
+    <span><mat-icon aria-hidden="true">person</mat-icon>{{ actor() }}</span>
+    <span><mat-icon aria-hidden="true">category</mat-icon>{{ entity() }}</span>
+    @if (technical()) {
+      <code class="audit-key">{{ log().action }}</code>
+    }
+    <mat-icon class="audit-eye-hint" aria-hidden="true">visibility</mat-icon>
+  </span>
+</button>

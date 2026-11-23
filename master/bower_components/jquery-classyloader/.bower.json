@@ -1,0 +1,19 @@
+{
+  "name": "jquery-classyloader",
+  "version": "1.2.3",
+  "main": [
+    "js/jquery.classyloader.js"
+  ],
+  "dependencies": {
+    "jquery": ">=1.2"
+  },
+  "_cacheHeaders": {
+    "ETag": "W/\"2e82849ce83698111307d4611c00a10fc8730ca728762706731534db67d805a6\"",
+    "Content-Type": "application/zip",
+    "Content-Disposition": "attachment; filename=jquery-classyloader-master.zip"
+  },
+  "_release": "e-tag:W/\"2e82849",
+  "_source": "https://github.com/kab91/jquery-classyloader/archive/master.zip",
+  "_target": "*",
+  "_originalSource": "https://github.com/kab91/jquery-classyloader/archive/master.zip"
+}

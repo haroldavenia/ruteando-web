@@ -1,0 +1,107 @@
+// Estilos de los filtros. Van en la hoja del componente (sin encapsulación: las clases `audit-*` son suyas) y no en la global, para
+// que solo se carguen al abrir Auditoría. Solo tokens del tema (claro y oscuro).
+
+// ---------- Filtros ----------
+
+.audit-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+}
+
+.audit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: flex-end;
+}
+
+.audit-switches {
+  align-items: center;
+}
+
+.audit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.audit-label {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-medium);
+}
+
+.audit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.audit-chip {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 999px;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-label-large);
+  cursor: pointer;
+
+  &.on {
+    border-color: transparent;
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+}
+
+.audit-field {
+  --mat-form-field-container-height: 44px;
+  --mat-form-field-container-vertical-padding: 10px;
+  flex: 1 1 11rem;
+  min-width: 0;
+  max-width: 18rem;
+}
+
+.audit-clear {
+  margin-inline-start: auto;
+}
+
+.audit-error {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-medium);
+}
+
+@media (max-width: 599.98px) {
+  .audit-filters {
+    padding: 16px;
+  }
+
+  .audit-field {
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .audit-clear {
+    margin-inline-start: 0;
+  }
+}

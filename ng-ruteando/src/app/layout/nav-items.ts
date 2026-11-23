@@ -1,0 +1,70 @@
+import { ADMIN_ROLES, OPERATIONS_ROLES } from '../core/auth/admin-roles';
+import { UserRole } from '../core/auth/session.model';
+import { t } from '../core/i18n/i18n';
+/** Entrada del menú: un enlace (`link`) o una sección con enlaces (`children`). */
+export interface NavItem {
+  label: string;
+  /** Nombre corto para el riel de iconos, donde no cabe el largo (el accesible sigue siendo `label`). */
+  short?: string;
+  icon: string;
+  link?: string;
+  /** Con `true` solo se marca activa en la ruta exacta; por defecto también en sus subrutas. */
+  exact?: boolean;
+  /** Roles que la ven; sin `roles`, la ve cualquier persona con sesión (y el render en servidor). */
+  roles?: readonly UserRole[];
+  children?: NavItem[];
+}
+
+export const HOME_LINK = '/';
+
+export const NAV_ITEMS: readonly NavItem[] = [
+  { label: t('Inicio'), icon: 'home', link: HOME_LINK, exact: true },
+  {
+    label: t('Flota'),
+    icon: 'local_shipping',
+    roles: ADMIN_ROLES,
+    children: [
+      { label: t('Vehículos'), icon: 'directions_car', link: '/fleet/vehicles' },
+      { label: t('Tipos de vehículo'), icon: 'category', link: '/fleet/types' },
+      { label: t('Conductores'), icon: 'badge', link: '/fleet/drivers' },
+    ],
+  },
+  { label: t('Lugares'), icon: 'place', link: '/places', roles: ADMIN_ROLES },
+  { label: t('Zonas'), icon: 'hexagon', link: '/zones', roles: ADMIN_ROLES },
+  { label: t('Paquetes'), icon: 'deployed_code', link: '/packages', roles: OPERATIONS_ROLES },
+  { label: t('Jornadas'), icon: 'route', link: '/journeys', roles: OPERATIONS_ROLES },
+  { label: t('Configuraciones'), short: t('Config.'), icon: 'tune', link: '/settings', roles: ADMIN_ROLES },
+  { label: t('Auditoría'), icon: 'history', link: '/audit', roles: OPERATIONS_ROLES },
+  { label: t('Seguridad'), icon: 'shield', link: '/security', roles: ADMIN_ROLES },
+];
+
+/** Acción rápida de la búsqueda: lleva a una pantalla en la que se empieza algo. */
+export interface QuickAction {
+  label: string;
+  icon: string;
+  link: string;
+  roles: readonly UserRole[];
+}
+
+export const QUICK_ACTIONS: readonly QuickAction[] = [
+  { label: t('Planificar jornada'), icon: 'add_road', link: '/journeys/new', roles: OPERATIONS_ROLES },
+  { label: t('Nuevo paquete'), icon: 'add_box', link: '/packages/new', roles: OPERATIONS_ROLES },
+  { label: t('Importar paquetes'), icon: 'upload_file', link: '/packages/import', roles: OPERATIONS_ROLES },
+];
+
+/** Acciones rápidas que el rol puede hacer (las mismas rutas que ya protegen las guardas). */
+export function quickActionsFor(role: UserRole | null): QuickAction[] {
+  return QUICK_ACTIONS.filter((action) => role !== null && action.roles.includes(role));
+}
+
+/** Entradas que el rol puede ver. El menú es una comodidad: la seguridad la dan las guardas y el gateway. */
+export function navItemsFor(role: UserRole | null): NavItem[] {
+  return NAV_ITEMS.filter((item) => !item.roles || (role !== null && item.roles.includes(role)));
+}
+
+/** Enlaces de las áreas del rol, sin «Inicio» y con las secciones aplanadas: los accesos de la página de inicio. */
+export function areaLinksFor(role: UserRole | null): NavItem[] {
+  return navItemsFor(role)
+    .filter((item) => item.link !== HOME_LINK)
+    .flatMap((item) => item.children ?? [item]);
+}

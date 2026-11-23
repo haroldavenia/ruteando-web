@@ -1,0 +1,90 @@
+// Estilos de la lista de auditoría: ámbito, avisos y presentación. Van en la hoja del componente (sin encapsulación: las clases `audit-*` son suyas) y no en la global, para
+// que solo se carguen al abrir Auditoría. Solo tokens del tema (claro y oscuro).
+
+app-audit-list {
+  --app-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Roboto Mono', monospace;
+
+  code {
+    font: 500 0.86em var(--app-font-mono);
+    overflow-wrap: anywhere;
+  }
+}
+
+.audit-intro {
+  max-width: 70ch;
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-large);
+}
+
+// ---------- Ámbito y avisos ----------
+
+.audit-scope {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: flex-start;
+}
+
+.audit-scope-group {
+  overflow: hidden;
+  max-width: 100%;
+  border-radius: 999px;
+  outline: 1px solid var(--mat-sys-outline-variant);
+  outline-offset: -1px;
+  background: var(--mat-sys-surface-container);
+
+  .mat-button-toggle {
+    --mat-button-toggle-height: 44px;
+    --mat-button-toggle-shape: 999px;
+    --mat-button-toggle-text-color: var(--mat-sys-on-surface-variant);
+    --mat-button-toggle-background-color: transparent;
+    --mat-button-toggle-selected-state-background-color: var(--mat-sys-primary-container);
+    --mat-button-toggle-selected-state-text-color: var(--mat-sys-on-primary-container);
+    --mat-button-toggle-divider-color: transparent;
+    border: 0;
+  }
+}
+
+.audit-tenant {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+
+  .mat-mdc-form-field {
+    --mat-form-field-container-height: 44px;
+    --mat-form-field-container-vertical-padding: 10px;
+    flex: 1 1 16rem;
+    min-width: 0;
+    max-width: 26rem;
+  }
+
+  button {
+    min-height: 44px;
+  }
+}
+
+.audit-notice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--app-info-container);
+  color: var(--app-on-info-container);
+  font: var(--mat-sys-body-medium);
+
+  &.warn {
+    background: var(--app-warning-container);
+    color: var(--app-on-warning-container);
+  }
+}
+
+// El ojo que abre el detalle de cada fila se ve siempre: en los listados las acciones solo aparecen al pasar el cursor, pero aquí es
+// la forma principal de abrir un evento
+app-audit-list app-data-table td.actions > * {
+  opacity: 1;
+}

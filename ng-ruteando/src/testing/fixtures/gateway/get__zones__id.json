@@ -1,0 +1,48 @@
+{
+  "name": "GET /api/v1/zones/{id}",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/zones/{zone_id}?tenantId={tenant_id}",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99b38275a26dbdf8fcf3",
+      "tenantId": "6acb99aca2fa810fb39fb599",
+      "name": "Postman zone",
+      "code": "PM",
+      "boundary": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -74.1,
+              4.5
+            ],
+            [
+              -74,
+              4.5
+            ],
+            [
+              -74,
+              4.7
+            ],
+            [
+              -74.1,
+              4.7
+            ],
+            [
+              -74.1,
+              4.5
+            ]
+          ]
+        ]
+      },
+      "color": null,
+      "active": true,
+      "createdAt": "2026-10-11T14:14:11.962Z",
+      "updatedAt": "2026-10-11T14:14:11.962Z"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+node_modules
+dist
+.angular
+coverage
+out-tsc
+*.log
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Documentación y planes (no es código)
+*.md
+openspec
+.claude
+
+# Generados o de terceros
+ng-ruteando/src/testing/fixtures
+ng-ruteando/src/assets/screenshots
+ng-ruteando/src/assets/icons
+qa-visual

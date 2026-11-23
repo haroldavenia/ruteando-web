@@ -1,0 +1,23 @@
+{
+  "name": "POST /api/v1/auth/register (correo ya registrado)",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/auth/register",
+    "body": {
+      "email": "persona@example.invalid",
+      "password": "Ficticia@2026abcdef",
+      "firstName": "Prueba",
+      "lastName": "Ruteando",
+      "tenantName": "otra-empresa-ficticia"
+    }
+  },
+  "response": {
+    "status": 409,
+    "body": {
+      "error": "EMAIL_ALREADY_EXISTS",
+      "message": "Email already in use",
+      "timestamp": "2026-10-28T20:21:45.186837531Z",
+      "path": "/api/v1/auth/register"
+    }
+  }
+}

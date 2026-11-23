@@ -1,0 +1,21 @@
+{
+  "name": "POST /api/v1/notifications/otp/resend",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/notifications/otp/resend",
+    "body": {
+      "otpId": "4ea5bbf2-9039-47c1-a568-3e3b8429fc35",
+      "recipient": "postman-5f6f1325079242c7807dd3c411677b3c@example.invalid",
+      "channel": "email"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "channel": "email",
+      "otpId": "4ea5bbf2-9039-47c1-a568-3e3b8429fc35",
+      "expiresInSeconds": 299,
+      "message": "Código OTP reenviado a p***@example.invalid"
+    }
+  }
+}

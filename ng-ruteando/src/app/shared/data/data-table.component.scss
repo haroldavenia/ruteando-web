@@ -1,0 +1,109 @@
+:host {
+  display: block;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  --mat-table-background-color: transparent;
+  width: 100%;
+}
+
+th.mat-mdc-header-cell {
+  background: var(--mat-sys-surface-container);
+}
+
+tr.mat-mdc-row:hover {
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+}
+
+// Los enlaces de una celda (el nombre del registro) son un objetivo de 44px y se distinguen del texto
+td a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--mat-sys-primary);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+// La columna fija necesita su propio fondo: el de la tabla es transparente y el texto de debajo se vería al desplazar
+td.mat-mdc-table-sticky {
+  background: var(--mat-sys-surface-container-low);
+}
+
+th.mat-mdc-table-sticky {
+  background: var(--mat-sys-surface-container);
+}
+
+tr.mat-mdc-row:hover td.mat-mdc-table-sticky {
+  background: color-mix(in srgb, var(--mat-sys-primary) 6%, var(--mat-sys-surface-container-low));
+}
+
+@media (max-width: 719.98px) {
+  .mat-mdc-table-sticky {
+    box-shadow: 8px 0 8px -8px rgb(0 0 0 / 0.3);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  tr.mat-mdc-row {
+    transition: background-color 120ms ease-out;
+  }
+}
+
+.actions {
+  text-align: end;
+  white-space: nowrap;
+}
+
+// Estados de carga, vacío, sin resultados y error: un bloque centrado con icono
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 16px;
+  text-align: center;
+}
+
+.state p {
+  margin: 0;
+}
+
+.state-icon {
+  width: 56px;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 16px;
+  border-radius: 50%;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 24px;
+}
+
+.state.error {
+  color: var(--mat-sys-error);
+}
+
+.state.error .state-icon {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+mat-paginator {
+  --mat-paginator-container-background-color: transparent;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-inline-end: 8px;
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 3px;
+  vertical-align: -2px;
+}

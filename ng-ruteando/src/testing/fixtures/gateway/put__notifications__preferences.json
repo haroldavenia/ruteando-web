@@ -1,0 +1,44 @@
+{
+  "name": "PUT /api/v1/notifications/preferences",
+  "request": {
+    "method": "PUT",
+    "url": "/api/v1/notifications/preferences",
+    "body": {
+      "email": {
+        "billing": true,
+        "security": true,
+        "product": false,
+        "invitations": true
+      },
+      "sms": {
+        "otp": true,
+        "alerts": false
+      },
+      "push": {
+        "routeUpdates": true,
+        "journeyCompleted": true,
+        "billing": false
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "email": {
+        "invitations": true,
+        "billing": true,
+        "product": false,
+        "security": true
+      },
+      "sms": {
+        "otp": true,
+        "alerts": false
+      },
+      "push": {
+        "journeyCompleted": true,
+        "billing": false,
+        "routeUpdates": true
+      }
+    }
+  }
+}

@@ -1,0 +1,102 @@
+:host {
+  display: block;
+}
+
+// Una tarjeta por ruta, con una franja del color que tiene en el mapa (el color no es lo único que la identifica: lleva su nombre)
+.routes {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.route {
+  --route-color: var(--mat-sys-primary);
+  padding: 16px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-inline-start: 6px solid var(--route-color);
+  border-radius: 16px;
+  background: var(--mat-sys-surface);
+}
+
+.route.focused {
+  background: var(--mat-sys-secondary-container);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.head h3 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+  font-family: var(--mat-sys-title-large-font);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.dot {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--route-color);
+}
+
+.vehicle {
+  margin: 0 0 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(7.5rem, 100%), 1fr));
+  gap: 12px 16px;
+  margin: 0 0 12px;
+}
+
+.figures dt {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-medium);
+}
+
+.figures dd {
+  margin: 0;
+  font: var(--mat-sys-title-small);
+}
+
+.bar {
+  display: block;
+  height: 6px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--mat-sys-surface-container-highest);
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--route-color);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stops {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.scroll {
+  overflow-x: auto;
+}

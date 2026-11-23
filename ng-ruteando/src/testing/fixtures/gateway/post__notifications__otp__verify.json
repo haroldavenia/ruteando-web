@@ -1,0 +1,17 @@
+{
+  "name": "POST /api/v1/notifications/otp/verify",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/notifications/otp/verify",
+    "body": {
+      "otpId": "4ea5bbf2-9039-47c1-a568-3e3b8429fc35",
+      "code": "123456"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "verified": true
+    }
+  }
+}

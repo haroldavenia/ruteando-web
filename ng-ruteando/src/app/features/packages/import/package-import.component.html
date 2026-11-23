@@ -1,0 +1,261 @@
+<app-form-head [title]="'Importar paquetes' | t" [backLabel]="'Paquetes' | t" backLink="/packages" />
+
+<ol class="steps" [attr.aria-label]="'Pasos de la importación' | t">
+  @for (step of steps(); track step.number) {
+    <li
+      [class.done]="step.state === 'done'"
+      [class.current]="step.state === 'current'"
+      [attr.aria-current]="step.state === 'current' ? 'step' : null"
+    >
+      <span class="num" aria-hidden="true">
+        @if (step.state === 'done') {
+          <mat-icon fontIcon="check" />
+        } @else {
+          {{ step.number }}
+        }
+      </span>
+      {{ step.label }}
+    </li>
+  }
+</ol>
+
+<section class="card" aria-labelledby="guide-title">
+  <h2 id="guide-title">{{ '1. Prepara el archivo' | t }}</h2>
+  <p>
+    {{ 'El archivo debe ser un CSV en UTF-8 con una fila por paquete.' | t }}
+    <strong>{{ 'La aplicación no calcula la ubicación a partir de la dirección:' | t }}</strong>
+    {{ 'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.' | t: [maxRows] }}
+  </p>
+  <button mat-stroked-button type="button" (click)="downloadTemplate()">
+    <mat-icon aria-hidden="true">download</mat-icon>{{ 'Descargar plantilla' | t }}
+  </button>
+  <div class="scroll stack-scope">
+    <table class="grid stack-table" role="table">
+      <caption>
+        {{
+          'Columnas del archivo' | t
+        }}
+      </caption>
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader">{{ 'Columna' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Obligatoria' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Qué lleva' | t }}</th>
+          <th scope="col" role="columnheader">{{ 'Si falta' | t }}</th>
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        @for (column of columns; track column.key) {
+          <tr role="row">
+            <th scope="row" role="rowheader" class="primary-cell">{{ column.header }}</th>
+            <td role="cell" [attr.data-label]="'Obligatoria' | t">{{ column.required ? ('Sí' | t) : 'No' }}</td>
+            <td role="cell" [attr.data-label]="'Qué lleva' | t">{{ column.description }}</td>
+            <td role="cell" [attr.data-label]="'Si falta' | t">{{ column.fallback }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card" aria-labelledby="file-title">
+  <h2 id="file-title">{{ '2. Elige el archivo' | t }}</h2>
+  <label class="file" for="csv-file">{{ 'Archivo CSV' | t }}</label>
+  <input
+    #file
+    id="csv-file"
+    type="file"
+    accept=".csv,text/csv"
+    [disabled]="phase() === 'importing' || phase() === 'reading'"
+    (change)="onFile($event)"
+  />
+  @if (fileName()) {
+    <p class="selected" role="status">{{ 'Archivo elegido: {0}' | t: [fileName()] }}</p>
+  }
+  @if (phase() === 'reading') {
+    <mat-progress-bar mode="indeterminate" [attr.aria-label]="'Leyendo el archivo' | t" />
+  }
+  @if (problem(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+  @if (phase() === 'preview' || phase() === 'importing' || phase() === 'done') {
+    <button mat-button type="button" (click)="clearFile(file)" [disabled]="phase() === 'importing'">
+      {{ 'Quitar archivo' | t }}
+    </button>
+  }
+</section>
+
+@if (validation(); as result) {
+  <section class="card" aria-labelledby="preview-title">
+    <h2 id="preview-title">{{ '3. Revisa y confirma' | t }}</h2>
+    <p class="summary" role="status" aria-live="polite">
+      {{ '{0} filas leídas: {1} válidas y {2} rechazadas.' | t: [result.totalRows, validCount(), invalidRows()] }}
+    </p>
+    @for (warning of warnings(); track warning) {
+      <p class="warning" role="status">{{ warning }}</p>
+    }
+
+    @if (result.errors.length > 0) {
+      <div class="scroll stack-scope">
+        <table class="grid stack-table" role="table">
+          <caption>
+            {{
+              'Filas rechazadas (no se importarán)' | t
+            }}
+          </caption>
+          <thead role="rowgroup">
+            <tr role="row">
+              <th scope="col" role="columnheader">{{ 'Línea' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Campo' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Motivo' | t }}</th>
+            </tr>
+          </thead>
+          <tbody role="rowgroup">
+            @for (error of shownErrors(); track $index) {
+              <tr role="row">
+                <td role="cell" [attr.data-label]="'Línea' | t">{{ error.line }}</td>
+                <td role="cell" [attr.data-label]="'Campo' | t">{{ error.field }}</td>
+                <td role="cell" [attr.data-label]="'Motivo' | t">{{ error.message }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (hiddenErrors() > 0) {
+        <p>{{ '… y {0} errores más; están todos en el informe de errores.' | t: [hiddenErrors()] }}</p>
+      }
+    }
+
+    @if (preview().length > 0) {
+      <div class="scroll stack-scope">
+        <table class="grid stack-table" role="table">
+          <caption>
+            {{
+              'Primeras {0} filas válidas' | t: [previewLimit]
+            }}
+          </caption>
+          <thead role="rowgroup">
+            <tr role="row">
+              <th scope="col" role="columnheader">{{ 'Línea' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Guía' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Nombre' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Dirección' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Latitud / longitud' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Peso' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Volumen' | t }}</th>
+            </tr>
+          </thead>
+          <tbody role="rowgroup">
+            @for (row of preview(); track row.line) {
+              <tr role="row">
+                <td role="cell" [attr.data-label]="'Línea' | t">{{ row.line }}</td>
+                <td role="cell" [attr.data-label]="'Guía' | t">{{ row.input.guideNumber ?? '' }}</td>
+                <td role="cell" [attr.data-label]="'Nombre' | t">{{ row.input.name }}</td>
+                <td role="cell" [attr.data-label]="'Dirección' | t">{{ row.input.address }}</td>
+                <td role="cell" [attr.data-label]="'Latitud / longitud' | t">{{ location(row) }}</td>
+                <td role="cell" [attr.data-label]="'Peso' | t">{{ row.input.weight }}</td>
+                <td role="cell" [attr.data-label]="'Volumen' | t">{{ row.input.volume }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (phase() === 'preview') {
+      @if (validCount() === 0) {
+        <p class="error" role="alert">{{ 'Ninguna fila es válida: corrige el archivo y vuelve a elegirlo.' | t }}</p>
+      }
+      <div class="actions">
+        <button mat-flat-button class="primary-action" type="button" (click)="start()" [disabled]="validCount() === 0">
+          {{ 'Importar {0} paquetes' | t: [validCount()] }}
+        </button>
+        @if (result.errors.length > 0) {
+          <button mat-stroked-button type="button" (click)="downloadReport()">
+            {{ 'Descargar informe de errores' | t }}
+          </button>
+        }
+      </div>
+    }
+  </section>
+}
+
+@if (phase() === 'importing') {
+  <section class="card" aria-labelledby="progress-title">
+    <h2 id="progress-title">{{ 'Importando' | t }}</h2>
+    <mat-progress-bar
+      mode="determinate"
+      [value]="progress().total ? (progress().done / progress().total) * 100 : 0"
+      [attr.aria-label]="'Progreso de la importación' | t"
+    />
+    <p role="status" aria-live="polite">{{ 'Importando… {0} de {1}' | t: [progress().done, progress().total] }}</p>
+    <button mat-stroked-button type="button" (click)="cancel()" [disabled]="cancelling()">
+      {{ cancelling() ? ('Cancelando…' | t) : ('Cancelar importación' | t) }}
+    </button>
+  </section>
+}
+
+@if (phase() === 'done') {
+  <section class="card" aria-labelledby="result-title">
+    <h2 id="result-title">{{ 'Resultado' | t }}</h2>
+    <p class="summary" role="status" aria-live="polite">{{ summaryText() }}</p>
+    <dl class="counts">
+      <div>
+        <dt>{{ 'Creados' | t }}</dt>
+        <dd>{{ counts().created }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Ya existían' | t }}</dt>
+        <dd>{{ counts().existed }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Fallidos' | t }}</dt>
+        <dd>{{ counts().failed }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'Sin procesar' | t }}</dt>
+        <dd>{{ counts().skipped }}</dd>
+      </div>
+    </dl>
+    @if (failedRows().length > 0) {
+      <div class="scroll stack-scope">
+        <table class="grid stack-table" role="table">
+          <caption>
+            {{
+              'Filas que fallaron' | t
+            }}
+          </caption>
+          <thead role="rowgroup">
+            <tr role="row">
+              <th scope="col" role="columnheader">{{ 'Línea' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Dirección' | t }}</th>
+              <th scope="col" role="columnheader">{{ 'Motivo' | t }}</th>
+            </tr>
+          </thead>
+          <tbody role="rowgroup">
+            @for (item of failedRows(); track item.row.line) {
+              <tr role="row">
+                <td role="cell" [attr.data-label]="'Línea' | t">{{ item.row.line }}</td>
+                <td role="cell" [attr.data-label]="'Dirección' | t">{{ item.row.input.address }}</td>
+                <td role="cell" [attr.data-label]="'Motivo' | t">{{ item.message }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    <div class="actions">
+      @if (counts().created > 0 || counts().existed > 0) {
+        <a mat-flat-button class="primary-action" routerLink="/packages">{{ 'Ver los paquetes' | t }}</a>
+      }
+      @if (failedRows().length > 0) {
+        <button mat-stroked-button type="button" (click)="retryFailed()">{{ 'Reintentar las fallidas' | t }}</button>
+      }
+      @if (reportEntries().length > 0) {
+        <button mat-stroked-button type="button" (click)="downloadReport()">
+          {{ 'Descargar informe de errores' | t }}
+        </button>
+      }
+    </div>
+  </section>
+}

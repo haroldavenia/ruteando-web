@@ -1,0 +1,125 @@
+// Estilos de el gráfico de eventos por día. Van en la hoja del componente (sin encapsulación: las clases `audit-*` son suyas) y no en la global, para
+// que solo se carguen al abrir Auditoría. Solo tokens del tema (claro y oscuro).
+
+app-activity-bars {
+  display: block;
+  min-width: 0;
+}
+
+.audit-muted {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+
+.audit-chart {
+  min-width: 0;
+  margin: 0;
+
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 12px;
+  }
+
+  > .audit-muted {
+    margin: 8px 0 0;
+  }
+}
+
+.audit-bars {
+  display: flex;
+  gap: 2px;
+  align-items: stretch;
+  height: 196px;
+  padding-top: 20px;
+}
+
+.audit-bar {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0 1px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+  }
+
+  &.on {
+    background: var(--mat-sys-primary-container);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 1px;
+  }
+}
+
+.audit-track {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--mat-sys-outline);
+}
+
+.audit-fill {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  background: var(--mat-sys-primary);
+}
+
+// El número de eventos va sobre la barra, fuera de ella
+.audit-value {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  padding-bottom: 2px;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-label-small);
+  font-weight: 700;
+  text-align: center;
+}
+
+// El día de hoy aún no terminó: barra rayada, no solo de otro color
+.audit-bar.partial .audit-fill {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 4px,
+    color-mix(in srgb, var(--mat-sys-on-primary) 45%, transparent) 4px 8px
+  );
+}
+
+.audit-tick {
+  display: flex;
+  justify-content: center;
+  height: 22px;
+  padding-top: 4px;
+  font: var(--mat-sys-label-small);
+  white-space: nowrap;
+}
+
+.audit-table-toggle {
+  margin-top: 4px;
+
+  summary {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--mat-sys-primary);
+    font: var(--mat-sys-label-large);
+    cursor: pointer;
+  }
+
+  table {
+    margin-top: 4px;
+  }
+}
