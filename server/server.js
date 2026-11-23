@@ -1,31 +1,4 @@
-'use strict';
 /**
-<<<<<<< HEAD
- * Servidor web de ruteando (AngularJS). FND-002:
- *  - /api/v1/** → BACKEND_URL (proxy del mismo origen, ADR-0002)
- *  - redirecciones de los enlaces de correo a la SPA
- *  - estáticos: index.html, app/, vendor/
- * Variables en .env (ver .env.example). El ejemplo Satellizer/MongoDB queda tras LEGACY_SATELLIZER=1.
- */
-const fs = require('fs');
-const path = require('path');
-
-const envFile = path.join(__dirname, '..', '.env');
-if (fs.existsSync(envFile) && typeof process.loadEnvFile === 'function') {
-  process.loadEnvFile(envFile);
-}
-
-const { createApp } = require('./app');
-
-const app = createApp(process.env);
-if (process.env.LEGACY_SATELLIZER === '1') {
-  require('./legacy-satellizer')(app);
-}
-
-const port = Number(process.env.PORT) || 3000;
-app.listen(port, () => {
-  console.log(`ruteando-web en http://localhost:${port} · backend: ${process.env.BACKEND_URL || '(sin configurar: /api/v1 responde 503)'}`);
-=======
  * Servidor de ruteando-web: publica la compilación de ng-ruteando y reenvía /gateway/** al
  * HanoIT Gateway (ver gateway-proxy.js). Variables de entorno: PORT, WEB_DIST y las del proxy (.env.example).
  */
@@ -138,5 +111,4 @@ if (!webEntryFile()) {
 
 app.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));
->>>>>>> 4bcc752af1377e528ef13e04eb0d09cefe5dd0f7
 });

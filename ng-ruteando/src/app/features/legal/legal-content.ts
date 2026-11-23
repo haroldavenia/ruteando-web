@@ -49,7 +49,7 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
   es: {
     privacy: {
       intro:
-        'Esta política explica qué datos trata Ruteando cuando usas la aplicación, para qué los usa y qué control tienes sobre ellos.',
+        'Esta política explica qué datos trata Ruteando by Hanoit, LLC cuando usas la aplicación, para qué los usa y qué control tienes sobre ellos.',
       sections: [
         {
           heading: 'Quién decide sobre los datos',
@@ -116,7 +116,8 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
       ],
     },
     terms: {
-      intro: 'Al usar Ruteando aceptas estos términos. Si no estás de acuerdo con ellos, no uses la aplicación.',
+      intro:
+        'Estos términos regulan el uso de Ruteando by Hanoit, LLC. Al usar Ruteando los aceptas. Si no estás de acuerdo con ellos, no uses la aplicación.',
       sections: [
         {
           heading: 'El servicio',
@@ -222,7 +223,7 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
   en: {
     privacy: {
       intro:
-        'This policy explains what data Ruteando handles when you use the application, what it uses it for and what control you have over it.',
+        'This policy explains what data Ruteando by Hanoit, LLC handles when you use the application, what it uses it for and what control you have over it.',
       sections: [
         {
           heading: 'Who decides about the data',
@@ -289,7 +290,8 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
       ],
     },
     terms: {
-      intro: 'By using Ruteando you accept these terms. If you do not agree with them, do not use the application.',
+      intro:
+        'These terms govern the use of Ruteando by Hanoit, LLC. By using Ruteando you accept them. If you do not agree with them, do not use the application.',
       sections: [
         {
           heading: 'The service',
@@ -395,7 +397,7 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
   pt: {
     privacy: {
       intro:
-        'Esta política explica que dados o Ruteando trata quando utiliza a aplicação, para que os usa e que controlo tem sobre eles.',
+        'Esta política explica que dados o Ruteando by Hanoit, LLC trata quando utiliza a aplicação, para que os usa e que controlo tem sobre eles.',
       sections: [
         {
           heading: 'Quem decide sobre os dados',
@@ -462,7 +464,8 @@ export const LEGAL: Record<Language, Record<LegalDoc, LegalText>> = {
       ],
     },
     terms: {
-      intro: 'Ao usar o Ruteando aceita estes termos. Se não concordar com eles, não use a aplicação.',
+      intro:
+        'Estes termos regulam o uso do Ruteando by Hanoit, LLC. Ao usar o Ruteando, aceita-os. Se não concordar com eles, não use a aplicação.',
       sections: [
         {
           heading: 'O serviço',

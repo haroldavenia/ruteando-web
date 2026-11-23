@@ -18,3 +18,25 @@ ng-ruteando/src/testing/fixtures
 ng-ruteando/src/assets/screenshots
 ng-ruteando/src/assets/icons
 qa-visual
+
+# Línea AngularJS de Hanoit (rama `angularjs-main`): no es código de esta aplicación
+master
+tests
+tools
+docs
+specs
+config
+.agents
+.cursor
+playwright.config.mjs
+karma.conf.cjs
+eslint.config.mjs
+.github/workflows/pr-conventions.yml
+.github/workflows/security.yml
+.github/ISSUE_TEMPLATE
+.github/pull_request_template.md
+Claude outputs
+ng-ruteando/data
+server/app.js
+server/legacy-satellizer.js
+server/proxy.js

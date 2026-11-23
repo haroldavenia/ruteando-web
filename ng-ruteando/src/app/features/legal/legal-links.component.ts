@@ -5,7 +5,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { LEGAL_DOCS, legalTitle } from './legal-docs';
 
 /**
- * Pie con los enlaces a los documentos legales y el derecho de autor. Va al final de las pantallas de acceso y de cada documento
+ * Pie con los enlaces a los documentos legales y el derecho de autor con la atribución «by Hanoit, LLC» (solo texto: no enlaza a la web de Hanoit). Va al final de las pantallas de acceso y de cada documento
  * (donde marca el que se está leyendo).
  */
 @Component({
@@ -23,7 +23,7 @@ import { LEGAL_DOCS, legalTitle } from './legal-docs';
           >{{ title(doc) }}</a
         >
       }
-      <span class="copy">© {{ year }} Ruteando</span>
+      <span class="copy">© {{ year }} Ruteando by Hanoit, LLC</span>
     </nav>
   `,
   styles: `

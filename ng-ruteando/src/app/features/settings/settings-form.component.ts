@@ -19,9 +19,8 @@ import { map, startWith } from 'rxjs';
 
 import { MasterDomainsService } from '../../core/api/data/master-domains.service';
 import { PlacesApi } from '../../core/api/data/places.api';
-import { ResourcesApi } from '../../core/api/data/resources.api';
 import { SettingsApi } from '../../core/api/data/settings.api';
-import { Place, Resource, Settings, SettingsInput } from '../../core/api/models';
+import { Place, Settings, SettingsInput } from '../../core/api/models';
 import { t } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RecordLoader } from '../../shared/data/record-loader';
@@ -32,6 +31,7 @@ import { FormActionsComponent } from '../../shared/form/form-actions.component';
 import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
+import { formatDuration, parseDuration } from '../../shared/time/duration';
 import {
   fromUtcIso,
   localDateOf,
@@ -51,7 +51,7 @@ import {
   restrictionTypeLabel,
   routeTopologyLabel,
 } from './settings-labels';
-/** Cuántos lugares y vehículos se cargan en los selectores; si hay más, el formulario avisa. */
+/** Cuántos lugares se cargan en el selector; si hay más, el formulario avisa. */
 export const SELECT_LIMIT = 200;
 
 export const FIXED_ROUTES = 'fixed_routes';
@@ -76,8 +76,8 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
   whole: t('Escribe un número entero de 1 o más'),
   shiftNotPositive: t('La duración debe ser mayor que 0'),
   shiftTooLong: t('El turno no puede durar más de 24 horas (1440 minutos)'),
-  breakNegative: t('El descanso no puede ser negativo'),
   positive: t('Escribe un valor mayor que 0'),
+  duration: t('Usa el formato 2h 45m (h = horas, m = minutos)'),
 };
 
 type FieldName =
@@ -85,7 +85,6 @@ type FieldName =
   | 'routeTopology'
   | 'restrictionType'
   | 'placeStartId'
-  | 'resourceIds'
   | 'fixedRoutes'
   | 'shiftStart'
   | 'shiftDurationMin'
@@ -94,14 +93,24 @@ type FieldName =
 
 const wholeRoutes = (c: AbstractControl): ValidationErrors | null =>
   c.value === null || c.value === '' || (Number.isInteger(c.value) && c.value >= 1) ? null : { whole: true };
-const positive = (c: AbstractControl): ValidationErrors | null =>
-  c.value === null || c.value === '' || Number(c.value) > 0 ? null : { positive: true };
+const stayDuration = (c: AbstractControl): ValidationErrors | null => {
+  const minutes = parseDuration(String(c.value ?? ''));
+  if (minutes === null) {
+    return c.value ? { duration: true } : null;
+  }
+  return minutes > 0 ? null : { positive: true };
+};
 const shiftDuration = (c: AbstractControl): ValidationErrors | null => {
-  const errors = shiftErrors(Number(c.value), 0).filter((e) => e !== 'breakNegative');
+  const minutes = parseDuration(String(c.value ?? ''));
+  if (minutes === null) {
+    return c.value ? { duration: true } : null;
+  }
+  const errors = shiftErrors(minutes, 0);
   return errors.length ? { [errors[0]]: true } : null;
 };
+/** El descanso puede ser 0m: solo se exige que siga el formato. */
 const breakDuration = (c: AbstractControl): ValidationErrors | null =>
-  shiftErrors(1, Number(c.value)).includes('breakNegative') ? { breakNegative: true } : null;
+  c.value && parseDuration(String(c.value)) === null ? { duration: true } : null;
 
 /**
  * Cuerpo del PUT: el registro cargado sin los campos de solo lectura ni los resúmenes y con lo editado
@@ -154,11 +163,8 @@ export class SettingsFormComponent implements HasUnsavedChanges {
 
   protected readonly selectLimit = SELECT_LIMIT;
   protected readonly places = signal<readonly Place[]>([]);
-  protected readonly vehicles = signal<readonly Resource[]>([]);
   protected readonly placesLoaded = signal(false);
-  protected readonly vehiclesLoaded = signal(false);
   protected readonly placesTruncated = signal(false);
-  protected readonly vehiclesTruncated = signal(false);
 
   protected readonly topologies = computed(() =>
     this.options('RouteTopology', DEFAULT_ROUTE_TOPOLOGIES, routeTopologyLabel)
@@ -176,16 +182,15 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     restrictionType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     placeStartId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     placeEndId: new FormControl('', { nonNullable: true }),
-    resourceIds: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
     evaluateWeight: new FormControl(false, { nonNullable: true }),
     evaluateVolume: new FormControl(false, { nonNullable: true }),
     evaluateItineraryZone: new FormControl(false, { nonNullable: true }),
     fixedRoutes: new FormControl<number | null>(null, [Validators.required, wholeRoutes]),
     shiftStart: new FormControl('08:00', { nonNullable: true, validators: [Validators.required] }),
-    shiftDurationMin: new FormControl<number | null>(480, [Validators.required, shiftDuration]),
-    breakDurationMin: new FormControl<number | null>(60, [Validators.required, breakDuration]),
+    shiftDurationMin: new FormControl('8h', { nonNullable: true, validators: [Validators.required, shiftDuration] }),
+    breakDurationMin: new FormControl('1h', { nonNullable: true, validators: [Validators.required, breakDuration] }),
     typeLengthOfStay: new FormControl(NO_STAY, { nonNullable: true }),
-    lengthOfStay: new FormControl<number | null>(null, [Validators.required, positive]),
+    lengthOfStay: new FormControl('', { nonNullable: true, validators: [Validators.required, stayDuration] }),
   });
 
   private readonly value = toSignal(
@@ -201,17 +206,18 @@ export class SettingsFormComponent implements HasUnsavedChanges {
   /** La configuración que se está escribiendo, en una frase: solo da formato a lo que hay en el formulario. */
   protected readonly summary = computed(() => {
     const value = this.value();
+    const fixed = value.restrictionType === FIXED_ROUTES;
     const placeName = (id: string): string | null => this.places().find((place) => place.id === id)?.name ?? null;
     return describeSettings({
       restrictionType: value.restrictionType,
       routeTopology: value.routeTopology,
       fixedRoutes: value.fixedRoutes,
-      shiftDurationMin: value.shiftDurationMin,
+      shiftDurationMin: parseDuration(value.shiftDurationMin),
       placeStartName: value.placeStartId ? placeName(value.placeStartId) : null,
       placeEndName: value.placeEndId ? placeName(value.placeEndId) : null,
-      vehicleCount: value.resourceIds.length,
-      evaluateWeight: value.evaluateWeight,
-      evaluateVolume: value.evaluateVolume,
+      vehicleCount: 0,
+      evaluateWeight: !fixed && value.evaluateWeight,
+      evaluateVolume: !fixed && value.evaluateVolume,
       evaluateItineraryZone: value.evaluateItineraryZone,
     });
   });
@@ -220,6 +226,8 @@ export class SettingsFormComponent implements HasUnsavedChanges {
   protected readonly restriction = signal('');
   protected readonly stay = signal(NO_STAY);
   protected readonly showFixedRoutes = computed(() => this.restriction() === FIXED_ROUTES);
+  /** Con rutas fijas no hay peso ni volumen que evaluar: los dos interruptores se ocultan. */
+  protected readonly showCapacity = computed(() => this.restriction() !== FIXED_ROUTES);
   protected readonly showShift = computed(() => this.restriction() !== '' && this.restriction() !== FIXED_ROUTES);
   protected readonly showStayValue = computed(() => this.stay() === FIXED_STAY);
 
@@ -243,16 +251,6 @@ export class SettingsFormComponent implements HasUnsavedChanges {
         },
         error: () => this.placesLoaded.set(true),
       });
-    inject(ResourcesApi)
-      .list({ page: 0, size: SELECT_LIMIT })
-      .subscribe({
-        next: (page) => {
-          this.vehicles.set(page.content);
-          this.vehiclesTruncated.set(page.totalElements > page.content.length);
-          this.vehiclesLoaded.set(true);
-        },
-        error: () => this.vehiclesLoaded.set(true),
-      });
 
     this.loader.load((record) => {
       if (record.shiftStartUtc) {
@@ -264,16 +262,17 @@ export class SettingsFormComponent implements HasUnsavedChanges {
         restrictionType: record.restrictionType,
         placeStartId: record.placeStartId,
         placeEndId: record.placeEndId && record.placeEndId !== record.placeStartId ? record.placeEndId : '',
-        resourceIds: record.resourceIds ?? [],
         evaluateWeight: record.evaluateWeight,
         evaluateVolume: record.evaluateVolume,
         evaluateItineraryZone: record.evaluateItineraryZone,
         fixedRoutes: record.fixedRoutes,
         shiftStart: record.shiftStartUtc ? fromUtcIso(record.shiftStartUtc) : '08:00',
-        shiftDurationMin: record.shiftDurationSec === null ? 480 : secondsToMinutes(record.shiftDurationSec),
-        breakDurationMin: record.breakDurationSec === null ? 60 : secondsToMinutes(record.breakDurationSec),
+        shiftDurationMin:
+          record.shiftDurationSec === null ? '8h' : formatDuration(secondsToMinutes(record.shiftDurationSec)),
+        breakDurationMin:
+          record.breakDurationSec === null ? '1h' : formatDuration(secondsToMinutes(record.breakDurationSec)),
         typeLengthOfStay: record.typeLengthOfStay ?? NO_STAY,
-        lengthOfStay: record.lengthOfStay,
+        lengthOfStay: record.lengthOfStay === null ? '' : formatDuration(record.lengthOfStay),
       });
       this.applySections();
     });
@@ -285,6 +284,8 @@ export class SettingsFormComponent implements HasUnsavedChanges {
       restrictionType,
       typeLengthOfStay,
       fixedRoutes,
+      evaluateWeight,
+      evaluateVolume,
       shiftStart,
       shiftDurationMin,
       breakDurationMin,
@@ -295,6 +296,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     const toggle = (controls: AbstractControl[], on: boolean) =>
       controls.forEach((c) => (on ? c.enable({ emitEvent: false }) : c.disable({ emitEvent: false })));
     toggle([fixedRoutes], restrictionType.value === FIXED_ROUTES);
+    toggle([evaluateWeight, evaluateVolume], restrictionType.value !== FIXED_ROUTES);
     toggle(
       [shiftStart, shiftDurationMin, breakDurationMin],
       restrictionType.value !== '' && restrictionType.value !== FIXED_ROUTES
@@ -326,6 +328,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
     const fixed = value.restrictionType === FIXED_ROUTES;
     const stayFixed = value.typeLengthOfStay === FIXED_STAY;
     const hasStayType = value.typeLengthOfStay !== NO_STAY;
+    const stayMinutes = parseDuration(value.lengthOfStay);
 
     const record = this.loader.record();
     if (this.id !== null && !record) {
@@ -335,13 +338,12 @@ export class SettingsFormComponent implements HasUnsavedChanges {
       description: value.description.trim(),
       routeTopology: value.routeTopology,
       restrictionType: value.restrictionType,
-      resourceIds: value.resourceIds,
       placeStartId: value.placeStartId,
     };
     const shift = {
       shiftStartUtc: toUtcIso(value.shiftStart, this.anchorDate),
-      shiftDurationSec: minutesToSeconds(value.shiftDurationMin as number),
-      breakDurationSec: minutesToSeconds(value.breakDurationMin as number),
+      shiftDurationSec: minutesToSeconds(parseDuration(value.shiftDurationMin) as number),
+      breakDurationSec: minutesToSeconds(parseDuration(value.breakDurationMin) as number),
     };
 
     const request$ =
@@ -351,11 +353,11 @@ export class SettingsFormComponent implements HasUnsavedChanges {
             ...required,
             ...(value.placeEndId ? { placeEndId: value.placeEndId } : {}),
             ...(fixed ? { fixedRoutes: value.fixedRoutes } : shift),
-            ...(value.evaluateWeight ? { evaluateWeight: true } : {}),
-            ...(value.evaluateVolume ? { evaluateVolume: true } : {}),
+            ...(!fixed && value.evaluateWeight ? { evaluateWeight: true } : {}),
+            ...(!fixed && value.evaluateVolume ? { evaluateVolume: true } : {}),
             ...(value.evaluateItineraryZone ? { evaluateItineraryZone: true } : {}),
             ...(hasStayType
-              ? { typeLengthOfStay: value.typeLengthOfStay, ...(stayFixed ? { lengthOfStay: value.lengthOfStay } : {}) }
+              ? { typeLengthOfStay: value.typeLengthOfStay, ...(stayFixed ? { lengthOfStay: stayMinutes } : {}) }
               : {}),
           })
         : this.api.update(
@@ -363,8 +365,8 @@ export class SettingsFormComponent implements HasUnsavedChanges {
             buildSettingsUpdateBody(record, {
               ...required,
               placeEndId: value.placeEndId || value.placeStartId,
-              evaluateWeight: value.evaluateWeight,
-              evaluateVolume: value.evaluateVolume,
+              evaluateWeight: !fixed && value.evaluateWeight,
+              evaluateVolume: !fixed && value.evaluateVolume,
               evaluateItineraryZone: value.evaluateItineraryZone,
               // Las secciones que no aplican se envían como null para no dejar valores obsoletos
               fixedRoutes: fixed ? value.fixedRoutes : null,
@@ -372,7 +374,7 @@ export class SettingsFormComponent implements HasUnsavedChanges {
               shiftDurationSec: fixed ? null : shift.shiftDurationSec,
               breakDurationSec: fixed ? null : shift.breakDurationSec,
               typeLengthOfStay: hasStayType ? value.typeLengthOfStay : null,
-              lengthOfStay: stayFixed ? value.lengthOfStay : null,
+              lengthOfStay: stayFixed ? stayMinutes : null,
             })
           );
 
@@ -381,9 +383,5 @@ export class SettingsFormComponent implements HasUnsavedChanges {
       void notify(this.injector, this.id === null ? t('Configuración creada') : t('Configuración guardada'));
       void this.router.navigateByUrl('/settings');
     });
-  }
-
-  protected vehicleLabel(vehicle: Resource): string {
-    return vehicle.licensePlate ? `${vehicle.name} (${vehicle.licensePlate})` : vehicle.name;
   }
 }

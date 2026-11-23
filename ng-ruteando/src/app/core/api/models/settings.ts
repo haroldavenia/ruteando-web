@@ -50,7 +50,8 @@ export interface SettingsInput {
   description: string;
   routeTopology: string;
   restrictionType: string;
-  resourceIds: string[];
+  /** La pantalla de configuraciones ya no asigna flota: solo se reenvía la que el registro ya tenía. */
+  resourceIds?: string[];
   placeStartId: string;
   placeEndId?: string;
   fixedRoutes?: number | null;

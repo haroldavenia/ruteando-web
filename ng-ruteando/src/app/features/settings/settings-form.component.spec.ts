@@ -7,7 +7,6 @@ import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angul
 
 import { expectSameContract, Fixture, respondWith } from '../../../testing/api-testing';
 import places from '../../../testing/fixtures/gateway/get__places.json';
-import resources from '../../../testing/fixtures/gateway/get__resources.json';
 import get from '../../../testing/fixtures/gateway/get__settings__id.json';
 import create from '../../../testing/fixtures/gateway/post__settings.json';
 import { API_BASE_URL } from '../../core/api/api-config';
@@ -35,7 +34,7 @@ describe('SettingsFormComponent', () => {
     placeStartId: string;
   };
 
-  function setup(id: string | null, load: { places?: unknown; resources?: unknown } = {}): void {
+  function setup(id: string | null, load: { places?: unknown } = {}): void {
     TestBed.configureTestingModule({
       imports: [SettingsFormComponent],
       providers: [
@@ -52,11 +51,8 @@ describe('SettingsFormComponent', () => {
     fixture.detectChanges();
     http.match((r) => r.url === '/gateway/master-domains').forEach((r) => r.flush([]));
     const placesReq = http.expectOne((r) => r.url === '/gateway/places');
-    const resourcesReq = http.expectOne((r) => r.url === '/gateway/resources');
     expect(placesReq.request.params.get('size')).toBe('200');
-    expect(resourcesReq.request.params.get('size')).toBe('200');
     respondWith(placesReq, (load.places ?? places) as Fixture);
-    respondWith(resourcesReq, (load.resources ?? resources) as Fixture);
     fixture.detectChanges();
   }
 
@@ -82,7 +78,6 @@ describe('SettingsFormComponent', () => {
       routeTopology: body.routeTopology,
       restrictionType: body.restrictionType,
       fixedRoutes: body.fixedRoutes,
-      resourceIds: body.resourceIds,
       placeStartId: body.placeStartId,
     });
 
@@ -104,13 +99,13 @@ describe('SettingsFormComponent', () => {
       expect(head.querySelector('a.back')?.getAttribute('href')).toBe('/settings');
     });
 
-    it('los campos van en cinco secciones con icono y título', () => {
+    it('los campos van en cuatro secciones con icono y título', () => {
       const titles = Array.from(root().querySelectorAll('form section.form-section h2')).map((h) =>
         h.textContent?.trim()
       );
 
-      expect(titles).toEqual(['Ruta', 'Lugares', 'Flota', 'Qué evalúa la planificación', 'Estancia en cada parada']);
-      expect(root().querySelectorAll('form section.form-section h2 mat-icon[aria-hidden="true"]').length).toBe(5);
+      expect(titles).toEqual(['Ruta', 'Lugares', 'Qué evalúa la planificación', 'Estancia en cada parada']);
+      expect(root().querySelectorAll('form section.form-section h2 mat-icon[aria-hidden="true"]').length).toBe(4);
     });
 
     it('lo que evalúa la planificación son tres interruptores con los mismos controles y nombres de antes', () => {
@@ -155,13 +150,12 @@ describe('SettingsFormComponent', () => {
 
         expect(sentence()).toContain(`Planificará ${routes} ${routes === 1 ? 'ruta' : 'rutas'}`);
         expect(sentence()).toContain('desde Postman depot');
-        expect(sentence()).toContain(
-          `con ${body.resourceIds.length} ${body.resourceIds.length === 1 ? 'vehículo' : 'vehículos'}`
-        );
-        expect(sentence()).toMatch(/, evaluando peso\.$/);
+        // Con rutas fijas no hay peso ni volumen: el resumen no los menciona
+        expect(sentence()).not.toContain('peso');
 
-        set({ restrictionType: 'resource_vs_time', shiftDurationMin: 90 });
+        set({ restrictionType: 'resource_vs_time', shiftDurationMin: '1h 30m' });
         expect(sentence()).toContain('rutas con turnos de 1 h 30 min');
+        expect(sentence()).toMatch(/, evaluando peso\.$/);
       });
 
       it('no cambia lo que se envía: el resumen es solo texto', () => {
@@ -184,7 +178,7 @@ describe('SettingsFormComponent', () => {
       expect(actions.querySelector('[role="status"]')?.textContent).toContain('Cambios sin guardar');
     });
 
-    it('ofrece topologías y restricciones en español, y lugares y vehículos por su nombre', () => {
+    it('ofrece topologías y restricciones en español, y lugares por su nombre', () => {
       const optionTexts = (selector: string) => {
         (root().querySelector(selector) as HTMLElement).click();
         fixture.detectChanges();
@@ -197,7 +191,6 @@ describe('SettingsFormComponent', () => {
       expect(optionTexts('mat-select[formcontrolname="routeTopology"]')).toContain('Ida y vuelta');
       expect(optionTexts('mat-select[formcontrolname="restrictionType"]')).toContain('Rutas fijas');
       expect(optionTexts('mat-select[formcontrolname="placeStartId"]')).toContain('Postman depot');
-      expect(optionTexts('mat-select[formcontrolname="resourceIds"]')).toContain('Postman resource');
     });
 
     it('envía el cuerpo del ejemplo real sin la llegada vacía', () => {
@@ -206,7 +199,9 @@ describe('SettingsFormComponent', () => {
       submit();
 
       const req = http.expectOne((r) => r.method === 'POST' && r.url === '/gateway/settings');
-      expectSameContract(req, fx(create));
+      // Con rutas fijas el cuerpo es el del ejemplo sin la flota
+      const { resourceIds: _fleet, ...withoutFleet } = fx(create).request.body as Record<string, unknown>;
+      expectSameContract(req, { ...fx(create), request: { ...fx(create).request, body: withoutFleet } });
       expect('placeEndId' in req.request.body).toBeFalse();
       respondWith(req, fx(create));
     });
@@ -239,25 +234,24 @@ describe('SettingsFormComponent', () => {
         }
       });
 
-      it('con el turno, una duración de 0 o negativa y un descanso negativo se rechazan', () => {
+      it('con el turno, una duración de 0 y un descanso que no sigue el formato se rechazan', () => {
         set({
           ...{
             description: 'X',
             routeTopology: 'round_trip',
             restrictionType: 'resource_vs_time',
-            resourceIds: body.resourceIds,
             placeStartId: body.placeStartId,
           },
         });
-        set({ shiftDurationMin: 0 });
+        set({ shiftDurationMin: '0m' });
         submit();
         http.expectNone((r) => r.method === 'POST');
         expect(root().textContent).toContain('La duración debe ser mayor que 0');
 
-        set({ shiftDurationMin: 480, breakDurationMin: -1 });
+        set({ shiftDurationMin: '8h', breakDurationMin: '-1' });
         submit();
         http.expectNone((r) => r.method === 'POST');
-        expect(root().textContent).toContain('El descanso no puede ser negativo');
+        expect(root().textContent).toContain('Usa el formato 2h 45m');
       });
 
       it('con turno envía el inicio en UTC y las duraciones en segundos, y no envía las rutas fijas', () => {
@@ -265,10 +259,9 @@ describe('SettingsFormComponent', () => {
           description: 'Turno',
           routeTopology: 'round_trip',
           restrictionType: 'time_windows',
-          resourceIds: body.resourceIds,
           placeStartId: body.placeStartId,
         });
-        set({ shiftStart: '07:30', shiftDurationMin: 480, breakDurationMin: 45 });
+        set({ shiftStart: '07:30', shiftDurationMin: '8h', breakDurationMin: '45m' });
         spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
         submit();
 
@@ -281,7 +274,50 @@ describe('SettingsFormComponent', () => {
       });
     });
 
+    describe('rutas fijas', () => {
+      it('ocultan los interruptores de peso y volumen, y deja la zona del itinerario', () => {
+        set({ restrictionType: 'resource_vs_time' });
+        expect(field('evaluateWeight')).not.toBeNull();
+
+        set({ restrictionType: 'fixed_routes' });
+        expect(field('evaluateWeight')).toBeNull();
+        expect(field('evaluateVolume')).toBeNull();
+        expect(field('evaluateItineraryZone')).not.toBeNull();
+      });
+
+      it('se guardan sin peso ni volumen aunque se hubieran marcado antes', () => {
+        set({ evaluateWeight: true, evaluateVolume: true });
+        fillFixed();
+        spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
+        submit();
+
+        const req = http.expectOne((r) => r.method === 'POST');
+        for (const name of ['evaluateWeight', 'evaluateVolume']) {
+          expect(name in req.request.body).toBeFalse();
+        }
+        req.flush({});
+      });
+
+      it('la topología de la ruta está en la sección de lugares', () => {
+        const places = Array.from(root().querySelectorAll('form section.form-section')).find(
+          (s) => s.querySelector('h2')?.textContent?.trim() === 'Lugares'
+        )!;
+        expect(places.querySelector('[formcontrolname="routeTopology"]')).not.toBeNull();
+      });
+    });
+
     describe('estancia', () => {
+      it('la estancia fija se escribe en horas y minutos, con el formato a la vista', () => {
+        set({ typeLengthOfStay: 'fixed' });
+        expect(field('lengthOfStay')?.getAttribute('placeholder')).toBe('1h 30m');
+        expect(root().textContent).toContain('Usa este formato: 2h 45m (h = horas, m = minutos)');
+
+        set({ lengthOfStay: 'dos horas' });
+        expect(form().controls['lengthOfStay'].hasError('duration')).toBeTrue();
+        set({ lengthOfStay: '1h 30m' });
+        expect(form().controls['lengthOfStay'].valid).toBeTrue();
+      });
+
       it('fija exige un valor positivo y se envía con su tipo', () => {
         fillFixed();
         set({ typeLengthOfStay: 'fixed' });
@@ -290,15 +326,15 @@ describe('SettingsFormComponent', () => {
         http.expectNone((r) => r.method === 'POST');
         expect(root().textContent).toContain('Este campo es obligatorio');
 
-        set({ lengthOfStay: 0 });
+        set({ lengthOfStay: '0m' });
         submit();
         http.expectNone((r) => r.method === 'POST');
 
-        set({ lengthOfStay: 5 });
+        set({ lengthOfStay: '1h 30m' });
         spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
         submit();
         const req = http.expectOne((r) => r.method === 'POST');
-        expect(req.request.body).toEqual(jasmine.objectContaining({ typeLengthOfStay: 'fixed', lengthOfStay: 5 }));
+        expect(req.request.body).toEqual(jasmine.objectContaining({ typeLengthOfStay: 'fixed', lengthOfStay: 90 }));
         req.flush({});
       });
 
@@ -316,7 +352,12 @@ describe('SettingsFormComponent', () => {
 
     it('envía las casillas marcadas y el lugar de llegada elegido', () => {
       fillFixed();
-      set({ evaluateWeight: true, evaluateItineraryZone: true, placeEndId: body.placeStartId });
+      set({
+        restrictionType: 'resource_vs_time',
+        evaluateWeight: true,
+        evaluateItineraryZone: true,
+        placeEndId: body.placeStartId,
+      });
       submit();
       const req = http.expectOne((r) => r.method === 'POST');
       expect(req.request.body).toEqual(
@@ -333,19 +374,16 @@ describe('SettingsFormComponent', () => {
     });
   });
 
-  describe('sin lugares ni vehículos', () => {
+  describe('sin lugares', () => {
     it('lo explica y enlaza a su pantalla de creación', () => {
-      setup(null, { places: EMPTY_PAGE, resources: EMPTY_PAGE });
+      setup(null, { places: EMPTY_PAGE });
       expect(root().textContent).toContain('Todavía no hay lugares');
       expect(root().querySelector('a[href="/places/new"]')).not.toBeNull();
-      expect(root().textContent).toContain('Todavía no hay vehículos');
-      expect(root().querySelector('a[href="/fleet/vehicles/new"]')).not.toBeNull();
     });
 
     it('con datos no muestra los enlaces', () => {
       setup(null);
       expect(root().querySelector('a[href="/places/new"]')).toBeNull();
-      expect(root().querySelector('a[href="/fleet/vehicles/new"]')).toBeNull();
     });
   });
 
@@ -353,12 +391,11 @@ describe('SettingsFormComponent', () => {
     const record = fx(get).response.body as Settings;
     const complete = { ...record, globalShiftActive: true, globalBreakActive: true, active: false } as Settings;
 
-    it('rellena el formulario, incluidos los vehículos seleccionados', () => {
+    it('rellena el formulario', () => {
       setup(record.id);
       http.expectOne(`/gateway/settings/${record.id}`).flush(complete);
       fixture.detectChanges();
       expect(field('description')!.value).toBe(record.description);
-      expect(form().controls['resourceIds'].value).toEqual(record.resourceIds);
       expect(form().controls['placeStartId'].value).toBe(record.placeStartId);
     });
 
