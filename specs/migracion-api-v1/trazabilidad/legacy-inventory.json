@@ -1,0 +1,790 @@
+{
+ "generated": "2026-11-17",
+ "source": "docs/HANOIT_API_INVENTORY.md + master/js/modules/config.js",
+ "items": [
+  {
+   "id": "L001",
+   "kind": "call",
+   "legacy": "POST /oauth/token (password)",
+   "spec": "ACC-001",
+   "note": ""
+  },
+  {
+   "id": "L002",
+   "kind": "call",
+   "legacy": "POST /oauth/token (refresh_token)",
+   "spec": "ACC-001",
+   "note": ""
+  },
+  {
+   "id": "L003",
+   "kind": "call",
+   "legacy": "POST /singup",
+   "spec": "ACC-002",
+   "note": ""
+  },
+  {
+   "id": "L004",
+   "kind": "call",
+   "legacy": "POST /singup/activate",
+   "spec": "ACC-002",
+   "note": ""
+  },
+  {
+   "id": "L005",
+   "kind": "call",
+   "legacy": "POST /forgotPassword",
+   "spec": "ACC-003",
+   "note": ""
+  },
+  {
+   "id": "L006",
+   "kind": "call",
+   "legacy": "POST /forgotPassword/reset",
+   "spec": "ACC-003",
+   "note": ""
+  },
+  {
+   "id": "L007",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /typevehicle",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L008",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /typevehicle",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L009",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 PUT /typevehicle/:id",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L010",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /typevehicle/:id",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L011",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /typevehicle?ids=",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L012",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /vehicles",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L013",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /vehicles",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L014",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 PUT /vehicles/:id",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L015",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /vehicles/:id",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L016",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /vehicles?ids=",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L017",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /driver",
+   "spec": "MAE-003",
+   "note": ""
+  },
+  {
+   "id": "L018",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /driver",
+   "spec": "MAE-003",
+   "note": ""
+  },
+  {
+   "id": "L019",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 PUT /driver/:id",
+   "spec": "MAE-003",
+   "note": ""
+  },
+  {
+   "id": "L020",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /driver/:id",
+   "spec": "MAE-003",
+   "note": ""
+  },
+  {
+   "id": "L021",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /driver?ids=",
+   "spec": "MAE-003",
+   "note": ""
+  },
+  {
+   "id": "L022",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /places",
+   "spec": "MAE-005",
+   "note": ""
+  },
+  {
+   "id": "L023",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /places",
+   "spec": "MAE-005",
+   "note": ""
+  },
+  {
+   "id": "L024",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 PUT /places/:id",
+   "spec": "MAE-005",
+   "note": ""
+  },
+  {
+   "id": "L025",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /places/:id",
+   "spec": "MAE-005",
+   "note": ""
+  },
+  {
+   "id": "L026",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /places?ids=",
+   "spec": "MAE-005",
+   "note": ""
+  },
+  {
+   "id": "L027",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /settings",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L028",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /settings",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L029",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 PUT /settings/:id",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L030",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /settings/:id",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L031",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /settings?ids=",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L032",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /assignedservice",
+   "spec": "MAE-002",
+   "note": "Backend retiró asignaciones: se sustituye por asignar conductor al vehículo"
+  },
+  {
+   "id": "L033",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /catalogs",
+   "spec": "MAE-007",
+   "note": ""
+  },
+  {
+   "id": "L034",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /catalogs",
+   "spec": "MAE-007",
+   "note": ""
+  },
+  {
+   "id": "L035",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 PUT /catalogs/:id",
+   "spec": "MAE-007",
+   "note": ""
+  },
+  {
+   "id": "L036",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /catalogs/:id",
+   "spec": "MAE-007",
+   "note": ""
+  },
+  {
+   "id": "L037",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /journeys/summary",
+   "spec": "JOR-002",
+   "note": ""
+  },
+  {
+   "id": "L038",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /journeys/:id",
+   "spec": "JOR-003",
+   "note": ""
+  },
+  {
+   "id": "L039",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /journeys/:id",
+   "spec": "JOR-002",
+   "note": ""
+  },
+  {
+   "id": "L040",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 DELETE /journeys?ids=",
+   "spec": "JOR-002",
+   "note": ""
+  },
+  {
+   "id": "L041",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /journey/upload?name=",
+   "spec": "PAQ-003",
+   "note": ""
+  },
+  {
+   "id": "L042",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 GET /routes",
+   "spec": "JOR-003",
+   "note": "Se retira: rutas embebidas en la jornada"
+  },
+  {
+   "id": "L043",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /geocoding",
+   "spec": "MAE-004",
+   "note": ""
+  },
+  {
+   "id": "L044",
+   "kind": "call",
+   "legacy": "/hanoit/api/v1 POST /reverse_geocoding",
+   "spec": "MAE-004",
+   "note": ""
+  },
+  {
+   "id": "L045",
+   "kind": "call",
+   "legacy": "/hanoit/v2/delivery POST /optimalRouteOfPointCloud",
+   "spec": "JOR-001",
+   "note": ""
+  },
+  {
+   "id": "L046",
+   "kind": "call",
+   "legacy": "/hanoit/v2/delivery POST /optimisationForMessenger",
+   "spec": "JOR-001",
+   "note": ""
+  },
+  {
+   "id": "L047",
+   "kind": "call",
+   "legacy": "/hanoit/v2/delivery POST /optimisationForPackages",
+   "spec": "JOR-001",
+   "note": ""
+  },
+  {
+   "id": "L048",
+   "kind": "state",
+   "legacy": "access.login",
+   "spec": "ACC-001",
+   "note": ""
+  },
+  {
+   "id": "L049",
+   "kind": "state",
+   "legacy": "access.register",
+   "spec": "ACC-002",
+   "note": ""
+  },
+  {
+   "id": "L050",
+   "kind": "state",
+   "legacy": "access.registerTwo",
+   "spec": "ACC-002",
+   "note": ""
+  },
+  {
+   "id": "L051",
+   "kind": "state",
+   "legacy": "access.recovery",
+   "spec": "ACC-003",
+   "note": ""
+  },
+  {
+   "id": "L052",
+   "kind": "state",
+   "legacy": "access.reset",
+   "spec": "ACC-003",
+   "note": ""
+  },
+  {
+   "id": "L053",
+   "kind": "state",
+   "legacy": "access.activate",
+   "spec": "ACC-002",
+   "note": ""
+  },
+  {
+   "id": "L054",
+   "kind": "state",
+   "legacy": "app.home",
+   "spec": "ACC-005",
+   "note": ""
+  },
+  {
+   "id": "L055",
+   "kind": "state",
+   "legacy": "app.submenu",
+   "spec": "CIE-001",
+   "note": ""
+  },
+  {
+   "id": "L056",
+   "kind": "state",
+   "legacy": "app.maps.index",
+   "spec": "JOR-007",
+   "note": ""
+  },
+  {
+   "id": "L057",
+   "kind": "state",
+   "legacy": "app.maps.address",
+   "spec": "MAE-004",
+   "note": ""
+  },
+  {
+   "id": "L058",
+   "kind": "state",
+   "legacy": "app.maps.geocoding",
+   "spec": "MAE-004",
+   "note": ""
+  },
+  {
+   "id": "L059",
+   "kind": "state",
+   "legacy": "app.maps.journey",
+   "spec": "JOR-003",
+   "note": ""
+  },
+  {
+   "id": "L060",
+   "kind": "state",
+   "legacy": "app.maps.route",
+   "spec": "JOR-003",
+   "note": ""
+  },
+  {
+   "id": "L061",
+   "kind": "state",
+   "legacy": "app.maps.assigned",
+   "spec": "SEG-001",
+   "note": ""
+  },
+  {
+   "id": "L062",
+   "kind": "state",
+   "legacy": "app.visits.list",
+   "spec": "JOR-006",
+   "note": ""
+  },
+  {
+   "id": "L063",
+   "kind": "state",
+   "legacy": "app.visits.detail",
+   "spec": "JOR-006",
+   "note": ""
+  },
+  {
+   "id": "L064",
+   "kind": "state",
+   "legacy": "app.visitsUnattended",
+   "spec": "JOR-006",
+   "note": ""
+  },
+  {
+   "id": "L065",
+   "kind": "state",
+   "legacy": "app.journeys.add",
+   "spec": "PAQ-003",
+   "note": ""
+  },
+  {
+   "id": "L066",
+   "kind": "state",
+   "legacy": "app.journeys.help",
+   "spec": "PAQ-003",
+   "note": ""
+  },
+  {
+   "id": "L067",
+   "kind": "state",
+   "legacy": "app.journeys.list",
+   "spec": "JOR-002",
+   "note": ""
+  },
+  {
+   "id": "L068",
+   "kind": "state",
+   "legacy": "app.journeys.detail",
+   "spec": "JOR-003",
+   "note": ""
+  },
+  {
+   "id": "L069",
+   "kind": "state",
+   "legacy": "app.journeys.chart",
+   "spec": "JOR-004",
+   "note": ""
+  },
+  {
+   "id": "L070",
+   "kind": "state",
+   "legacy": "app.itinerary.list",
+   "spec": "JOR-001",
+   "note": ""
+  },
+  {
+   "id": "L071",
+   "kind": "state",
+   "legacy": "app.itinerary.add",
+   "spec": "PAQ-002",
+   "note": ""
+  },
+  {
+   "id": "L072",
+   "kind": "state",
+   "legacy": "app.itinerary.edit",
+   "spec": "PAQ-002",
+   "note": ""
+  },
+  {
+   "id": "L073",
+   "kind": "state",
+   "legacy": "app.settings.list",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L074",
+   "kind": "state",
+   "legacy": "app.settings.add",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L075",
+   "kind": "state",
+   "legacy": "app.settings.edit",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L076",
+   "kind": "state",
+   "legacy": "app.vehicleTypes.list",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L077",
+   "kind": "state",
+   "legacy": "app.vehicleTypes.add",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L078",
+   "kind": "state",
+   "legacy": "app.vehicleTypes.edit",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L079",
+   "kind": "state",
+   "legacy": "app.places.list",
+   "spec": "MAE-005",
+   "note": ""
+  },
+  {
+   "id": "L080",
+   "kind": "state",
+   "legacy": "app.places.add",
+   "spec": "MAE-005",
+   "note": ""
+  },
+  {
+   "id": "L081",
+   "kind": "state",
+   "legacy": "app.places.edit",
+   "spec": "MAE-005",
+   "note": ""
+  },
+  {
+   "id": "L082",
+   "kind": "state",
+   "legacy": "app.routes.list",
+   "spec": "JOR-003",
+   "note": ""
+  },
+  {
+   "id": "L083",
+   "kind": "state",
+   "legacy": "app.routes.detail",
+   "spec": "JOR-003",
+   "note": ""
+  },
+  {
+   "id": "L084",
+   "kind": "state",
+   "legacy": "app.assignedServices.list",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L085",
+   "kind": "state",
+   "legacy": "app.assignedServices.add",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L086",
+   "kind": "state",
+   "legacy": "app.assignedServices.edit",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L087",
+   "kind": "state",
+   "legacy": "app.vehicles.list",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L088",
+   "kind": "state",
+   "legacy": "app.vehicles.add",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L089",
+   "kind": "state",
+   "legacy": "app.vehicles.edit",
+   "spec": "MAE-002",
+   "note": ""
+  },
+  {
+   "id": "L090",
+   "kind": "state",
+   "legacy": "app.drivers.list",
+   "spec": "MAE-003",
+   "note": ""
+  },
+  {
+   "id": "L091",
+   "kind": "state",
+   "legacy": "app.drivers.add",
+   "spec": "MAE-003",
+   "note": ""
+  },
+  {
+   "id": "L092",
+   "kind": "state",
+   "legacy": "app.drivers.edit",
+   "spec": "MAE-003",
+   "note": ""
+  },
+  {
+   "id": "L093",
+   "kind": "state",
+   "legacy": "app.catalogs.list",
+   "spec": "MAE-007",
+   "note": ""
+  },
+  {
+   "id": "L094",
+   "kind": "state",
+   "legacy": "app.catalogs.add",
+   "spec": "MAE-007",
+   "note": ""
+  },
+  {
+   "id": "L095",
+   "kind": "state",
+   "legacy": "app.catalogs.edit",
+   "spec": "MAE-007",
+   "note": ""
+  },
+  {
+   "id": "L096",
+   "kind": "state",
+   "legacy": "app.address",
+   "spec": "MAE-004",
+   "note": ""
+  },
+  {
+   "id": "L097",
+   "kind": "state",
+   "legacy": "app.address.geocoding",
+   "spec": "MAE-004",
+   "note": ""
+  },
+  {
+   "id": "L098",
+   "kind": "state",
+   "legacy": "app.test",
+   "spec": "CIE-001",
+   "note": ""
+  },
+  {
+   "id": "L099",
+   "kind": "feature",
+   "legacy": "Cerrar sesión",
+   "spec": "ACC-001",
+   "note": ""
+  },
+  {
+   "id": "L100",
+   "kind": "feature",
+   "legacy": "Renovación de token (resincTknRefresh / main.js)",
+   "spec": "ACC-001",
+   "note": ""
+  },
+  {
+   "id": "L101",
+   "kind": "feature",
+   "legacy": "Menú lateral (server/sidebar-menu.json)",
+   "spec": "ACC-005",
+   "note": ""
+  },
+  {
+   "id": "L102",
+   "kind": "feature",
+   "legacy": "Exportar XLSX de jornada y de ruta (XlsxExporter)",
+   "spec": "JOR-005",
+   "note": ""
+  },
+  {
+   "id": "L103",
+   "kind": "feature",
+   "legacy": "Exportar PDF de jornada/ruta (PdfExporter)",
+   "spec": "JOR-005",
+   "note": ""
+  },
+  {
+   "id": "L104",
+   "kind": "feature",
+   "legacy": "Exportar PDF de tipos de vehículo",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L105",
+   "kind": "feature",
+   "legacy": "Exportar CSV del itinerario (imprimirCsv)",
+   "spec": "PAQ-002",
+   "note": ""
+  },
+  {
+   "id": "L106",
+   "kind": "feature",
+   "legacy": "Formularios dinámicos de settings (server/partials)",
+   "spec": "PAQ-001",
+   "note": ""
+  },
+  {
+   "id": "L107",
+   "kind": "feature",
+   "legacy": "Selección de punto en mapa con dirección inversa",
+   "spec": "MAE-004",
+   "note": ""
+  },
+  {
+   "id": "L108",
+   "kind": "feature",
+   "legacy": "Línea de tiempo de la ruta en mapa (map_timeline_controller)",
+   "spec": "JOR-003",
+   "note": ""
+  },
+  {
+   "id": "L109",
+   "kind": "feature",
+   "legacy": "Filtro por estado de geocodificación",
+   "spec": "PAQ-002",
+   "note": ""
+  },
+  {
+   "id": "L110",
+   "kind": "feature",
+   "legacy": "Crear tipo/lugar/configuración y volver (returnTo)",
+   "spec": "MAE-001",
+   "note": ""
+  },
+  {
+   "id": "L111",
+   "kind": "feature",
+   "legacy": "Login social Satellizer (configurado, sin uso)",
+   "spec": "CIE-001",
+   "note": ""
+  },
+  {
+   "id": "L112",
+   "kind": "feature",
+   "legacy": "Servidor Satellizer con MongoDB",
+   "spec": "CIE-001",
+   "note": ""
+  }
+ ]
+}

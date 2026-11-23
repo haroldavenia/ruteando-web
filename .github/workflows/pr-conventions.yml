@@ -1,0 +1,72 @@
+name: pr-conventions
+
+# Mecaniza docs/engineering/github-flow.md §3-§5. Mismo job en todos los eventos.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+    branches: [main, angularjs-main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar rama, título, Issue y spec
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const types = 'feat|fix|chore|docs|refactor|test|ci|perf|build|revert|hotfix';
+            const errors = [];
+            const branch = pr.head.ref;
+            const title = pr.title;
+            const body = pr.body || '';
+            if (!new RegExp(`^(${types})/([0-9]+|[A-Z]{3}-[0-9]{3})-[a-z0-9]+(-[a-z0-9]+)*$`).test(branch)) {
+              errors.push(`Rama "${branch}" no cumple <tipo>/<issue>-<slug> (github-flow.md §3).`);
+            }
+            if (!new RegExp(`^(${types})(\\([a-z0-9-]+\\))?!?: .+ \\(#[0-9]+\\)$`).test(title)) {
+              errors.push(`Título "${title}" no cumple <tipo>(<scope>): <descripción> (#<issue>).`);
+            }
+            if (!/(close[sd]?|fix(e[sd])?|resolve[sd]?|refs?)\s+#\d+/i.test(body)) {
+              errors.push('El cuerpo debe enlazar el Issue con "Closes #<n>" o "Refs #<n>".');
+            }
+            const type = branch.split('/')[0];
+            const needsSpec = ['feat', 'fix', 'refactor', 'perf', 'hotfix'].includes(type);
+            const specMatch = body.match(/specs\/[A-Za-z0-9_\-\/]+\.md/);
+            if (needsSpec && !specMatch) {
+              errors.push('Los cambios de comportamiento deben citar su spec (specs/migracion-api-v1/<fase>/<ID>-<slug>.md).');
+            }
+            if (specMatch) {
+              try {
+                await github.rest.repos.getContent({ owner: context.repo.owner, repo: context.repo.repo, path: specMatch[0], ref: pr.head.sha });
+              } catch (e) {
+                errors.push(`La spec citada no existe en la rama: ${specMatch[0]}`);
+              }
+            }
+            if (/Se realizaron los cambios solicitados/i.test(body) && body.length < 200) {
+              errors.push('Descripción insuficiente: usar la plantilla del PR.');
+            }
+            if (errors.length) core.setFailed(errors.join('\n'));
+            else core.info('Convenciones OK');
+
+  pr-size:
+    name: pr-size
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comentar si el PR supera 400 líneas (no bloqueante)
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const total = pr.additions + pr.deletions;
+            const marker = '<!-- pr-size -->';
+            const { data: comments } = await github.rest.issues.listComments({ ...context.repo, issue_number: pr.number });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (total <= 400) return core.info(`PR de ${total} líneas`);
+            const body = `${marker}\nEste PR cambia ${total} líneas (+${pr.additions}/-${pr.deletions}); el objetivo es 200-400. No bloquea: considera dividir la historia.`;
+            if (existing) await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
+            else await github.rest.issues.createComment({ ...context.repo, issue_number: pr.number, body });

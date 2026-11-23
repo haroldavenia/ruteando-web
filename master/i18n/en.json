@@ -1,0 +1,847 @@
+{
+  "app": {
+    "ACEPT": "Accept",
+    "CANCEL": "Cancel",
+    "ADD": "ADD",
+    "SAVE": "SAVE",
+    "SELECT": "SELECT",
+    "DELETE": "DELETE",
+    "MAX": "Max",
+    "MIN": "Min",
+    "EXPORT_TO_PDF": "Export to PDF",
+    "LOADING_TEXT": "Processing, please wait...",
+    "NO_DATA": "No records found",
+    "EXPORT_TO_XLSX": "Export to EXCEL",
+    "errors": {
+      "SESSION_EXPIRED_TITLE": "Session expired",
+      "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
+      "ACCESS_DENIED_TITLE": "Access denied",
+      "ACCESS_DENIED": "You do not have permission to access this resource. If you believe this is an error, contact the administrator.",
+      "CONNECTION_LOST_TITLE": "No connection",
+      "CONNECTION_LOST": "Could not establish a connection to the server. Check your internet connection and try again.",
+      "SERVER_UNAVAILABLE_TITLE": "Server unavailable",
+      "SERVER_UNAVAILABLE": "The server is not available at this time. Verify the service is active and try again.",
+      "SERVER_ERROR_TITLE": "Server error",
+      "SERVER_ERROR": "The server encountered an error processing your request. Please try again later.",
+      "UPLOAD_ERROR_TITLE": "File upload error",
+      "UPLOAD_ERROR": "An error occurred while processing the file. Check the format and try again.",
+      "GENERIC_TITLE": "Error",
+      "GENERIC": "An unexpected error occurred. Please try again.",
+      "ROUTE_ERROR_TITLE": "Routing error",
+      "ROUTE_ERROR": "Could not calculate the route. Check the data and try again.",
+      "NO_DATA_TITLE": "No data",
+      "NO_DATA": "No data found to process."
+    }
+  },
+  "dashboard": {
+    "WELCOME": "Welcome to Ruteando"
+  },
+  "topbar": {
+    "search": {
+      "PLACEHOLDER": "Type and hit enter.."
+    }
+  },
+  "sidebar": {
+    "WELCOME": "Welcome",
+    "INFO_COMPANY": {
+      "COPYRIGHT": "© 2026 Ruteando. All rights reserved.",
+      "SUPPORT_PHONE": "Support: +57 300 000 0000"
+    },
+    "heading": {
+      "HEADER": "Main Navigation"
+    },
+    "nav": {
+      "SINGLEVIEW": "Single View",
+      "menu": {
+        "MENU": "Menu",
+        "SUBMENU": "Sub Menu"
+      },
+      "MAPS": "Maps",
+      "VISIT_LIST": "Visit list",
+      "JOURNEYS": "Journeys",
+      "SETTINGS": "Settings",
+      "VEHICLE_TYPE": "Vehicle types",
+      "PLACES": "Places",
+      "ROUTES": "Routes",
+      "ASSIGNED_SERVICES": "Assigned services",
+      "VEHICLES": "Vehicles",
+      "DRIVERS": "Drivers",
+      "ITINERARY": "Itinerary",
+      "VISITS_UNATTENDED": "Unattended visits",
+      "CATALOG": "Catalog"
+    }
+  },
+  "access": {
+    "login": {
+      "TITLE": "SIGN IN TO CONTINUE.",
+      "placeholder": {
+        "EMAIL": "Enter email",
+        "USERNAME": "Email",
+        "PASSWORD": "Password"
+      },
+      "REMENBER": "Remember Me",
+      "FORGOT_PASSWORD": "Forgot your password?",
+      "TITLE_SOCIAL": "Login with social account.",
+      "NEED_SIGNUP": "Need to Signup?",
+      "REGISTER_NOW": "New to Ruteando? Join now!",
+      "messages_status": {
+        "success": "Login successful",
+        "bad_credentials": "Invalid credentials. Check your username and password.",
+        "login_process_sctive": "A login process is already in progress",
+        "connection_error": "Could not connect to the server. Check your internet connection and try again.",
+        "server_error": "The server could not process the request. Please try again later.",
+        "account_disabled": "Your account has been disabled. Contact the administrator.",
+        "account_locked": "Your account has been locked due to multiple failed attempts. Try again later.",
+        "generic_error": "An unexpected error occurred during login. Please try again.",
+        "TITLE_ERROR": "Login error",
+        "TITLE_CONNECTION": "Connection error",
+        "TITLE_SERVER": "Server error"
+      }
+    },
+    "register": {
+      "TITLE": "New to Ruteando? Join now!",
+      "EMAIL_LABEL": "Email address",
+      "PASS_LABEL": "Password",
+      "REPIT_PASS_LABEL": "Retype Password",
+      "TEST_DATA": "Would you use test data?",
+      "AGGRE_TERM": "By joining Ruteando you accept the Terms of Use and Privacy Policy",
+      "CREATE_ACCOUNT": "Create account",
+      "HAVE_ACCOUNT": "Have an account?",
+      "INIT_WITH_SERVICE": "Login with another service",
+      "SIGNUP": "Login",
+      "dialog": {
+        "TITLE": "Email Verification",
+        "CONTENT": "Check your inbox for the confirmation email to complete your registration"
+      },
+      "messages_status": {
+        "empty_account": "You must enter an email address",
+        "login_process_sctive": "A registration process is already in progress",
+        "success": "Registration successful. Check your email to activate your account.",
+        "default_error": "An error occurred during registration. Please try again."
+      }
+    },
+    "registerTwo": {
+      "TITLE": "ENTER YOUR DETAILS TO COMPLETE REGISTRATION",
+      "label": {
+        "LEGAL_NAME": "User/Company Name",
+        "PHONE": "Phone",
+        "LANGUAJE": "Language",
+        "COUNTRY": "Country",
+        "CITY": "City",
+        "STATE": "State",
+        "INDUSTRY": "Industry",
+        "NO_SHARE": "Do not share this application"
+      },
+      "legend": {
+        "TITLE_ONE": "1. Basic Information",
+        "TITLE_TWO": "2. Sharing",
+        "TITLE_LAST": "Last step"
+      },
+      "wellcome": {
+        "TITLE": "Done!",
+        "WELLCOME": "Just activate your account to start using our application",
+        "BUTTON": "Activate account"
+      }
+    },
+    "reset": {
+      "TITLE": "ENTER YOUR NEW PASSWORD",
+      "RESET_PASSWORD": "Change password",
+      "messages_status": {
+        "success": "Password changed successfully.",
+        "error": "An error occurred while changing the password. Please try again."
+      }
+    },
+    "recovery": {
+      "TITLE": "RECOVER YOUR ACCOUNT",
+      "MESSAGE": "Enter the email associated with your account and you will receive instructions to reset your password",
+      "CONTINUE": "Continue",
+      "messages_status": {
+        "success": "We sent an email with instructions to reset your password.",
+        "error": "Could not process the recovery request."
+      }
+    },
+    "activate": {
+      "messages_status": {
+        "success": "User confirmed successfully. Enter your username and password.",
+        "error": "An error occurred while confirming your user. Please try again."
+      }
+    }
+  },
+  "places": {
+    "TITLE": "PLACES",
+    "TABLE_TITLE": {
+      "name": "Places",
+      "address": "Address",
+      "phone_number": "Phone Number"
+    },
+    "LINKS": {
+      "EDIT": "Edit place",
+      "DELETE": "Delete place"
+    },
+    "message": {
+      "deleteConfirm": "Places deleted successfully"
+    },
+    "form": {
+      "TITLE": "Place Information",
+      "legend": {
+        "NAME": "Name",
+        "ADDRESS": "Address",
+        "PHONE": "Phone"
+      },
+      "label": {
+        "NAME": "Name",
+        "ADDRESS": "Address",
+        "PHONE": "Phone"
+      },
+      "button": {
+        "ADD": "Add",
+        "ACEPT": "Accept",
+        "CANCEL": "Cancel"
+      },
+      "validation": {
+        "NAME_REQUIRED": "Name is required",
+        "NAME_LENGTH": "Minimum 2 characters for name",
+        "ADDRESS_REQUIRED": "Address is required",
+        "ADDRESS_LENGTH": "Minimum 2 characters for address",
+        "PHONE_REQUIRED": "Phone is required",
+        "PHONE_LENGTH": "7 to 10 digits for phone",
+        "PHONE_PATTERN": "Not a valid phone number"
+      },
+      "tooltip": {
+        "GEOCODING": "Geocode address",
+        "MAP": "Locate on map"
+      }
+    }
+  },
+  "vehicles": {
+    "TITLE": "VEHICLES",
+    "TABLE_TITLE": {
+      "name": "Vehicle"
+    },
+    "LABEL": {
+      "name": "Name",
+      "licensePlate": "License Plate",
+      "vehicleType": "Vehicle Type"
+    },
+    "LINKS": {
+      "ADD_VEHICLETYPES": "Add Vehicle Type",
+      "EDIT": "Edit vehicle",
+      "DELETE": "Delete vehicle"
+    },
+    "message": {
+      "deleteConfirm": "Vehicles deleted successfully"
+    },
+    "form": {
+      "validation": {
+        "LICENCSEPLATE_REQUIRED": "License plate number is required",
+        "LICENCSEPLATE_LENGTH": "Minimum 6 characters",
+        "NAME_REQUIRED": "Name is required",
+        "NAME_LENGTH": "Minimum 2 characters",
+        "VEHICLE_TYPE_REQUIRED": "Vehicle type is required"
+      }
+    }
+  },
+  "vehicleTypes": {
+    "TITLE": "VEHICLE TYPES",
+    "TABLE_TITLE": {
+      "name": "Vehicle",
+      "weight": "Weight",
+      "volume": "Volume",
+      "capacity": "Capacity",
+      "disponibility": "Availability"
+    },
+    "errorMessage": {
+      "minWeight>maxWeight": "Minimum weight cannot be greater than maximum weight",
+      "maxWeight<minWeight": "Maximum weight cannot be less than minimum weight",
+      "minVolume>maxVolume": "Minimum volume cannot be greater than maximum volume",
+      "maxVolume<minVolume": "Maximum volume cannot be less than minimum volume",
+      "maxVolume>volume": "Maximum volume cannot be greater than the vehicle volume",
+      "maxWeight>weight": "Maximum weight cannot be greater than the vehicle weight"
+    },
+    "message": {
+      "deleteConfirm": "Vehicle types deleted successfully"
+    },
+    "LABEL": {
+      "basicInfo": "Basic Information",
+      "name": "Name",
+      "weight": "Weight",
+      "capacity": "Capacity",
+      "volume": "Volume",
+      "measures": "Measures",
+      "high": "Length",
+      "width": "Width",
+      "depth": "Depth",
+      "restrictions": "Restrictions"
+    },
+    "LINKS": {
+      "EDIT": "Edit vehicle type",
+      "DELETE": "Delete vehicle type"
+    },
+    "form": {
+      "TITLE": "Vehicle Type",
+      "legend": {
+        "BASIC_INFO": "Basic Information",
+        "MEASURES": "Measures",
+        "RESTRICTIONS": "Per-package restrictions",
+        "VOLUME": "Volume"
+      },
+      "label": {
+        "NAME": "Name",
+        "WEIGHT": "Weight",
+        "CAPACITY": "Capacity",
+        "VOLUME": "Volume",
+        "WIDTH": "Width",
+        "LONG": "Length",
+        "HIGH": "Height",
+        "WEIGHT_RESTRICTION": "Weight",
+        "VOLUME_RESTRICTION": "Volume",
+        "MAXIMUN": "Maximum",
+        "MINIMUN": "Minimum",
+        "ENABLE_RESTRICTIONS": "Enable per-package weight and volume restrictions",
+        "RESTRICTION_HELP": "Restrictions define the weight and volume limits allowed per individual package or piece. The total vehicle capacity is defined in the weight and volume fields above."
+      },
+      "validation": {
+        "GREATER_THAN_ZERO": "Value must be greater than 0",
+        "RESTRICTION_GREATER_THAN_ZERO": "All per-package restriction fields must have values greater than 0"
+      },
+      "button": {
+        "ADD": "Add",
+        "ACEPT": "Accept",
+        "CANCEL": "Cancel"
+      }
+    }
+  },
+  "visits": {
+    "TITLE": "VISIT LIST",
+    "TABLE_TITLE": {
+      "name": "Visit",
+      "address": "Address"
+    },
+    "LABEL": {
+      "routes": "Routes"
+    },
+    "LINKS": {
+      "ADD_ROUTE": "Add Route",
+      "INFO": "Visit information",
+      "MAP": "View on map",
+      "DELETE": "Delete visit",
+      "FILTER": "Filter by visit status"
+    }
+  },
+  "settings": {
+    "TITLE": "SETTINGS",
+    "TABLE_TITLE": {
+      "name": "Visit",
+      "address": "Address"
+    },
+    "LINKS": {
+      "ADD_VEHICLETYPES": "Add Vehicle Type",
+      "ADD_PLACE": "Add Place",
+      "EDIT": "Edit settings",
+      "DELETE": "Delete settings"
+    },
+    "message": {
+      "deleteConfirm": "Settings deleted successfully"
+    },
+    "form": {
+      "title": "Journey settings",
+      "legend": {
+        "TIME": "Time",
+        "RESOURCES": "Resources",
+        "EVALUATE": "Evaluate with"
+      },
+      "label": {
+        "TRAVEL_MODE": "Travel mode",
+        "DESCRIPTION": "Description",
+        "LENGTH_OF_STAY": "Length of stay",
+        "FIXED": "Fixed",
+        "FIXED_ROUTES": "Fixed routes",
+        "BACK_TO_START_POINT": "Return to start point",
+        "EVALUATE_PACKAGE": "Package restriction",
+        "EVALUATE_WEIGHT": "Weight",
+        "EVALUATE_VOLUME": "Volume",
+        "EVALUATE_ITINERARY_ZONE": "Itinerary zones",
+        "DEFINE_ITINERARY": "Defined in Itinerary",
+        "RESTRICTION_ROUTE_CALCULATION": "Restrictions in route calculation",
+        "DURATION_LIMIT": "",
+        "VEHICLE_TYPE": "Vehicle Type",
+        "QUANTITY": "Quantity",
+        "NO_RESTRICTION": "No restriction",
+        "PLACE": "Place",
+        "TIME": "Time",
+        "RESOURCE": "Resource",
+        "RESOURCE_VS_TIME": "Resources Vs Time",
+        "RESOURCE_VS_TIME_WINDOWS": "Resources Vs Time Vs Time Windows",
+        "NOT_AVAILABLE": "not available",
+        "TIME_FROM": "Start Time",
+        "TIME_END": "End Time",
+        "ROUTES_UNIT": "routes"
+      },
+      "button": {
+        "ADD": "Add",
+        "ACEPT": "Accept",
+        "CANCEL": "Cancel"
+      },
+      "validation": {
+        "NAME_REQUIRED": "Name is required",
+        "NAME_LENGTH": "Minimum 2 characters for name",
+        "WEIGHT_REQUIRED": "Weight is required",
+        "CAPACITY_REQUIRED": "Select the vehicle capacity",
+        "VOLUME_REQUIRED": "Volume is required",
+        "WIDTH_REQUIRED": "Width is required",
+        "HIGH_REQUIRED": "Height is required",
+        "DEPTH_REQUIRED": "Depth is required",
+        "MIN_WEIGHT_REQUIRED": "Minimum weight required",
+        "MAX_WEIGHT_REQUIRED": "Maximum weight required",
+        "MIN_VOL_REQUIRED": "Minimum volume required",
+        "MAX_VOL_REQUIRED": "Maximum volume required"
+      }
+    }
+  },
+  "assignedServices": {
+    "TITLE": "ASSIGNED SERVICES",
+    "TABLE_TITLE": {
+      "name": "Places",
+      "address": "Address",
+      "phone_number": "Phone Number"
+    },
+    "LINKS": {
+      "EDIT": "Edit",
+      "LIST_VIEW": "View list",
+      "MAP": "View on map",
+      "DELETE": "Delete service"
+    },
+    "form": {
+      "TITLE": "Assign service",
+      "label": {
+        "VEHICLE": "Vehicle",
+        "DRIVER": "Driver",
+        "OBSERVATIONS": "Observations",
+        "LOGIN": "Login"
+      },
+      "button": {
+        "ASSIGN": "Accept",
+        "CANCEL": "Cancel"
+      },
+      "validations": {
+        "VEHICLE_REQUIRED": "Vehicle is required",
+        "OBSERVATIONS_REQUIRED": "Enter an observation"
+      },
+      "tooltip": {
+        "ADD_VEHICLE": "Add vehicle",
+        "ADD_DRIVER": "Add driver"
+      }
+    }
+  },
+  "journeys": {
+    "TITLE": "JOURNEYS",
+    "TABLE_TITLE": {
+      "name": "Journey",
+      "routes": "Routes",
+      "servedClients": "Served Clients"
+    },
+    "LINKS": {
+      "ROUTE": "View Routes",
+      "SHARE": "Share",
+      "CHART": "View chart",
+      "DELETE": "Delete journey",
+      "ADD_SETTING": "Add settings",
+      "MAP": "View on map"
+    },
+    "message": {
+      "deleteConfirm": "Journeys deleted successfully",
+      "MAP_ERROR_TITLE": "Error loading map",
+      "PDF_ERROR_TITLE": "Error exporting PDF",
+      "XLSX_ERROR_TITLE": "Error exporting Excel"
+    },
+    "form": {
+      "title": "Add Journey",
+      "legend": {
+        "GENERAL_INFORMATION": "General Information",
+        "JOURNEYS_FILE": "Journey File"
+      },
+      "label": {
+        "NAME": "Name",
+        "SETTINGS": "Settings",
+        "DROP_FILE": "Drop File",
+        "DETAIL": "Detail",
+        "LOAD": "Load"
+      },
+      "messages_filters": {
+        "INVALID_FILE_TYPE": "Invalid file type. Only .csv files are allowed",
+        "INVALID_FILE_TYPE_TITLE": "Invalid file",
+        "INVALID_FILE_SIZE": "The file is empty. Select a valid file.",
+        "INVALID_FILE_SIZE_TITLE": "Empty file",
+        "FILE_TOO_LARGE": "The file exceeds the maximum allowed size of {{max}} MB.",
+        "FILE_TOO_LARGE_TITLE": "File too large",
+        "FILE_TOO_MANY_RECORDS": "The file contains {{count}} records, exceeding the maximum limit of {{max}}. Reduce the number of records and try again.",
+        "FILE_TOO_MANY_RECORDS_TITLE": "Too many records",
+        "UPLOAD_ERROR_TITLE": "File upload error",
+        "UNEXPECTED_RESPONSE_TITLE": "Unexpected response",
+        "UNEXPECTED_RESPONSE": "The server responded unexpectedly. Please try again."
+      },
+      "button": {
+        "ADD": "Add",
+        "ACEPT": "Accept",
+        "CANCEL": "Cancel"
+      },
+      "helpText": {
+        "TITLE": "File building help",
+        "ITEM_ONE": "== first item text ==",
+        "ITEM_TWO": "== second item text ==",
+        "ITEM_THREE": "== third item text =="
+      },
+      "validation": {
+        "NAME_REQUIRED": "This field is required",
+        "NAME_ERROR": "Not valid",
+        "NAME_LENGTH": "Minimum 2 characters",
+        "SETTING_REQUIRED": "Select a setting"
+      }
+    }
+  },
+  "drivers": {
+    "TITLE": "DRIVERS",
+    "label": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "password": "Password",
+      "repeatPassword": "Confirm Password",
+      "licenceNumber": "License Number",
+      "vehicle": "Vehicle",
+      "identificationNumber": "Identification",
+      "phoneNumber": "Phone Number",
+      "login": "Login",
+      "active": "Active"
+    },
+    "LINKS": {
+      "EDIT": "Edit driver",
+      "DELETE": "Delete driver"
+    },
+    "message": {
+      "deleteConfirm": "Drivers deleted successfully"
+    },
+    "form": {
+      "validation": {
+        "LICENCE_REQUIRED": "License number is required",
+        "LICENCE_LENGTH": "Minimum 7 digits",
+        "LICENCE_PATTERN": "Not a valid license",
+        "NAME_REQUIRED": "Driver name is required",
+        "NAME_LENGTH": "Minimum 2 characters",
+        "NAME_PATTERN": "Not a valid name",
+        "IDENTIFICATION_REQUIRED": "Driver identification is required",
+        "IDENTIFICATION_LENGTH": "Minimum 7 characters",
+        "IDENTIFICATION_PATTERN": "Not a valid identification",
+        "PHONE_REQUIRED": "Phone number is required",
+        "PHONE_LENGTH": "Minimum 7 digits",
+        "PHONE_PATTERN": "Not a valid phone number",
+        "PASSWORD_REQUIRED": "Password is required",
+        "PASSWORD_LENGTH": "Minimum 6 characters",
+        "PASSWORD_PATTERN": "Not a valid password",
+        "VEHICLE_REQUIRED": "Vehicle is required"
+      }
+    }
+  },
+  "geocoding": {
+    "TITLE": "GEOCODER",
+    "form": {
+      "TITLE": "Geocode address",
+      "label": {
+        "COUNTRY": "Country",
+        "ZONE": "Zone",
+        "CITY": "City",
+        "ADDRESS": "Address"
+      },
+      "button": {
+        "ACEPT": "Accept",
+        "CANCEL": "Cancel"
+      },
+      "validation": {
+        "COUNTRY_REQUIRED": "Country is required",
+        "CITY_REQUIRED": "City is required",
+        "ZONE_REQUIRED": "Zone is required",
+        "ADDRESS_REQUIRED": "Address is required",
+        "ADDRESS_LENGTH": "Minimum 2 characters",
+        "ADDRESS_NOFOUND": "No valid address found"
+      }
+    }
+  },
+  "package": {
+    "TITLE": "Addresses",
+    "form": {
+      "TITLE": "VISIT INFORMATION",
+      "label": {
+        "GUIDE_NUMBER": "Guide number",
+        "ZONE": "Zone",
+        "ADDRESS": "Address",
+        "TIME_OF_STAY": "Length of stay",
+        "PIECE_NUMBER": "Number of Pieces",
+        "WEIGHT": "Weight",
+        "CAPACITY": "Capacity",
+        "VOLUME": "Volume",
+        "WIDTH": "Width",
+        "HEIGHT": "Height",
+        "DEPTH": "Depth",
+        "OBSERVATIONS": "Observations",
+        "PHONE_NUMBER": "Phone Number",
+        "START_DELIVERY_TIME": "Min. delivery time",
+        "END_DELIVERY_TIME": "Max. delivery time"
+      },
+      "legend": {
+        "SENDER": "Sender",
+        "RECEIVER": "Receiver"
+      },
+      "button": {
+        "ACEPT": "Accept",
+        "CANCEL": "Cancel"
+      },
+      "tooltip": {
+        "GEOCODING": "Geocode address",
+        "MAP": "Locate on map"
+      },
+      "validation": {
+        "ADDRESS_REQUIRED": "Address is required",
+        "ADDRESS_LENGTH": "Minimum 2 characters",
+        "LENGTH_OF_STAY_REQUIRED": "Length of stay is required",
+        "WEIGHT_REQUIRED": "Delivery weight required",
+        "VOLUME_REQUIRED": "Delivery volume required",
+        "RECIPIENT_GUIDE_REQUIRED": "Recipient guide required",
+        "RECIPIENT_GUIDE_LENGTH": "Minimum 2 characters",
+        "ZONE_REQUIRED": "Select a zone from the list",
+        "DELIVERY_TIME": "Delivery time required",
+        "PIECE_NUMBER_REQUIRED": "Number of pieces is required",
+        "WIDTH_REQUIRED": "Width is required",
+        "HIGH_REQUIRED": "Height is required",
+        "DEPTH_REQUIRED": "Depth is required"
+      }
+    }
+  },
+  "routes": {
+    "TITLE": "ROUTES",
+    "TABLE_TITLE": {
+      "name": "Places",
+      "address": "Visits",
+      "phone_number": "Phone Number",
+      "weightUsed": "Weight used",
+      "volumeUsed": "Volume used"
+    },
+    "LABEL": {
+      "journey": "Journey",
+      "showRoutesInMap": "Show route list",
+      "closeRoutesInMap": "Hide route list"
+    },
+    "LINKS": {
+      "ADD_JOURNEY": "Add journey",
+      "ADD_SERVICE": "Add service",
+      "INFO_ROUTE": "Route information",
+      "MAP": "View on map",
+      "SHARE": "Share",
+      "LIST_VIEW": "View service list",
+      "DELETE": "Delete route",
+      "SHOW_IN_MAP": "VIEW ON MAP"
+    }
+  },
+  "journey": {
+    "TITLE": "JOURNEY",
+    "ROUTER": "Route",
+    "START_POINT": "Start Point",
+    "LINKS": {
+      "DETAIL": "View detail",
+      "ADD_PLACE": "Add start point",
+      "MAP": "View on map",
+      "EDIT": "Edit address",
+      "DELETE": "Delete address",
+      "FILTER": "Filter by address status"
+    }
+  },
+  "visitsUnattended": {
+    "TITLE": "UNATTENDED VISITS"
+  },
+  "itinerary": {
+    "TITLE": "ITINERARY",
+    "ROUTER": "Route",
+    "START_POINT": "Start Point",
+    "SETTINGS": "Settings",
+    "STATE_VISIT": "Visit Status",
+    "VALIDATION_STATUS": "Validation Status",
+    "validationFilter": {
+      "ALL": "All",
+      "OK": "OK",
+      "WARNINGS": "Warnings",
+      "ERRORS": "Errors"
+    },
+    "NO_DATA": "No visits found for this journey",
+    "ST_GEO_POINTS": {
+      "NOT_FINDED": "No geographic points found"
+    },
+    "LINKS": {
+      "ADD_PLACE": "Add start point",
+      "ADD_SETTING": "Add settings",
+      "MAP": "View on map",
+      "EDIT": "Edit address",
+      "DELETE": "Delete address",
+      "FILTER": "Filter by address status"
+    },
+    "validation": {
+      "PLACE_REQUIRED": "Start point required",
+      "SETTING_REQUIRED": "Settings required",
+      "MISSING_LOCATION": "Address not located (no coordinates)",
+      "MISSING_WEIGHT": "Weight not defined (required by settings)",
+      "MISSING_VOLUME": "Volume not defined (required by settings)",
+      "MISSING_TIME_STATE": "Length of stay not defined (required by settings: defined in itinerary)",
+      "MISSING_ZONE": "Zone not defined (required by settings)",
+      "MISSING_START_DELIVERY_TIME": "Min. delivery time not defined (required by time windows)",
+      "MISSING_END_DELIVERY_TIME": "Max. delivery time not defined (required by time windows)"
+    },
+    "messages": {
+      "NO_RECORDS_TITLE": "No records",
+      "NO_RECORDS": "No records have been entered for optimization. Upload a CSV file with the addresses to route.",
+      "VALIDATION_ERROR_TITLE": "Validation error",
+      "INVALID_PACKAGES_BLOCK": "Found {{count}} visits with critical errors (no location). Correct the data before continuing.",
+      "WARNING_TITLE": "Validation warnings",
+      "WARNING_PACKAGES": "Found {{count}} visits with incomplete data. This data will not be considered in the optimization.",
+      "CONTINUE_ROUTING": "Continue with routing"
+    }
+  },
+  "catalogs": {
+    "TITLE": "CATALOG",
+    "label": {
+      "name": "Name",
+      "parent": "Parent",
+      "ancestors": "Ancestors"
+    },
+    "LINKS": {
+      "ADD_ANCESTORS": "Add ancestor",
+      "EDIT": "Edit catalog",
+      "DELETE": "Delete catalog"
+    },
+    "message": {
+      "deleteConfirm": "Catalogs deleted successfully"
+    },
+    "form": {
+      "validation": {
+        "NAME_REQUIRED": "Name is required",
+        "NAME_LENGTH": "Minimum 2 characters"
+      }
+    }
+  },
+  "address": {
+    "form": {
+      "TITLE": "Address Information",
+      "label": {
+        "ADDRESS": "Address",
+        "TIME_OF_STAY": "Length of stay",
+        "WEIGHT": "Weight",
+        "VOLUMEN": "Volume",
+        "RECIPIENT_GUIDE": "Recipient guide",
+        "ALIAS": "Alias",
+        "ZONE": "Zone",
+        "OBSERVATIONS": "Observations",
+        "START_DELIVERY_TIME": "Min. delivery time",
+        "END_DELIVERY_TIME": "Max. delivery time"
+      },
+      "button": {
+        "ACEPT": "Accept",
+        "CANCEL": "Cancel"
+      },
+      "tooltip": {
+        "GEOCODING": "Geocode address",
+        "MAP": "Locate on map"
+      },
+      "validation": {
+        "ADDRESS_REQUIRED": "Address is required",
+        "ADDRESS_LENGTH": "Minimum 2 characters",
+        "LENGTH_OF_STAY_REQUIRED": "Length of stay is required",
+        "WEIGHT_REQUIRED": "Weight is required",
+        "VOLUME_REQUIRED": "Volume is required",
+        "RECIPIENT_GUIDE_REQUIRED": "Recipient guide is required",
+        "RECIPIENT_GUIDE_LENGTH": "Minimum 2 characters",
+        "ZONE_REQUIRED": "Select a zone from the list"
+      }
+    }
+  },
+  "errors": {
+    "code": {
+      "VALIDATION_ERROR": "Check the highlighted fields.",
+      "BAD_REQUEST": "The request is not valid.",
+      "INVALID_OTP": "Wrong code. {{attemptsRemaining}} attempts left.",
+      "INVALID_TOKEN": "The link is invalid or was already used.",
+      "TOKEN_EXPIRED": "The link expired. Request a new one.",
+      "EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
+      "UNAUTHORIZED": "Your session ended. Sign in again.",
+      "INVALID_CREDENTIALS": "Wrong email or password.",
+      "ACCOUNT_DISABLED": "The account is disabled.",
+      "FORBIDDEN": "You are not allowed to do this.",
+      "NOT_FOUND": "The record does not exist or was deleted.",
+      "CONFLICT": "Cannot complete: the record is in use or already exists.",
+      "EMAIL_ALREADY_EXISTS": "An account with that email already exists.",
+      "SEAT_LIMIT_EXCEEDED": "The plan user limit was reached.",
+      "OTP_EXPIRED": "The code expired. Request a new one.",
+      "INVITATION_TOKEN_GONE": "The invitation is no longer available.",
+      "UNPROCESSABLE_ENTITY": "The operation breaks a business rule.",
+      "MAX_ATTEMPTS_EXCEEDED": "Too many attempts.",
+      "MAX_RESENDS": "Too many resends.",
+      "ENTERPRISE_PLAN_SELF_SERVICE": "The Enterprise plan is arranged with sales.",
+      "SEAT_DECREASE_BLOCKED": "You cannot go below the active users.",
+      "ACCOUNT_LOCKED": "Account locked until {{lockedUntil}}.",
+      "RATE_LIMIT_EXCEEDED": "Too many requests. Wait {{seconds}} seconds.",
+      "INTERNAL_ERROR": "Something went wrong. Try again.",
+      "ROUTING_ENGINE_UNAVAILABLE": "The routing engine is unavailable. Retry in a few minutes.",
+      "STRIPE_INTEGRATION_ERROR": "The payment provider did not respond. Retry.",
+      "NETWORK_ERROR": "No connection to the server. Check your network.",
+      "SERVICE_UNAVAILABLE": "The service is unavailable.",
+      "GATEWAY_TIMEOUT": "The server took too long to respond.",
+      "BAD_GATEWAY": "Could not reach the server.",
+      "INVALID_SORT": "That sort order is not allowed."
+    },
+    "status": {
+      "0": "No connection.",
+      "400": "Invalid request.",
+      "401": "Invalid session.",
+      "403": "Access denied.",
+      "404": "Not found.",
+      "409": "Conflict with the current state.",
+      "410": "No longer available.",
+      "422": "Business rule not met.",
+      "423": "Locked.",
+      "429": "Too many requests.",
+      "500": "Server error.",
+      "502": "Server unavailable.",
+      "503": "Service unavailable.",
+      "504": "Timed out."
+    },
+    "unknown": "Something went wrong."
+  },
+  "ui": {
+    "state": {
+      "loading": "Loading…",
+      "empty": "No records yet.",
+      "error": "The information could not be loaded."
+    },
+    "actions": {
+      "retry": "Retry",
+      "create": "Create",
+      "save": "Save",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "table": {
+      "range": "{{from}}–{{to}} of {{total}}",
+      "selected": "{{count}} selected",
+      "selectPage": "Select page",
+      "selectRow": "Select row",
+      "actions": "Actions",
+      "pagination": "Pagination",
+      "prev": "Previous page",
+      "next": "Next page"
+    },
+    "form": {
+      "unsaved": "Unsaved changes"
+    },
+    "confirm": {
+      "title": "Confirm",
+      "message": "Are you sure you want to continue?"
+    }
+  }
+}

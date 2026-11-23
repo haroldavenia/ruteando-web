@@ -1,0 +1,59 @@
+name: Historia
+description: Historia de usuario con spec atómica en specs/
+title: "[<ID>] <título>"
+labels: ["tipo:historia"]
+body:
+  - type: input
+    id: spec
+    attributes:
+      label: Spec
+      description: Ruta de la spec en el repositorio
+      placeholder: specs/migracion-api-v1/<fase>/<ID>-<slug>.md
+    validations:
+      required: true
+  - type: input
+    id: iniciativa
+    attributes:
+      label: Iniciativa (Issue)
+      placeholder: "#12"
+    validations:
+      required: true
+  - type: textarea
+    id: historia
+    attributes:
+      label: Historia de usuario
+      placeholder: Como <rol>, quiero <capacidad>, para <beneficio>.
+    validations:
+      required: true
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación (resumen; el detalle vive en la spec)
+      placeholder: "- CA-1: Dado … Cuando … Entonces …"
+    validations:
+      required: true
+  - type: input
+    id: maqueta
+    attributes:
+      label: Maqueta
+      description: Ancla en docs/ui/maquetas/index.html (vacío si la historia no tiene interfaz)
+      placeholder: docs/ui/maquetas/index.html#mae-001
+  - type: input
+    id: endpoints
+    attributes:
+      label: Endpoints /api/v1
+      placeholder: GET /api/v1/places, POST /api/v1/places
+  - type: checkboxes
+    id: dor
+    attributes:
+      label: Definition of Ready
+      options:
+        - label: Alcance y exclusiones escritos en la spec
+          required: true
+        - label: Cada CA es verificable y tiene caso de prueba
+          required: true
+        - label: Dependencias y preguntas abiertas resueltas o aceptadas
+          required: true
+        - label: Contrato /api/v1 copiado en la spec con fixture o "capturar"
+          required: true
+        - label: Maqueta confirmada por una persona (si hay interfaz)

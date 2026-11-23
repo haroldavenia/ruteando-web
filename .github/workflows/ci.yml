@@ -1,0 +1,153 @@
+name: ci
+
+# Controles bloqueantes de ruteando-web (línea AngularJS). Ver docs/engineering/calidad-y-ci.md y ADR-0005.
+# Rama base: ADR-0001 (propuesta `angularjs-main`; `main` mientras no se decida).
+on:
+  pull_request:
+    branches: [main, angularjs-main]
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+  push:
+    branches: [main, angularjs-main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+  ESLINT_VERSION: "10.15.0"
+
+jobs:
+  config:
+    name: config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Validar configuración de Antigravity (.agents/, AGENTS.md)
+        run: node tools/validate-harness.mjs .
+      - name: Specs (lint de todas) y trazabilidad legacy/endpoints
+        run: |
+          node tools/specs.mjs lint --all
+          node tools/specs.mjs trace
+          node tools/specs.mjs lint-ui
+      - name: Validar JSON versionados
+        run: |
+          set -euo pipefail
+          git ls-files '*.json' ':!:**/node_modules/**' | while read -r f; do
+            node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" "$f" || { echo "::error file=$f::JSON inválido"; exit 1; }
+          done
+      - name: Validar YAML versionados
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pyyaml
+          git ls-files '*.yml' '*.yaml' | xargs -r python3 -c 'import sys,yaml; [yaml.safe_load(open(f)) for f in sys.argv[1:]]'
+
+  test-and-coverage:
+    name: test-and-coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Arnés (tools/ y tests/tools) + cobertura de tools
+        run: npm run coverage:tools && node --test "tests/tools/*.test.mjs"
+      - name: Unitarias AngularJS (Karma, ChromeHeadless) + cobertura
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+        run: npm run coverage:unit
+      - name: Contrato (fixtures reales)
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+        run: npm run test:integration
+      - name: Servidor (proxy, redirecciones) + cobertura
+        run: npm run coverage:server
+      - name: Unir LCOV
+        run: npm run coverage:merge
+      - name: Cobertura del código nuevo o modificado (>= 90 %)
+        if: github.event_name == 'pull_request'
+        env:
+          HEREDADO: ${{ contains(github.event.pull_request.labels.*.name, 'codigo-heredado') }}
+        run: |
+          set -uo pipefail
+          status=0
+          node tools/diff-coverage.mjs --lcov coverage/lcov.info --base "origin/${{ github.base_ref }}" --threshold 90 \
+            \
+            --include '^(master/js|server|tools)/.*\.(c|m)?js$' \
+            --exclude '(^|/)(node_modules|bower_components|tests?|coverage)/|\.(test|spec)\.(c|m)?js$|^server/legacy-satellizer\.js$' | tee -a "$GITHUB_STEP_SUMMARY" || status=$?
+          if [ "$status" -eq 1 ] && [ "$HEREDADO" = "true" ]; then
+            echo "::warning::Cobertura de diff bajo el umbral, aceptada por la etiqueta codigo-heredado (requiere aprobación humana)."
+            exit 0
+          fi
+          exit "$status"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reports-and-coverage
+          path: |
+            reports/
+            coverage/
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Dependencias de compilación (Gulp + bower). node-sass no se compila (--ignore-scripts).
+        working-directory: master
+        run: |
+          npm ci --ignore-scripts || npm install --ignore-scripts
+          npx --yes bower@1.8.14 install --allow-root --config.interactive=false
+      - name: Navegador
+        run: npx playwright install --with-deps chromium
+      - name: E2E (Gulp build + server.js + mock-api)
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-report
+          path: |
+            reports/
+            test-results/
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: ESLint sobre las líneas cambiadas (deuda heredada informativa)
+        env:
+          HEREDADO: ${{ contains(github.event.pull_request.labels.*.name, 'codigo-heredado') }}
+        run: |
+          set -uo pipefail
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" -- '*.js' '*.cjs' '*.mjs' | grep -v -E '/node_modules/|/bower_components/|^app/|^vendor/' || true)
+          if [ ${#files[@]} -eq 0 ]; then echo "Sin archivos JS cambiados"; exit 0; fi
+          npx --yes "eslint@${ESLINT_VERSION}" -f json "${files[@]}" > "$RUNNER_TEMP/eslint.json" || true
+          status=0
+          node tools/lint-diff.mjs --report "$RUNNER_TEMP/eslint.json" --base "origin/${{ github.base_ref }}" | tee -a "$GITHUB_STEP_SUMMARY" || status=$?
+          if [ "$status" -eq 1 ] && [ "$HEREDADO" = "true" ]; then
+            echo "::warning::Problemas de lint en código heredado, aceptados por la etiqueta codigo-heredado (requiere aprobación humana)."
+            exit 0
+          fi
+          exit "$status"

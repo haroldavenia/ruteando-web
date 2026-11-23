@@ -1,0 +1,21 @@
+{
+  "$comment": "Código de master/js que cargan las suites Karma, en el orden del gulpfile. Cada historia migrada añade aquí sus archivos (y sus dependencias legacy si las usa).",
+  "files": [
+    "master/js/modules/services/api_config.js",
+    "master/js/modules/services/api_error.js",
+    "master/js/modules/services/api_client.js",
+    "master/js/modules/services/error_messages.js",
+    "master/js/modules/services/authResponseInterceptor.js",
+    "master/js/modules/services/units.js",
+    "master/js/modules/services/master_domains.js",
+    "master/js/modules/services/polyline_codec.js",
+    "master/js/modules/services/geo_utils.js",
+    "master/js/modules/filters/domain_label.js",
+    "master/js/modules/directives/rw-list-state.js",
+    "master/js/modules/directives/rw-data-table.js",
+    "master/js/modules/directives/rw-status-badge.js",
+    "master/js/modules/directives/rw-confirm.js",
+    "master/js/modules/directives/rw-form-actions.js",
+    "master/js/modules/directives/rw-page-head.js"
+  ]
+}

@@ -1,0 +1,961 @@
+{
+ "generated": "2026-11-17",
+ "source": "docs/contracts/source/endpoints.md + API_ROUTING_V3.md",
+ "base": "/api/v1",
+ "items": [
+  {
+   "endpoint": "DELETE /invitations/{id}",
+   "specs": [
+    "EMP-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /journeys/{id}",
+   "specs": [
+    "JOR-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /notifications/push/unregister",
+   "specs": [
+    "EMP-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /packages/{id}",
+   "specs": [
+    "PAQ-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /places/{id}",
+   "specs": [
+    "MAE-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /resource-types/{id}",
+   "specs": [
+    "MAE-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /resources/{id}",
+   "specs": [
+    "MAE-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /resources/{id}/driver",
+   "specs": [
+    "MAE-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /settings/{id}",
+   "specs": [
+    "PAQ-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /users/{id}",
+   "specs": [
+    "MAE-003",
+    "EMP-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "DELETE /zones/{id}",
+   "specs": [
+    "MAE-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /admin/geocoding-config",
+   "specs": [
+    "PLA-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /audit-logs",
+   "specs": [
+    "EMP-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /audit-logs/admin",
+   "specs": [
+    "PLA-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /audit-logs/me",
+   "specs": [
+    "EMP-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /audit-logs/{id}",
+   "specs": [
+    "EMP-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /auth/me",
+   "specs": [
+    "ACC-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /billing/invoices",
+   "specs": [
+    "EMP-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /billing/subscription",
+   "specs": [
+    "EMP-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /billing/usage",
+   "specs": [
+    "EMP-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /invitations",
+   "specs": [
+    "EMP-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /invitations/accept/{token}",
+   "specs": [
+    "EMP-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /journeys",
+   "specs": [
+    "JOR-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /journeys/{id}",
+   "specs": [
+    "JOR-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /journeys/{journeyId}/metrics",
+   "specs": [
+    "JOR-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /journeys/{journeyId}/navigations",
+   "specs": [
+    "JOR-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /journeys/{journeyId}/navigations/{routeIndex}",
+   "specs": [
+    "JOR-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /master-domains",
+   "specs": [
+    "FND-003",
+    "MAE-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /master-domains/{code}",
+   "specs": [
+    "FND-003",
+    "MAE-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /master-domains/{code}/values",
+   "specs": [
+    "FND-003",
+    "MAE-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /notifications/preferences",
+   "specs": [
+    "EMP-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /package-status-reasons",
+   "specs": [
+    "MAE-009",
+    "PAQ-002",
+    "JOR-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /packages",
+   "specs": [
+    "PAQ-002",
+    "JOR-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /packages/upload/limits",
+   "specs": [
+    "PAQ-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /packages/{id}",
+   "specs": [
+    "PAQ-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /places",
+   "specs": [
+    "MAE-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /places/nearby",
+   "specs": [
+    "MAE-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /places/{id}",
+   "specs": [
+    "MAE-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /positions",
+   "specs": [
+    "SEG-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /positions/{driverId}",
+   "specs": [
+    "SEG-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /resource-types",
+   "specs": [
+    "MAE-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /resource-types/{id}",
+   "specs": [
+    "MAE-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /resources",
+   "specs": [
+    "MAE-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /resources/{id}",
+   "specs": [
+    "MAE-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /settings",
+   "specs": [
+    "PAQ-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /settings/{id}",
+   "specs": [
+    "PAQ-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /tenants",
+   "specs": [
+    "PLA-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /tenants/me",
+   "specs": [
+    "EMP-001",
+    "EMP-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /tenants/slug/{slug}",
+   "specs": [
+    "PLA-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /tenants/{id}",
+   "specs": [
+    "PLA-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /units",
+   "specs": [
+    "FND-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /users",
+   "specs": [
+    "MAE-003",
+    "EMP-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /users/drivers",
+   "specs": [
+    "MAE-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /users/{id}",
+   "specs": [
+    "MAE-003",
+    "EMP-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /zones",
+   "specs": [
+    "MAE-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /zones/containing",
+   "specs": [
+    "MAE-005",
+    "MAE-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /zones/{id}",
+   "specs": [
+    "MAE-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PATCH /master-domains/{code}/values/{key}/toggle",
+   "specs": [
+    "MAE-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PATCH /package-status-reasons/{key}/toggle",
+   "specs": [
+    "MAE-009"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PATCH /packages/{id}/status/{status}",
+   "specs": [
+    "PAQ-002",
+    "JOR-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PATCH /tenants/{id}",
+   "specs": [
+    "PLA-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /auth/forgot-password",
+   "specs": [
+    "ACC-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /auth/login",
+   "specs": [
+    "ACC-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /auth/logout",
+   "specs": [
+    "ACC-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /auth/refresh",
+   "specs": [
+    "ACC-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /auth/register",
+   "specs": [
+    "ACC-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /auth/resend-verification",
+   "specs": [
+    "ACC-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /auth/reset-password",
+   "specs": [
+    "ACC-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /auth/verify-email",
+   "specs": [
+    "ACC-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /billing/cancel",
+   "specs": [
+    "EMP-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /billing/checkout",
+   "specs": [
+    "EMP-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /billing/portal",
+   "specs": [
+    "EMP-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /billing/upgrade",
+   "specs": [
+    "EMP-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /geocoding",
+   "specs": [
+    "MAE-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /invitations",
+   "specs": [
+    "EMP-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /invitations/accept/{token}",
+   "specs": [
+    "EMP-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /invitations/{token}/resend",
+   "specs": [
+    "EMP-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /journeys/plan",
+   "specs": [
+    "JOR-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /master-domains/{code}/values",
+   "specs": [
+    "MAE-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /notifications/otp/resend",
+   "specs": [
+    "EMP-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /notifications/otp/send",
+   "specs": [
+    "EMP-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /notifications/otp/verify",
+   "specs": [
+    "EMP-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /notifications/push/register",
+   "specs": [
+    "EMP-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /package-status-reasons",
+   "specs": [
+    "MAE-009"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /packages",
+   "specs": [
+    "PAQ-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /packages/upload",
+   "specs": [
+    "PAQ-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /places",
+   "specs": [
+    "MAE-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /resource-types",
+   "specs": [
+    "MAE-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /resources",
+   "specs": [
+    "MAE-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /reverse-geocoding",
+   "specs": [
+    "MAE-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /routing/directions",
+   "specs": [
+    "JOR-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /routing/matrix",
+   "specs": [
+    "JOR-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /routing/messenger",
+   "specs": [
+    "JOR-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /routing/nearest",
+   "specs": [
+    "JOR-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /routing/optimizations",
+   "specs": [
+    "JOR-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /routing/optimizations/collection",
+   "specs": [
+    "JOR-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /routing/optimizations/point-route",
+   "specs": [
+    "JOR-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /routing/route",
+   "specs": [
+    "JOR-007"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /settings",
+   "specs": [
+    "PAQ-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /tenants",
+   "specs": [
+    "PLA-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /users",
+   "specs": [
+    "MAE-003",
+    "EMP-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /users/{id}/reset-password",
+   "specs": [
+    "EMP-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "POST /zones",
+   "specs": [
+    "MAE-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /admin/geocoding-config",
+   "specs": [
+    "PLA-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /auth/change-password",
+   "specs": [
+    "ACC-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /auth/me",
+   "specs": [
+    "ACC-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /billing/seats",
+   "specs": [
+    "EMP-004"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /notifications/preferences",
+   "specs": [
+    "EMP-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /package-status-reasons/{key}",
+   "specs": [
+    "MAE-009"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /packages/{id}",
+   "specs": [
+    "PAQ-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /places/{id}",
+   "specs": [
+    "MAE-005"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /resource-types/{id}",
+   "specs": [
+    "MAE-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /resources/{id}",
+   "specs": [
+    "MAE-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /resources/{id}/driver/{driverId}",
+   "specs": [
+    "MAE-002"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /settings/{id}",
+   "specs": [
+    "PAQ-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /tenants/me",
+   "specs": [
+    "EMP-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /tenants/me/billing",
+   "specs": [
+    "EMP-003"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /tenants/{id}",
+   "specs": [
+    "PLA-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /users/{id}",
+   "specs": [
+    "MAE-003",
+    "EMP-001"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "PUT /zones/{id}",
+   "specs": [
+    "MAE-006"
+   ],
+   "status": "in_scope"
+  },
+  {
+   "endpoint": "GET /auth/verify-email",
+   "specs": [],
+   "status": "out_of_scope",
+   "reason": "Lo abre el correo (HTML del backend); la SPA usa POST"
+  },
+  {
+   "endpoint": "GET /driver/routes",
+   "specs": [],
+   "status": "out_of_scope",
+   "reason": "App móvil del conductor"
+  },
+  {
+   "endpoint": "GET /driver/routes/{journeyId}/{routeIndex}",
+   "specs": [],
+   "status": "out_of_scope",
+   "reason": "App móvil del conductor"
+  },
+  {
+   "endpoint": "PUT /driver/packages/report",
+   "specs": [],
+   "status": "out_of_scope",
+   "reason": "App móvil del conductor"
+  },
+  {
+   "endpoint": "POST /driver/positions",
+   "specs": [],
+   "status": "out_of_scope",
+   "reason": "App móvil del conductor"
+  },
+  {
+   "endpoint": "POST /webhooks/stripe",
+   "specs": [],
+   "status": "out_of_scope",
+   "reason": "Servidor-a-servidor (Stripe)"
+  },
+  {
+   "endpoint": "GET /assigned-services",
+   "specs": [
+    "MAE-008"
+   ],
+   "status": "retired",
+   "reason": "Eliminado por el backend el 2026-11-19 (404)"
+  },
+  {
+   "endpoint": "GET /assigned-services/{id}",
+   "specs": [
+    "MAE-008"
+   ],
+   "status": "retired",
+   "reason": "Eliminado por el backend el 2026-11-19 (404)"
+  },
+  {
+   "endpoint": "POST /assigned-services",
+   "specs": [
+    "MAE-008"
+   ],
+   "status": "retired",
+   "reason": "Eliminado por el backend el 2026-11-19 (404)"
+  },
+  {
+   "endpoint": "PUT /assigned-services/{id}",
+   "specs": [
+    "MAE-008"
+   ],
+   "status": "retired",
+   "reason": "Eliminado por el backend el 2026-11-19 (404)"
+  },
+  {
+   "endpoint": "DELETE /assigned-services/{id}",
+   "specs": [
+    "MAE-008"
+   ],
+   "status": "retired",
+   "reason": "Eliminado por el backend el 2026-11-19 (404)"
+  },
+  {
+   "endpoint": "POST /admin/migrate",
+   "specs": [
+    "PLA-004"
+   ],
+   "status": "retired",
+   "reason": "Eliminado por el backend el 2026-11-19 (404)"
+  },
+  {
+   "endpoint": "POST /admin/migrate/{step}",
+   "specs": [
+    "PLA-004"
+   ],
+   "status": "retired",
+   "reason": "Eliminado por el backend el 2026-11-19 (404)"
+  },
+  {
+   "endpoint": "GET /admin/migrate/validate",
+   "specs": [
+    "PLA-004"
+   ],
+   "status": "retired",
+   "reason": "Eliminado por el backend el 2026-11-19 (404)"
+  }
+ ]
+}

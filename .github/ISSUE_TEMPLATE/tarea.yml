@@ -1,0 +1,23 @@
+name: Tarea técnica
+description: Trabajo sin cambio de comportamiento (docs, CI, chore)
+title: "[<ID>] <título>"
+labels: ["tipo:tarea"]
+body:
+  - type: input
+    id: padre
+    attributes:
+      label: Iniciativa o historia padre
+      placeholder: "#12"
+    validations:
+      required: true
+  - type: textarea
+    id: objetivo
+    attributes:
+      label: Objetivo y criterio de terminado verificable
+    validations:
+      required: true
+  - type: input
+    id: spec
+    attributes:
+      label: Spec (si aplica)
+      placeholder: specs/...

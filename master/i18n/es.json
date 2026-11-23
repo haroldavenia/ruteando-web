@@ -1,0 +1,847 @@
+{
+  "app": {
+    "ACEPT": "Aceptar",
+    "CANCEL": "Cancelar",
+    "ADD": "AGREGAR",
+    "SAVE": "GUARDAR",
+    "SELECT": "SELECCIONAR",
+    "DELETE": "ELIMINAR",
+    "MAX": "Máximo",
+    "MIN": "Mínimo",
+    "EXPORT_TO_PDF": "Exportar a PDF",
+    "LOADING_TEXT": "Procesando, espere un momento...",
+    "NO_DATA": "No se encontraron registros",
+    "EXPORT_TO_XLSX": "Exportar a EXCEL",
+    "errors": {
+      "SESSION_EXPIRED_TITLE": "Sesión expirada",
+      "SESSION_EXPIRED": "Su sesión ha expirado. Por favor, inicie sesión nuevamente.",
+      "ACCESS_DENIED_TITLE": "Acceso denegado",
+      "ACCESS_DENIED": "No tiene permisos para acceder a este recurso. Si cree que esto es un error, contacte al administrador.",
+      "CONNECTION_LOST_TITLE": "Sin conexión",
+      "CONNECTION_LOST": "No se pudo establecer conexión con el servidor. Verifique su conexión a internet e intente nuevamente.",
+      "SERVER_UNAVAILABLE_TITLE": "Servidor no disponible",
+      "SERVER_UNAVAILABLE": "El servidor no está disponible en este momento. Verifique que el servicio esté activo e intente nuevamente.",
+      "SERVER_ERROR_TITLE": "Error del servidor",
+      "SERVER_ERROR": "El servidor encontró un error al procesar su solicitud. Intente nuevamente más tarde.",
+      "UPLOAD_ERROR_TITLE": "Error al cargar archivo",
+      "UPLOAD_ERROR": "Ocurrió un error al procesar el archivo. Verifique el formato e intente nuevamente.",
+      "GENERIC_TITLE": "Error",
+      "GENERIC": "Ocurrió un error inesperado. Intente nuevamente.",
+      "ROUTE_ERROR_TITLE": "Error de ruteo",
+      "ROUTE_ERROR": "No se pudo calcular la ruta. Verifique los datos e intente nuevamente.",
+      "NO_DATA_TITLE": "Sin datos",
+      "NO_DATA": "No se encontraron datos para procesar."
+    }
+  },
+  "dashboard": {
+    "WELCOME": "Bienvenido a Ruteando"
+  },
+  "topbar": {
+    "search": {
+      "PLACEHOLDER": "Tipea y pulsa enter.."
+    }
+  },
+  "sidebar": {
+    "WELCOME": "Bienvenido",
+    "INFO_COMPANY": {
+      "COPYRIGHT": "© 2026 Ruteando. Todos los derechos reservados.",
+      "SUPPORT_PHONE": "Soporte: +57 300 000 0000"
+    },
+    "heading": {
+      "HEADER": "Navegacion principal"
+    },
+    "nav": {
+      "SINGLEVIEW": "Vista simple",
+      "menu": {
+        "MENU": "Menu",
+        "SUBMENU": "Sub Menu"
+      },
+      "MAPS": "Mapa",
+      "VISIT_LIST": "Lista de visitas",
+      "JOURNEYS": "Trayectos",
+      "SETTINGS": "Ajustes",
+      "VEHICLE_TYPE": "Tipos de vehiculos",
+      "PLACES": "Lugares",
+      "ROUTES": "Rutas",
+      "ASSIGNED_SERVICES": "Servicios Asignados",
+      "VEHICLES": "Vehiculos",
+      "DRIVERS": "Conductores",
+      "ITINERARY": "Itineario",
+      "VISITS_UNATTENDED": "Dir. sin atender",
+      "CATALOG": "Catalogo"
+    }
+  },
+  "access": {
+    "login": {
+      "TITLE": "INGRESE LAS CREDENCIALES PARA CONTINUAR",
+      "placeholder": {
+        "EMAIL": "Ingrese un correo Electronico",
+        "USERNAME": "Correo Electronico",
+        "PASSWORD": "Contraseña"
+      },
+      "REMENBER": "Recuerdame",
+      "FORGOT_PASSWORD": "¿Has olvidado la contraseña?",
+      "TITLE_SOCIAL": "Iniciar sesión con otros servicios",
+      "NEED_SIGNUP": "¿Necesita registrarse?",
+      "REGISTER_NOW": "¿Eres nuevo en Ruteando? ¡Unete!",
+      "messages_status": {
+        "success": "Inicio de sesión exitoso",
+        "bad_credentials": "Credenciales incorrectas. Verifique su usuario y contraseña.",
+        "login_process_sctive": "Ya hay un proceso de inicio de sesión en curso",
+        "connection_error": "No se pudo conectar con el servidor. Verifique su conexión a internet e intente nuevamente.",
+        "server_error": "El servidor no pudo procesar la solicitud. Intente nuevamente más tarde.",
+        "account_disabled": "Su cuenta ha sido deshabilitada. Contacte al administrador.",
+        "account_locked": "Su cuenta ha sido bloqueada por múltiples intentos fallidos. Intente más tarde.",
+        "generic_error": "Ocurrió un error inesperado durante el inicio de sesión. Intente nuevamente.",
+        "TITLE_ERROR": "Error de inicio de sesión",
+        "TITLE_CONNECTION": "Error de conexión",
+        "TITLE_SERVER": "Error del servidor"
+      }
+    },
+    "register": {
+      "TITLE": "¿Eres nuevo en Ruteando? ¡Unete!",
+      "EMAIL_LABEL": "Dirección de correo electronico",
+      "PASS_LABEL": "Contraseña",
+      "REPIT_PASS_LABEL": "Repita la contraseña",
+      "TEST_DATA": "¿Desea usar datos de prueba?",
+      "AGGRE_TERM": "Al unirte a ruteando aceptas las Condiciones de uso y  su Política de privacidad",
+      "CREATE_ACCOUNT": "Abrir una cuenta",
+      "HAVE_ACCOUNT": "¿Tiene una cuenta?",
+      "INIT_WITH_SERVICE": "Iniciar sesión con otro servicio",
+      "SIGNUP": "Login",
+      "dialog": {
+        "TITLE": "Verificacion de correo electronico",
+        "CONTENT": "verifique en la bandeja de entrada el correo con el enlace de confirmacion para registrarte"
+      },
+      "messages_status": {
+        "empty_account": "Debe ingresar un correo electrónico",
+        "login_process_sctive": "Ya hay un proceso de registro en curso",
+        "success": "Registro exitoso. Revise su correo para activar la cuenta.",
+        "default_error": "Ocurrió un error durante el registro. Intente nuevamente."
+      }
+    },
+    "registerTwo": {
+      "TITLE": "INGRESE LOS DATOS PARA COMPLETAR EL REGISTRO",
+      "label": {
+        "LEGAL_NAME": "Nombre de Usuario/Empresa",
+        "PHONE": "Telefono",
+        "LANGUAJE": "Idioma",
+        "COUNTRY": "Pais",
+        "CITY": "Ciudad",
+        "STATE": "Estado",
+        "INDUSTRY": "Industria",
+        "NO_SHARE": "No compatir esta aplicacion"
+      },
+      "legend": {
+        "TITLE_ONE": "1. Informacion basica",
+        "TITLE_TWO": "2. Compartir",
+        "TITLE_LAST": "Ultimo paso"
+      },
+      "wellcome": {
+        "TITLE": "Listo!",
+        "WELLCOME": "Solo queda activar tu cuenta para que puedas disfrutar de nuestra aplicacion",
+        "BUTTON": "Activar cuenta"
+      }
+    },
+    "reset": {
+      "TITLE": "INGRESE LA NUEVA",
+      "RESET_PASSWORD": "Cambiar password",
+      "messages_status": {
+        "success": "Contraseña cambiada exitosamente.",
+        "error": "Ocurrió un error al cambiar la contraseña. Intente nuevamente."
+      }
+    },
+    "recovery": {
+      "TITLE": "RECUPERE SU CUENTA",
+      "MESSAGE": "Ingrese el correo asociado su cuenta y recibirá las instrucciones para restablecer una contraseña",
+      "CONTINUE": "Continuar",
+      "messages_status": {
+        "success": "Le enviamos al correo electrónico información para restablecer su contraseña.",
+        "error": "No se pudo procesar la solicitud de recuperación."
+      }
+    },
+    "activate": {
+      "messages_status": {
+        "success": "Usuario confirmado correctamente. Ingrese su usuario y contraseña.",
+        "error": "Ocurrió un error al confirmar su usuario. Intente nuevamente."
+      }
+    }
+  },
+  "places": {
+    "TITLE": "LUGARES",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Dirección",
+      "phone_number": "Número Teléfono"
+    },
+    "LINKS": {
+      "EDIT": "Editar lugar",
+      "DELETE": "Eliminar lugar"
+    },
+    "message": {
+      "deleteConfirm": "Lugares eliminados satisfactoriamente"
+    },
+    "form": {
+      "TITLE": "Informacion del lugar",
+      "legend": {
+        "NAME": "Nombre",
+        "ADDRESS": "Dirección",
+        "PHONE": "Telefono"
+      },
+      "label": {
+        "NAME": "Nombre",
+        "ADDRESS": "Dirección",
+        "PHONE": "Telefono"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "validation": {
+        "NAME_REQUIRED": "El nombre es requerido",
+        "NAME_LENGTH": "Minimo 2 caracteres para el nombre",
+        "ADDRESS_REQUIRED": "la dirección es requerida",
+        "ADDRESS_LENGTH": "Minimo 2 caracteres para la dirección",
+        "PHONE_REQUIRED": "un telefono es requerido",
+        "PHONE_LENGTH": "de 7 a 10 digitos para el telefono",
+        "PHONE_PATTERN": "No es un telefono valido"
+      },
+      "tooltip": {
+        "GEOCODING": "Geocodificar dirección",
+        "MAP": "Ubicar dentro del mapa"
+      }
+    }
+  },
+  "vehicles": {
+    "TITLE": "VEHÍCULOS",
+    "TABLE_TITLE": {
+      "name": "Vehículo"
+    },
+    "LABEL": {
+      "name": "Nombre",
+      "licensePlate": "Placa",
+      "vehicleType": "Tipo De Vehículo"
+    },
+    "LINKS": {
+      "ADD_VEHICLETYPES": "Agregar Tipo De Vehículo",
+      "EDIT": "Editar vehículo",
+      "DELETE": "Eliminar vehículo"
+    },
+    "message": {
+      "deleteConfirm": "Vehículos eliminados satisfactoriamente"
+    },
+    "form": {
+      "validation": {
+        "LICENCSEPLATE_REQUIRED": "El numero de matricula es requerido",
+        "LICENCSEPLATE_LENGTH": "Minimo 6 caracteres",
+        "NAME_REQUIRED": "El nombre es requerido",
+        "NAME_LENGTH": "Minimo 2 caracteres",
+        "VEHICLE_TYPE_REQUIRED": "El tipo de vehiculo es requerido"
+      }
+    }
+  },
+  "vehicleTypes": {
+    "TITLE": "TIPOS DE VEHÍCULOS",
+    "TABLE_TITLE": {
+      "name": "Vehículo",
+      "weight": "Peso",
+      "volume": "Volumen",
+      "capacity": "Capacidad",
+      "disponibility": "Disponibilidad"
+    },
+    "errorMessage": {
+      "minWeight>maxWeight": "Peso mínimo no puede ser mayor que el peso máximo",
+      "maxWeight<minWeight": "Peso máximo no puede ser menor que el peso mínimo",
+      "minVolume>maxVolume": "Volumen mínimo no puede ser mayor que el volumen máximo",
+      "maxVolume<minVolume": "Volumen máximo no puede ser menor que el volumen mínimo",
+      "maxVolume>volume": "Volumen máximo no puede ser mayor que el volumen del vehículo",
+      "maxWeight>weight": "Peso máximo no puede ser mayor que el peso del vehículo"
+    },
+    "message": {
+      "deleteConfirm": "Tipos de vehículos eliminados satisfactoriamente"
+    },
+    "LABEL": {
+      "basicInfo": "Información Básica",
+      "name": "Nombre",
+      "weight": "Peso",
+      "capacity": "Capacidad",
+      "volume": "Volumen",
+      "measures": "Medidas",
+      "high": "Largo",
+      "width": "Ancho",
+      "depth": "Profundidad",
+      "restrictions": "Restricciones"
+    },
+    "LINKS": {
+      "EDIT": "Editar tipo de vehículo",
+      "DELETE": "Eliminar tipo de vehículo"
+    },
+    "form": {
+      "TITLE": "Tipo de vehiculo",
+      "legend": {
+        "BASIC_INFO": "Informacion Basica",
+        "MEASURES": "Medidas",
+        "RESTRICTIONS": "Restricciones por paquete",
+        "VOLUME": "Volumen"
+      },
+      "label": {
+        "NAME": "Nombre",
+        "WEIGHT": "Peso",
+        "CAPACITY": "Capacidad",
+        "VOLUME": "Volumen",
+        "WIDTH": "Ancho",
+        "LONG": "Largo",
+        "HIGH": "Alto",
+        "WEIGHT_RESTRICTION": "De peso",
+        "VOLUME_RESTRICTION": "De volumen",
+        "MAXIMUN": "Maximo",
+        "MINIMUN": "Minimo",
+        "ENABLE_RESTRICTIONS": "Habilitar restricciones de peso y volumen por paquete",
+        "RESTRICTION_HELP": "Las restricciones definen los límites de peso y volumen permitidos por cada paquete o pieza individual. La capacidad total del vehículo se define en los campos de peso y volumen de arriba."
+      },
+      "validation": {
+        "GREATER_THAN_ZERO": "El valor debe ser mayor a 0",
+        "RESTRICTION_GREATER_THAN_ZERO": "Todos los campos de restricción por paquete deben tener valores mayores a 0"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      }
+    }
+  },
+  "visits": {
+    "TITLE": "LISTA DE VISITAS",
+    "TABLE_TITLE": {
+      "name": "Visita",
+      "address": "Dirección"
+    },
+    "LABEL": {
+      "routes": "Rutas"
+    },
+    "LINKS": {
+      "ADD_ROUTE": "Agregar Ruta",
+      "INFO": "Información de la visita",
+      "MAP": "Ver en el mapa",
+      "DELETE": "Eliminar visita",
+      "FILTER": "Filtrar por estado de la visita"
+    }
+  },
+  "settings": {
+    "TITLE": "AJUSTES",
+    "TABLE_TITLE": {
+      "name": "Visita",
+      "address": "Dirección"
+    },
+    "LINKS": {
+      "ADD_VEHICLETYPES": "Agregar Tipo De Vehículo",
+      "ADD_PLACE": "Agregar Lugar",
+      "EDIT": "Editar configuración",
+      "DELETE": "Eliminar configuración"
+    },
+    "message": {
+      "deleteConfirm": "Ajustes eliminados satisfactoriamente"
+    },
+    "form": {
+      "title": "Ajustes del trayecto",
+      "legend": {
+        "TIME": "Tiempo",
+        "RESOURCES": "Recursos",
+        "EVALUATE": "Evaluar con"
+      },
+      "label": {
+        "TRAVEL_MODE": "Modo de viaje",
+        "DESCRIPTION": "Descripción",
+        "LENGTH_OF_STAY": "Tiempo de estadia",
+        "FIXED": "Fijo",
+        "FIXED_ROUTES": "Rutas fijas",
+        "BACK_TO_START_POINT": "Regresar al punto de inicio",
+        "EVALUATE_PACKAGE": "Restricción de paquetes",
+        "EVALUATE_WEIGHT": "Peso",
+        "EVALUATE_VOLUME": "Volumen",
+        "EVALUATE_ITINERARY_ZONE": "Zonas de itinerario",
+        "DEFINE_ITINERARY": "Definido en Itinerario",
+        "RESTRICTION_ROUTE_CALCULATION": "Restricciones en el cálculo de la ruta",
+        "DURATION_LIMIT": "",
+        "VEHICLE_TYPE": "Tipo de Vehiculo",
+        "QUANTITY": "Cantidad",
+        "NO_RESTRICTION": "Sin restriccion",
+        "PLACE": "Lugar",
+        "TIME": "Tiempo",
+        "RESOURCE": "Recurso",
+        "RESOURCE_VS_TIME": "Recursos Vs Tiempo",
+        "RESOURCE_VS_TIME_WINDOWS": "Recursos Vs Tiempo Vs Ventanas de Atención",
+        "NOT_AVAILABLE": "no disponible",
+        "TIME_FROM": "Hora Inicio",
+        "TIME_END": "Hora Fin",
+        "ROUTES_UNIT": "rutas"
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "validation": {
+        "NAME_REQUIRED": "El nombre es requerido",
+        "NAME_LENGTH": "Minimo 2 caracteres para el nombre",
+        "WEIGHT_REQUIRED": "El peso es requerido",
+        "CAPACITY_REQUIRED": "Seleccione la capacidad del vehiculo",
+        "VOLUME_REQUIRED": "El Volumen es requerido",
+        "WIDTH_REQUIRED": "El peso es requerido",
+        "HIGH_REQUIRED": "EL alto es requerido",
+        "DEPTH_REQUIRED": "La profundidad es requirida",
+        "MIN_WEIGHT_REQUIRED": "Peso minimo requerido",
+        "MAX_WEIGHT_REQUIRED": "Peso maximo requerido",
+        "MIN_VOL_REQUIRED": "Volumen minimo requerido",
+        "MAX_VOL_REQUIRED": "Volumen Maximo requerido"
+      }
+    }
+  },
+  "assignedServices": {
+    "TITLE": "SERVICIOS ASIGNADOS",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Dirección",
+      "phone_number": "Número Teléfono"
+    },
+    "LINKS": {
+      "EDIT": "Editar",
+      "LIST_VIEW": "Ver lista",
+      "MAP": "Ver en el mapa",
+      "DELETE": "Eliminar servicio"
+    },
+    "form": {
+      "TITLE": "Asignar servicio",
+      "label": {
+        "VEHICLE": "Vehiculo",
+        "DRIVER": "Conductor",
+        "OBSERVATIONS": "Observaciones",
+        "LOGIN": "Login"
+      },
+      "button": {
+        "ASSIGN": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "validations": {
+        "VEHICLE_REQUIRED": "el vehiculo es requerido",
+        "OBSERVATIONS_REQUIRED": "ingrese alguna observacion"
+      },
+      "tooltip": {
+        "ADD_VEHICLE": "Agregar vehículo",
+        "ADD_DRIVER": "Agregar conductor"
+      }
+    }
+  },
+  "journeys": {
+    "TITLE": "TRAYECTOS",
+    "TABLE_TITLE": {
+      "name": "Trayecto",
+      "routes": "Rutas",
+      "servedClients": "Clientes Atendidos"
+    },
+    "LINKS": {
+      "ROUTE": "Ver Rutas",
+      "SHARE": "Compartir",
+      "CHART": "Ver gráfico",
+      "DELETE": "Eliminar trayecto",
+      "ADD_SETTING": "Agregar ajuste",
+      "MAP": "Ver en el mapa"
+    },
+    "message": {
+      "deleteConfirm": "Trayectos eliminados satisfactoriamente",
+      "MAP_ERROR_TITLE": "Error al cargar mapa",
+      "PDF_ERROR_TITLE": "Error al exportar PDF",
+      "XLSX_ERROR_TITLE": "Error al exportar Excel"
+    },
+    "form": {
+      "title": "Agregar Trayecto",
+      "legend": {
+        "GENERAL_INFORMATION": "Informacion General",
+        "JOURNEYS_FILE": "Archivo de Trayectos"
+      },
+      "label": {
+        "NAME": "Nombre",
+        "SETTINGS": "Ajuste",
+        "DROP_FILE": "Soltar Archivo",
+        "DETAIL": "Detalle",
+        "LOAD": "Cargar"
+      },
+      "messages_filters": {
+        "INVALID_FILE_TYPE": "Tipo de archivo no válido. Solo se permiten archivos con extensión .csv",
+        "INVALID_FILE_TYPE_TITLE": "Archivo no válido",
+        "INVALID_FILE_SIZE": "El archivo está vacío. Seleccione un archivo válido.",
+        "INVALID_FILE_SIZE_TITLE": "Archivo vacío",
+        "FILE_TOO_LARGE": "El archivo excede el tamaño máximo permitido de {{max}} MB.",
+        "FILE_TOO_LARGE_TITLE": "Archivo demasiado grande",
+        "FILE_TOO_MANY_RECORDS": "El archivo contiene {{count}} registros, superando el límite máximo de {{max}}. Reduzca el número de registros e intente nuevamente.",
+        "FILE_TOO_MANY_RECORDS_TITLE": "Demasiados registros",
+        "UPLOAD_ERROR_TITLE": "Error al cargar archivo",
+        "UNEXPECTED_RESPONSE_TITLE": "Respuesta inesperada",
+        "UNEXPECTED_RESPONSE": "El servidor respondió de forma inesperada. Intente nuevamente."
+      },
+      "button": {
+        "ADD": "Agregar",
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "helpText": {
+        "TITLE": "Ayuda para construcción de archivo",
+        "ITEM_ONE": "== texto del primer item ==",
+        "ITEM_TWO": "== texto del segundo item==",
+        "ITEM_THREE": "== texto del tercer item =="
+      },
+      "validation": {
+        "NAME_REQUIRED": "Este campo es requerido",
+        "NAME_ERROR": "No es valido",
+        "NAME_LENGTH": "Minimo 2 caracteres",
+        "SETTING_REQUIRED": "Seleccione un ajuste"
+      }
+    }
+  },
+  "drivers": {
+    "TITLE": "CONDUCTORES",
+    "label": {
+      "firstName": "Nombres",
+      "lastName": "Apellidos",
+      "password": "Contraseña",
+      "repeatPassword": "Confirmar Contraseña",
+      "licenceNumber": "Número Licencia",
+      "vehicle": "Vehículo",
+      "identificationNumber": "Identificación",
+      "phoneNumber": "Numero Teléfono",
+      "login": "login",
+      "active": "Activo"
+    },
+    "LINKS": {
+      "EDIT": "Editar conductor",
+      "DELETE": "Eliminar conductor"
+    },
+    "message": {
+      "deleteConfirm": "Conductores eliminados satisfactoriamente"
+    },
+    "form": {
+      "validation": {
+        "LICENCE_REQUIRED": "El numero de licencia es requerido",
+        "LICENCE_LENGTH": "Minimo 7 digitos",
+        "LICENCE_PATTERN": "la licencia no es valida",
+        "NAME_REQUIRED": "El nombre del conductorer es requerido",
+        "NAME_LENGTH": "Minimo 2 caracteres",
+        "NAME_PATTERN": "no es un nombre valida",
+        "IDENTIFICATION_REQUIRED": "La identificacion del conductor es requerida",
+        "IDENTIFICATION_LENGTH": "Minimo 7 caracteres",
+        "IDENTIFICATION_PATTERN": "no es una identificacion valida",
+        "PHONE_REQUIRED": "El numero de telefono es requerido",
+        "PHONE_LENGTH": "Minimo 7 digitos",
+        "PHONE_PATTERN": "no umero de telefono valido",
+        "PASSWORD_REQUIRED": "la contraseña es requerida",
+        "PASSWORD_LENGTH": "Minimo 6 caracteres",
+        "PASSWORD_PATTERN": "el password no es valido",
+        "VEHICLE_REQUIRED": "El vehiculo es requerido"
+      }
+    }
+  },
+  "geocoding": {
+    "TITLE": "GEOCODIFICADOR",
+    "form": {
+      "TITLE": "Geocodificar dirección",
+      "label": {
+        "COUNTRY": "País",
+        "ZONE": "Zona",
+        "CITY": "Ciudad",
+        "ADDRESS": "Dirección"
+      },
+      "button": {
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "validation": {
+        "COUNTRY_REQUIRED": "El país es requerido",
+        "CITY_REQUIRED": "La ciudad es requerida",
+        "ZONE_REQUIRED": "La zona es requerida",
+        "ADDRESS_REQUIRED": "La dirección es requerida",
+        "ADDRESS_LENGTH": "Minimo 2 caracteres",
+        "ADDRESS_NOFOUND": "No se encontró dirección valida"
+      }
+    }
+  },
+  "package": {
+    "TITLE": "Direcciones",
+    "form": {
+      "TITLE": "INFORMACIÓN DE VISITA",
+      "label": {
+        "GUIDE_NUMBER": "Numero de guia",
+        "ZONE": "Zona",
+        "ADDRESS": "Dirección",
+        "TIME_OF_STAY": "Tiempo de estadia",
+        "PIECE_NUMBER": "Numero de Piezas",
+        "WEIGHT": "Peso",
+        "CAPACITY": "Capacidad",
+        "VOLUME": "Volumen",
+        "WIDTH": "Ancho",
+        "HEIGHT": "Alto",
+        "DEPTH": "Profundidad",
+        "OBSERVATIONS": "Observaciones",
+        "PHONE_NUMBER": "Número De Telefono",
+        "START_DELIVERY_TIME": "Hora mín. entrega",
+        "END_DELIVERY_TIME": "Hora máx. entrega"
+      },
+      "legend": {
+        "SENDER": "Remitente",
+        "RECEIVER": "Destinatario"
+      },
+      "button": {
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "tooltip": {
+        "GEOCODING": "Geocodificar dirección",
+        "MAP": "Ubicar dentro del mapa"
+      },
+      "validation": {
+        "ADDRESS_REQUIRED": "la dirección es requerida",
+        "ADDRESS_LENGTH": "Minimo 2 caracteres",
+        "LENGTH_OF_STAY_REQUIRED": "El tiempo de estadia es requerido",
+        "WEIGHT_REQUIRED": "Peso de la entrega requerido",
+        "VOLUME_REQUIRED": "Volumen de la entrega requerido",
+        "RECIPIENT_GUIDE_REQUIRED": "Guia de destinatario requerida",
+        "RECIPIENT_GUIDE_LENGTH": "Minimo 2 caracteres",
+        "ZONE_REQUIRED": "Seleccione una zona de la lista",
+        "DELIVERY_TIME": "Hora de entrega requerida",
+        "PIECE_NUMBER_REQUIRED": "El número de piezas es requerido",
+        "WIDTH_REQUIRED": "El ancho es requerido",
+        "HIGH_REQUIRED": "El alto es requerido",
+        "DEPTH_REQUIRED": "La profundidad es requerida"
+      }
+    }
+  },
+  "routes": {
+    "TITLE": "RUTAS",
+    "TABLE_TITLE": {
+      "name": "Lugares",
+      "address": "Visitas",
+      "phone_number": "Número Teléfono",
+      "weightUsed": "Peso usado",
+      "volumeUsed": "Volumen usado"
+    },
+    "LABEL": {
+      "journey": "Trayecto",
+      "showRoutesInMap": "Mostrar lista de rutas",
+      "closeRoutesInMap": "Ocultar lista de rutas"
+    },
+    "LINKS": {
+      "ADD_JOURNEY": "Agregar trayecto",
+      "ADD_SERVICE": "Agregar servicio",
+      "INFO_ROUTE": "Información de la ruta",
+      "MAP": "Ver en el mapa",
+      "SHARE": "Compartir",
+      "LIST_VIEW": "Ver lista de servicios",
+      "DELETE": "Eliminar ruta",
+      "SHOW_IN_MAP": "VER EN MAPA"
+    }
+  },
+  "journey": {
+    "TITLE": "TRAYECTO",
+    "ROUTER": "Rutear",
+    "START_POINT": "Punto De Inicio",
+    "LINKS": {
+      "DETAIL": "Ver detalle",
+      "ADD_PLACE": "Agregar punto de inicio",
+      "MAP": "Ver en el mapa",
+      "EDIT": "Editar dirección",
+      "DELETE": "Eliminar dirección",
+      "FILTER": "Filtrar por estado de la dirección"
+    }
+  },
+  "visitsUnattended": {
+    "TITLE": "VISITAS SIN ATENDER"
+  },
+  "itinerary": {
+    "TITLE": "ITINERARIO",
+    "ROUTER": "Rutear",
+    "START_POINT": "Punto De Inicio",
+    "SETTINGS": "Ajuste",
+    "STATE_VISIT": "Estado De Visita",
+    "VALIDATION_STATUS": "Estado de Validación",
+    "validationFilter": {
+      "ALL": "Todos",
+      "OK": "OK",
+      "WARNINGS": "Alertas",
+      "ERRORS": "Errores"
+    },
+    "NO_DATA": "No se encuentran visitas para esté trayecto",
+    "ST_GEO_POINTS": {
+      "NOT_FINDED": "No se encontraron puntos geográficos"
+    },
+    "LINKS": {
+      "ADD_PLACE": "Agregar punto de inicio",
+      "ADD_SETTING": "Agregar ajuste",
+      "MAP": "Ver en el mapa",
+      "EDIT": "Editar dirección",
+      "DELETE": "Eliminar dirección",
+      "FILTER": "Filtrar por estado de la dirección"
+    },
+    "validation": {
+      "PLACE_REQUIRED": "Punto de inicio requerido",
+      "SETTING_REQUIRED": "Ajuste requerido",
+      "MISSING_LOCATION": "Dirección sin ubicar (sin coordenadas)",
+      "MISSING_WEIGHT": "Peso no definido (requerido por ajustes)",
+      "MISSING_VOLUME": "Volumen no definido (requerido por ajustes)",
+      "MISSING_TIME_STATE": "Tiempo de estadía no definido (requerido por ajustes: definido en itinerario)",
+      "MISSING_ZONE": "Zona no definida (requerida por ajustes)",
+      "MISSING_START_DELIVERY_TIME": "Hora mín. entrega no definida (requerida por ventanas de atención)",
+      "MISSING_END_DELIVERY_TIME": "Hora máx. entrega no definida (requerida por ventanas de atención)"
+    },
+    "messages": {
+      "NO_RECORDS_TITLE": "Sin registros",
+      "NO_RECORDS": "No se han ingresado registros para optimizar. Cargue un archivo CSV con las direcciones a rutear.",
+      "VALIDATION_ERROR_TITLE": "Error de validación",
+      "INVALID_PACKAGES_BLOCK": "Se encontraron {{count}} visitas con errores críticos (sin ubicación). Corrija los datos antes de continuar.",
+      "WARNING_TITLE": "Advertencias de validación",
+      "WARNING_PACKAGES": "Se encontraron {{count}} visitas con datos incompletos. Estos datos no serán considerados en la optimización.",
+      "CONTINUE_ROUTING": "Continuar con el ruteo"
+    }
+  },
+  "catalogs": {
+    "TITLE": "CATALOGO",
+    "label": {
+      "name": "Nombre",
+      "parent": "Padre",
+      "ancestors": "Ancestros"
+    },
+    "LINKS": {
+      "ADD_ANCESTORS": "Agregar ancestro",
+      "EDIT": "Editar catalogo",
+      "DELETE": "Eliminar catalogo"
+    },
+    "message": {
+      "deleteConfirm": "Catálogos eliminados satisfactoriamente"
+    },
+    "form": {
+      "validation": {
+        "NAME_REQUIRED": "El nombre es requerido",
+        "NAME_LENGTH": "Mínimo 2 caracteres"
+      }
+    }
+  },
+  "address": {
+    "form": {
+      "TITLE": "Información de dirección",
+      "label": {
+        "ADDRESS": "Dirección",
+        "TIME_OF_STAY": "Tiempo de estadía",
+        "WEIGHT": "Peso",
+        "VOLUMEN": "Volumen",
+        "RECIPIENT_GUIDE": "Guía destinatario",
+        "ALIAS": "Alias",
+        "ZONE": "Zona",
+        "OBSERVATIONS": "Observaciones",
+        "START_DELIVERY_TIME": "Hora mín. entrega",
+        "END_DELIVERY_TIME": "Hora máx. entrega"
+      },
+      "button": {
+        "ACEPT": "Aceptar",
+        "CANCEL": "Cancelar"
+      },
+      "tooltip": {
+        "GEOCODING": "Geocodificar dirección",
+        "MAP": "Ubicar dentro del mapa"
+      },
+      "validation": {
+        "ADDRESS_REQUIRED": "La dirección es requerida",
+        "ADDRESS_LENGTH": "Mínimo 2 caracteres",
+        "LENGTH_OF_STAY_REQUIRED": "El tiempo de estadía es requerido",
+        "WEIGHT_REQUIRED": "El peso es requerido",
+        "VOLUME_REQUIRED": "El volumen es requerido",
+        "RECIPIENT_GUIDE_REQUIRED": "La guía de destinatario es requerida",
+        "RECIPIENT_GUIDE_LENGTH": "Mínimo 2 caracteres",
+        "ZONE_REQUIRED": "Seleccione una zona de la lista"
+      }
+    }
+  },
+  "errors": {
+    "code": {
+      "VALIDATION_ERROR": "Revisa los campos marcados.",
+      "BAD_REQUEST": "La solicitud no es válida.",
+      "INVALID_OTP": "Código incorrecto. Te quedan {{attemptsRemaining}} intentos.",
+      "INVALID_TOKEN": "El enlace no es válido o ya se usó.",
+      "TOKEN_EXPIRED": "El enlace venció. Solicita uno nuevo.",
+      "EMAIL_NOT_VERIFIED": "Debes verificar tu correo antes de entrar.",
+      "UNAUTHORIZED": "Tu sesión terminó. Vuelve a iniciar sesión.",
+      "INVALID_CREDENTIALS": "Correo o contraseña incorrectos.",
+      "ACCOUNT_DISABLED": "La cuenta está desactivada.",
+      "FORBIDDEN": "No tienes permiso para esta acción.",
+      "NOT_FOUND": "El registro no existe o fue eliminado.",
+      "CONFLICT": "No se puede completar: el registro está en uso o ya existe.",
+      "EMAIL_ALREADY_EXISTS": "Ya existe una cuenta con ese correo.",
+      "SEAT_LIMIT_EXCEEDED": "Se alcanzó el límite de usuarios del plan.",
+      "OTP_EXPIRED": "El código venció. Pide uno nuevo.",
+      "INVITATION_TOKEN_GONE": "La invitación ya no está disponible.",
+      "UNPROCESSABLE_ENTITY": "La operación no cumple una regla del negocio.",
+      "MAX_ATTEMPTS_EXCEEDED": "Superaste el número de intentos.",
+      "MAX_RESENDS": "Superaste el número de reenvíos.",
+      "ENTERPRISE_PLAN_SELF_SERVICE": "El plan Enterprise se contrata con ventas.",
+      "SEAT_DECREASE_BLOCKED": "No puedes bajar de los usuarios activos.",
+      "ACCOUNT_LOCKED": "Cuenta bloqueada hasta {{lockedUntil}}.",
+      "RATE_LIMIT_EXCEEDED": "Demasiadas solicitudes. Espera {{seconds}} segundos.",
+      "INTERNAL_ERROR": "Ocurrió un error inesperado. Inténtalo de nuevo.",
+      "ROUTING_ENGINE_UNAVAILABLE": "El motor de rutas no está disponible. Reintenta en unos minutos.",
+      "STRIPE_INTEGRATION_ERROR": "El proveedor de pagos no respondió. Reintenta.",
+      "NETWORK_ERROR": "Sin conexión con el servidor. Revisa tu red.",
+      "SERVICE_UNAVAILABLE": "El servicio no está disponible.",
+      "GATEWAY_TIMEOUT": "El servidor tardó demasiado en responder.",
+      "BAD_GATEWAY": "No se pudo contactar el servidor.",
+      "INVALID_SORT": "Ese orden no está permitido."
+    },
+    "status": {
+      "0": "Sin conexión.",
+      "400": "Solicitud no válida.",
+      "401": "Sesión no válida.",
+      "403": "Acceso denegado.",
+      "404": "No encontrado.",
+      "409": "Conflicto con el estado actual.",
+      "410": "Ya no disponible.",
+      "422": "Regla de negocio no cumplida.",
+      "423": "Bloqueado.",
+      "429": "Demasiadas solicitudes.",
+      "500": "Error del servidor.",
+      "502": "Servidor no disponible.",
+      "503": "Servicio no disponible.",
+      "504": "Tiempo de espera agotado."
+    },
+    "unknown": "Ocurrió un error."
+  },
+  "ui": {
+    "state": {
+      "loading": "Cargando…",
+      "empty": "No hay registros todavía.",
+      "error": "No se pudo cargar la información."
+    },
+    "actions": {
+      "retry": "Reintentar",
+      "create": "Crear",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "delete": "Eliminar",
+      "edit": "Editar"
+    },
+    "table": {
+      "range": "{{from}}–{{to}} de {{total}}",
+      "selected": "{{count}} seleccionados",
+      "selectPage": "Seleccionar la página",
+      "selectRow": "Seleccionar fila",
+      "actions": "Acciones",
+      "pagination": "Paginación",
+      "prev": "Página anterior",
+      "next": "Página siguiente"
+    },
+    "form": {
+      "unsaved": "Cambios sin guardar"
+    },
+    "confirm": {
+      "title": "Confirmar",
+      "message": "¿Seguro que quieres continuar?"
+    }
+  }
+}

@@ -8,6 +8,11 @@ App.service('authResponseInterceptor', function($q, $timeout, $location, tokenSt
     responseError: function(response) {
       var INVALID_TOKEN = 'invalid_token';
 
+      // FND-002: las llamadas de ApiClient (/api/v1) gestionan sus errores con ApiError.
+      if (response && response.config && response.config.apiV1) {
+        return $q.reject(response);
+      }
+
       if (response.status == 0) {
         alert("Verifique su conexión a Internet");
         //        messageStorage.add("warning", "Verifique su conexión a Internet");

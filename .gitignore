@@ -7,3 +7,10 @@ cosas
 app
 !ruteando-ng/src/app/
 vendor
+# SDD
+.env
+reports/
+coverage/
+test-results/
+.tmp/
+playwright-report/

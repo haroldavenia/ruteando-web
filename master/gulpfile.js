@@ -24,7 +24,8 @@ var paths = {
   app:     '../app/',
   markup:  'jade/',
   styles:  'less/',
-  scripts: 'js/'
+  scripts: 'js/',
+  i18n:    'i18n/'
 }
 
 // if sass -> switch to sass folder
@@ -250,6 +251,7 @@ function watching() {
   $.livereload.listen();
 
   gulp.watch(source.scripts,         gulp.series(scripts_app));
+  gulp.watch(paths.i18n + '*.json',  gulp.series(i18n));
   gulp.watch(source.styles.watch,    gulp.series(styles_app, styles_app_rtl));
   gulp.watch(source.styles.themes,   gulp.series(styles_themes));
   gulp.watch(source.templates.views, gulp.series(templates_views));
@@ -292,7 +294,14 @@ function prod(done) {
 // VENDOR BUILD
 var vendorTask = gulp.series(vendor_base, vendor_app);
 
+// i18n: diccionarios versionados en master/i18n → app/i18n (FND-002; app/ no se versiona)
+function i18n() {
+  log('Copying i18n..');
+  return gulp.src(paths.i18n + '*.json').pipe(gulp.dest(paths.app + 'i18n'));
+}
+
 var assets = gulp.series(
+  i18n,
   scripts_app,
   styles_app,
   styles_app_rtl,

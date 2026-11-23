@@ -1,0 +1,93 @@
+name: security
+
+# Ver docs/engineering/calidad-y-ci.md. gitleaks se usa como binario open source
+# (la Action oficial exige licencia en repos privados de organización), versión
+# pineada como en la plantilla harness-engineering (8.30.1).
+on:
+  pull_request:
+    branches: [main, angularjs-main]
+  push:
+    branches: [main, angularjs-main]
+  schedule:
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    env:
+      GITLEAKS_VERSION: "8.30.1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Descargar gitleaks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release download "v${GITLEAKS_VERSION}" --repo gitleaks/gitleaks --pattern "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" -O gitleaks.tar.gz --clobber
+          tar -xzf gitleaks.tar.gz gitleaks
+      - name: Escanear secretos (diff del PR o historial completo en main/cron)
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./gitleaks git . --log-opts="origin/${{ github.base_ref }}..HEAD" --redact --no-banner -v
+          else
+            ./gitleaks git . --redact --no-banner -v
+          fi
+
+  npm-audit:
+    name: npm-audit
+    runs-on: ubuntu-latest
+    # Informativo hasta sanear dependencias heredadas (riesgo R5, PLT-002): publica el
+    # resultado y avisa, pero el check termina en verde para no confundirse con un bloqueo.
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: npm audit por paquete con lockfile
+        run: |
+          set -uo pipefail
+          status=0
+          for lock in $(git ls-files '*package-lock.json' ':!:**/node_modules/**'); do
+            d=$(dirname "$lock")
+            echo "### npm audit: $d" >> "$GITHUB_STEP_SUMMARY"
+            (cd "$d" && npm audit --audit-level=high --omit=dev) >> "$GITHUB_STEP_SUMMARY" 2>&1 || status=1
+          done
+          if [ "$status" -ne 0 ]; then
+            echo "::warning::npm audit encontró vulnerabilidades altas o críticas (ver resumen del job). No bloquea hasta PLT-002."
+          fi
+          exit 0
+
+  codeql:
+    name: codeql
+    if: vars.ENABLE_CODE_SECURITY == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+      - uses: github/codeql-action/analyze@v4
+
+  dependency-review:
+    name: dependency-review
+    if: github.event_name == 'pull_request' && vars.ENABLE_CODE_SECURITY == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure

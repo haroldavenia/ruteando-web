@@ -1,0 +1,24 @@
+{
+  "name": "PUT /api/v1/tenants/{id}",
+  "request": {
+    "method": "PUT",
+    "url": "/api/v1/tenants/{tenant_id}",
+    "body": {
+      "name": "postman-5f6f1325079242c7807dd3c411677b3c updated"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99b0a2fa810fb39fb5a3",
+      "name": "postman-5f6f1325079242c7807dd3c411677b3c updated",
+      "slug": "postman-5f6f1325079242c7807dd3c411677b3c-second",
+      "isActive": true,
+      "seatLimit": 2,
+      "seatUsed": 0,
+      "plan": "free",
+      "createdAt": "2026-10-11T14:14:08.697Z",
+      "updatedAt": "2026-10-11T14:14:08.920Z"
+    }
+  }
+}

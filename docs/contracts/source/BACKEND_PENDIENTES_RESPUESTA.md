@@ -1,0 +1,137 @@
+# Respuesta del backend a los pendientes de la migración de ruteando-web
+
+Nov 17, 2026 · Rama `feature/f4-12-frontend-migration-gaps` · Actualizado Nov 18, 2026 (unidades fijas, rama `feature/f4-13-platform-measurement-units`) · Nov 19, 2026 (retiro del legacy, rama `feature/f4-18-remove-legacy`; tiempos de `journeys/plan`, D11)
+
+Responde, ítem por ítem, a [Backend Hanoit pendientes para la migración de ruteando-web](./Backend%20Hanoit%20pendientes%20para%20la%20migración%20de%20ruteando-web.md).
+
+## Resumen
+
+- **Defectos corregidos en código:** los 7 defectos de código (B2 a B8). B2 y B3, los críticos, ya no bloquean F4.
+- **Inconsistencias:** las 5 cerradas, con contrato único.
+- **Decisiones:** respondidas las 13. D3, D4, D5 y D6 cambiaron el contrato.
+- **D11 cerrado como documentado (2026-11-19):** hay tiempos medidos para 100, 500 y 2000 paquetes. 2000 pasa de 60 s; el modo asíncrono queda como tarea aparte, no como ítem abierto.
+- **Pendientes de operación:** 5 ítems no son código (E1, E2, B1, D12 y D13). Tienen el procedimiento escrito, pero aún sin dueño asignado. No se cierran desde el repositorio.
+- **Retirados (2026-11-19):** E5 y D9. La plataforma arranca en limpio: no hay migración de datos del backend anterior y los restos del modelo legacy se borran con [`LEGACY_DB_CLEANUP.md`](../operations/LEGACY_DB_CLEANUP.md).
+
+## Sigue abierto
+
+No se cierran desde el repositorio. Cada uno ya tiene el procedimiento en su fila.
+
+| # | Quién | Qué falta |
+| --- | --- | --- |
+| E1 | Infra | URL fija del entorno de desarrollo (y `X-Api-Key` si hay gateway). Sonda: `GET /api/v1/journeys` sin token responde 401 durante una semana. |
+| E2 | Operación | Tenant `sdd-test` con `tenant_admin`, `agent`, `driver` y un `super_admin` (`tenantId` nulo). Asientos libres y contraseñas de 16 caracteres. No hay seeder a propósito. |
+| B1 | Cuenta Brevo | Remitente verificado, SPF/DKIM, plantillas #1 #2 #3 y API key. Los tres correos deben llegar en menos de 2 minutos. |
+| D12 | Dueño de Firebase | Configuración pública web y clave VAPID. Si no llegan antes de F6-05, el push web se aplaza. |
+| D13 | Cuenta Stripe | Claves de test, precios `stripe.prices.*` y webhook `/api/v1/webhooks/stripe`. |
+
+Mejoras que el informe deja fuera del cierre (M1 a M5) y el modo asíncrono de `journeys/plan` siguen sin implementarse.
+
+Estados usados en las tablas:
+
+- **corregido:** cambio de código con pruebas automatizadas en la rama.
+- **documentado:** el comportamiento ya era correcto o se fijó por decisión; solo cambió la documentación.
+- **operación:** requiere una acción de infraestructura o de cuentas, fuera del repositorio.
+- **retirado (arranque en limpio):** dependía de la migración de datos legacy, que se eliminó.
+
+El criterio de cierre de cada ítem es el mismo del documento original salvo que la tabla diga otra cosa. Las sondas del frontend son las que lo validan.
+
+## Cambios de contrato que el frontend debe adoptar
+
+Estos once cambios rompen o amplían respuestas ya publicadas. El detalle está en [`migration-guide.md`](./migration-guide.md) y en [`docs/api/endpoints.md`](../api/endpoints.md).
+
+| Cambio | Antes | Ahora |
+| --- | --- | --- |
+| Refresh rechazado (C1) | 401 con texto `Unauthorized access` | 401 JSON con `error = INVALID_TOKEN` (no existe o ya rotado) o `TOKEN_EXPIRED` (caducado) |
+| Rotación del refresh (C3) | Devolvía el mismo refresh, que seguía valiendo | Cada refresh devuelve un refresh nuevo y revoca el usado; reusarlo da 401 `INVALID_TOKEN` |
+| 401 y 403 de seguridad | Cuerpo de texto | `{error: "UNAUTHORIZED"\|"FORBIDDEN", message, timestamp, path}` |
+| Página de `audit-logs` (C4) | `Page` de Spring (`number`, `pageable`…) | `PageResponse`: `{content, totalElements, totalPages, page, size}` |
+| `stopType` de las paradas (B3) | `service` | `delivery` o `pickup` según `package.serviceType` (`mixed` pasa a `delivery`); `depot` no cambia. Las jornadas anteriores conservan `service` |
+| `boundary` de zonas (B4) | No deserializaba (500) | GeoJSON estándar `{type: "Polygon", coordinates: [[[lon, lat], …]]}` |
+| Borrar un registro en uso (D3) | 204 y la referencia quedaba rota | 409 `CONFLICT` con `details {referencedBy, ids}` |
+| Guía duplicada en el CSV (D16) | 409 de toda la carga; los lotes anteriores quedaban guardados | 200 con la fila en `errors[]` (`is repeated in the file` o `already exists`); el resto se guarda |
+| Unidades de medida (E5, D4) | `config.defaultWeightUnit` / `defaultVolumeUnit` por tenant, texto libre | Unidades fijas de la plataforma en `GET /api/v1/units` (g, cm³, cm, m, s). Ya no vienen en `config`; enviarlas a `POST`/`PUT /tenants` da 400 `VALIDATION_ERROR` |
+| Reporte de posición (D8) | Body con `driverId`; respuesta con `date` (hora local) | Sin `driverId` (sale del JWT); `recordedAt` opcional en UTC. Respuesta `{id, driverId, resourceId, longitude, latitude, address, recordedAt}` |
+| Reporte de entrega del conductor | `status` en valores legacy (`ENTREGADO`, `RECHAZADO`…) | `status` es una clave de `PackageStatus` y se añade `reason` (motivo por tenant, D14). Respuesta con `statusReason`. 400 / 404 / 422 como `PATCH /packages/{id}/status/{status}` |
+| Asignaciones | `/api/v1/assigned-services` y `GET /api/v1/driver/assignments` | Retirados (404). El vehículo del conductor es el recurso con `driverId`; sus rutas, `GET /api/v1/driver/routes` |
+| Migración (D9) | `/api/v1/admin/migrate*` | Retirada (404). Sin migración de datos legacy |
+
+## 1. Entorno y accesos
+
+| # | Estado | Respuesta | Contrato o procedimiento | Responsable |
+| --- | --- | --- | --- | --- |
+| E1 | operación | El backend escucha en el puerto 8000. Las caídas 530/502 vinieron del túnel de Cloudflare y del arranque, no de la API. | Publicar una URL fija del entorno de desarrollo detrás del proxy del frontend (ver E4). Si hay gateway con `X-Api-Key`, entregarla por el gestor de secretos del equipo. Sonda: `GET /api/v1/journeys` sin token responde 401 JSON `UNAUTHORIZED`. | Pendiente (infra) |
+| E2 | operación | No hay seeder de cuentas de prueba, a propósito, para no crear credenciales en código. | Crear el tenant `sdd-test` con `POST /api/v1/auth/register`, verificarlo e invitar `agent` y `driver` con `POST /api/v1/invitations`. El `super_admin` lo crea un operador en `users` con `tenantId: null`. Para tener asientos libres, el tenant necesita un plan pago o en trial (el plan FREE tiene 2 asientos), o que el SUPER_ADMIN ajuste `seatLimit`. Todas las contraseñas siguen la política de 16 caracteres. | Pendiente (backend) |
+| E3 | documentado | `GET /v3/api-docs` (JSON) y `/swagger-ui.html` ya están abiertos sin token (`springdoc.api-docs.enabled: true`). | El frontend descarga `/v3/api-docs` para su `contract-diff`. Los esquemas de esta rama ya incluyen los 409, 422, 401 y 502 nuevos. | — |
+| E4 | documentado | Decisión: proxy del mismo origen (ADR-F001). El frontend llama a la API por su propio origen, y el proxy reenvía sin la cabecera `Origin`. | No se amplía `cors.allowed-origins` (hoy `localhost:3010` y `localhost:8080`). Un `Origin` no listado sigue respondiendo 403; es el comportamiento esperado. Ver [`APPLICATION_CONFIG.md`](../configuration/APPLICATION_CONFIG.md). | — |
+| E5 | retirado (arranque en limpio) | Ya no hay migración de datos (2026-11-19). Se mantiene la decisión del 2026-11-18: las unidades son **fijas de la plataforma**, no del tenant: peso en gramos, volumen en cm³, dimensiones en cm, distancia en metros y duración en segundos. `config.defaultWeightUnit` y `defaultVolumeUnit` no existen en el tenant; si una base antigua los tiene, los quita el script de [`LEGACY_DB_CLEANUP.md`](../operations/LEGACY_DB_CLEANUP.md). | `GET /api/v1/units` (cualquier rol) devuelve las unidades; el catálogo `MeasurementUnit` es de solo lectura. El frontend convierte para mostrar y capturar. Pruebas: `MeasurementUnitsE2ETest`, `MeasurementUnitServiceImplTest`. | — |
+
+## 2. Defectos
+
+| # | Estado | Causa | Qué se hizo | Contrato final | Pruebas |
+| --- | --- | --- | --- | --- | --- |
+| B2 | corregido | El algoritmo C++ recibe ids numéricos. El servicio pasaba el ObjectId del paquete y fallaba con `For input string`. | Antes de llamar al algoritmo se asignan ids por posición (`"0"`, `"1"`, …) y se guarda la tabla posición → paquete. La vuelta al depósito solo se quita del resultado si la topología es de ida y vuelta (antes se quitaba siempre la última parada). | `POST /api/v1/journeys/plan` responde 201 con ids hexadecimales en `mode=packages` y `mode=messenger`. | `JourneyPlanningServiceImplTest` y `AlgorithmResultConverterTest` cubren `mode=packages`. `mode=messenger` (`createMessengerJourney`) no tiene test de éxito: arma `new DistanceTableDAOJNI()` dentro del método. |
+| B3 | corregido | Mismo origen que B2: sin la tabla de ids no se podía resolver el paquete de cada parada. | Cada parada de servicio trae `packageId` y `packageInfo`. `stopType` pasa a `delivery` o `pickup`. | `packageInfo = {id, trackingCode, address, status}`. **Ojo:** el campo de la guía se llama `trackingCode` (valor de `guideNumber`), no `guideNumber`. `placeId` solo viene en `stopType = depot`. | Mismos tests |
+| B1 | operación | El envío pasa por Brevo; el código no se cambió. Brevo descarta en silencio si el remitente no está verificado o si la plantilla no existe en la cuenta. | Verificar en Brevo el remitente y el dominio (SPF/DKIM), que las plantillas #1 (verificación), #2 (restablecer) y #3 (invitación) existan, y la API key del entorno. Revisar los logs transaccionales de Brevo por destinatario. | Criterio original: los tres correos llegan en menos de 2 minutos. | — |
+| B7 | corregido | El parser exigía el delimitador `,`, no toleraba BOM ni comillas, y devolvía 400 sin mensaje. | El parser acepta BOM, `;` como delimitador (si la cabecera no tiene comas) y campos entre comillas. Cada error trae un mensaje y el número de línea real del archivo. Guarda en lotes de 500. Las guías duplicadas son errores de fila desde D16. | 200 `{totalRows, successCount, errorCount, errors[{row, message}]}` también con filas inválidas. 400 si el archivo está vacío, no es CSV o la cabecera no tiene `address`. 422 si supera el tope de filas (D5). Reglas en [`GEOCODING_API.md`](../api/GEOCODING_API.md). | `PackageUploadTest`, `CsvUtilsTest` |
+| B5 | corregido | Las validaciones lanzaban excepciones genéricas (500), y la configuración `breakTime` no se validaba. | Las validaciones responden 400 `BAD_REQUEST` con mensaje. Una falla de OSRM responde 502 `ROUTING_ENGINE_UNAVAILABLE`. `messenger` exige un depósito con ubicación y un `breakTime` con inicio anterior al fin. | El 200 de messenger lo afirma `MessengerServiceImplTest.route_returnsOneRoute`: OSRM y el clustering van mockeados y devuelve una ruta. No reproduce el JSON de [`API_ROUTING_V3.md`](../api/API_ROUTING_V3.md) §4 contra OSRM real (ese ejemplo trae `timeInit` y `breakTime`). El ejemplo de `nearest` se corrigió: pedía 5 paquetes cercanos con 1 solo paquete. | `NearestServiceImplTest`, `MessengerServiceImplTest` |
+| B4 | corregido | Jackson no puede construir `GeoJsonPolygon` de Spring Data. | `ZoneRequest` y `ZoneResponse` usan `GeoJsonPolygonDto`. Anillos de al menos 4 posiciones `[lon, lat]`, cerrados. | 201/200 al crear y editar. `GET /zones/containing` encuentra la zona. Un anillo abierto da 400. | `GeoJsonPolygonDtoTest`, `ZoneTenantIsolationTest` |
+| B6 | corregido | El dominio admitía valores que el enum `PackageStatus` rechaza. | Desde el 2026-11-18 `PackageStatus` (y los otros once catálogos de enum) ya no se guardan en `master_domains`: la API los arma desde el enum, así que no pueden divergir. Si una base antigua guarda copias, las borra el script de [`LEGACY_DB_CLEANUP.md`](../operations/LEGACY_DB_CLEANUP.md). Se limpiaron los ejemplos con `returned` en Swagger, Postman y `API_TESTING_GUIDE.md`. | `GET /master-domains/PackageStatus/values` devuelve solo `pending`, `attended`, `unattended` y `cancelled`. | `EnumCatalogRegistryTest`, `DropLegacyCollectionsScriptTest` |
+| B8 | corregido | Los listados ignoraban `sort`. | `sort=campo` o `sort=campo,asc\|desc`, con lista blanca por recurso. Sin `sort` se mantiene el orden actual. | Un campo fuera de la lista blanca o una dirección inválida responden 400 `BAD_REQUEST` con los campos permitidos. Las listas blancas están en [`endpoints.md`](../api/endpoints.md#ordenamiento-sort). | `SortParserTest`, `RoutingApiSurfaceCoverageTest` |
+
+## 3. Inconsistencias
+
+| # | Estado | Verdad única |
+| --- | --- | --- |
+| C1 | corregido | `POST /api/v1/auth/refresh` con un token inexistente, revocado o ya rotado responde 401 `INVALID_TOKEN`; con un token caducado, 401 `TOKEN_EXPIRED`. Siempre JSON `ErrorResponse`. Si el access token falta o es inválido en cualquier ruta protegida, la respuesta es 401 `UNAUTHORIZED`. `/error` es público, para que un error interno no se convierta en 401. |
+| C2 | documentado | Se mantienen los dos códigos en verificar correo y restablecer contraseña: 400 `INVALID_TOKEN` si el token no existe o ya se usó, y 400 `TOKEN_EXPIRED` si existió pero venció (24 h para verificación, 1 h para restablecer). Acción del frontend: con `TOKEN_EXPIRED`, ofrecer reenviar; con `INVALID_TOKEN`, volver al inicio. |
+| C3 | corregido | Cada refresh revoca el usado y devuelve uno nuevo. Hay **una sesión de refresh por usuario**: un login nuevo en otro dispositivo invalida el refresh anterior. Si llegan dos refresh en paralelo con el mismo token, uno gana y el otro recibe 401 `INVALID_TOKEN`, así que el frontend debe hacer *single-flight* (una sola petición de refresh en curso, las demás esperan). |
+| C4 | corregido | `GET /api/v1/audit-logs`, `/audit-logs/me` y `/audit-logs/admin` devuelven `PageResponse` con `page` (0-based), igual que el resto. |
+| C5 | documentado | [`AUTHENTICATION_ENDPOINTS.md`](../auth/AUTHENTICATION_ENDPOINTS.md) pasa a `/api/v1` con rotación y los 401 nuevos. `AUTH_USER.md` y `FLUJO_AUTENTICACION_DETALLADO.md` quedan marcados como históricos. |
+
+## 4. Decisiones
+
+| # | Estado | Decisión y contrato |
+| --- | --- | --- |
+| D1 | documentado | Se mantienen las URLs actuales (decisión: no cambiar plantillas). **Verificación:** `{app.frontend-url}/verify-email?token=`, o `{app.email-verification-link-base}/api/v1/auth/verify-email?token=` si esa propiedad tiene valor (el backend responde HTML). **Restablecer:** `{app.frontend-url}/reset-password?token=`. **Invitación:** el backend envía solo el parámetro `invitation_token` a la plantilla #3 de Brevo, y la URL la arma la plantilla. `app.frontend-url` vale `https://app.hanoit.com` por defecto. El frontend debe resolver esas rutas sin `#`: o redirige `/verify-email` y `/reset-password` a sus rutas hash, o se cambia `frontend-url` y la plantilla #3 por entorno. |
+| D2 | documentado | `PUT` **sustituye** el registro: un campo omitido queda en `null` o en su valor por defecto. Excepciones que se conservan aunque no se envíen: Resource conserva `quantity` e `isDefault`; ResourceType conserva `osrmProfile`; Package conserva `pieceNumber` y `status` (el estado cambia solo por `PATCH /packages/{id}/status/{status}`); User cambia la contraseña solo si se envía `password`. `PUT /auth/me` y `PUT /tenants/me` actualizan solo lo enviado. Lo que hace hoy el frontend (reenviar el registro completo) es lo correcto. |
+| D3 | corregido | Responden 409 `CONFLICT` con `details = {referencedBy, ids}` (máximo 20 ids). Casos: tipo de recurso usado por recursos (`referencedBy: "resources"`); lugar usado como depósito de un recurso (`"resources"`) o como inicio o fin de un settings activo (`"settings"`); settings usado por una jornada no eliminada (`"journeys"`); zona referida por lugares (`"places"`) o paquetes (`"packages"`); paquete incluido en una jornada no eliminada (`"journeys"`). Los registros ya eliminados (soft delete) no bloquean. |
+| D4 | corregido | `GET /api/v1/tenants/me` incluye `config` con los límites del plan (`maxDeposits`, `maxDrivers`, `maxRoutesMonthly`, `maxAdmins`, `maxAddressesPerFile`, `maxGeocodedAddresses`, `maxDefaultResources`). Desde el 2026-11-18 **no** trae unidades: son de la plataforma y se leen en `GET /api/v1/units` (ver E5). `capacity` y `restriction` van en g y cm³, `measure` en cm. El algoritmo compara números crudos, así que paquete y capacidad deben estar en la misma unidad. |
+| D5 | corregido | `GET /api/v1/packages/upload/limits` (cualquier usuario autenticado, incluido `agent`) devuelve `{maxRows: 10000, maxAddressesPerFile, effectiveLimit}`, con `effectiveLimit = min(10000, maxAddressesPerFile del tenant; 5000 si el tenant no lo tiene)`. Un CSV con más filas responde 422 `UNPROCESSABLE_ENTITY` con `details {limit, rows}` sin guardar nada. |
+| D6 | corregido | `POST /master-domains/{code}/values` y `PATCH …/values/{key}/toggle` quedan solo para `tenant_admin` y `super_admin` (403 `FORBIDDEN` para los demás); la lectura sigue abierta a todos. Desde el 2026-11-18 los doce catálogos respaldados por enums (`OsrmProfile`, `RouteTopology`, `RestrictionType`, `TypeLengthOfStay`, `IdentifierType`, `ServiceType`, `PackageStatus`, `GeocodingStatus`, `Role`, `JourneyStatus`, `PlaceType`, `StopType`) se sirven desde el código y no se guardan en la base: `id = null`, valores siempre activos, claves de `Role` en minúsculas como el JWT. Escribir en ellos o en `MeasurementUnit` responde 422 con `details {code, readOnlyCodes}`; solo `audit_actions` es editable. **Nota:** los catálogos son globales; los motivos por tenant están en D14. |
+| D7 | documentado | `GET /journeys/{id}/navigations` devuelve `RouteNavigation[]`; `/{routeIndex}` devuelve uno. Forma: `{id, tenantId, journeyId, routeIndex, osrmVersion: "v4"\|"v5", instructionsLegacy, viaPointsLegacy, legs[], snappedWaypoints[], createdAt}`. En v5: `legs[] = {distance (m), duration (s), summary, steps[]}` y `steps[] = {maneuver {type, modifier, location [lon, lat], bearingBefore, bearingAfter}, name, distance, duration, geometry (polyline), mode}`. En v4 solo vienen `instructionsLegacy` (arreglos OSRM v4) y `viaPointsLegacy`. El frontend debe soportar ambas formas según `osrmVersion`. |
+| D8 | corregido | Polling. `GET /api/v1/positions` devuelve la última posición de cada conductor del tenant (de la más nueva a la más vieja) y `/positions/{driverId}` la de uno, 404 si no ha reportado. Desde el 2026-11-19 las posiciones se guardan en `vehicle_positions` y el conductor es el usuario `driver` del JWT: el reporte ya no lleva `driverId`, `recordedAt` (UTC, opcional) reemplaza a `date` y la respuesta añade `resourceId` (recurso con ese `driverId`). No hay WebSocket ni SSE para el panel. Un polling de 30 s es aceptable para la API. La frecuencia de envío la fija la app móvil (`POST /api/v1/driver/positions`), no el backend; hay que confirmarla con el equipo móvil. Pruebas: `DriverPositionE2ETest`, `VehiclePositionServiceImplTest`. |
+| D9 | retirado (arranque en limpio) | Se eliminaron `/api/v1/admin/migrate*` y el código de migración (2026-11-19): el sistema no está en producción y no hay datos legacy que conservar. Las rutas responden 404. Las colecciones legacy que queden en una base se borran a mano con [`LEGACY_DB_CLEANUP.md`](../operations/LEGACY_DB_CLEANUP.md) (dry-run por defecto, backup antes de aplicar). |
+| D10 | documentado | No se añade campo. La licencia del conductor es `identifierType = "license"` + `identifierValue`, y `/users` ya acepta y devuelve ambos. Para mostrar o editar la licencia, usar `identifierValue` cuando `identifierType = "license"`. `license` es un valor del catálogo `IdentifierType` (ver D15), así que aparece en el select. Sin migración (D9), las licencias se cargan al crear o editar el conductor. |
+| D11 | documentado | Medido el 2026-11-19 en local con `colombia-car.osrm` (`JourneyPlanLatencyTest`, un `POST /api/v1/journeys/plan?mode=packages` síncrono, depósito y paquetes en Bogotá, turno de 8 h, sin peso ni volumen, parada de 120 s): 100 paquetes en 5,5 s, 500 en 31,1 s y 2000 en 136,6 s (201, ningún paquete inválido). 100 y 500 caben en los 60 s del proxy; 2000 no. El frontend muestra progreso indeterminado y trata el corte del proxy como error recuperable. El modo asíncrono (202 + consulta de estado) no forma parte de este cierre: es tarea aparte. | 
+| D12 | operación | El backend acepta `platform: web` y reenvía por FCM. La configuración pública de Firebase web y la clave VAPID no existen en el repositorio; debe entregarlas el dueño del proyecto Firebase. Si no existen antes de F6-05, el push web se aplaza. |
+| D13 | operación | Checkout y portal ya reciben `successUrl`, `cancelUrl` y `returnUrl` en la petición. Falta crear en el entorno de desarrollo las claves de Stripe en modo test y los precios por plan e intervalo (`stripe.prices.*`), y registrar el webhook (`/api/v1/webhooks/stripe`) con su secreto. |
+| D14 | corregido | Motivos de estado de paquete **por tenant** en `/api/v1/package-status-reasons` (GET todos los roles con `?status=&active=`; POST, `PUT /{key}` y `PATCH /{key}/toggle` para `tenant_admin` y `super_admin`; sin DELETE). El paquete guarda la `key` en `statusReason`: en `POST`/`PUT /packages` y en `PATCH /packages/{id}/status/{status}?reason=` debe ser un motivo activo que aplique al status final, si no 422. Sin `reason`, un cambio de status conserva el motivo solo si aplica al nuevo status. Pruebas: `PackageStatusReasonServiceImplTest`, `PackageServiceImplTest`, `EnumCatalogsAndStatusReasonsE2ETest`. |
+| D15 | corregido | `IdentifierType` suma `license` (ver D10). `identifierType` se valida contra el enum en `POST`/`PUT /users` y al aceptar invitaciones; un valor fuera del catálogo responde 400 `BAD_REQUEST`. `place.type` y `resourceType.osrmProfile` ya se validaban con listas copiadas a mano; ahora usan `PlaceType` y `OsrmProfile`. Desde el 2026-11-19 no hay corrección al arrancar (se retiró `IdentifierTypeNormalizationRunner` y la acción de audit `user.identifier_type.normalize`). Si una base antigua guarda valores fuera del catálogo, el script de [`LEGACY_DB_CLEANUP.md`](../operations/LEGACY_DB_CLEANUP.md) los corrige con las mismas reglas: alias conocidos (`CC`, `cedula`, `dni` → `citizen_id`; `licencia` → `license`; `placa` → `plate`; `nit` → `itin`), mayúsculas a su clave y el resto a `code`, conservando `identifierValue`. |
+| D16 | corregido | `POST /packages/upload` ya no corta la carga con 409 por un `guideNumber` repetido. Antes de escribir detecta las guías repetidas dentro del archivo (se guarda la primera aparición) y las que ya existen en el tenant; las inserta en modo no ordenado para que un choque de último momento solo afecte a su fila. Cada duplicado sale en `errors[]` con su línea y `successCount` es lo realmente guardado. `POST`/`PUT /packages` responden 409 con `details {field: "guideNumber", value}`. El índice único pasa a ser parcial (`tenant_guide_unique_partial`, solo guías de tipo string): con el anterior (`sparse`) dos paquetes sin guía del mismo tenant chocaban. Lo crea `IndexInitializer` al arrancar; los índices anteriores de una base antigua los borra el script de [`LEGACY_DB_CLEANUP.md`](../operations/LEGACY_DB_CLEANUP.md). |
+
+## 5. Mejoras opcionales
+
+Ninguna se implementó en esta rama. Quedan como trabajo futuro en este orden sugerido por impacto:
+
+| # | Propuesta | Nota |
+| --- | --- | --- |
+| M3 | Paradas con estado del paquete en una llamada | Ya existe en parte: `GET /journeys/{id}` trae `packageInfo.status` en cada parada. Faltaría refrescar solo el estado sin traer la jornada completa. |
+| M2 | Cambio de estado por lote | `PATCH /packages/status` con `{ids, status}`; un audit por paquete. |
+| M1 | Borrado por lote | Tendría que devolver un resultado por id, porque cada borrado puede dar 409 (D3). |
+| M4 | `dateFrom` / `dateTo` en `audit-logs` | Índice `tenantId + createdAt` ya existe. |
+| M5 | Búsqueda `?q=` | Requiere índice de texto en `packages`. |
+
+## Documentos actualizados
+
+- [`docs/api/endpoints.md`](../api/endpoints.md): `sort`, `upload/limits`, roles de catálogos, catálogos de enum, motivos de estado por tenant, 409, 401 del refresh, 502 de OSRM.
+- [`docs/api/API_ROUTING_V3.md`](../api/API_ROUTING_V3.md): `stopType`, ejemplos válidos, 400 y 502.
+- [`docs/api/GEOCODING_API.md`](../api/GEOCODING_API.md): reglas del CSV y tope de filas.
+- [`docs/api/ENDPOINT_MIGRATION_MAP.md`](../api/ENDPOINT_MIGRATION_MAP.md): cambios de contrato de esta rama.
+- [`docs/auth/AUTHENTICATION_ENDPOINTS.md`](../auth/AUTHENTICATION_ENDPOINTS.md): `/api/v1`, rotación y 401. `AUTH_USER.md` y `FLUJO_AUTENTICACION_DETALLADO.md` marcados como históricos.
+- [`docs/configuration/APPLICATION_CONFIG.md`](../configuration/APPLICATION_CONFIG.md): CORS por proxy, enlaces de correo, springdoc.
+- [`docs/diagrams/sequence/`](../diagrams/sequence/) y [`docs/flows/TENANT_ONBOARDING_FLOW.md`](../flows/TENANT_ONBOARDING_FLOW.md): prefijo `/api/v1`, plan de jornada y carga de paquetes.
+- [`docs/frontend/migration-guide.md`](./migration-guide.md): errores nuevos, `page`, `config`, `stopType`, `sort`, GeoJSON y tope de filas.
+- [`docs/data/DATABASE_ER_DIAGRAM.md`](../data/DATABASE_ER_DIAGRAM.md): `stopType` de las paradas y licencia en `identifierValue`.
+- **2026-11-19, retiro del legacy:** `endpoints.md` (posiciones, reporte de entrega, admin), `migration-guide.md` (§2, §3, §10, §11, §13, §16), `ENDPOINT_MIGRATION_MAP.md`, `DATABASE_ER_DIAGRAM.md` (`vehicle_positions`, `geocoding_config`), `migration-map.md` (nota histórica), Postman y el runbook nuevo [`LEGACY_DB_CLEANUP.md`](../operations/LEGACY_DB_CLEANUP.md).
+- **2026-11-18, unidades fijas:** `endpoints.md` (sección "Unidades de medida"), `API_ROUTING_V3.md`, `GEOCODING_API.md` (columnas `weight`/`volume`), `ENDPOINT_MIGRATION_MAP.md` §6.1, `migration-guide.md` (§1 Unidades, ejemplos en g/cm³/cm), `TENANT_ONBOARDING_FLOW.md`, `API_TESTING_GUIDE.md`, Postman y diccionarios de datos.

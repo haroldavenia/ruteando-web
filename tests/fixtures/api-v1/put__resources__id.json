@@ -1,0 +1,44 @@
+{
+  "name": "PUT /api/v1/resources/{id}",
+  "request": {
+    "method": "PUT",
+    "url": "/api/v1/resources/{resource_id}",
+    "body": {
+      "name": "Postman resource",
+      "resourceTypeId": "6acb99b48275a26dbdf8fcf4",
+      "depotId": "6acb99b38275a26dbdf8fcf2",
+      "shiftStartUtc": "2026-10-11T13:00:00Z",
+      "shiftDurationSec": 28800,
+      "breakDurationSec": 3600
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99b48275a26dbdf8fcf5",
+      "tenantId": "6acb99aca2fa810fb39fb599",
+      "resourceTypeId": "6acb99b48275a26dbdf8fcf4",
+      "driverId": null,
+      "name": "Postman resource",
+      "licensePlate": null,
+      "depotId": "6acb99b38275a26dbdf8fcf2",
+      "shiftStartUtc": "2026-10-11T13:00:00Z",
+      "shiftDurationSec": 28800,
+      "breakDurationSec": 3600,
+      "quantity": 1,
+      "default": false,
+      "active": true,
+      "createdAt": "2026-10-11T14:14:12.119Z",
+      "updatedAt": "2026-10-11T14:14:12.195Z",
+      "allowedPackageTypes": null,
+      "allowedZoneIds": null,
+      "resourceType": {
+        "id": "6acb99b48275a26dbdf8fcf4",
+        "name": "Postman van",
+        "capacity": null,
+        "osrmProfile": "driving"
+      },
+      "assignedUser": null
+    }
+  }
+}

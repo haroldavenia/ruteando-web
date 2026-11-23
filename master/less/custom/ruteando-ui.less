@@ -1,0 +1,69 @@
+// =========================================================
+// Sistema UI de ruteando (FND-005) — ver docs/ui/sistema-ui.md
+// Tokens sobre el tema Angle (Bootstrap 3). Solo clases rw-*.
+// =========================================================
+
+// Tokens
+@rw-primary:   #5d9cec;
+@rw-success:   #27c24c;
+@rw-info:      #23b7e5;
+@rw-warning:   #ff902b;
+@rw-danger:    #f05050;
+@rw-muted:     #909fa7;
+@rw-text:      #3a3f51;
+@rw-surface:   #ffffff;
+@rw-canvas:    #f5f7fa;
+@rw-border:    #e4eaec;
+@rw-radius:    4px;
+@rw-space-1:   4px;
+@rw-space-2:   8px;
+@rw-space-3:   16px;
+@rw-space-4:   24px;
+@rw-focus:     0 0 0 3px fade(@rw-primary, 45%);
+
+// Foco visible en todo control interactivo (WCAG 2.4.7)
+.rw-data-table, .rw-form-actions, .rw-page-head, .rw-list-state {
+  button:focus, a:focus, input:focus, select:focus { outline: none; box-shadow: @rw-focus; }
+}
+
+// Cabecera de pantalla
+.rw-page-head { display: block; .rw-page-title { display: inline-block; margin: 0; font-size: 20px; } .rw-page-head-actions > * { margin-left: @rw-space-2; } }
+
+// Estados de listado
+.rw-list-state .rw-state { padding: @rw-space-4; text-align: center; color: @rw-muted; }
+.rw-list-state .rw-state-empty p { margin: @rw-space-2 0 @rw-space-3; }
+.rw-list-state .rw-state-error { text-align: left; .btn { margin-left: @rw-space-3; } }
+
+// Tabla
+.rw-data-table {
+  background: @rw-surface; border: 1px solid @rw-border; border-radius: @rw-radius;
+  .table { margin-bottom: 0; }
+  .rw-col-check { width: 36px; }
+  .rw-col-actions { width: 1%; }
+  .rw-sort { padding: 0; color: inherit; font-weight: 600; }
+  .rw-row-selected > td { background: fade(@rw-primary, 10%) !important; }
+  .rw-table-foot { padding: @rw-space-2 @rw-space-3; border-top: 1px solid @rw-border; line-height: 30px; color: @rw-muted; }
+  .rw-selected { margin-left: @rw-space-3; color: @rw-text; font-weight: 600; }
+  td .btn + .btn { margin-left: @rw-space-1; }
+}
+
+// Insignias (color + icono + texto; nunca solo color)
+.rw-badge {
+  display: inline-block; padding: 2px @rw-space-2; border-radius: 10px; font-size: 12px; font-weight: 600; line-height: 18px; white-space: nowrap;
+  .fa { margin-right: 2px; }
+}
+.rw-badge-tone(@c) { color: darken(@c, 18%); background: fade(@c, 15%); border: 1px solid fade(@c, 40%); }
+.rw-badge-success { .rw-badge-tone(@rw-success); }
+.rw-badge-info    { .rw-badge-tone(@rw-info); }
+.rw-badge-warning { .rw-badge-tone(@rw-warning); }
+.rw-badge-danger  { .rw-badge-tone(@rw-danger); }
+.rw-badge-primary { .rw-badge-tone(@rw-primary); }
+.rw-badge-muted   { .rw-badge-tone(@rw-muted); }
+
+// Barra fija de acciones de formulario
+.rw-form-actions {
+  position: sticky; bottom: 0; z-index: 2; padding: @rw-space-3; margin-top: @rw-space-4; text-align: right;
+  background: @rw-surface; border-top: 1px solid @rw-border;
+  .btn { margin-left: @rw-space-2; }
+  .rw-form-dirty { float: left; line-height: 34px; }
+}

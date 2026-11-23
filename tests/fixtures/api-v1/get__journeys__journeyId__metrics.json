@@ -1,0 +1,30 @@
+{
+  "name": "GET /api/v1/journeys/{journeyId}/metrics",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/journeys/{journey_id}/metrics",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99b55a068143a4d53ea7",
+      "tenantId": "6acb99aca2fa810fb39fb599",
+      "journeyId": "5f6f1325079242c7807dd3c4",
+      "distance": null,
+      "efficiency": null,
+      "weightAccum": null,
+      "volumeAccum": null,
+      "avgAttendWeightPct": null,
+      "avgAttendVolumePct": null,
+      "attendServicesPct": null,
+      "attendedRoutes": null,
+      "attendedServices": null,
+      "totalServices": 0,
+      "usedResources": null,
+      "totalResources": null,
+      "attendedCustomers": null,
+      "createdAt": null
+    }
+  }
+}

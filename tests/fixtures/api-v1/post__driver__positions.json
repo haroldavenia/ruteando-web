@@ -1,0 +1,20 @@
+{
+  "name": "POST /api/v1/driver/positions",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/driver/positions",
+    "body": {
+      "address": {
+        "location": {
+          "x": -74.07728,
+          "y": 4.60872
+        }
+      },
+      "date": "2026-10-11 13:00"
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": null
+  }
+}

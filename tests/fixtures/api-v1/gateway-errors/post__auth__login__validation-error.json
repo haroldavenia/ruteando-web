@@ -1,0 +1,24 @@
+{
+  "name": "POST /api/v1/auth/login (campos vacíos)",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/auth/login",
+    "body": {
+      "email": "",
+      "password": ""
+    }
+  },
+  "response": {
+    "status": 400,
+    "body": {
+      "error": "VALIDATION_ERROR",
+      "message": "Request validation failed",
+      "details": {
+        "email": "must not be blank",
+        "password": "must not be blank"
+      },
+      "timestamp": "2026-10-28T20:21:45.186837531Z",
+      "path": "/api/v1/auth/login"
+    }
+  }
+}
