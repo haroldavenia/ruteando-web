@@ -296,8 +296,8 @@ function seed() {
 
 function planJourney(name, settings, packages, offsetMs) {
   const depot = db.places.find((p) => p.id === settings.placeStartId);
-  const resources = db.resources.filter((r) => settings.resourceIds.includes(r.id));
-  const count = Math.max(1, Math.min(settings.fixedRoutes ?? 1, resources.length, packages.length || 1));
+  const resources = db.resources.filter((r) => (settings.resourceIds ?? []).includes(r.id));
+  const count = Math.max(1, Math.min(settings.fixedRoutes ?? 1, resources.length || Infinity, packages.length || 1));
   const groups = Array.from({ length: count }, () => []);
   packages.forEach((pkg, i) => groups[i % count].push(pkg));
   const start = Date.now() + offsetMs;
@@ -365,8 +365,10 @@ function planJourney(name, settings, packages, offsetMs) {
     return {
       routeIndex,
       name: `Ruta ${routeIndex + 1}`,
-      resourceId: resource.id,
-      resource: { id: resource.id, name: resource.name, plate: resource.licensePlate, resourceTypeName: 'Furgoneta' },
+      resourceId: resource?.id ?? null,
+      resource: resource
+        ? { id: resource.id, name: resource.name, plate: resource.licensePlate, resourceTypeName: 'Furgoneta' }
+        : null,
       geoJson: encodePolyline(stops.map((s) => s.coordinates)),
       startRouteUtc: new Date(start + routeIndex * 600000).toISOString(),
       finishRouteUtc: new Date(clock).toISOString(),

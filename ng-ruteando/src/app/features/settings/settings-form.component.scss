@@ -10,7 +10,7 @@
   font: var(--mat-sys-body-small);
 }
 
-// Los tres interruptores de lo que evalúa la planificación: uno por fila, con su borde
+// Los tres interruptores de lo que evalúa la planificación: sin cuadro alrededor
 .toggles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
@@ -18,9 +18,7 @@
 }
 
 .toggles mat-slide-toggle {
-  padding: 4px 12px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 12px;
+  padding: 4px 0;
 }
 
 .sentence {
