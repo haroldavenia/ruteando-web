@@ -10,7 +10,7 @@
 | Rama | `feat/<n>-journey-detail` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
-| Endpoints `/api/v1` | `GET /journeys/{id}` |
+| Endpoints `/api/v1` | `GET /journeys/{id}`, `GET /journeys/{id}/package-statuses` |
 | Maqueta | `docs/ui/maquetas/index.html#jor-003` |
 | ADR relacionados | ADR-0002, ADR-0004, ADR-0006 |
 | Responsable | Ingeniería de Software |
@@ -39,6 +39,7 @@ Unificar `app.routes.*`, `app.journeys.detail`, `app.maps.route/journey` y el ma
 | Método | Ruta | Request | Response | Errores | Fixture |
 | --- | --- | --- | --- | --- | --- |
 | GET | `/api/v1/journeys/{id}` | — | JourneyDetail con `routes[].waypoints`, `resourceSummary`, `stats` | 400 id mal formado,404 | `get__journeys__id.json` |
+| GET | `/api/v1/journeys/{id}/package-statuses` | — | `[{routeIndex,sequence,stopType,packageId,status,statusReason}]` del paquete actual (sin paradas de depósito; `status` nulo si el paquete ya no existe) | 404 jornada de otro tenant | — (capturar) |
 
 Reglas transversales: `docs/contracts/api-v1-catalog.md` · fuente canónica: `docs/contracts/source/migration-guide.md`.
 
@@ -94,6 +95,7 @@ Como operador, quiero ver una jornada con sus rutas, paradas y mapa, para entend
 - **RF-6** — Mostrar la línea de tiempo de la ruta
 - **RF-7** — Compartir el enlace a la ruta y asignar servicio desde ella
 - **RF-8** — Manejar jornada inexistente o id inválido
+- **RF-9** — Refrescar el estado de las paradas sin recargar la jornada
 
 **No funcionales**
 
@@ -112,6 +114,7 @@ Como operador, quiero ver una jornada con sus rutas, paradas y mapa, para entend
 - **CA-7** (RF-7) — Dado «Asignar servicio», Entonces formulario de MAE-008 precargado
 - **CA-8** (RF-8) — Dado 404, Entonces «La jornada ya no existe» y volver; 400, Entonces «Identificador no válido»
 - **CA-9** (RF-5) — Dado paradas `delivery`/`pickup` (o `service` en jornadas antiguas), Entonces se etiquetan con `StopType` y muestran guía desde `packageInfo.trackingCode` y la dirección; `placeId` solo en `depot`
+- **CA-10** (RF-9) — Dado el detalle abierto, Cuando pulso «Actualizar estados», Entonces `GET /journeys/{id}/package-statuses` actualiza las insignias de estado de las paradas (tabla y mapa) sin volver a pedir la jornada; una parada con `status` nulo queda «No disponible»
 
 ## 6. Diseño y restricciones técnicas
 
@@ -142,6 +145,8 @@ Crear `journey_detail_controller.js` (reescrito), `journey_route_controller.js`,
 | T-13 | CA-8 | unitaria | Prueba `[JOR-003 CA-8]` en `tests/unit/journey-detail/` |
 | T-14 | CA-9 | unitaria | Prueba `[JOR-003 CA-9]` en `tests/unit/journey-detail/` |
 | T-15 | CA-9 | contrato | Prueba `[JOR-003 CA-9]` en `tests/integration/journey-detail/` |
+| T-16 | CA-10 | unitaria | Prueba `[JOR-003 CA-10]` en `tests/unit/journey-detail/` |
+| T-17 | CA-10 | e2e | Prueba `[JOR-003 CA-10]` en `tests/e2e/journey-detail.e2e.mjs` |
 
 ## 8. Excepciones de cobertura
 
@@ -166,6 +171,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-7 | | | `evidencia/JOR-003/...` |
 | CA-8 | | | `evidencia/JOR-003/...` |
 | CA-9 | | | `evidencia/JOR-003/...` |
+| CA-10 | | | `evidencia/JOR-003/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -174,3 +180,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | Spec creada desde el inventario legacy y el contrato `/api/v1` | Migración | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (B3) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Refresco de estados de paradas con `package-statuses` (M3) | migration-guide §9 (M3) | pendiente |

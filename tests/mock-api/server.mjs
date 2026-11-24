@@ -51,6 +51,8 @@ export function createMockApi({ fixtures = loadFixtures() } = {}) {
       try { body = JSON.parse(raw.toString('utf8')); } catch { return send(res, 400, errorJson(400, p, 'JSON mal formado')); }
     }
     const [name, id, ...rest] = p.replace('/api/v1/', '').split('/');
+    if (COLLECTIONS.has(name) && id === 'batch-delete' && req.method === 'POST') return batchDelete(res, name, body, p);
+    if (name === 'packages' && id === 'status' && req.method === 'PATCH') return packagesStatus(res, body, p);
     if (COLLECTIONS.has(name) && rest.length === 0) {
       const crud = crudFor(req.method, name, id, body, url);
       if (crud) return send(res, crud[0], crud[1]);
@@ -61,12 +63,40 @@ export function createMockApi({ fixtures = loadFixtures() } = {}) {
     return send(res, status, fb);
   }
 
+  // M1: POST /{recurso}/batch-delete {ids} (máx. 100). x-mock-conflict-ids: "a,b" fuerza conflict.
+  function batchDelete(res, name, body, path) {
+    const ids = (body && body.ids) || [];
+    if (ids.length > 100) return send(res, 422, errorJson(422, path, 'Máximo 100 ids'));
+    const conflicts = new Set(String(res.req.headers['x-mock-conflict-ids'] || '').split(',').filter(Boolean));
+    const results = ids.map((id) => {
+      if (conflicts.has(id)) return { id, status: 'conflict', error: { code: 'CONFLICT', message: 'Resource in use', details: { referencedBy: 'journeys', ids: ['j1'] } } };
+      return { id, status: store.remove(name, id) ? 'deleted' : 'not_found' };
+    });
+    return send(res, 200, { results });
+  }
+
+  // M2: PATCH /packages/status {ids, status, reason?}
+  function packagesStatus(res, body, path) {
+    const ids = (body && body.ids) || [];
+    if (ids.length > 100 || !body || !body.status) return send(res, 422, errorJson(422, path, 'Petición de estado no válida'));
+    const results = ids.map((id) => {
+      const pkg = store.find('packages', id);
+      if (!pkg) return { id, status: 'not_found' };
+      pkg.status = body.status;
+      pkg.statusReason = body.reason || null;
+      return { id, status: 'updated' };
+    });
+    return send(res, 200, { results });
+  }
+
   function crudFor(method, name, id, body, url) {
     const template = (f) => (matchFixture(fixtures, f, `/api/v1/${name}${f === 'POST' ? '' : '/id'}`) || { data: { response: { body: {} } } }).data.response.body || {};
     if (method === 'GET' && !id) {
       const list = store.list(name);
       if (name === 'zones') return [200, list];
-      return [200, store.page(name, Number(url.searchParams.get('page') || 0), Number(url.searchParams.get('size') || 20))];
+      const q = (url.searchParams.get('q') || '').toLowerCase();
+      if (q.length > 80) return [422, errorJson(422, url.pathname, 'q supera 80 caracteres')];
+      return [200, store.page(name, Number(url.searchParams.get('page') || 0), Number(url.searchParams.get('size') || 20), q)];
     }
     if (method === 'GET' && id) {
       const item = store.find(name, id);

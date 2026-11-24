@@ -78,6 +78,8 @@ Como desarrollador del frontend, quiero una sola puerta al backend `/api/v1` con
 - `tests/tools/i18n.test.mjs`
 - `docs/architecture/adr/0002-proxy-mismo-origen.md`
 - `docs/architecture/adr/0004-capa-api-y-sesion.md`
+- `tests/mock-api/server.mjs`
+- `tests/mock-api/store.mjs`
 - `specs/migracion-api-v1/f0-fundaciones/evidencia/FND-002/**`
 
 ## 4. Requisitos
@@ -96,6 +98,7 @@ Como desarrollador del frontend, quiero una sola puerta al backend `/api/v1` con
 - **RF-10** — Enviar `sort=campo,asc|desc` en los seis listados paginados (lista blanca por recurso) y tratar 400 `BAD_REQUEST` de un campo no permitido
 - **RF-11** — Redirigir en `server.js` las rutas sin `#` de los correos (`/verify-email?token=`, `/reset-password?token=`) a las rutas de la SPA, conservando el token
 - **RF-12** — Aplicar a `POST /api/v1/journeys/plan` un timeout propio del proxy (`BACKEND_PLAN_TIMEOUT_MS`, 180 000 por defecto) distinto del general
+- **RF-13** — Ofrecer `ApiClient.batchDelete(recurso, ids)` sobre `POST /{recurso}/batch-delete` en lotes de 100, con resultado unificado `{deleted, notFound, conflicts, results}`
 
 **No funcionales**
 
@@ -121,6 +124,8 @@ Como desarrollador del frontend, quiero una sola puerta al backend `/api/v1` con
 - **CA-14** (RF-11) — Dado `GET /verify-email?token=abc`, Entonces 302 a `/#/access/verify?token=abc`; dado `GET /reset-password?token=xyz`, Entonces 302 a `/#/access/reset?token=xyz`
 - **CA-15** (RF-12) — Dado un plan simulado de 90 s, Entonces el proxy no corta; dado otra ruta de 90 s, Entonces responde 504 con el timeout general
 - **CA-16** (RF-4) — Dado 401 o 403 de seguridad, Entonces el cuerpo JSON `{error:'UNAUTHORIZED'|'FORBIDDEN',…}` se lee como `ApiError` con su código (ya no texto)
+- **CA-17** (RF-13) — Dado 150 ids y respuestas con `deleted`, `not_found` y `conflict`, Cuando `batchDelete("places", ids)`, Entonces 2 peticiones (100 y 50) en orden, `deleted`/`notFound` con sus ids y `conflicts[].error` como `ApiError{status:409, code:"CONFLICT", details}`; un 422 de un lote rechaza con `ApiError`
+- **CA-18** (RF-8) — Dado `ApiError{status:502, code:"OTP_DELIVERY_FAILED"}`, Entonces `ErrorMessages.for` devuelve el texto propio (no el genérico de 502) en es, en y es_AR
 
 ## 6. Diseño y restricciones técnicas
 
@@ -159,6 +164,9 @@ Crear: `master/js/modules/services/api_config.js`, `api_client.js`, `api_error.j
 | T-25 | CA-16 | sonda API | `tests/api/api-core.api.test.mjs` |
 | T-26 | CA-16 | unitaria | `tests/unit/api-core/api_client.spec.js` |
 | T-27 | CA-16 | unitaria | `tests/unit/api-core/auth_response_interceptor.spec.js` |
+| T-28 | CA-17 | unitaria | Prueba `[FND-002 CA-17]` en `tests/unit/api-core/` |
+| T-29 | CA-17 | contrato | Prueba `[FND-002 CA-17]` en `tests/integration/api-core/` |
+| T-30 | CA-18 | unitaria | Prueba `[FND-002 CA-18]` en `tests/unit/api-core/` |
 
 ## 8. Excepciones de cobertura
 
@@ -192,6 +200,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-14 | `tests/e2e/api-core.e2e.mjs`, `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-15 | `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-16 | `tests/api/api-core.api.test.mjs`, `tests/unit/api-core/api_client.spec.js`, `tests/unit/api-core/auth_response_interceptor.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-17 | `tests/unit/api-core/api_client.spec.js`, `tests/integration/api-core/page.contract.spec.js`, `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-23-implementador.md` |
+| CA-18 | `tests/unit/api-core/error_messages.spec.js`, `tests/tools/i18n.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-23-implementador.md` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -207,3 +217,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-20 | Proxy con `http`/`https` nativos (`server/proxy.js`) en lugar de `http-proxy-middleware`: sin dependencia nueva y con control de timeouts por ruta. El ejemplo Satellizer/MongoDB se mueve sin cambios a `server/legacy-satellizer.js` (solo con `LEGACY_SATELLIZER=1`). | server.js dependía de MongoDB y servía la build de Angular 21 | pendiente |
 | 2026-11-20 | Las pruebas de CA-2…CA-5 y CA-14/15 se hacen como pruebas de servidor (`tests/server/proxy.test.mjs`, node:test sobre mock-api) más E2E de navegador para CA-2 y CA-14. | Más rápidas y deterministas que E2E | pendiente |
 | 2026-11-20 | `list-state.jade` se sustituye por la directiva `rw-list-state` de FND-005. | Un único componente de estados | pendiente |
+| 2026-11-23 | `batchDelete` (M1) y código `OTP_DELIVERY_FAILED` en `ErrorMessages` | migration-guide §7, §15 | pendiente |

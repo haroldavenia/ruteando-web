@@ -94,6 +94,7 @@ Como administrador de la empresa, quiero invitar personas por correo, para que s
 - **CA-5** (RF-5) — Dado `#/access/invitation?token=t`, Entonces vista previa con empresa y rol; 410 → «Invitación caducada o ya usada»
 - **CA-6** (RF-6) — Dado datos válidos, Entonces `POST /invitations/accept/{token}` y entra con la sesión del `LoginResponse`; 409 → «La empresa no tiene cupo, contacta con su administrador»
 - **CA-7** (RF-1) — Dado el formulario de invitación, Entonces el rol solo ofrece `agent` y `driver`, y se muestran asientos usados/límite antes de enviar
+- **CA-8** (RF-6) — Dado `POST /invitations/accept/{token}` → **201** `LoginResponse` (`message`, `accessToken`, `refreshToken`, `expiresIn`, `user`), Entonces se guardan los dos tokens con el mismo servicio de sesión que ACC-001 y se entra al tablero sin pasar por login; si por defecto del backend faltara `accessToken`, se va a `access.login` con el correo precargado (defensivo, no es el contrato)
 
 ## 6. Diseño y restricciones técnicas
 
@@ -124,6 +125,8 @@ Crear `invitations.api.js`, controladores y vistas.
 | T-12 | CA-6 | contrato | Prueba `[EMP-002 CA-6]` en `tests/integration/invitations/` |
 | T-13 | CA-6 | e2e | Prueba `[EMP-002 CA-6]` en `tests/e2e/invitations.e2e.mjs` |
 | T-14 | CA-7 | unitaria | Prueba `[EMP-002 CA-7]` en `tests/unit/invitations/` |
+| T-15 | CA-8 | unitaria | Prueba `[EMP-002 CA-8]` en `tests/unit/invitations/` |
+| T-16 | CA-8 | sonda API | Prueba `[EMP-002 CA-8]` en `tests/api/invitations.api.test.mjs` |
 
 ## 8. Excepciones de cobertura
 
@@ -132,7 +135,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 ## 9. Dependencias, riesgos y preguntas abiertas
 
 - Dependencias: EMP-001, ACC-002.
-- Riesgos: D12, G10.
+- Riesgos: correos de verificación, restablecer e invitación comprobados en el entorno de desarrollo (B1, 2026-11-23; remitente `info@routengio.com`): la prueba en vivo usa la cuenta `sdd-test`. La plantilla de invitación es la id 6 y solo recibe `invitation_token`: su URL debe apuntar a `/invitations/accept?token=` (server.js la redirige) o a `#/access/invitation?token=`.
 - Pregunta no bloqueante: URL del enlace de invitación → Decisión propuesta: La SPA expone `#/access/invitation?token=`; configurar la plantilla en el backend
 
 ## 10. Trazabilidad (se completa al cerrar)
@@ -146,6 +149,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-5 | | | `evidencia/EMP-002/...` |
 | CA-6 | | | `evidencia/EMP-002/...` |
 | CA-7 | | | `evidencia/EMP-002/...` |
+| CA-8 | | | `evidencia/EMP-002/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -154,3 +158,6 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | Spec creada desde el inventario legacy y el contrato `/api/v1` | Migración | — |
 | 2026-11-17 | v2: contrato real (migration-guide §5); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | B1 comprobado: se retira la dispensa de prueba en vivo de los correos | BACKEND_PENDIENTES B1 | pendiente |
+| 2026-11-24 | Respuesta de aceptar invitación: tolerar cuerpo sin tokens (G20) | Colección Postman del backend (2026-11-24) | pendiente |
+| 2026-11-24 | G20 cerrada: aceptar invitación responde 201 `LoginResponse` y deja la sesión iniciada | migration-guide 2026-11-24 (G19–G23 cerradas) | pendiente |

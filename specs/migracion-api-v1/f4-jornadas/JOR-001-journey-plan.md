@@ -10,7 +10,7 @@
 | Rama | `feat/<n>-journey-plan` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
-| Endpoints `/api/v1` | `POST /journeys/plan` |
+| Endpoints `/api/v1` | `POST /journeys/plan`, `GET /journeys/plan/jobs/{jobId}` |
 | Maqueta | `docs/ui/maquetas/index.html#jor-001` |
 | ADR relacionados | ADR-0002, ADR-0004, ADR-0006 |
 | Responsable | Ingeniería de Software |
@@ -37,7 +37,8 @@ Sustituir la optimización en cliente (`osrmHttp`: `optimalRouteOfPointCloud`, `
 
 | Método | Ruta | Request | Response | Errores | Fixture |
 | --- | --- | --- | --- | --- | --- |
-| POST | `/api/v1/journeys/plan` | `?mode=packages\|messenger` + `{settingsId,packageIds,name,date}` | 201 detalle de jornada | 400 settingsId/paquetes, 404 no del tenant, 422, 502/504 | `post__journeys__plan.json` |
+| POST | `/api/v1/journeys/plan` | `?mode=packages\|messenger` + `{settingsId,packageIds,name,date}` | 201 detalle de jornada (síncrono); con `&async=true`: 202 `{jobId,status:"queued"}` + `Location` | 400 settingsId/paquetes, 404 no del tenant, 422, 502/504 (síncrono); 429 `RATE_LIMIT_EXCEEDED` cola llena (asíncrono, no crea job) | `post__journeys__plan.json` |
+| GET | `/api/v1/journeys/plan/jobs/{jobId}` | — | 200 `{jobId,status:queued\|running,mode}`; `succeeded` añade `journeyId`; `failed` añade `error{code,message}` (`BAD_REQUEST`, `NOT_FOUND`, `ROUTING_ENGINE_UNAVAILABLE`, `INTERNAL_ERROR`) | 404 job desconocido o de otro tenant | — (capturar) |
 
 Reglas transversales: `docs/contracts/api-v1-catalog.md` · fuente canónica: `docs/contracts/source/migration-guide.md`.
 
@@ -87,6 +88,7 @@ Como operador, quiero planificar una jornada con una configuración y paquetes e
 - **RF-5** — Enviar la planificación mostrando una espera no bloqueante y evitando doble envío
 - **RF-6** — Abrir el detalle de la jornada creada y listar los paquetes no asignados
 - **RF-7** — Gestionar errores conservando la selección para reintentar
+- **RF-8** — Planificar en modo asíncrono cuando la selección pueda pasar de 60 s (más de 500 paquetes): enviar `async=true`, consultar el job hasta `succeeded` o `failed` y abrir la jornada
 
 **No funcionales**
 
@@ -107,6 +109,11 @@ Como operador, quiero planificar una jornada con una configuración y paquetes e
 - **CA-9** (RF-5) — Dado backend real, Cuando planifico 2 paquetes de prueba, Entonces 201 (o D1 documentado como `fixme`)
 - **CA-10** (RF-5) — Dado más de 500 paquetes seleccionados, Entonces aviso «Puede tardar más de un minuto» y progreso indeterminado con tiempo transcurrido
 - **CA-11** (RF-7) — Dado 504 del proxy, Entonces «La planificación tardó demasiado» y, al reintentar, primero se consulta `GET /journeys?sort=createdAt,desc` por una jornada con el mismo nombre creada en los últimos minutos para no duplicarla
+- **CA-12** (RF-8) — Dado 600 paquetes, Cuando envío, Entonces `POST /journeys/plan?mode=packages&async=true`, guardo el `jobId` y consulto `GET /journeys/plan/jobs/{jobId}` cada 3 s mostrando «En cola» / «Calculando» y el tiempo transcurrido; con `succeeded` navego a `app.journeys.detail` del `journeyId`
+- **CA-13** (RF-8) — Dado un job `failed` con `BAD_REQUEST` o `NOT_FOUND`, Entonces muestro `error.message` traducido por código, conservo la selección y no reintento solo; con `ROUTING_ENGINE_UNAVAILABLE`, Entonces «El motor de rutas no respondió» y botón Reintentar (nuevo POST)
+- **CA-14** (RF-8) — Dado 429 al enviar (cola llena: 20 en espera), Entonces «Hay muchas planificaciones en cola, inténtalo en unos minutos», no se crea nada y el botón vuelve a estar disponible
+- **CA-15** (RF-8) — Dado que recargo la página con un job en curso, Entonces se recupera el `jobId` guardado en la sesión del navegador y se retoma la consulta; dado 404 del job, Entonces «La planificación ya no está disponible» y se limpia
+- **CA-16** (RF-5) — Dado 500 paquetes o menos, Entonces se usa el modo síncrono (201) como hasta ahora; el umbral vive en `apiConfig.planAsyncThreshold` (500)
 
 ## 6. Diseño y restricciones técnicas
 
@@ -138,6 +145,14 @@ Crear `journeys.api.js#plan`, `custom/journeys/plan_controller.js`, `pages/journ
 | T-14 | CA-10 | unitaria | Prueba `[JOR-001 CA-10]` en `tests/unit/journey-plan/` |
 | T-15 | CA-11 | unitaria | Prueba `[JOR-001 CA-11]` en `tests/unit/journey-plan/` |
 | T-16 | CA-11 | e2e | Prueba `[JOR-001 CA-11]` en `tests/e2e/journey-plan.e2e.mjs` |
+| T-17 | CA-12 | unitaria | Prueba `[JOR-001 CA-12]` en `tests/unit/journey-plan/` |
+| T-18 | CA-12 | contrato | Prueba `[JOR-001 CA-12]` en `tests/integration/journey-plan/` |
+| T-19 | CA-12 | e2e | Prueba `[JOR-001 CA-12]` en `tests/e2e/journey-plan.e2e.mjs` |
+| T-20 | CA-13 | unitaria | Prueba `[JOR-001 CA-13]` en `tests/unit/journey-plan/` |
+| T-21 | CA-14 | unitaria | Prueba `[JOR-001 CA-14]` en `tests/unit/journey-plan/` |
+| T-22 | CA-15 | unitaria | Prueba `[JOR-001 CA-15]` en `tests/unit/journey-plan/` |
+| T-23 | CA-15 | e2e | Prueba `[JOR-001 CA-15]` en `tests/e2e/journey-plan.e2e.mjs` |
+| T-24 | CA-16 | unitaria | Prueba `[JOR-001 CA-16]` en `tests/unit/journey-plan/` |
 
 ## 8. Excepciones de cobertura
 
@@ -146,10 +161,10 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 ## 9. Dependencias, riesgos y preguntas abiertas
 
 - Dependencias: PAQ-001, PAQ-002.
-- Riesgos: Tiempos medidos (D11): 100 paquetes 5,5 s, 500 en 31 s, 2000 en 137 s. El proxy da 180 s a esta ruta (FND-002); si aun así corta, la jornada puede haberse creado en el servidor.
+- Riesgos: Tiempos medidos (D11): 100 paquetes 5,5 s, 500 en 31 s, 2000 en 137 s. Por encima de 500 se usa `async=true` (sin corte del proxy). En síncrono el proxy da 180 s (FND-002); si aun así corta, la jornada puede haberse creado en el servidor (CA-11). Un job interrumpido por un reinicio del backend queda `failed`: el usuario lo reenvía. Los jobs se purgan a las 24 h.
 - Pregunta no bloqueante: ¿`date` afecta al plan? → Decisión propuesta: Resuelta: metadato `Instant` UTC opcional
 - Pregunta no bloqueante: Legacy `fixedRoutes == 1` usaba `optimalRouteOfPointCloud` → Decisión propuesta: Persistir con `plan?mode=messenger`; la variante efímera queda en JOR-007 (`/routing/optimizations`)
-- Pregunta no bloqueante: ¿Modo asíncrono? → Decisión propuesta: No disponible (tarea aparte del backend); se usa el síncrono con timeout ampliado
+- Pregunta no bloqueante: ¿Modo asíncrono? → Decisión propuesta: Resuelta (D11 cerrado 2026-11-23): `async=true` por encima de 500 paquetes; consulta cada 3 s
 
 ## 10. Trazabilidad (se completa al cerrar)
 
@@ -166,6 +181,11 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-9 | | | `evidencia/JOR-001/...` |
 | CA-10 | | | `evidencia/JOR-001/...` |
 | CA-11 | | | `evidencia/JOR-001/...` |
+| CA-12 | | | `evidencia/JOR-001/...` |
+| CA-13 | | | `evidencia/JOR-001/...` |
+| CA-14 | | | `evidencia/JOR-001/...` |
+| CA-15 | | | `evidencia/JOR-001/...` |
+| CA-16 | | | `evidencia/JOR-001/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -175,3 +195,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | v2: contrato real (migration-guide §9, 16.3); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (B2, D11) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Plan asíncrono (D11): `async=true` + `GET /journeys/plan/jobs/{jobId}` por encima de 500 paquetes; 429 de cola llena; recuperación tras recargar | migration-guide §9, endpoints.md, BACKEND_PENDIENTES D11 | pendiente |

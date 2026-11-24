@@ -8,6 +8,7 @@ Detalle de cada ruta: [`source/endpoints.md`](source/endpoints.md) · ruteo y jo
 - Base relativa `/api/v1` (ADR-F001). `Authorization: Bearer <accessToken>`.
 - Página: `{ content, totalElements, totalPages, page, size }` (base 0, size 20), también en `audit-logs`.
 - Listas planas (sin página): `zones`, `assigned-services`, `master-domains`, `users/drivers`, `journeys/{id}/navigations`, `positions`.
+- Borrado por lote: `POST /{recurso}/batch-delete {ids}` (máx. 100, 200 con `results[]`) en places, resource-types, resources, settings, users y journeys.
 - Filtros por query (`status`, `serviceType`, `active`, `role`, `type`, `resourceTypeId`, `isActive`). `sort=campo,asc|desc` con lista blanca en packages, journeys, settings, users, places y resources (400 si no está permitido).
 - Unidades fijas de plataforma (`GET /units`): peso g, volumen cm³, longitud cm, distancia m, duración s. El cliente convierte para mostrar y capturar.
 - `PUT` sustituye el registro (excepciones: `quantity`/`isDefault` de Resource, `osrmProfile`, `pieceNumber`/`status` de Package, `password` de User). Borrar algo en uso: 409 `details{referencedBy, ids}`.
@@ -41,7 +42,7 @@ Detalle de cada ruta: [`source/endpoints.md`](source/endpoints.md) · ruteo y jo
 | Invitations | `/invitations`, `?status=`, `DELETE /{id}`, `/{token}/resend`, `/accept/{token}` GET/POST | EMP-002 |
 | Billing | `/billing/subscription, checkout, portal, upgrade, seats, cancel, invoices, usage` | EMP-004 |
 | Notifications | `/notifications/preferences`, `/otp/send|resend|verify`, `/push/register|unregister` | EMP-005 |
-| Audit | `/audit-logs`, `/me`, `/{id}`, `/admin` | EMP-006, PLA-002 |
+| Audit | `/audit-logs`, `/me`, `/{id}`, `/admin`; `dateFrom`/`dateTo` UTC inclusivos | EMP-006, PLA-002 |
 | Master domains | `/master-domains`, `/{code}`, `/{code}/values` GET/POST, `/{code}/values/{key}/toggle` | FND-003, MAE-007 |
 | Resource types | `/resource-types` CRUD, `?active=true` | MAE-001 |
 | Resources | `/resources` CRUD + filtros, `PUT /{id}/driver/{driverId}`, `DELETE /{id}/driver` | MAE-002 |
@@ -50,8 +51,8 @@ Detalle de cada ruta: [`source/endpoints.md`](source/endpoints.md) · ruteo y jo
 | Assigned services | **Retirado (404)**: el vehículo del conductor es el recurso con `driverId` | MAE-002 |
 | Geocoding | `POST /geocoding`, `POST /reverse-geocoding` | MAE-004 |
 | Settings | `/settings` CRUD, `?active=true` (DELETE = desactivar) | PAQ-001 |
-| Packages | `/packages` CRUD, `?status=`, `?serviceType=`, `PATCH /{id}/status/{status}?reason=`, `POST /upload`, `GET /upload/limits` | PAQ-002, PAQ-003, JOR-006 |
-| Journeys | `POST /journeys/plan?mode=packages|messenger`, list, `?status=`, `/{id}`, DELETE, `/navigations`, `/navigations/{routeIndex}`, `/metrics` | JOR-001…JOR-005 |
+| Packages | `/packages` CRUD, `?status=`, `?serviceType=`, `?q=`, `PATCH /{id}/status/{status}?reason=`, `PATCH /status` (lote), `POST /upload`, `GET /upload/limits` | PAQ-002, PAQ-003, JOR-006 |
+| Journeys | `POST /journeys/plan?mode=packages|messenger[&async=true]`, `GET /plan/jobs/{jobId}`, list, `?status=`, `/{id}`, `/{id}/package-statuses`, DELETE, `POST /batch-delete`, `/navigations`, `/navigations/{routeIndex}`, `/metrics` | JOR-001…JOR-006 |
 | Routing engine | `/routing/route, directions, matrix, nearest, messenger, optimizations, optimizations/point-route, optimizations/collection` | JOR-007 |
 | Positions | `GET /positions`, `GET /positions/{driverId}` | SEG-001 |
 | Admin | `/admin/geocoding-config` GET/PUT (`/admin/migrate*` retirado) | PLA-003 |

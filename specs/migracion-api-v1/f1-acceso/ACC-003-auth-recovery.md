@@ -124,7 +124,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 ## 9. Dependencias, riesgos y preguntas abiertas
 
 - Dependencias: ACC-001.
-- Riesgos: D12.
+- Riesgos: correos de verificación, restablecer e invitación comprobados en el entorno de desarrollo (B1, 2026-11-23; remitente `info@routengio.com`): la prueba en vivo usa la cuenta `sdd-test`.
 - Pregunta no bloqueante: URL del enlace → Decisión propuesta: Resuelta (D1): `{app.frontend-url}/reset-password?token=`
 
 ## 10. Trazabilidad (se completa al cerrar)
@@ -145,3 +145,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | v2: contrato real (migration-guide §4); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (C2, D1) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | B1 comprobado: se retira la dispensa de prueba en vivo de los correos | BACKEND_PENDIENTES B1 | pendiente |

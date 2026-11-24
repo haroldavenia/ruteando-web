@@ -178,6 +178,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 - Pregunta no bloqueante: Vida del refresh token → Decisión propuesta: Resuelta: 7 días; access 1 h (migration-guide §1)
 - Pregunta no bloqueante: ¿`email` o `username`? → Decisión propuesta: Resuelta: `email`
 - Pregunta no bloqueante: ¿Las rutas legacy siguen activas? → Decisión propuesta: No: responden 403 (corte total)
+- Nota: `BACKEND_PENDIENTES` (E1) sugiere que el proxy reescriba `/api/...` → `/api/v1/...`. No se adopta (ADR-0002): el cliente llama a `/api/v1` y el proxy no reescribe rutas. Las llamadas a `/api/auth/...` vistas en pruebas venían de un `app/js/app.js` compilado de otra versión del código.
 
 ## 10. Trazabilidad (se completa al cerrar)
 
@@ -210,3 +211,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | v2: contrato real (migration-guide §1, 4, 16.1); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (C1, C3) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Se documenta la discrepancia con E1 (sin reescritura de rutas en el proxy) | BACKEND_PENDIENTES E1 | pendiente |

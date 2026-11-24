@@ -32,8 +32,8 @@ Preferencias de correo/SMS/push del usuario, verificación de teléfono por OTP 
 | --- | --- | --- | --- | --- | --- |
 | GET | `/api/v1/notifications/preferences` | — | Preferencias | — | `get__notifications__preferences.json` |
 | PUT | `/api/v1/notifications/preferences` | parcial | objeto completo | 400 | `put__notifications__preferences.json` |
-| POST | `/api/v1/notifications/otp/send` | `{recipient,channel,purpose}` | `{otpId,expiresInSeconds,channel,message}` | 400, 429 | `post__notifications__otp__send.json` |
-| POST | `/api/v1/notifications/otp/resend` | `{otpId,channel,recipient}` | ídem | 422 MAX_RESENDS, 429 | `post__notifications__otp__resend.json` |
+| POST | `/api/v1/notifications/otp/send` | `{recipient,channel,purpose}` | 200 solo si Twilio/Brevo aceptan: `{otpId,expiresInSeconds:300,channel,message}` (`message` ya enmascarado) | 400, 429; **502 `OTP_DELIVERY_FAILED`** (sin `otpId`, mensaje fijo) | `post__notifications__otp__send.json` |
+| POST | `/api/v1/notifications/otp/resend` | `{otpId,channel,recipient}` | ídem | 422 MAX_RESENDS, 429; **502 `OTP_DELIVERY_FAILED`** (se conserva el código anterior) | `post__notifications__otp__resend.json` |
 | POST | `/api/v1/notifications/otp/verify` | `{otpId,code}` | `{verified:true}` | 400 INVALID_OTP, 410 OTP_EXPIRED, 422 MAX_ATTEMPTS_EXCEEDED, 429 | `post__notifications__otp__verify.json` |
 | POST | `/api/v1/notifications/push/register` | `{deviceToken,platform:'web'}` | `{registered,deviceCount}` | — | `post__notifications__push__register.json` |
 | DELETE | `/api/v1/notifications/push/unregister` | `{deviceToken}` | 204 | — | `delete__notifications__push__unregister.json` |
@@ -53,6 +53,7 @@ Como usuario del panel, quiero elegir qué notificaciones recibo y verificar mi 
 **Excluye (no tocar)**
 
 - Push móvil.
+- Push web: aplazado por el backend hasta tener configuración Firebase web y VAPID (D12, decisión 2026-11-23). Los endpoints quedan inventariados pero la opción no se muestra.
 - App móvil del conductor (`/api/v1/driver/*`).
 
 **Archivos autorizados** (lista inicial; el orquestador la confirma antes de `Lista` y registra cambios en la sección 11)
@@ -80,6 +81,7 @@ Como usuario del panel, quiero elegir qué notificaciones recibo y verificar mi 
 - **RF-4** — Reenviar por canal alternativo
 - **RF-5** — Mostrar intentos restantes, caducidad y límites
 - **RF-6** — Activar/desactivar push del navegador
+- **RF-7** — Pedir el código solo con consentimiento explícito del usuario sobre su propio número y mostrar los límites del envío (política de opt-in SMS)
 
 **No funcionales**
 
@@ -94,7 +96,10 @@ Como usuario del panel, quiero elegir qué notificaciones recibo y verificar mi 
 - **CA-3** (RF-3) — Dado `+57300…`, Entonces `POST /otp/send {channel:'sms',purpose:'phone_verification'}`, cuenta atrás de `expiresInSeconds` y campo de 6 dígitos
 - **CA-4** (RF-5) — Dado `INVALID_OTP` con `attemptsRemaining:2`, Entonces «Código incorrecto, te quedan 2 intentos»; `OTP_EXPIRED`, Entonces «Pide un código nuevo»; `MAX_ATTEMPTS_EXCEEDED`, Entonces bloquear y ofrecer nuevo
 - **CA-5** (RF-4) — Dado reenviar por correo, Entonces `POST /otp/resend` conservando la caducidad
-- **CA-6** (RF-6) — Dado permiso del navegador concedido, Entonces `POST /push/register {platform:'web'}`; al desactivar `DELETE /push/unregister`
+- **CA-6** (RF-6) — Dado `apiConfig.features.pushWeb = false` (D12 aplazado), Entonces la sección de push del navegador no se muestra y no se registra ningún service worker; con el indicador en `true` (cuando exista FCM web), permiso concedido → `POST /push/register {platform:'web'}` y al desactivar `DELETE /push/unregister`
+- **CA-7** (RF-3) — Dado 502 `OTP_DELIVERY_FAILED` en enviar o reenviar, Entonces «No pudimos enviar el código. Inténtalo de nuevo» con botón Reintentar y la opción «Recibir por correo»; no se muestra el campo de código porque no hay `otpId`
+- **CA-8** (RF-7) — Dado el formulario de teléfono, Entonces el número se valida en E.164 (`^\+\d{10,15}$`) antes de enviar y junto al botón se lee «Al pedir el código aceptas recibir un único SMS con un código de verificación de HanoIT en este número. Sin mensajes promocionales.»; el SMS solo se pide al pulsar el botón
+- **CA-9** (RF-7) — Dado la pantalla de código, Entonces se informan los límites: 6 dígitos, válido 5 min, máximo 2 reenvíos, 3 intentos y 3 códigos SMS nuevos por número y hora; el reenvío por correo no envía otro SMS
 
 ## 6. Diseño y restricciones técnicas
 
@@ -119,6 +124,11 @@ Crear `notifications.api.js`, controladores y vistas. Push: requiere service wor
 | T-7 | CA-4 | unitaria | Prueba `[EMP-005 CA-4]` en `tests/unit/notifications/` |
 | T-8 | CA-5 | unitaria | Prueba `[EMP-005 CA-5]` en `tests/unit/notifications/` |
 | T-9 | CA-6 | unitaria | Prueba `[EMP-005 CA-6]` en `tests/unit/notifications/` |
+| T-10 | CA-7 | unitaria | Prueba `[EMP-005 CA-7]` en `tests/unit/notifications/` |
+| T-11 | CA-7 | contrato | Prueba `[EMP-005 CA-7]` en `tests/integration/notifications/` |
+| T-12 | CA-8 | unitaria | Prueba `[EMP-005 CA-8]` en `tests/unit/notifications/` |
+| T-13 | CA-8 | e2e | Prueba `[EMP-005 CA-8]` en `tests/e2e/notifications.e2e.mjs` |
+| T-14 | CA-9 | unitaria | Prueba `[EMP-005 CA-9]` en `tests/unit/notifications/` |
 
 ## 8. Excepciones de cobertura
 
@@ -127,8 +137,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 ## 9. Dependencias, riesgos y preguntas abiertas
 
 - Dependencias: ACC-004.
-- Riesgos: Push web exige configuración FCM.
-- Pregunta **bloqueante**: ¿Push web en alcance inmediato? → Decisión propuesta: Sí para registro; si no hay FCM web, se difiere con aprobación
+- Riesgos: Push web aplazado (D12) hasta F6-05; envío real comprobado con Twilio/Brevo (B1, 2026-11-23). La política de opt-in (`docs/contracts/source/backend-docs/compliance/SMS_OTP_OPT_IN.md`) es requisito de la verificación del número de Twilio: el texto de consentimiento no se cambia sin revisar ese documento.
+- Pregunta no bloqueante: ¿Push web en alcance inmediato? → Decisión propuesta: Resuelta: aplazado (D12); se activa con `features.pushWeb` cuando exista FCM web
 
 ## 10. Trazabilidad (se completa al cerrar)
 
@@ -140,6 +150,9 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-4 | | | `evidencia/EMP-005/...` |
 | CA-5 | | | `evidencia/EMP-005/...` |
 | CA-6 | | | `evidencia/EMP-005/...` |
+| CA-7 | | | `evidencia/EMP-005/...` |
+| CA-8 | | | `evidencia/EMP-005/...` |
+| CA-9 | | | `evidencia/EMP-005/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -148,3 +161,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | Spec creada desde el inventario legacy y el contrato `/api/v1` | Migración | — |
 | 2026-11-17 | v2: contrato real (migration-guide §12); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | OTP 502 `OTP_DELIVERY_FAILED`; consentimiento y límites de opt-in SMS; push web aplazado tras indicador (D12) | migration-guide §12, NOTIFICATIONS_OTP_FLOW, SMS_OTP_OPT_IN | pendiente |

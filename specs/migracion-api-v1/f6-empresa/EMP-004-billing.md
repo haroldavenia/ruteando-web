@@ -34,7 +34,7 @@ Autogestión de la suscripción con Stripe: estado, uso, contratar, portal, camb
 | POST | `/api/v1/billing/checkout` | `{plan(basic\|standard\|premium),billingInterval(monthly\|annual),initialQuantity≥1,successUrl,cancelUrl}` (URLs absolutas) | 201 `{checkoutUrl,sessionId}` | 422 ENTERPRISE_PLAN_SELF_SERVICE, 502 | — |
 | POST | `/api/v1/billing/portal` | `{returnUrl}` | `{portalUrl}` | 502 | — |
 | POST | `/api/v1/billing/upgrade` | `{plan,billingInterval}` | Plan nuevo, mismos asientos | 422, 502 | — |
-| PUT | `/api/v1/billing/seats` | `{op:'increase'\|'decrease',quantity}` | Cupo nuevo | 422 SEAT_DECREASE_BLOCKED/ENTERPRISE_PLAN_SELF_SERVICE | — |
+| PUT | `/api/v1/billing/seats` | `{op:'increase'\|'decrease',quantity}` (`quantity` es delta) | 200 `{subscription:{previousQuantity,newQuantity,billingInterval},tenant:{seatLimit,seatUsed}}` | 422 SEAT_DECREASE_BLOCKED/ENTERPRISE_PLAN_SELF_SERVICE | — |
 | POST | `/api/v1/billing/cancel` | — | `{cancelAtPeriodEnd,currentPeriodEnd,message}` | 502 | — |
 | GET | `/api/v1/billing/invoices` | — | `[{id,number,status,amountPaid,currency,created,pdfUrl}]` | 502 | `get__billing__invoices.json` |
 | GET | `/api/v1/billing/usage` | — | `{plan,seats{…,usagePercent},limits{deposits,drivers,routesMonthly{…,resetsAt},admins,addressesPerFile},subscription,trial}` | — | `get__billing__usage.json` |
@@ -86,6 +86,7 @@ Como administrador de la empresa, quiero gestionar plan, asientos, pagos y factu
 - **RF-8** — Ver facturas
 - **RF-9** — Volver de Stripe (`#/app/billing/success` y `/cancel`) y refrescar suscripción y empresa tolerando el retraso del webhook
 - **RF-10** — Mostrar un aviso de pago fallido con acceso al portal cuando `subscriptionStatus = past_due`
+- **RF-11** — Mostrar el estado de prueba (`trialing`) y los importes tal como los devuelve Stripe
 
 **No funcionales**
 
@@ -97,7 +98,7 @@ Como administrador de la empresa, quiero gestionar plan, asientos, pagos y factu
 
 - **CA-1** (RF-1) — Dado 404, Entonces «No tienes suscripción» y botón Contratar
 - **CA-2** (RF-2) — Dado el fixture de uso, Entonces barras con % de rutas y asientos
-- **CA-3** (RF-3) — Dado Contratar, Entonces `POST /billing/checkout` y redirección a `url`; 422 enterprise → «Contacta con ventas»
+- **CA-3** (RF-3) — Dado Contratar, Entonces `POST /billing/checkout` → 201 y redirección a `checkoutUrl`; 422 enterprise → «Contacta con ventas»
 - **CA-4** (RF-4) — Dado Portal, Entonces `POST /billing/portal` y redirección
 - **CA-5** (RF-5) — Dado cambio a anual, Entonces confirmación y `POST /billing/upgrade`
 - **CA-6** (RF-6) — Dado 5 asientos comprados y 4 usados, Entonces el control no permite bajar más de 1 (`op:'decrease'`); si llega 422 `SEAT_DECREASE_BLOCKED`, Entonces se explica
@@ -106,6 +107,8 @@ Como administrador de la empresa, quiero gestionar plan, asientos, pagos y factu
 - **CA-9** (RF-1) — Dado 502 `STRIPE_INTEGRATION_ERROR`, Entonces «Facturación no disponible»
 - **CA-10** (RF-9) — Dado la vuelta por `successUrl`, Cuando `GET /billing/subscription` da 404, Entonces «Confirmando el pago…» y reintenta (3 veces, 3 s) antes de avisar; no se muestra como fallo
 - **CA-11** (RF-10) — Dado `past_due`, Entonces franja de pago fallido con botón al portal y la operación no se bloquea en el cliente
+- **CA-12** (RF-11) — Dado una suscripción `trialing` (premium mensual, quantity 5), Entonces la insignia «Prueba» con la fecha de fin y el importe de `amount`/`currency` sin recalcular descuentos anuales en el cliente
+- **CA-13** (RF-6) — Dado 10 asientos y «Añadir 3», Entonces se envía `PUT /billing/seats {op:"increase",quantity:3}` (delta, no el cupo final) y con el 200 la pantalla muestra `subscription.newQuantity` 13 y `tenant.seatLimit`/`seatUsed` de la respuesta (no los calcula), y refresca `GET /billing/usage`
 
 ## 6. Diseño y restricciones técnicas
 
@@ -138,6 +141,10 @@ Crear `billing.api.js`, `custom/billing/*`.
 | T-15 | CA-10 | unitaria | Prueba `[EMP-004 CA-10]` en `tests/unit/billing/` |
 | T-16 | CA-10 | e2e | Prueba `[EMP-004 CA-10]` en `tests/e2e/billing.e2e.mjs` |
 | T-17 | CA-11 | unitaria | Prueba `[EMP-004 CA-11]` en `tests/unit/billing/` |
+| T-18 | CA-12 | unitaria | Prueba `[EMP-004 CA-12]` en `tests/unit/billing/` |
+| T-19 | CA-12 | sonda API | Prueba `[EMP-004 CA-12]` en `tests/api/billing.api.test.mjs` |
+| T-20 | CA-13 | unitaria | Prueba `[EMP-004 CA-13]` en `tests/unit/billing/` |
+| T-21 | CA-13 | contrato | Prueba `[EMP-004 CA-13]` en `tests/integration/billing/` |
 
 ## 8. Excepciones de cobertura
 
@@ -146,7 +153,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 ## 9. Dependencias, riesgos y preguntas abiertas
 
 - Dependencias: EMP-003.
-- Riesgos: Pruebas live contra Stripe test mode solamente.
+- Riesgos: Pruebas live contra Stripe test mode solamente (D13 comprobado 2026-11-23: checkout premium mensual → `trialing`). Los precios anuales del sandbox no coinciden con el descuento del spec del backend: no mostrar porcentajes de ahorro calculados en el cliente. El webhook es del backend (fuera de alcance).
 - Pregunta no bloqueante: Planes e intervalos → Decisión propuesta: Resuelta (§6): basic/standard/premium; enterprise no es autoservicio
 
 ## 10. Trazabilidad (se completa al cerrar)
@@ -164,6 +171,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-9 | | | `evidencia/EMP-004/...` |
 | CA-10 | | | `evidencia/EMP-004/...` |
 | CA-11 | | | `evidencia/EMP-004/...` |
+| CA-12 | | | `evidencia/EMP-004/...` |
+| CA-13 | | | `evidencia/EMP-004/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -172,3 +181,6 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | Spec creada desde el inventario legacy y el contrato `/api/v1` | Migración | — |
 | 2026-11-17 | v2: contrato real (migration-guide §6); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | D13 comprobado: sondas de checkout en Stripe test mode; estado `trialing`; importes solo desde Stripe | BACKEND_PENDIENTES D13 | pendiente |
+| 2026-11-24 | Forma real de la respuesta de asientos; checkout 200/201 | Colección Postman del backend (2026-11-24) | pendiente |
+| 2026-11-24 | G22 cerrada: checkout 201 `checkoutUrl`; seats con `quantity` delta | migration-guide 2026-11-24 (G19–G23 cerradas) | pendiente |

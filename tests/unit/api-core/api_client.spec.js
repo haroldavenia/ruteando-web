@@ -184,3 +184,58 @@ describe('ApiClient (FND-002)', function () {
     expect(seen['X-Test']).toBe('1');
   });
 });
+
+describe('ApiClient.batchDelete (FND-002)', function () {
+  var ApiClient, ApiError, $httpBackend;
+  beforeEach(module('angle'));
+  beforeEach(inject(function (_ApiClient_, _ApiError_, _$httpBackend_) {
+    ApiClient = _ApiClient_;
+    ApiError = _ApiError_;
+    $httpBackend = _$httpBackend_;
+  }));
+
+  function ids(n) { var out = []; for (var i = 0; i < n; i++) { out.push('id' + i); } return out; }
+
+  it('[FND-002 CA-17] parte 150 ids en lotes de 100 y 50 y unifica deleted, not_found y conflict', function () {
+    var sent = [];
+    $httpBackend.whenPOST('/api/v1/places/batch-delete').respond(function (m, url, data) {
+      var body = JSON.parse(data);
+      sent.push(body.ids.length);
+      return [200, { results: body.ids.map(function (id) {
+        if (id === 'id3') { return { id: id, status: 'conflict', error: { code: 'CONFLICT', message: 'en uso', details: { referencedBy: 'settings', ids: ['s1'] } } }; }
+        if (id === 'id120') { return { id: id, status: 'not_found' }; }
+        if (id === 'id121') { return { id: id, status: 'conflict' }; }
+        return { id: id, status: 'deleted' };
+      }) }];
+    });
+    var result;
+    ApiClient.batchDelete('places', ids(150)).then(function (r) { result = r; });
+    $httpBackend.flush();
+    expect(sent).toEqual([100, 50]);
+    expect(result.results.length).toBe(150);
+    expect(result.deleted.length).toBe(147);
+    expect(result.notFound).toEqual(['id120']);
+    expect(result.conflicts[0].id).toBe('id3');
+    expect(result.conflicts[0].error instanceof ApiError).toBe(true);
+    expect([result.conflicts[0].error.status, result.conflicts[0].error.code]).toEqual([409, 'CONFLICT']);
+    expect(result.conflicts[0].error.details.referencedBy).toBe('settings');
+    expect(result.conflicts[1].error.code).toBe('CONFLICT');
+  });
+
+  it('[FND-002 CA-17] un 422 de un lote rechaza con ApiError y sin ids no hace peticiones', function () {
+    $httpBackend.whenPOST('/api/v1/journeys/batch-delete').respond(422, { error: 'UNPROCESSABLE_ENTITY', message: 'max 100' });
+    var err;
+    ApiClient.batchDelete('journeys', ids(2)).catch(function (e) { err = e; });
+    $httpBackend.flush();
+    expect([err.status, err.code]).toEqual([422, 'UNPROCESSABLE_ENTITY']);
+    var empty;
+    ApiClient.batchDelete('journeys', []).then(function (r) { empty = r; });
+    inject(function ($rootScope) { $rootScope.$digest(); });
+    expect(empty).toEqual({ results: [], deleted: [], notFound: [], conflicts: [] });
+    $httpBackend.whenPOST('/api/v1/users/batch-delete').respond(200, {});
+    var none;
+    ApiClient.batchDelete('users', ['a']).then(function (r) { none = r; });
+    $httpBackend.flush();
+    expect(none.results).toEqual([]);
+  });
+});

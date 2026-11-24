@@ -10,7 +10,7 @@
 | Rama | `feat/<n>-visits-tracking` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
-| Endpoints `/api/v1` | `PATCH /packages/{id}/status/{status}`, `GET /packages`, `GET /package-status-reasons` |
+| Endpoints `/api/v1` | `PATCH /packages/{id}/status/{status}`, `GET /packages`, `GET /package-status-reasons`, `GET /journeys/{id}/package-statuses` |
 | Maqueta | `docs/ui/maquetas/index.html#jor-006` |
 | ADR relacionados | ADR-0002, ADR-0004, ADR-0006 |
 | Responsable | Ingeniería de Software |
@@ -36,6 +36,7 @@ Las visitas usaban un mock local (`json/visits.json`). Ahora una visita es una p
 | PATCH | `/api/v1/packages/{id}/status/{status}` | — | Package | 400 | `patch__packages__id__status__status.json` |
 | GET | `/api/v1/packages` | `?status=` | Page | — | `get__packages.json` |
 | GET | `/api/v1/package-status-reasons` | `?status&active=true` | Motivos | — | — (capturar) |
+| GET | `/api/v1/journeys/{id}/package-statuses` | — | `[{routeIndex,sequence,stopType,packageId,status,statusReason}]` del paquete actual (sin paradas de depósito; `status` nulo si el paquete ya no existe) | 404 jornada de otro tenant | — (capturar) |
 
 Reglas transversales: `docs/contracts/api-v1-catalog.md` · fuente canónica: `docs/contracts/source/migration-guide.md`.
 
@@ -76,7 +77,7 @@ Como operador, quiero seguir el estado de cada visita y registrar motivos, para 
 
 **Funcionales**
 
-- **RF-1** — Listar las visitas de una ruta con el estado de `packageInfo.status` del detalle de la jornada (sin una petición por paquete) y refrescar recargando la jornada
+- **RF-1** — Listar las visitas de una ruta con el estado de `packageInfo.status` del detalle de la jornada (sin una petición por paquete) y refrescar solo los estados con `GET /journeys/{id}/package-statuses`
 - **RF-2** — Filtrar por estado y texto
 - **RF-3** — Mostrar el avance de visitas atendidas
 - **RF-4** — Cambiar el estado de una visita (pesimista; cancelar con confirmación)
@@ -91,12 +92,13 @@ Como operador, quiero seguir el estado de cada visita y registrar motivos, para 
 
 ## 5. Criterios de aceptación
 
-- **CA-1** (RF-1) — Dado una ruta con 15 paradas `delivery`/`pickup`, Entonces las 15 visitas salen del detalle ya cargado sin peticiones adicionales; «Actualizar» vuelve a pedir `GET /journeys/{id}`
+- **CA-1** (RF-1) — Dado una ruta con 15 paradas `delivery`/`pickup`, Entonces las 15 visitas salen del detalle ya cargado sin peticiones adicionales; «Actualizar» pide `GET /journeys/{id}/package-statuses` (no la jornada completa) y actualiza estado y motivo por `routeIndex`+`sequence`
 - **CA-2** (RF-2) — Dado filtro «Entregado» y texto «calle 100», Entonces solo visitas que cumplen ambos (sin acentos ni mayúsculas)
 - **CA-3** (RF-3) — Dado 4 de 10 visitas en `attended`, Entonces «4 de 10 visitas atendidas» y barra al 40 %
 - **CA-4** (RF-4) — Dado «Marcar no atendido», Entonces diálogo con motivos de MAE-009 y `PATCH …/status/unattended?reason=…`; la fila cambia tras la respuesta y muestra el motivo
 - **CA-5** (RF-5) — Dado «No atendidas», Entonces `GET /packages?status=unattended` paginado
 - **CA-6** (RF-6) — Dado una parada sin `packageInfo` (jornada antigua), Entonces esa visita muestra «No disponible»
+- **CA-7** (RF-1) — Dado la pantalla abierta, Entonces los estados se refrescan solos cada 60 s con `package-statuses` mientras la pestaña está visible (se pausa oculta), y una parada con `status` nulo muestra «No disponible»
 
 ## 6. Diseño y restricciones técnicas
 
@@ -121,6 +123,8 @@ Crear `visits_store.js`. Eliminar `visits_http.js`, `json/visits.json`, controla
 | T-6 | CA-5 | unitaria | Prueba `[JOR-006 CA-5]` en `tests/unit/visits-tracking/` |
 | T-7 | CA-5 | e2e | Prueba `[JOR-006 CA-5]` en `tests/e2e/visits-tracking.e2e.mjs` |
 | T-8 | CA-6 | unitaria | Prueba `[JOR-006 CA-6]` en `tests/unit/visits-tracking/` |
+| T-9 | CA-7 | unitaria | Prueba `[JOR-006 CA-7]` en `tests/unit/visits-tracking/` |
+| T-10 | CA-7 | e2e | Prueba `[JOR-006 CA-7]` en `tests/e2e/visits-tracking.e2e.mjs` |
 
 ## 8. Excepciones de cobertura
 
@@ -142,6 +146,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-4 | | | `evidencia/JOR-006/...` |
 | CA-5 | | | `evidencia/JOR-006/...` |
 | CA-6 | | | `evidencia/JOR-006/...` |
+| CA-7 | | | `evidencia/JOR-006/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -151,3 +156,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | v2: contrato real (migration-guide §8); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (B3, D14, M3 parcial) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Estados vivos con `GET /journeys/{id}/package-statuses` (M3) en lugar de recargar la jornada | migration-guide §9 (M3) | pendiente |

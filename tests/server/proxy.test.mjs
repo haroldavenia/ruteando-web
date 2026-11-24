@@ -157,3 +157,29 @@ describe('redirecciones de correo y estáticos', () => {
     await shut(server);
   });
 });
+
+describe('mock-api: lotes y búsqueda (contrato 2026-11-23)', () => {
+  let stack;
+  before(async () => { stack = await startStack(); });
+  after(() => stack.close());
+  const json = { ...auth, 'content-type': 'application/json' };
+
+  test('[FND-002 CA-17] POST /{recurso}/batch-delete devuelve un resultado por id y 422 con más de 100', async () => {
+    const created = await (await fetch(`${stack.mockUrl}/api/v1/places`, { method: 'POST', headers: json, body: '{"name":"Lote"}' })).json();
+    const res = await fetch(`${stack.webUrl}/api/v1/places/batch-delete`, { method: 'POST', headers: { ...json, 'x-mock-conflict-ids': 'c1' }, body: JSON.stringify({ ids: [created.id, 'nope', 'c1'] }) });
+    assert.equal(res.status, 200);
+    assert.deepEqual((await res.json()).results.map((r) => r.status), ['deleted', 'not_found', 'conflict']);
+    const many = await fetch(`${stack.webUrl}/api/v1/places/batch-delete`, { method: 'POST', headers: json, body: JSON.stringify({ ids: Array.from({ length: 101 }, (_, i) => `x${i}`) }) });
+    assert.equal(many.status, 422);
+  });
+
+  test('[FND-002 CA-17] PATCH /packages/status y GET /packages?q= se simulan como en el contrato', async () => {
+    const pkg = await (await fetch(`${stack.mockUrl}/api/v1/packages`, { method: 'POST', headers: json, body: '{"guideNumber":"G01-XYZ","name":"Tienda"}' })).json();
+    const r = await (await fetch(`${stack.webUrl}/api/v1/packages/status`, { method: 'PATCH', headers: json, body: JSON.stringify({ ids: [pkg.id, 'nope'], status: 'unattended', reason: 'customer_absent' }) })).json();
+    assert.deepEqual(r.results.map((x) => x.status), ['updated', 'not_found']);
+    assert.equal((await fetch(`${stack.webUrl}/api/v1/packages/status`, { method: 'PATCH', headers: json, body: '{"ids":["a"]}' })).status, 422);
+    const found = await (await fetch(`${stack.webUrl}/api/v1/packages?q=g01`, { headers: auth })).json();
+    assert.ok(found.content.some((p) => p.id === pkg.id && p.status === 'unattended'));
+    assert.equal((await fetch(`${stack.webUrl}/api/v1/packages?q=${'a'.repeat(81)}`, { headers: auth })).status, 422);
+  });
+});

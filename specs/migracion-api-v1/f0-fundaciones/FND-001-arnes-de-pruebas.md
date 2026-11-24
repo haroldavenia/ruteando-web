@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 | --- | --- |
-| Estado | Borrador |
+| Estado | Lista |
 | Iniciativa / Fase | `migracion-api-v1` / `f0-fundaciones` |
 | Clave anterior | F0-01 · `SDD-TOOLING` |
 | Depende de | — |
@@ -168,3 +168,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-20 | CA-1: Karma carga angular/angular-mocks 1.3.15 de npm y un módulo `angle` de prueba (`tests/helpers/app-shim.js`) con el código de `tests/helpers/sources.json`; la carga completa de la app (base.js de bower + app.js) pasa a E2E (CA-5/CA-10). RF-1 se lee así. | Bower no está en npm ni en CI sin `bower install`; las unitarias deben correr en cualquier equipo (ADR-0005) | pendiente |
 | 2026-11-20 | Archivos autorizados ajustados a lo implementado (CI, ESLint, `tools/merge-lcov.mjs`, `tests/e2e/ensure-build.mjs`, `tests/tools/**`); `master/js` no se toca. | Implementación F0 | pendiente |
 | 2026-11-20 | CA-5 y CA-10 requieren la app compilada (bower + Gulp): no ejecutables en el contenedor de la sesión; quedan pendientes de ejecución en el equipo o en CI (`ci / e2e`). | Entorno sin registro de bower | pendiente |
+| 2026-11-24 | Estado → Lista | — | Harold Avenia |

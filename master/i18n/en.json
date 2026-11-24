@@ -791,7 +791,8 @@
       "SERVICE_UNAVAILABLE": "The service is unavailable.",
       "GATEWAY_TIMEOUT": "The server took too long to respond.",
       "BAD_GATEWAY": "Could not reach the server.",
-      "INVALID_SORT": "That sort order is not allowed."
+      "INVALID_SORT": "That sort order is not allowed.",
+      "OTP_DELIVERY_FAILED": "We could not send the code. Try again or request it by email."
     },
     "status": {
       "0": "No connection.",

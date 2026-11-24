@@ -10,7 +10,7 @@
 | Rama | `feat/<n>-packages` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
-| Endpoints `/api/v1` | `GET /packages`, `GET /packages/{id}`, `POST /packages`, `PUT /packages/{id}`, `DELETE /packages/{id}`, `PATCH /packages/{id}/status/{status}`, `GET /package-status-reasons` |
+| Endpoints `/api/v1` | `GET /packages`, `GET /packages/{id}`, `POST /packages`, `PUT /packages/{id}`, `DELETE /packages/{id}`, `PATCH /packages/{id}/status/{status}`, `GET /package-status-reasons`, `PATCH /packages/status` |
 | Maqueta | `docs/ui/maquetas/index.html#paq-002` |
 | ADR relacionados | ADR-0002, ADR-0004, ADR-0006 |
 | Responsable | Ingeniería de Software |
@@ -36,13 +36,14 @@ El itinerario vivía en memoria (`tempStorageData`) entre la subida del CSV y la
 
 | Método | Ruta | Request | Response | Errores | Fixture |
 | --- | --- | --- | --- | --- | --- |
-| GET | `/api/v1/packages` | `?page&size&status&serviceType` | Page<Package> (más recientes primero) | 401 | `get__packages.json` |
+| GET | `/api/v1/packages` | `?page&size&status&serviceType&q&sort` (`q` ≤ 80 caracteres, literal, sin mayúsculas, en guía/nombre/dirección) | Page<Package> (más recientes primero) | 401; 422 si `q` pasa de 80 | `get__packages.json` |
 | GET | `/api/v1/packages/{id}` | — | Package | 400,404 | `get__packages__id.json` |
 | POST | `/api/v1/packages` | `{serviceType*(pickup\|delivery\|mixed),guideNumber,name,address,standardizedAddress,location,geocodingScore,geocodingStatus,city,country(2 letras),postalCode,zoneId,weight,volume,pieceNumber,measure,durationStay(s),timeWindow{startUtc,endUtc},category,goodsTags,customerId,receiver{name,phone,email},sender{…},observation,status}` | 201 | 400,409 guía duplicada | `post__packages.json` |
 | PUT | `/api/v1/packages/{id}` | registro completo sin solo-lectura | 200 | 400,404,409 | `put__packages__id.json` |
 | DELETE | `/api/v1/packages/{id}` | — | 204 | 404, 409 en jornada | `delete__packages__id.json` |
 | PATCH | `/api/v1/packages/{id}/status/{status}` | `?reason=<key>` opcional | Package con `statusReason` | 400 estado inválido, 422 motivo inexistente/inactivo/no aplica | `patch__packages__id__status__status.json` |
 | GET | `/api/v1/package-status-reasons` | `?status&active=true` | Motivos del tenant que aplican al estado | — | — (capturar) |
+| PATCH | `/api/v1/packages/status` | `{ids (máx. 100), status, reason?}` | 200 `{results:[{id,status:updated\|not_found}]}`; un audit por paquete | 422 status desconocido o `reason` que no aplica (no escribe ninguno); 422 más de 100 ids | — (capturar) |
 
 Reglas transversales: `docs/contracts/api-v1-catalog.md` · fuente canónica: `docs/contracts/source/migration-guide.md`.
 
@@ -96,6 +97,7 @@ Como operador, quiero gestionar paquetes persistidos con su estado y ubicación,
 - **RF-8** — Identificar los paquetes «listos para rutear» (con `location` y `geocodingStatus` `match` o `manual`)
 - **RF-9** — Pedir un motivo (`reason`) al cambiar a un estado que tenga motivos activos, y mostrar `statusReason` en el listado
 - **RF-10** — Ordenar en servidor por fecha, guía, nombre, estado, servicio, ciudad o estado de geocodificación (`sort`)
+- **RF-11** — Buscar por texto en guía, nombre o dirección en el servidor (`?q=`, máx. 80 caracteres), combinable con estado, servicio y orden
 
 **No funcionales**
 
@@ -109,8 +111,8 @@ Como operador, quiero gestionar paquetes persistidos con su estado y ubicación,
 - **CA-2** (RF-2) — Dado la página, Entonces los contadores ubicadas/aproximadas/manuales/no ubicadas suman el total de la página y el filtro reduce filas
 - **CA-3** (RF-3) — Dado guía vacía, Entonces `POST` sin `guideNumber`; dado 409, Entonces «Ya existe un paquete con ese número de guía»
 - **CA-4** (RF-3) — Dado nuevo paquete con dirección, Cuando geocodifico y guardo, Entonces aparece con estado de geocodificación
-- **CA-5** (RF-4) — Dado «Atendido», Entonces `PATCH /packages/{id}/status/attended`; el menú ofrece solo valores activos de `PackageStatus` (`pending`, `attended`, `unattended`, `cancelled`); cancelar pide confirmación
-- **CA-6** (RF-5) — Dado «Entregado», Entonces `PATCH /packages/{id}/status/delivered`; el menú no ofrece `returned` ni `demo_*`
+- **CA-5** (RF-5) — Dado «Atendido» en una fila, Entonces `PATCH /packages/{id}/status/attended`; el menú ofrece solo valores activos de `PackageStatus` (`pending`, `attended`, `unattended`, `cancelled`); cancelar pide confirmación
+- **CA-6** (RF-5) — Dado el catálogo `PackageStatus` con valores inactivos (`returned`, `demo_*`), Entonces el menú de cambio de estado no los ofrece y nunca se envía un estado fuera del catálogo activo
 - **CA-7** (RF-6) — Dado paquetes, Cuando exporto, Entonces CSV `;` con cabecera `ID_GUIA;LONGITUD;LATITUD;CIUDAD;PAIS;DIRECCION;DIRECCION ESTANDARIZADA;PRECISION;ESTADO DE GEOCODIFICACION;ESTADIA;VOLUMEN;PESO;ZONA;NUM_PIEZAS;CODIGO_POSTAL;REMITENTE;TEL_REMITENTE;DESTINATARIO;TEL_DESTINATARIO;OBSERVACIONES;`, peso correcto y `'=` protegido
 - **CA-8** (RF-7) — Dado una fila, Cuando «Ver en mapa», Entonces el mapa centra el punto
 - **CA-9** (RF-8) — Dado paquetes con estados `match`, `mean`, `unmatch` y `manual`, Entonces el indicador «listos para rutear» cuenta solo `match` y `manual` con ubicación
@@ -119,6 +121,11 @@ Como operador, quiero gestionar paquetes persistidos con su estado y ubicación,
 - **CA-12** (RF-3) — Dado peso 2,5 kg y volumen 0,015 m³ en el formulario, Entonces se envía `weight:2500` y `volume:15000` (g, cm³); dado 409 `details.field:'guideNumber'`, Entonces el error va al campo guía
 - **CA-13** (RF-4) — Dado borrar un paquete incluido en una jornada (409 `referencedBy:'journeys'`), Entonces «Está en N jornadas» y no se borra
 - **CA-14** (RF-10) — Dado clic en la columna Guía, Entonces `GET /packages?…&sort=guideNumber,asc` y la tabla deja de ordenar en cliente
+- **CA-15** (RF-11) — Dado escribir «G01» en el buscador, Cuando pasan 300 ms sin teclear, Entonces `GET /packages?q=G01&page=0&size=20` (con `status`/`serviceType` si están puestos) y la página vuelve a 0; el campo limita a 80 caracteres y un 422 se muestra junto al buscador
+- **CA-16** (RF-5) — Dado 3 paquetes seleccionados y «No atendido» con motivo `customer_absent`, Entonces una sola petición `PATCH /packages/status {ids,status:"unattended",reason:"customer_absent"}`, informe «Se actualizaron X de 3» (`not_found` aparte) y las filas se refrescan; dado 422, Entonces nada cambió y se explica el motivo
+- **CA-17** (RF-4) — Dado borrar 3 paquetes seleccionados, Entonces 3 `DELETE /packages/{id}` con `ApiClient.runBulk` (concurrencia 4) e informe «Se eliminaron X de 3», con el 409 `referencedBy:"journeys"` por paquete (los paquetes no tienen borrado por lote)
+- **CA-18** (RF-5) — Dado más de 100 paquetes seleccionados para cambiar estado, Entonces se envían lotes de 100 y un informe único
+- **CA-19** (RF-11) — Dado buscar «G.01», Entonces se envía `q=G.01` tal cual; el backend lo trata como literal (coincide con «guide g.01 north», no con «GX01»)
 
 ## 6. Diseño y restricciones técnicas
 
@@ -157,6 +164,16 @@ Crear `packages.api.js`, `custom/packages/*`, `pages/packages/*`, `csv_writer.js
 | T-21 | CA-12 | contrato | Prueba `[PAQ-002 CA-12]` en `tests/integration/packages/` |
 | T-22 | CA-13 | unitaria | Prueba `[PAQ-002 CA-13]` en `tests/unit/packages/` |
 | T-23 | CA-14 | unitaria | Prueba `[PAQ-002 CA-14]` en `tests/unit/packages/` |
+| T-24 | CA-15 | unitaria | Prueba `[PAQ-002 CA-15]` en `tests/unit/packages/` |
+| T-25 | CA-15 | contrato | Prueba `[PAQ-002 CA-15]` en `tests/integration/packages/` |
+| T-26 | CA-15 | e2e | Prueba `[PAQ-002 CA-15]` en `tests/e2e/packages.e2e.mjs` |
+| T-27 | CA-16 | unitaria | Prueba `[PAQ-002 CA-16]` en `tests/unit/packages/` |
+| T-28 | CA-16 | contrato | Prueba `[PAQ-002 CA-16]` en `tests/integration/packages/` |
+| T-29 | CA-16 | e2e | Prueba `[PAQ-002 CA-16]` en `tests/e2e/packages.e2e.mjs` |
+| T-30 | CA-17 | unitaria | Prueba `[PAQ-002 CA-17]` en `tests/unit/packages/` |
+| T-31 | CA-18 | unitaria | Prueba `[PAQ-002 CA-18]` en `tests/unit/packages/` |
+| T-32 | CA-19 | contrato | Prueba `[PAQ-002 CA-19]` en `tests/integration/packages/` |
+| T-33 | CA-19 | sonda API | Prueba `[PAQ-002 CA-19]` en `tests/api/packages.api.test.mjs` |
 
 ## 8. Excepciones de cobertura
 
@@ -187,6 +204,11 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-12 | | | `evidencia/PAQ-002/...` |
 | CA-13 | | | `evidencia/PAQ-002/...` |
 | CA-14 | | | `evidencia/PAQ-002/...` |
+| CA-15 | | | `evidencia/PAQ-002/...` |
+| CA-16 | | | `evidencia/PAQ-002/...` |
+| CA-17 | | | `evidencia/PAQ-002/...` |
+| CA-18 | | | `evidencia/PAQ-002/...` |
+| CA-19 | | | `evidencia/PAQ-002/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -196,3 +218,6 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | v2: contrato real (migration-guide §8, GEOCODING_API §3); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (B6, D2, D3, D14, D16, B8, unidades) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Búsqueda `?q=` (M5) y cambio de estado por lote `PATCH /packages/status` (M2); el borrado sigue siendo uno a uno (no hay lote de paquetes). CA-5/CA-6 corregidos (CA-6 citaba un estado `delivered` que no existe) | migration-guide §8, endpoints.md (M2, M5) | pendiente |
+| 2026-11-24 | Ejemplo de búsqueda literal `q=G.01` de la colección Postman | Colección Postman del backend (2026-11-24) | pendiente |
+| 2026-11-24 | Búsqueda literal confirmada por el backend (`G.01` ≠ `GX01`) | migration-guide 2026-11-24 (G19–G23 cerradas) | pendiente |
