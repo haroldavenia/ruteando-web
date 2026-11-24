@@ -132,11 +132,11 @@ Persistido en colección **`otp_codes`**.
 1. Calcula `recipientHash = SHA256(recipient + pepper)`.
 2. Cuenta documentos con ese `recipientHash` creados en los últimos 60 min. Si `>= 3` → `OtpRateLimitException` (capa **interna**).
 3. Genera código numérico (`otp.length`), `otpId = UUID`, `expiresAt = now + ttl`.
-4. Persiste `OtpRecord` con `attempts=0`, `resendCount=0`, `codeHash = BCrypt(code)`.
-5. Llama canal vía `dispatchOtp`:
+4. Llama canal vía `dispatchOtp` y espera la aceptación del proveedor:
    - **SMS:** `TwilioSmsServiceImpl.sendOtpSms(PhoneE164.toSmsRecipient(...), code, purpose)`
    - **Email:** `BrevoNotificationServiceImpl.sendOtpEmail(...)`
-   - Falla silenciosa: se loguea pero NO se propaga al cliente.
+   - Si Twilio o Brevo rechazan, o no están configurados, lanza `NotificationDeliveryException` → **502 `OTP_DELIVERY_FAILED`**. No se persiste el OTP.
+5. Persiste `OtpRecord` con `attempts=0`, `resendCount=0`, `codeHash = BCrypt(code)`.
 6. Devuelve `OtpResult(otpId, ttlSeconds)`.
 
 ### 5.2 `resendOtp(otpId, newChannel, newRecipient)`
@@ -144,8 +144,8 @@ Persistido en colección **`otp_codes`**.
 1. Busca por `otpId`. Si no existe → `OtpExpiredException`.
 2. Si `expiresAt < now` → `OtpExpiredException`.
 3. Si `resendCount >= 2` → `OtpMaxResendsException`.
-4. Genera **nuevo código**, actualiza `channel`, `recipientHash`, `codeHash`, **`expiresAt` no cambia**, `resendCount++`.
-5. Reenvía vía `dispatchOtp` (Twilio SMS o Brevo email según canal).
+4. Genera **nuevo código** y llama `dispatchOtp` (Twilio SMS o Brevo email). Si el proveedor rechaza, el documento no cambia y la API responde **502**.
+5. Solo tras la aceptación actualiza `channel`, `recipientHash`, `codeHash`, **`expiresAt` no cambia**, `resendCount++`, y persiste.
 
 ### 5.3 `verifyOtp(otpId, code)`
 
@@ -215,12 +215,13 @@ Cuenta documentos `otp_codes` con el mismo `recipientHash` creados en los últim
 
 - SDK Twilio; remitente `twilio.from-number`.
 - Mensaje plano con código y TTL en minutos.
-- Errores: capturados, log, retorna `null`. **No** se propagan al cliente.
+- Llamada síncrona. Si Twilio no está configurado o rechaza el mensaje, lanza `NotificationDeliveryException` → **502 `OTP_DELIVERY_FAILED`**. El cuerpo de Twilio no sale al cliente.
 
 ### 7.2 Email — `BrevoNotificationServiceImpl.sendOtpEmail(email, code, firstName)`
 
 - Template ID: `brevo.templates.otp-email` (default 9).
-- Params: `firstName` (resuelto vía `RoutingUserRepository.findByEmailAndDeletedAtIsNull`, fallback `"Usuario"`), `otpCode`, `expiresMinutes`.
+- Params: `firstName` (resuelto vía `RoutingUserRepository.findByEmailAndDeletedAtIsNull`, fallback `"Usuario"`), `otpCode`.
+- Llamada síncrona. Template ausente o rechazo de Brevo → **502 `OTP_DELIVERY_FAILED`**. El resto de correos Brevo sigue siendo asíncrono y no falla la acción de negocio.
 
 ### 7.3 Enmascaramiento del `message` HTTP
 
@@ -243,6 +244,7 @@ Hecho en `NotificationController` antes de devolver `SendOtpResponse`:
 | `OtpMaxAttemptsException` | **422** | `MAX_ATTEMPTS_EXCEEDED` | `"Maximum verification attempts exceeded for this OTP."` | — |
 | `OtpRateLimitException` (capa interna) | **429** | `RATE_LIMIT_EXCEEDED` | `"Too many OTP requests for this recipient. Try again later."` | — (header `Retry-After: 3600` fijo) |
 | `RateLimitExceededException` (capa Redis) | **429** | `RATE_LIMIT_EXCEEDED` | `"Rate limit exceeded. Try again in N seconds."` | — (header `Retry-After: N` dinámico) |
+| `NotificationDeliveryException` (Twilio o Brevo rechazan el OTP) | **502** | `OTP_DELIVERY_FAILED` | `"The verification code could not be delivered. Please try again later."` | — |
 
 > No existe `InvalidOtpException`: `INVALID_OTP` se construye desde el controller, no es una excepción.
 
@@ -397,7 +399,7 @@ HTTP/1.1 400
 | Canal en verify | Verify no recibe canal; sólo `otpId` + `code` |
 | Email con mayúsculas | Hash interno usa string original; rate limit Redis lo lower-casea → **divergencia entre capas** |
 | `brevo.otp.length != 6` | `OtpService` genera el código con el length configurado pero `VerifyOtpRequest` exige 6 dígitos → respuesta `VALIDATION_ERROR` |
-| Brevo email / Twilio SMS falla | API ya devolvió 200 con `otpId`; envío async best-effort, log warning |
+| Brevo email / Twilio SMS falla | No se guarda el OTP (en reenvío se conserva el código anterior). **502 `OTP_DELIVERY_FAILED`**. El detalle del proveedor queda en el log |
 | Resend con OTP expirado | **410 `OTP_EXPIRED`** antes de tocar `resendCount` |
 | Reset por TTL Mongo | Documento puede desaparecer aunque la lógica de negocio lo considere "casi expirado"; verify devolverá **410** |
 
@@ -417,6 +419,7 @@ HTTP/1.1 400
 | Demasiados intentos de verificación | 422 | `MAX_ATTEMPTS_EXCEEDED` | `Maximum verification attempts exceeded for this OTP.` | — |
 | Rate limit interno (Mongo) | 429 | `RATE_LIMIT_EXCEEDED` | `Too many OTP requests for this recipient. Try again later.` | header `Retry-After: 3600` |
 | Rate limit filtro (Redis) | 429 | `RATE_LIMIT_EXCEEDED` | `Rate limit exceeded. Try again in N seconds.` | header `Retry-After: N` dinámico |
+| Twilio o Brevo rechazan el OTP | 502 | `OTP_DELIVERY_FAILED` | `The verification code could not be delivered. Please try again later.` | — |
 
 ## 13. Archivos relevantes
 

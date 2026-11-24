@@ -2,7 +2,7 @@
 // Gobierno de specs de la migración ruteando-web → /api/v1 (plantilla harness-engineering).
 // DoR, DoD, trazabilidad legacy/endpoint → spec, escaneo de código legacy y cambios de estado.
 // Sin dependencias externas. Uso: node tools/specs.mjs help
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -253,6 +253,30 @@ export function lintUi(root) {
   return r;
 }
 
+/** Issue de GitHub generado desde la spec (la spec manda; el Issue solo enlaza y resume). */
+export function issue(s) {
+  const historia = (s.sec['2. Historia de usuario'] || '').trim();
+  const deps = s.deps.length ? s.deps.join(', ') : '—';
+  const body = [
+    `**Spec:** \`${s.rel}\``,
+    `**Fase:** \`${s.fase}\` · **Depende de:** ${deps} · **Estado de la spec:** ${s.estado}`,
+    `**Maqueta:** ${s.maqueta ? `\`${s.maqueta}\`` : 'sin interfaz'}`,
+    `**Endpoints /api/v1:** ${s.endpoints.length ? s.endpoints.map((e) => `\`${e}\``).join(', ') : '—'}`,
+    '',
+    '### Historia de usuario',
+    historia,
+    '',
+    '### Criterios de aceptación (resumen; el detalle vive en la spec)',
+    ...s.ca.map((c) => `- [ ] CA-${c.n} (RF-${c.rf}) — ${c.text}`),
+    '',
+    '### Definition of Ready',
+    `- [${s.estado === 'Borrador' ? ' ' : 'x'}] Spec en \`Lista\` (aprobada por una persona)`,
+    '- [ ] Maqueta confirmada (si hay interfaz)',
+  ].join('\n');
+  const labels = ['tipo:historia', `fase:${(s.fase || '').split('-')[0]}`, `area:${s.id.slice(0, 3).toLowerCase()}`];
+  return { title: `[${s.id}] ${s.title}`, labels, body };
+}
+
 export function contractDiff(openapi, coverage) {
   const have = new Set();
   for (const [p, ops] of Object.entries(openapi.paths || {})) {
@@ -263,6 +287,50 @@ export function contractDiff(openapi, coverage) {
   const nh = new Set([...have].map(norm));
   const nk = new Set(known.map(norm));
   return { nuevos: [...have].filter((e) => !nk.has(norm(e))).sort(), ausentes: known.filter((e) => !nh.has(norm(e))).sort() };
+}
+
+/** Peticiones de una colección Postman v2.1 → ["MÉTODO /ruta"] (sin /api/v1; {{var}} → {var}). */
+export function postmanEndpoints(collection, { skipFolders = [/^00 /] } = {}) {
+  const out = [];
+  const walkItems = (items, top) => {
+    for (const it of items || []) {
+      const folder = top ?? it.name;
+      if (top === undefined && skipFolders.some((re) => re.test(it.name))) continue;
+      if (it.item) walkItems(it.item, folder);
+      else if (it.request) {
+        const u = it.request.url;
+        const raw = (typeof u === 'string' ? u : u?.raw || '').split('?')[0];
+        const route = raw.replace(/^\{\{(base_url|api_base)\}\}/, '').replace(/^https?:\/\/[^/]+/, '').replace(/^\/api\/v1/, '')
+          .replace(/\{\{([^}]+)\}\}/g, '{$1}').replace(/\/$/, '');
+        out.push({ endpoint: `${it.request.method} ${route}`, name: it.name, folder });
+      }
+    }
+  };
+  walkItems(collection.item);
+  return out;
+}
+
+/** ¿La ruta concreta (con valores o {var}) encaja en el patrón de cobertura ({x} = un segmento)? */
+export function matchEndpoint(pattern, actual) {
+  const [pm, pp] = pattern.split(' ');
+  const [am, ap] = actual.split(' ');
+  if (pm !== am) return false;
+  const ps = pp.split('/');
+  const as = ap.split('/');
+  return ps.length === as.length && ps.every((seg, i) => seg === as[i] || /^\{.+\}$/.test(seg));
+}
+
+/** Colección Postman frente a endpoint-coverage.json. */
+export function postmanDiff(collection, coverage) {
+  const reqs = postmanEndpoints(collection);
+  const known = coverage.filter((x) => x.status !== 'retired');
+  const best = (r) => known.filter((k) => matchEndpoint(k.endpoint, r.endpoint))
+    .sort((a, b) => (b.endpoint.match(/\/[^{/][^/]*/g) || []).length - (a.endpoint.match(/\/[^{/][^/]*/g) || []).length)[0];
+  const mapped = reqs.map((r) => ({ ...r, cubre: best(r) }));
+  const nuevos = [...new Set(mapped.filter((m) => !m.cubre).map((m) => m.endpoint))].sort();
+  const usados = new Set(mapped.filter((m) => m.cubre).map((m) => m.cubre.endpoint));
+  const ausentes = known.filter((k) => !usados.has(k.endpoint)).map((k) => k.endpoint).sort();
+  return { mapped, nuevos, ausentes };
 }
 
 // ---------- CLI ----------
@@ -297,7 +365,9 @@ export const HELP = `Uso: node tools/specs.mjs <comando>
   trace [--fase f2-maestros] [--write] Cobertura legacy y endpoints → historias
   legacy-scan [--id ID]               Restos legacy en master/js, master/jade y server/
   lint-ui                             Secciones obligatorias de docs/ui/sistema-ui.md
-  contract-diff --openapi <archivo>   Compara /v3/api-docs con endpoint-coverage.json`;
+  contract-diff --openapi <archivo>   Compara /v3/api-docs con endpoint-coverage.json
+  contract-diff --postman <colección> Mapea cada petición de Postman a la cobertura (falla si hay rutas sin historia)
+  issue <ID> [--write]                Título, etiquetas y cuerpo del Issue (con --write: .tmp/issues/<ID>.md para gh issue create)`;
 
 export function main(argv, io = { out: (t) => process.stdout.write(`${t}\n`), err: (t) => process.stderr.write(`${t}\n`) }, root = process.cwd()) {
   const a = parseArgs(argv);
@@ -329,6 +399,16 @@ export function main(argv, io = { out: (t) => process.stdout.write(`${t}\n`), er
         if (a.all) io.out(`${list.length} specs: ${ok ? 'todas cumplen' : 'hay fallos'}`);
         return ok ? 0 : 1;
       }
+      case 'issue': {
+        const i = issue(find(ctx.specs, id));
+        if (a.write) {
+          const dir = path.join(root, '.tmp', 'issues');
+          mkdirSync(dir, { recursive: true });
+          writeFileSync(path.join(dir, `${id}.md`), `${i.body}\n`);
+          io.out(`gh issue create --title "${i.title}" ${i.labels.map((l) => `--label "${l}"`).join(' ')} --body-file .tmp/issues/${id}.md`);
+        } else io.out(`${i.title}\n${i.labels.join(', ')}\n\n${i.body}`);
+        return 0;
+      }
       case 'dod': { const r = dod(find(ctx.specs, id), ctx); io.out(r.toString()); return r.passed ? 0 : 1; }
       case 'estado': { setEstado(find(ctx.specs, id), valor, { humano: a.humano, motivo: a.motivo }); io.out(`${id} → ${valor}`); return 0; }
       case 'trace': {
@@ -354,6 +434,12 @@ export function main(argv, io = { out: (t) => process.stdout.write(`${t}\n`), er
       }
       case 'lint-ui': { const r = lintUi(root); io.out(r.toString()); return r.passed ? 0 : 1; }
       case 'contract-diff': {
+        if (a.postman) {
+          const p = postmanDiff(JSON.parse(readFileSync(path.resolve(root, a.postman), 'utf8')), ctx.coverage);
+          io.out(`Postman: ${p.mapped.length} peticiones, ${p.mapped.filter((m) => m.cubre).length} mapeadas a la cobertura`);
+          io.out(`En Postman sin historia: ${p.nuevos.join(', ') || '—'}\nEn cobertura sin ejemplo en Postman: ${p.ausentes.join(', ') || '—'}`);
+          return p.nuevos.length ? 1 : 0;
+        }
         const d = contractDiff(JSON.parse(readFileSync(path.resolve(root, a.openapi), 'utf8')), ctx.coverage);
         io.out(`Nuevos en el backend (sin historia): ${d.nuevos.join(', ') || '—'}\nEn cobertura pero ausentes del backend: ${d.ausentes.join(', ') || '—'}`);
         return d.nuevos.length || d.ausentes.length ? 1 : 0;

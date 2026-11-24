@@ -10,7 +10,7 @@
 | Rama | `feat/<n>-fleet-vehicles` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
-| Endpoints `/api/v1` | `GET /resources`, `GET /resources/{id}`, `POST /resources`, `PUT /resources/{id}`, `DELETE /resources/{id}`, `PUT /resources/{id}/driver/{driverId}`, `DELETE /resources/{id}/driver` |
+| Endpoints `/api/v1` | `GET /resources`, `GET /resources/{id}`, `POST /resources`, `PUT /resources/{id}`, `DELETE /resources/{id}`, `PUT /resources/{id}/driver/{driverId}`, `DELETE /resources/{id}/driver`, `POST /resources/batch-delete` |
 | Maqueta | `docs/ui/maquetas/index.html#mae-002` |
 | ADR relacionados | ADR-0002, ADR-0004, ADR-0006 |
 | Responsable | Ingeniería de Software |
@@ -26,7 +26,7 @@ Migrar vehículos a `resources` (tipo, depósito, turno, cantidad, placa, zonas 
 | --- | --- | --- | --- |
 | L1 | Listado con búsqueda de texto, selección múltiple, paginación en cliente (10/página) | `vehicles_controller.js` | Cambia: paginación de servidor + búsqueda en cliente sobre la página o `listAll` |
 | L2 | Borrar uno con confirmación ngDialog | `vehicles_controller.js` | Se mantiene: `DELETE /{id}` |
-| L3 | Borrar seleccionados (`DELETE ?ids=`) | `vehicles_http.js` | Cambia: N `DELETE` con informe «Se eliminaron X de N» |
+| L3 | Borrar seleccionados (`DELETE ?ids=`) | `vehicles_http.js` | Cambia: una petición `POST /resources/batch-delete` (lotes de 100) con informe «Se eliminaron X de N» |
 | L4 | Ir a crear / editar | `vehicles_controller.js` | Se mantiene |
 | L5 | Formulario crear/editar con cancelar | `vehicle_controller.js` | Se mantiene con nuevos campos |
 | L6 | Recuperación de token con `resincTknRefresh` en la carga | `vehicles_controller.js` | Se retira (interceptor ACC-001) |
@@ -48,6 +48,7 @@ Migrar vehículos a `resources` (tipo, depósito, turno, cantidad, placa, zonas 
 | DELETE | `/api/v1/resources/{id}` | — | 204 | 404 | `delete__resources__id.json` |
 | PUT | `/api/v1/resources/{id}/driver/{driverId}` | — | Resource con `driverId` | 404, 409 | `put__resources__id__driver__driverId.json` |
 | DELETE | `/api/v1/resources/{id}/driver` | — | Resource sin conductor | 404 | `delete__resources__id__driver.json` |
+| POST | `/api/v1/resources/batch-delete` | `{ids}` (máx. 100) | 200 `{results:[{id,status:deleted\|not_found\|conflict,error?}]}`; `error` = el 409 (`CONFLICT`, `details.referencedBy`, `details.ids`) | 422 si hay más de 100 ids (no borra ninguno) | — (capturar con `capture-fixture`) |
 
 Reglas transversales: `docs/contracts/api-v1-catalog.md` · fuente canónica: `docs/contracts/source/migration-guide.md`.
 
@@ -113,7 +114,7 @@ Como administrador u operador, quiero gestionar vehículos y asignarles conducto
 - **CA-1** (RF-1) — Dado el filtro tipo=X, Entonces `GET /resources?resourceTypeId=X&page=0&size=20`
 - **CA-2** (RF-2) — Dado turno 08:00 local (UTC-5) y 8 h, Cuando guardo, Entonces `shiftStartUtc` = '…T13:00:00Z' y `shiftDurationSec`=28800
 - **CA-3** (RF-2) — Dado formulario válido, Cuando guardo, Entonces aparece en el listado
-- **CA-4** (RF-3) — Dado 2 seleccionados, Entonces 2 `DELETE` e informe
+- **CA-4** (RF-3) — Dado 2 seleccionados, Entonces `POST /resources/batch-delete` e informe
 - **CA-5** (RF-4) — Dado formulario a medias, Cuando «Crear tipo» y guardo el tipo, Entonces vuelvo con mis datos y el tipo nuevo
 - **CA-6** (RF-5) — Dado un vehículo sin conductor, Cuando elijo un conductor de `/users/drivers` y confirmo, Entonces `PUT /resources/{id}/driver/{driverId}` y la fila muestra su nombre
 - **CA-7** (RF-6) — Dado un vehículo con conductor, Cuando «Quitar conductor», Entonces `DELETE /resources/{id}/driver`
@@ -122,6 +123,8 @@ Como administrador u operador, quiero gestionar vehículos y asignarles conducto
 - **CA-10** (RF-2) — Dado un alta sin depósito o sin turno, Entonces no se envía y se marcan `depotId`/`shiftStartUtc`/`shiftDurationSec` como obligatorios
 - **CA-11** (RF-8) — Dado `#/app/assignedServices/list`, Entonces redirige a vehículos con el filtro «Con conductor»; el menú ya no muestra Asignaciones
 - **CA-12** (RF-9) — Dado orden por placa, Entonces `GET /resources?sort=licensePlate,asc`
+- **CA-13** (RF-3) — Dado 3 seleccionados con un resultado `conflict` (`details.referencedBy`), Cuando confirmo, Entonces una sola petición `POST /resources/batch-delete {ids:[…3]}`, aviso «Se eliminaron 2 de 3» y el detalle del que está en uso; un `not_found` cuenta como ya eliminado
+- **CA-14** (RF-3) — Dado 150 seleccionados, Entonces `ApiClient.batchDelete` envía 2 peticiones (100 y 50) y muestra un único informe; nunca se envía un lote de más de 100 (evita el 422)
 
 ## 6. Diseño y restricciones técnicas
 
@@ -156,6 +159,10 @@ Crear `resources.api.js`, `assign_driver_modal.jade`. Modificar controladores/vi
 | T-17 | CA-10 | unitaria | Prueba `[MAE-002 CA-10]` en `tests/unit/fleet-vehicles/` |
 | T-18 | CA-11 | e2e | Prueba `[MAE-002 CA-11]` en `tests/e2e/fleet-vehicles.e2e.mjs` |
 | T-19 | CA-12 | unitaria | Prueba `[MAE-002 CA-12]` en `tests/unit/fleet-vehicles/` |
+| T-20 | CA-13 | unitaria | Prueba `[MAE-002 CA-13]` en `tests/unit/fleet-vehicles/` |
+| T-21 | CA-13 | contrato | Prueba `[MAE-002 CA-13]` en `tests/integration/fleet-vehicles/` |
+| T-22 | CA-13 | e2e | Prueba `[MAE-002 CA-13]` en `tests/e2e/fleet-vehicles.e2e.mjs` |
+| T-23 | CA-14 | unitaria | Prueba `[MAE-002 CA-14]` en `tests/unit/fleet-vehicles/` |
 
 ## 8. Excepciones de cobertura
 
@@ -183,6 +190,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-10 | | | `evidencia/MAE-002/...` |
 | CA-11 | | | `evidencia/MAE-002/...` |
 | CA-12 | | | `evidencia/MAE-002/...` |
+| CA-13 | | | `evidencia/MAE-002/...` |
+| CA-14 | | | `evidencia/MAE-002/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -192,3 +201,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | v2: contrato real (migration-guide §7, 16.1); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (retiro de asignaciones, D2, B8) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Borrado por lote con `POST /resources/batch-delete` (M1): un resultado por id; sustituye los N `DELETE` | migration-guide §7 (M1) y endpoints.md | pendiente |

@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import {
   header, sections, ids, ticks, loadSpecs, find, lint, dod, legacyHits, trace, traceMarkdown, next, setEstado,
-  lintUi, contractDiff, context, parseArgs, main, Report, INITIATIVE,
+  lintUi, contractDiff, context, parseArgs, main, Report, INITIATIVE, issue, postmanEndpoints, matchEndpoint, postmanDiff,
 } from '../specs.mjs';
 
 const SPEC = (id, { estado = 'Borrador', deps = '—', eps = '—', maq = '—', issue = '#<n> (pendiente)', extra = '', ca = null } = {}) => `# ${id}: Historia de prueba
@@ -260,4 +260,73 @@ test('main sin trazabilidad ni maquetas', () => {
   const o = io();
   assert.equal(main(['trace'], o, root), 0);
   assert.equal(main(['contract-diff', '--openapi', 'nada.json'], o, root), 2);
+});
+
+test('issue: título, etiquetas y cuerpo salen de la spec; --write deja el archivo para gh', () => {
+  const root = repo({
+    [`${F}/FND-001-a.md`]: SPEC('FND-001', { eps: '`GET /units`', maq: '`docs/ui/maquetas/index.html#fnd-001`' }),
+    [`${F}/FND-002-b.md`]: SPEC('FND-002', { estado: 'Lista', deps: 'FND-001' }),
+  });
+  const specs = loadSpecs(root);
+  const i = issue(find(specs, 'FND-001'));
+  assert.equal(i.title, 'FND-001: Historia de prueba'.replace('FND-001: ', '[FND-001] '));
+  assert.deepEqual(i.labels, ['tipo:historia', 'fase:f0', 'area:fnd']);
+  assert.match(i.body, /\*\*Maqueta:\*\* `docs\/ui\/maquetas\/index.html#fnd-001`/);
+  assert.match(i.body, /- \[ \] CA-1 \(RF-1\)/);
+  assert.match(i.body, /- \[ \] Spec en `Lista`/);
+  const j = issue(find(specs, 'FND-002'));
+  assert.match(j.body, /sin interfaz/);
+  assert.match(j.body, /\*\*Endpoints \/api\/v1:\*\* —/);
+  assert.match(j.body, /- \[x\] Spec en `Lista`/);
+  const o = io();
+  assert.equal(main(['issue', 'FND-001'], o, root), 0);
+  assert.match(o.o.join('\n'), /tipo:historia, fase:f0, area:fnd/);
+  const w = io();
+  assert.equal(main(['issue', 'FND-002', '--write'], w, root), 0);
+  assert.match(w.o.join(''), /gh issue create --title "\[FND-002\] Historia de prueba" --label "tipo:historia"/);
+  assert.match(readFileSync(path.join(root, '.tmp', 'issues', 'FND-002.md'), 'utf8'), /### Historia de usuario/);
+});
+
+test('postman: mapea peticiones con valores literales a los patrones de cobertura', () => {
+  const col = { item: [
+    { name: '00 _Flows', item: [{ name: 'login', request: { method: 'POST', url: { raw: '{{base_url}}/api/v1/auth/login' } } }] },
+    { name: '11 Packages', item: [
+      { name: 'Get', request: { method: 'GET', url: { raw: '{{api_base}}/packages/{{package_id}}' } } },
+      { name: 'Status', request: { method: 'PATCH', url: { raw: '{{base_url}}/api/v1/packages/{{package_id}}/status/unattended?reason=x' } } },
+      { name: 'Alias', request: { method: 'GET', url: 'https://hanoit:8000/api/v1/packages/status/pending' } },
+      { name: 'Carpeta', item: [{ name: 'List', request: { method: 'GET', url: { raw: '{{base_url}}/api/v1/packages/' } } }] },
+      { name: 'Sin request' },
+    ] },
+  ] };
+  const eps = postmanEndpoints(col);
+  assert.deepEqual(eps.map((e) => e.endpoint), ['GET /packages/{package_id}', 'PATCH /packages/{package_id}/status/unattended', 'GET /packages/status/pending', 'GET /packages']);
+  assert.equal(eps[0].folder, '11 Packages');
+  assert.equal(postmanEndpoints(col, { skipFolders: [] }).length, 5);
+  assert.equal(matchEndpoint('GET /packages/{id}', 'GET /packages/{package_id}'), true);
+  assert.equal(matchEndpoint('GET /packages/{id}', 'POST /packages/{package_id}'), false);
+  assert.equal(matchEndpoint('GET /packages/{id}', 'GET /packages/status/pending'), false);
+  const cov = [
+    { endpoint: 'GET /packages', status: 'in_scope' }, { endpoint: 'GET /packages/{id}', status: 'in_scope' },
+    { endpoint: 'PATCH /packages/{id}/status/{status}', status: 'in_scope' }, { endpoint: 'GET /packages/upload/limits', status: 'in_scope' },
+    { endpoint: 'GET /assigned-services', status: 'retired' },
+  ];
+  const d = postmanDiff(col, cov);
+  assert.deepEqual(d.nuevos, ['GET /packages/status/pending']);
+  assert.deepEqual(d.ausentes, ['GET /packages/upload/limits']);
+  assert.equal(d.mapped[1].cubre.endpoint, 'PATCH /packages/{id}/status/{status}');
+});
+
+test('main contract-diff --postman', () => {
+  const root = repo({
+    [`${F}/FND-001-a.md`]: SPEC('FND-001', { eps: '`GET /units`' }),
+    [`${T}/endpoint-coverage.json`]: { items: [{ endpoint: 'GET /units', specs: ['FND-001'], status: 'in_scope' }] },
+    'ok.json': { item: [{ name: 'U', item: [{ name: 'units', request: { method: 'GET', url: { raw: '{{api_base}}/units' } } }] }] },
+    'nuevo.json': { item: [{ name: 'U', item: [{ name: 'x', request: { method: 'GET', url: { raw: '{{api_base}}/nuevo' } } }] }] },
+  });
+  const o = io();
+  assert.equal(main(['contract-diff', '--postman', 'ok.json'], o, root), 0);
+  assert.match(o.o.join('\n'), /1 peticiones, 1 mapeadas/);
+  const n = io();
+  assert.equal(main(['contract-diff', '--postman', 'nuevo.json'], n, root), 1);
+  assert.match(n.o.join('\n'), /En Postman sin historia: GET \/nuevo/);
 });

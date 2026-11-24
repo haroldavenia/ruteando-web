@@ -93,6 +93,7 @@ Como administrador de la empresa, quiero que cada rol vea solo lo que puede usar
 - **CA-5** (RF-4) — Dado un login de `driver`, Entonces ve el aviso de app móvil y vuelve a login
 - **CA-6** (RF-5) — Dado un 403 en una acción, Entonces aviso «No tienes permiso» y la pantalla sigue operativa
 - **CA-7** (RF-6) — Dado cada rol, Cuando abro home, Entonces solo veo accesos permitidos
+- **CA-8** (RF-2) — Dado las cuentas del tenant `sdd-test` (`SDD_TEST_AGENT_*`, `SDD_TEST_DRIVER_*`, `SDD_TEST_SUPERADMIN_*` en `.env`), Cuando la sonda inicia sesión con cada una, Entonces el `role` del JWT es el esperado y `GET /users` responde 403 para `agent` y 200 para `tenant_admin`
 
 ## 6. Diseño y restricciones técnicas
 
@@ -118,6 +119,7 @@ Crear `modules/services/role_guard.js`, `pages/forbidden.jade`, `nav_items.js` (
 | T-7 | CA-5 | e2e | Prueba `[ACC-005 CA-5]` en `tests/e2e/rbac-nav.e2e.mjs` |
 | T-8 | CA-6 | unitaria | Prueba `[ACC-005 CA-6]` en `tests/unit/rbac-nav/` |
 | T-9 | CA-7 | e2e | Prueba `[ACC-005 CA-7]` en `tests/e2e/rbac-nav.e2e.mjs` |
+| T-10 | CA-8 | sonda API | Prueba `[ACC-005 CA-8]` en `tests/api/rbac-nav.api.test.mjs` |
 
 ## 8. Excepciones de cobertura
 
@@ -140,6 +142,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-5 | | | `evidencia/ACC-005/...` |
 | CA-6 | | | `evidencia/ACC-005/...` |
 | CA-7 | | | `evidencia/ACC-005/...` |
+| CA-8 | | | `evidencia/ACC-005/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -148,3 +151,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | Spec creada desde el inventario legacy y el contrato `/api/v1` | Migración | — |
 | 2026-11-17 | v2: contrato real (migration-guide §2); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | E2 resuelto: tenant `sdd-test` con `tenant_admin`, `agent`, `driver` y `super_admin`; sonda por rol | BACKEND_PENDIENTES E2 | pendiente |

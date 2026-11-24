@@ -124,6 +124,7 @@ el cliente debe hacer *single-flight*.
 | POST | `/api/v1/users` | Create user | TENANT_ADMIN+ |
 | PUT | `/api/v1/users/{id}` | Update user | TENANT_ADMIN+ |
 | DELETE | `/api/v1/users/{id}` | Soft delete user | TENANT_ADMIN+ |
+| POST | `/api/v1/users/batch-delete` | Borrado por lote. 200 con un resultado por id | TENANT_ADMIN+ |
 | GET | `/api/v1/users/drivers` | List active drivers | TENANT_ADMIN+ |
 
 La licencia de un conductor va en `identifierValue` con `identifierType = "license"`; no hay campo
@@ -221,6 +222,7 @@ Si el dominio `MeasurementUnit` no existe, el endpoint responde las mismas clave
 | POST | `/api/v1/resource-types` | Create resource type | Authenticated |
 | PUT | `/api/v1/resource-types/{id}` | Update resource type | Authenticated |
 | DELETE | `/api/v1/resource-types/{id}` | Soft delete (isActive=false); 409 si lo usan recursos | Authenticated |
+| POST | `/api/v1/resource-types/batch-delete` | Borrado por lote. 200 con un resultado por id | Authenticated |
 
 ## Resources (`/api/v1/resources`)
 | Method | Path | Description | Auth |
@@ -231,6 +233,7 @@ Si el dominio `MeasurementUnit` no existe, el endpoint responde las mismas clave
 | POST | `/api/v1/resources` | Create resource | Authenticated |
 | PUT | `/api/v1/resources/{id}` | Update resource | Authenticated |
 | DELETE | `/api/v1/resources/{id}` | Soft delete | Authenticated |
+| POST | `/api/v1/resources/batch-delete` | Borrado por lote. 200 con un resultado por id | Authenticated |
 | PUT | `/api/v1/resources/{id}/driver/{driverId}` | Asignar conductor al recurso | Authenticated |
 | DELETE | `/api/v1/resources/{id}/driver` | Desasignar el conductor | Authenticated |
 
@@ -243,6 +246,7 @@ Si el dominio `MeasurementUnit` no existe, el endpoint responde las mismas clave
 | POST | `/api/v1/places` | Create place | Authenticated |
 | PUT | `/api/v1/places/{id}` | Update place | Authenticated |
 | DELETE | `/api/v1/places/{id}` | Soft delete; 409 si es depósito de un recurso o inicio/fin de un settings activo | Authenticated |
+| POST | `/api/v1/places/batch-delete` | Borrado por lote. 200 con un resultado por id | Authenticated |
 
 `maxDistance` va en metros y por defecto es `5000`. Las coordenadas siguen el orden GeoJSON:
 `lon` primero, `lat` después.
@@ -313,11 +317,13 @@ antes al enviarlo quedó corregido.
 | POST | `/api/v1/settings` | Create setting | Authenticated |
 | PUT | `/api/v1/settings/{id}` | Update setting | Authenticated |
 | DELETE | `/api/v1/settings/{id}` | Deactivate; 409 si lo usa una jornada no eliminada | Authenticated |
+| POST | `/api/v1/settings/batch-delete` | Borrado por lote. 200 con un resultado por id | Authenticated |
 
 ## Packages (`/api/v1/packages`)
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
 | GET | `/api/v1/packages?page=&size=&sort=` | List packages | Authenticated |
+| GET | `/api/v1/packages?q=&page=&status=&serviceType=` | Subcadena en guía, nombre o dirección (máx. 80). Se combina con page, status y serviceType | Authenticated |
 | GET | `/api/v1/packages?status=` | Filter by status (canónico) | Authenticated |
 | GET | `/api/v1/packages?serviceType=` | Filter by service type (canónico) | Authenticated |
 | GET | `/api/v1/packages/{id}` | Get package | Authenticated |
@@ -327,6 +333,7 @@ antes al enviarlo quedó corregido.
 | PUT | `/api/v1/packages/{id}` | Update package; 409 si el `guideNumber` es de otro paquete | Authenticated |
 | DELETE | `/api/v1/packages/{id}` | Delete package; 409 si está en una jornada no eliminada | Authenticated |
 | PATCH | `/api/v1/packages/{id}/status/{status}?reason=` | Update status (y motivo opcional) | Authenticated |
+| PATCH | `/api/v1/packages/status` | Estado de varios paquetes. 422 y no escribe ninguno si el status o el reason no valen | Authenticated |
 
 `guideNumber` es opcional y único por tenant; se guarda sin espacios a los lados y un valor vacío se guarda
 como ausente. Repetido en `POST`/`PUT`: 409 `CONFLICT` con `details { "field": "guideNumber", "value" }`.
@@ -341,6 +348,10 @@ borra. En `PATCH …/status/{status}`:
 - sin `reason`, el motivo actual se conserva solo si también aplica al nuevo status; si no, se borra.
 
 El audit `package.status.change` guarda `before`/`after` con `{ status, reason }`.
+
+`PATCH /api/v1/packages/status` recibe `{ ids, status, reason }`. `reason` es opcional y se aplica a todos, con las mismas reglas que el PATCH de un paquete. Un status desconocido o un `reason` que no aplica responde **422** y no escribe ninguno. Si la petición es válida, **200** `{ results: [{ id, status }] }` con `updated` o `not_found`, y un audit por paquete actualizado. Más de 100 ids es **422**.
+
+`GET /api/v1/packages?q=` coincide sin distinguir mayúsculas en `guideNumber`, `name` y `address`. El texto se escapa (un punto no es comodín) y no puede pasar de 80 caracteres (**422**). Se combina con `page`, `status` y `serviceType`. No usa índice `$text`: una guía parcial (`G01`) debe coincidir. El filtro sigue acotado por `tenantId`.
 
 `GET /packages/upload/limits` responde `{ "maxRows": 10000, "maxAddressesPerFile": 5000,
 "effectiveLimit": 5000 }`. `effectiveLimit = min(maxRows, config.maxAddressesPerFile del tenant)`,
@@ -375,11 +386,14 @@ POST /api/v1/package-status-reasons
 ## Journeys (`/api/v1/journeys`)
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
-| POST | `/api/v1/journeys/plan` | Plan journey (run algorithm) | Authenticated |
+| POST | `/api/v1/journeys/plan` | Plan journey. Sin `async`: 201 con la jornada. `?async=true`: 202 `{jobId, status: "queued"}` | Authenticated |
+| GET | `/api/v1/journeys/plan/jobs/{jobId}` | Estado del plan asíncrono (`queued`, `running`, `succeeded`, `failed`) | Authenticated |
 | GET | `/api/v1/journeys?page=&size=&sort=` | List journeys (summary, no routes) | Authenticated |
 | GET | `/api/v1/journeys?status=` | Filter by status (canónico) | Authenticated |
 | GET | `/api/v1/journeys/{id}` | Get journey detail (with routes) | Authenticated |
+| GET | `/api/v1/journeys/{id}/package-statuses` | Estado vivo de las paradas con paquete | Authenticated |
 | DELETE | `/api/v1/journeys/{id}` | Soft delete | Authenticated |
+| POST | `/api/v1/journeys/batch-delete` | Borrado por lote. 200 con un resultado por id | Authenticated |
 | GET | `/api/v1/journeys/{journeyId}/navigations` | Get navigation data | Authenticated |
 | GET | `/api/v1/journeys/{journeyId}/navigations/{routeIndex}` | Get specific route nav | Authenticated |
 | GET | `/api/v1/journeys/{journeyId}/metrics` | Get journey metrics | Authenticated |
@@ -387,6 +401,21 @@ POST /api/v1/package-status-reasons
 Cada parada (`routes[].waypoints[]`) trae `stopType = depot | delivery | pickup`. Las paradas
 `delivery` y `pickup` traen `packageId` y `packageInfo {id, trackingCode, address, status}`, donde
 `trackingCode` es la guía (`guideNumber`). Las `depot` traen `placeId`.
+
+`POST /api/v1/journeys/plan?async=true` acepta el mismo body y el mismo `mode`. Responde **202**
+`{jobId, status: "queued"}` y `Location: /api/v1/journeys/plan/jobs/{jobId}`. La cola admite 20 planes
+en espera; si está llena responde **429** `RATE_LIMIT_EXCEEDED` y no crea el job.
+`GET /api/v1/journeys/plan/jobs/{jobId}` (mismo tenant) responde **200**:
+
+- `queued` o `running`: `{jobId, status, mode}`
+- `succeeded`: añade `journeyId`. El detalle sigue en `GET /api/v1/journeys/{id}`
+- `failed`: añade `error {code, message}` (`BAD_REQUEST`, `NOT_FOUND`, `ROUTING_ENGINE_UNAVAILABLE` o `INTERNAL_ERROR`)
+
+Un job de otro tenant o un id desconocido responde **404**. Sin `async`, el POST sigue respondiendo **201**.
+
+`GET /api/v1/journeys/{id}/package-statuses` no devuelve la jornada. Por cada parada con `packageId`: `routeIndex`, `sequence`, `stopType`, `packageId`, `status` y `statusReason` del paquete actual. Jornada de otro tenant: **404**.
+
+`POST /api/v1/{recurso}/batch-delete` (`resource-types`, `resources`, `users`, `places`, `settings`, `journeys`) recibe `{ ids }` (máximo 100; más es **422**). Responde **200** `{ results: [{ id, status, error? }] }` con `deleted`, `not_found` o `conflict`. En `conflict`, `error` es `{ code: "CONFLICT", message, details: { referencedBy, ids } }`, el mismo 409 de un borrado suelto. Un conflicto no corta el resto.
 
 `navigations` devuelve `RouteNavigation {id, tenantId, journeyId, routeIndex, osrmVersion,
 instructionsLegacy, viaPointsLegacy, legs[], snappedWaypoints[], createdAt}`. Con
@@ -579,7 +608,7 @@ Used in: `PlaceSummary.location`, `PackageRequest.location`, `PlaceRequest.locat
 | POST | `/api/v1/billing/cancel` | Programar cancelación al fin del período (downgrade a FREE) | TENANT_ADMIN |
 | GET | `/api/v1/billing/invoices` | Listar facturas recientes desde Stripe | TENANT_ADMIN |
 | GET | `/api/v1/billing/usage` | Uso actual (limites, cuota mensual rutas, %, trial) | TENANT_ADMIN |
-| POST | `/api/v1/webhooks/stripe` | Stripe webhook receiver (verificado con signature) | Public* |
+| POST | `/api/v1/webhooks/stripe` | Stripe webhook (firma). 200 aplicado, duplicado o tipo ignorado; 400 firma mala; 502 o 500 si no se pudo aplicar | Public* |
 
 ### Notifications — Brevo (`/api/v1/notifications`) — F4
 | Method | Path | Description | Auth |
@@ -595,15 +624,16 @@ Used in: `PlaceSummary.location`, `PackageRequest.location`, `PlaceRequest.locat
 ### Audit Logs (`/api/v1/audit-logs`) — F4
 | Method | Path | Description | Auth |
 |--------|------|-------------|------|
-| GET | `/api/v1/audit-logs?page=&size=&action=&entityType=&actorId=` | Logs del tenant (filtrable por actor) | TENANT_ADMIN |
-| GET | `/api/v1/audit-logs/me?page=&size=&action=&entityType=` | Mi actividad (sin IP) | Authenticated |
+| GET | `/api/v1/audit-logs?page=&size=&action=&entityType=&actorId=&dateFrom=&dateTo=` | Logs del tenant (filtrable por actor y fechas UTC inclusivas) | TENANT_ADMIN |
+| GET | `/api/v1/audit-logs/me?page=&size=&action=&entityType=&dateFrom=&dateTo=` | Mi actividad (sin IP) | Authenticated |
 | GET | `/api/v1/audit-logs/{id}` | Detalle de un log | TENANT_ADMIN |
-| GET | `/api/v1/audit-logs/admin?page=&size=&action=&entityType=&tenantId=&actorId=` | Logs globales cross-tenant | SUPER_ADMIN |
+| GET | `/api/v1/audit-logs/admin?page=&size=&action=&entityType=&tenantId=&actorId=&dateFrom=&dateTo=` | Logs globales cross-tenant | SUPER_ADMIN |
 
 Las tres rutas de listado devuelven `PageResponse` (`content`, `totalElements`, `totalPages`,
 `page`, `size`), igual que el resto de la API; ya no devuelven `number` ni `pageable`.
-
-> Filtros temporales `dateFrom`/`dateTo` no están expuestos en el controller actual. Ver [`docs/flows/AUDIT_LOG_FLOW.md`](../flows/AUDIT_LOG_FLOW.md) para el detalle de actores, esquema `changes` por acción y privacidad.
+`dateFrom` y `dateTo` son Instant UTC e inclusivos. Si `dateFrom` es posterior a `dateTo`, **400**.
+Los índices `tenantId + createdAt` y `actorId + createdAt` cubren el filtro.
+Actores, esquema `changes` y privacidad: [`docs/flows/AUDIT_LOG_FLOW.md`](../flows/AUDIT_LOG_FLOW.md).
 
 ---
 

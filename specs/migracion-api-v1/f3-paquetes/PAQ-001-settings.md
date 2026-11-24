@@ -10,7 +10,7 @@
 | Rama | `feat/<n>-settings` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
-| Endpoints `/api/v1` | `GET /settings`, `GET /settings/{id}`, `POST /settings`, `PUT /settings/{id}`, `DELETE /settings/{id}` |
+| Endpoints `/api/v1` | `GET /settings`, `GET /settings/{id}`, `POST /settings`, `PUT /settings/{id}`, `DELETE /settings/{id}`, `POST /settings/batch-delete` |
 | Maqueta | `docs/ui/maquetas/index.html#paq-001` |
 | ADR relacionados | ADR-0002, ADR-0004, ADR-0006 |
 | Responsable | Ingeniería de Software |
@@ -26,7 +26,7 @@ Migrar las configuraciones de ruteo al nuevo modelo (topología, tipo de restric
 | --- | --- | --- | --- |
 | L1 | Listado con búsqueda de texto, selección múltiple, paginación en cliente (10/página) | `settings_controller.js` | Cambia: paginación de servidor + búsqueda en cliente sobre la página o `listAll` |
 | L2 | Borrar uno con confirmación ngDialog | `settings_controller.js` | Se mantiene: `DELETE /{id}` |
-| L3 | Borrar seleccionados (`DELETE ?ids=`) | `settings_http.js` | Cambia: N `DELETE` con informe «Se eliminaron X de N» |
+| L3 | Borrar seleccionados (`DELETE ?ids=`) | `settings_http.js` | Cambia: una petición `POST /settings/batch-delete` (lotes de 100) con informe «Se eliminaron X de N» |
 | L4 | Ir a crear / editar | `settings_controller.js` | Se mantiene |
 | L5 | Formulario crear/editar con cancelar | `settings_form_controller.js` | Se mantiene con nuevos campos |
 | L6 | Recuperación de token con `resincTknRefresh` en la carga | `settings_controller.js` | Se retira (interceptor ACC-001) |
@@ -50,6 +50,7 @@ Migrar las configuraciones de ruteo al nuevo modelo (topología, tipo de restric
 | POST | `/api/v1/settings` | `{description,routeTopology,restrictionType,placeStartId,placeEndId,evaluateWeight,evaluateVolume,evaluateItineraryZone,fixedRoutes,lengthOfStay,typeLengthOfStay,shiftStartUtc,shiftDurationSec,breakDurationSec,resourceIds}` | 201 + `placeStart`,`placeEnd`,`resources`,`globalShiftActive`,`globalBreakActive` | 400 VALIDATION_ERROR | `post__settings.json` |
 | PUT | `/api/v1/settings/{id}` | registro sin campos de solo lectura | 200 | 400,404 | `put__settings__id.json` |
 | DELETE | `/api/v1/settings/{id}` | — | 204 (desactiva) | 404, 409 en uso | `delete__settings__id.json` |
+| POST | `/api/v1/settings/batch-delete` | `{ids}` (máx. 100) | 200 `{results:[{id,status:deleted\|not_found\|conflict,error?}]}`; `error` = el 409 (`CONFLICT`, `details.referencedBy`, `details.ids`) | 422 si hay más de 100 ids (no borra ninguno) | — (capturar con `capture-fixture`) |
 
 Reglas transversales: `docs/contracts/api-v1-catalog.md` · fuente canónica: `docs/contracts/source/migration-guide.md`.
 
@@ -122,6 +123,8 @@ Como administrador u operador, quiero configurar cómo se planifican las rutas, 
 - **CA-9** (RF-8) — Dado una configuración, Entonces el resumen dice tipo, topología, depósitos, nº vehículos y turno
 - **CA-10** (RF-9) — Dado `{roadRestrictionType:'RESOURCE_TIME', backToStartPoint:false, initTime:'08:00', finishTime:'17:00'}`, Cuando aplico el diccionario, Entonces `{restrictionType:'resource_vs_time', routeTopology:'open_delivery', shiftDurationSec:32400}`
 - **CA-11** (RF-4) — Dado desactivar una configuración usada por una jornada (409 `referencedBy:'journeys'`), Entonces «La usan N jornadas»
+- **CA-12** (RF-4) — Dado 3 seleccionados con un resultado `conflict` (`details.referencedBy`), Cuando confirmo, Entonces una sola petición `POST /settings/batch-delete {ids:[…3]}`, aviso «Se eliminaron 2 de 3» y el detalle del que está en uso; un `not_found` cuenta como ya eliminado
+- **CA-13** (RF-4) — Dado 150 seleccionados, Entonces `ApiClient.batchDelete` envía 2 peticiones (100 y 50) y muestra un único informe; nunca se envía un lote de más de 100 (evita el 422)
 
 ## 6. Diseño y restricciones técnicas
 
@@ -153,6 +156,10 @@ Crear `settings.api.js`, `settings_form.jade` estático. Modificar settings cont
 | T-14 | CA-9 | unitaria | Prueba `[PAQ-001 CA-9]` en `tests/unit/settings/` |
 | T-15 | CA-10 | unitaria | Prueba `[PAQ-001 CA-10]` en `tests/unit/settings/` |
 | T-16 | CA-11 | unitaria | Prueba `[PAQ-001 CA-11]` en `tests/unit/settings/` |
+| T-17 | CA-12 | unitaria | Prueba `[PAQ-001 CA-12]` en `tests/unit/settings/` |
+| T-18 | CA-12 | contrato | Prueba `[PAQ-001 CA-12]` en `tests/integration/settings/` |
+| T-19 | CA-12 | e2e | Prueba `[PAQ-001 CA-12]` en `tests/e2e/settings.e2e.mjs` |
+| T-20 | CA-13 | unitaria | Prueba `[PAQ-001 CA-13]` en `tests/unit/settings/` |
 
 ## 8. Excepciones de cobertura
 
@@ -180,6 +187,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-9 | | | `evidencia/PAQ-001/...` |
 | CA-10 | | | `evidencia/PAQ-001/...` |
 | CA-11 | | | `evidencia/PAQ-001/...` |
+| CA-12 | | | `evidencia/PAQ-001/...` |
+| CA-13 | | | `evidencia/PAQ-001/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -189,3 +198,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | v2: contrato real (migration-guide §7, 16.2); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (D2, D3, B8) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Borrado por lote con `POST /settings/batch-delete` (M1): un resultado por id; sustituye los N `DELETE` | migration-guide §7 (M1) y endpoints.md | pendiente |

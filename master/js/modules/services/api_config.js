@@ -11,6 +11,12 @@
     pageSize: 20,
     listAllMax: 1000,
     bulkConcurrency: 4,
+    // POST /{recurso}/batch-delete admite como máximo 100 ids (más es 422).
+    batchMax: 100,
+    // Por encima de este número de paquetes, journeys/plan se pide con async=true (D11).
+    planAsyncThreshold: 500,
+    // Funciones condicionadas a configuración del backend.
+    features: { pushWeb: false },
     // Lista blanca de `sort` por listado (docs/contracts/source/endpoints.md#ordenamiento-sort).
     sortable: {
       packages: ['createdAt', 'updatedAt', 'guideNumber', 'name', 'status', 'serviceType', 'city', 'geocodingStatus'],

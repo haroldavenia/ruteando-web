@@ -1,5 +1,6 @@
 # Plan de la migración
 
+- Issues (generados desde las specs): [`issues.md`](issues.md).
 - Fases, historias, dependencias y olas: [`specs/migracion-api-v1/README.md`](../../specs/migracion-api-v1/README.md) (fuente única; `node tools/specs.mjs status` y `next` dan el estado vivo).
 - Pendientes del backend: `docs/contracts/contract-gaps.md` y `docs/contracts/known-backend-defects.md`.
 - Decisiones abiertas que bloquean publicar: ADR-0001 (rama base).

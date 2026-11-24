@@ -19,6 +19,14 @@ Respuesta del backend a los 31 pendientes del frontend (estado, contrato final y
 
 > **Cambio de contrato del 2026-11-18.** Unidades de medida fijas de la plataforma: `GET /api/v1/units` (§1, Unidades). `config.defaultWeightUnit` y `config.defaultVolumeUnit` ya no existen en tenants: enviarlos responde 400 y ya no vienen en `GET /tenants/me`.
 
+> **Contrato cerrado el 2026-11-24 (G19–G23).**
+> - **G19.** El estado de una jornada recién planificada es `planning`. El filtro `GET /api/v1/journeys?status=` acepta solo `planning`, `in_progress`, `completed`, `failed` y `cancelled`. `planned` y `dispatched` responden **400**. Las jornadas ya guardadas como `completed` no se reescriben.
+> - **G20.** `POST /api/v1/invitations/accept/{token}` responde **201** con `LoginResponse`: `message`, `accessToken`, `refreshToken`, `expiresIn` y `user`. Con esos tokens la sesión queda iniciada.
+> - **G21.** Lugares cercanos: `GET /api/v1/places/nearby?lon=&lat=&maxDistance=`. `longitude` y `latitude` son de `GET /zones/containing` y de las posiciones del conductor.
+> - **G22.** `POST /api/v1/billing/checkout` responde **201** `{ checkoutUrl, sessionId }`. `PUT /api/v1/billing/seats` responde **200** y `quantity` es un delta: aumentar 3 sobre 10 deja `previousQuantity` 10, `newQuantity` 13 y `tenant.seatLimit` 13.
+> - **G23.** La colección incluye el borrado por lote de places, resource-types, resources, settings y users, y `GET /api/v1/packages/upload/limits`. No existe `GET /packages/status/{status}`: el filtro es `GET /packages?status=` y el cambio de uno es `PATCH /packages/{id}/status/{status}`.
+> - **Búsqueda.** `GET /packages?q=G.01` es literal: el punto no es comodín y no coincide con `GX01`.
+
 ---
 
 ## 1. Convenciones que aplican a todas las pantallas
@@ -463,7 +471,7 @@ Aceptar:
 }
 ```
 
-Obligatorios: `firstName`, `lastName`, `password`. La respuesta es un `LoginResponse`.
+Obligatorios: `firstName`, `lastName`, `password`. La respuesta es **201** y un `LoginResponse` (`message`, `accessToken`, `refreshToken`, `expiresIn`, `user`). Guardar los dos tokens: la sesión queda iniciada.
 **410** `INVITATION_TOKEN_GONE` si el token venció, se revocó o ya se usó.
 **409** `SEAT_LIMIT_EXCEEDED` si el cupo se llenó entre el envío y la aceptación.
 **429**: 20 invitaciones / hora / tenant.
@@ -502,7 +510,7 @@ Redirigir el navegador a `checkoutUrl`. Al volver por `successUrl`, refrescar `G
 
 `SubscriptionResponse`: `id`, `plan`, `billingInterval`, `status`, `quantity` (asientos comprados), `unitAmount`, `amount` (céntimos), `currency`, `currentPeriodStart`, `currentPeriodEnd`, `cancelAtPeriodEnd`, `canceledAt`, `latestInvoiceId`, `latestInvoiceStatus`, `latestInvoicePdfUrl`.
 
-Bajar asientos por debajo de `seats.used` → **422** `SEAT_DECREASE_BLOCKED`. El SDD debe calcular `quantityActual - N >= seats.used` y deshabilitar el control, y además pintar el 422 si llega.
+`quantity` es un delta, no el cupo final. Subir 3 cuando hay 10 responde **200** con `subscription.previousQuantity` 10, `subscription.newQuantity` 13 y `tenant.seatLimit` 13. Bajar asientos por debajo de `seats.used` → **422** `SEAT_DECREASE_BLOCKED`. El SDD debe calcular `quantityActual - N >= seats.used` y deshabilitar el control, y además pintar el 422 si llega.
 
 `CancelSubscriptionResponse`: `cancelAtPeriodEnd`, `currentPeriodEnd`, `message`. El plan sigue activo hasta `currentPeriodEnd`. Después el tenant pasa a free (2 asientos) y el servidor desactiva usuarios de más. La UI solo informa; no desactiva usuarios en ese momento.
 
@@ -541,6 +549,8 @@ Uso (`BillingUsageResponse`), para la barra de cupos:
 
 Todos exigen sesión. El listado es paginado salvo donde se indica. Soft delete en places, resources, resource-types y settings (`active: false`). Las zonas se borran de verdad.
 
+`POST /api/v1/{recurso}/batch-delete` con `{ "ids": ["…"] }` en places, resource-types, resources, settings, users y journeys. Tope **100** ids; más que eso es **422** y no se borra ninguno. La respuesta es **200** `{ "results": [ { "id", "status", "error" } ] }` para poder mostrar «X de N». `status` es `deleted`, `not_found` o `conflict`. En `conflict`, `error` repite el 409 de hoy: `{ "code": "CONFLICT", "message", "details": { "referencedBy", "ids" } }`. Un conflicto no corta el resto del lote.
+
 ### Lugares — `/api/v1/places`
 
 ```json
@@ -560,7 +570,7 @@ Obligatorios: `name` (≤ 100), `location`. `type`: `depot` | `warehouse` | `sto
 `PlaceResponse` añade `id`, `tenantId`, `active`, `createdAt`, `updatedAt`.
 `GET /api/v1/places?type=&page=&size=&sort=` (default `name,asc`).
 `DELETE` responde **409** `CONFLICT` si el lugar es depósito de un recurso (`referencedBy: "resources"`) o inicio/fin de un settings activo (`"settings"`).
-`GET /api/v1/places/nearby?lon=&lat=&maxDistance=` — `maxDistance` en metros, default 5000. `lon` va primero.
+`GET /api/v1/places/nearby?lon=&lat=&maxDistance=` — `maxDistance` en metros, default 5000. `lon` va primero. Este endpoint no acepta `longitude` ni `latitude`; esos nombres son de zonas y de la posición del conductor.
 
 ### Zonas — `/api/v1/zones`
 
@@ -705,8 +715,10 @@ Obligatorio: `serviceType` (`pickup` | `delivery` | `mixed`).
 `country` en este DTO es de 2 letras. `durationStay` en segundos. `weight` (gramos) y `volume` (cm³) ≥ 0; `measure` en cm. El ejemplo es un paquete de 2,5 kg y 15 litros.
 
 Listados: `GET /api/v1/packages?page=&size=&sort=`, `?status=`, `?serviceType=`. Se pueden combinar. Orden por defecto `createdAt,desc`.
-Cambio de estado sin reenviar el paquete: `PATCH /api/v1/packages/{id}/status/{status}`. `PUT` conserva `status` y `pieceNumber` aunque no se envíen.
-`DELETE` responde **409** si el paquete está en una jornada no eliminada (`referencedBy: "journeys"`).
+`?q=` busca sin distinguir mayúsculas en `guideNumber`, `name` y `address`, y se combina con `page`, `status` y `serviceType`. El texto es literal: `q=G.01` coincide con `guide g.01 north` y no con `GX01`, porque el punto no es comodín. Más de 80 caracteres responde **422**. Una guía parcial como `G01` sí coincide.
+Cambio de estado de uno: `PATCH /api/v1/packages/{id}/status/{status}`. `PUT` conserva `status` y `pieceNumber` aunque no se envíen.
+Cambio de estado de varios: `PATCH /api/v1/packages/status` con `{ "ids": ["…"], "status": "unattended", "reason": "customer_absent" }`. `reason` es opcional y vale para todos, con las mismas reglas que el PATCH de uno. Un status desconocido o un `reason` que no aplica responde **422** y no escribe ninguno. Si la petición es válida, **200** `{ "results": [ { "id", "status": "updated"|"not_found" } ] }`. Un audit `package.status.change` por paquete actualizado. Tope 100 ids.
+`DELETE` responde **409** si el paquete está en una jornada no eliminada (`referencedBy: "journeys"`). Los paquetes no tienen borrado por lote.
 
 **Carga masiva (CSV).** Antes de subir, `GET /api/v1/packages/upload/limits` → `{ maxRows, maxAddressesPerFile, effectiveLimit }`; lo puede leer un `agent`. Mostrar `effectiveLimit` en la pantalla y avisar si el archivo lo supera.
 `POST /api/v1/packages/upload` responde:
@@ -730,20 +742,22 @@ Flujo de la pantalla “armar jornada”:
 1. Cargar settings activos, recursos activos y paquetes con coordenada.
 2. El usuario elige un settings y un conjunto de paquetes.
 3. `POST /api/v1/journeys/plan?mode=packages|messenger` con `{ settingsId, packageIds, name, date }`.
-4. Pintar el **201**, que ya trae `routes[]`, `waypoints` y `resourceSummary`. No hace falta un GET inmediato.
-5. Si `invalidPackageIds` o algún `badPackageIds` viene con ids, mostrarlos como no asignados.
+4. Pintar el **201**, que ya trae `routes[]`, `waypoints` y `resourceSummary`. El `status` de esa jornada es `planning`. No hace falta un GET inmediato.
+5. Si el plan puede pasar de 60 s (del orden de 2000 paquetes), usar el mismo POST con `async=true`. La respuesta es **202** `{ jobId, status: "queued" }`. Consultar `GET /api/v1/journeys/plan/jobs/{jobId}` hasta `succeeded` (entonces `GET /journeys/{journeyId}`) o `failed` (`error.code` y `error.message`). Un **429** significa que la cola del proceso está llena: reintentar el POST, no el cálculo. Esa cola no es Rabbit (Rabbit solo difunde posiciones del conductor): un hilo, 20 en espera. Un `failed` con `BAD_REQUEST` o `NOT_FOUND` no se reintenta solo. Un fallo del motor de rutas (`ROUTING_ENGINE_UNAVAILABLE`) se reintenta una vez dentro del mismo job; si vuelve a fallar, el GET queda `failed`.
+6. Si `invalidPackageIds` o algún `badPackageIds` viene con ids, mostrarlos como no asignados.
 
 `mode=packages` es el VRP (peso, volumen, jornada, zonas). `mode=messenger` son rutas fijas; el settings debe tener `restrictionType = fixed_routes`.
 
 Listado (`GET /api/v1/journeys`) **no trae `routes`**. El detalle y el mapa usan `GET /api/v1/journeys/{id}`.
-Filtro: `?status=` con `planning` | `in_progress` | `completed` | `failed` | `cancelled`.
-`DELETE /api/v1/journeys/{id}` es soft delete.
+Para refrescar solo el estado de las paradas, `GET /api/v1/journeys/{id}/package-statuses`. No devuelve la jornada. Cada parada con `packageId` sale como `{ routeIndex, sequence, stopType, packageId, status, statusReason }`, leídos del paquete actual. Una parada de depósito no se incluye. Si el paquete ya no existe, la parada viene con `status` y `statusReason` nulos. Jornada de otro tenant: **404**.
+Filtro: `?status=` con `planning` | `in_progress` | `completed` | `failed` | `cancelled`. Una jornada recién planificada queda en `planning`. `planned` y `dispatched` responden **400**. Las jornadas guardadas antes de este cambio pueden seguir en `completed` y no se reescriben.
+`DELETE /api/v1/journeys/{id}` es soft delete. El lote es `POST /api/v1/journeys/batch-delete` (mismo contrato que el de los maestros).
 
 Paradas: `stopType` es `depot`, `delivery` o `pickup` (según `serviceType` del paquete; `mixed` da `delivery`). Las de servicio traen `packageId` y `packageInfo { id, trackingCode, address, status }`; `trackingCode` es la guía. Jornadas anteriores al 2026-11-17 o migradas pueden traer `stopType = service`.
 La última parada vuelve al depósito solo si `routeTopology` es `round_trip` o `depot_to_depot`.
 Unidades de la respuesta: `distance*` en metros, `duration*` y `avgStayTime` en segundos, `weight*` en gramos, `volume*` en cm³, `*Percent` 0–100 (§1, Unidades). La UI convierte (m → km, s → min, g → kg).
 Listado paginado con `sort` (default `createdAt,desc`).
-El cálculo es síncrono y no hay medición publicada para 100, 500 o 2000 paquetes: mostrar progreso indeterminado y tratar un corte del proxy como error recuperable (no reintentar en automático, porque la jornada puede haberse guardado).
+Medido el 2026-11-19 (`mode=packages`, Bogotá): 100 paquetes ~5,5 s, 500 ~31 s y 2000 ~137 s. 100 y 500 caben en los 60 s del proxy. Para 2000, `async=true` evita el corte: el 201 síncrono no cambia. Un corte del proxy en el modo síncrono sigue siendo un error recuperable y no se reintenta en automático, porque la jornada puede haberse guardado.
 
 **Navegación** (`GET /journeys/{id}/navigations` y `/{routeIndex}`): `RouteNavigation { routeIndex, osrmVersion, instructionsLegacy, viaPointsLegacy, legs[], snappedWaypoints[] }`. Con `osrmVersion = "v5"`, leer `legs[].steps[]` (`maneuver {type, modifier, location, bearingBefore, bearingAfter}`, `name`, `distance`, `duration`, `geometry`, `mode`). Con `"v4"`, solo `instructionsLegacy`.
 
@@ -824,8 +838,9 @@ que aplique a ese status. Respuesta: `id`, `name`, `guideNumber`, `status`, `sta
 ```
 
 `channel`: `sms` | `email`. `purpose`: `phone_verification` | `login_2fa` | `email_2fa`.
-SMS exige E.164. Email exige correo. **200:** `{ otpId, expiresInSeconds: 300, channel, message }`.
-El `message` ya viene enmascarado (“terminado en **1222”). Mostrarlo tal cual.
+SMS exige E.164. Email exige correo. **200** solo si Twilio o Brevo aceptan el envío: `{ otpId, expiresInSeconds: 300, channel, message }`.
+Si el proveedor rechaza el envío, send y resend responden **502** `OTP_DELIVERY_FAILED` y no hay `otpId`. El mensaje es fijo; el cuerpo del proveedor no se devuelve. Tratar el 502 como fallo y ofrecer reintento.
+El `message` del 200 ya viene enmascarado (“terminado en **1222”). Mostrarlo tal cual.
 
 `POST /api/v1/notifications/otp/resend` `{ otpId, channel, recipient }` regenera el código y **no alarga** el vencimiento. `expiresInSeconds` es lo que queda.
 
@@ -855,10 +870,10 @@ Topes: 3 envíos / hora / destinatario, 2 reenvíos por `otpId`, 5 verificacione
 
 ### Mi actividad
 
-`GET /api/v1/audit-logs/me?page=&size=&action=&entityType=` para cualquier rol.
+`GET /api/v1/audit-logs/me?page=&size=&action=&entityType=&dateFrom=&dateTo=` para cualquier rol.
 El ítem de `/me` no trae IP. El del admin sí: `id`, `action`, `entityType`, `entityId`, `description`, `actorEmail`, `actorRole`, `changes`, `ipAddress`, `createdAt`.
 `GET /api/v1/audit-logs` y `/{id}` son de `tenant_admin`. `GET /api/v1/audit-logs/admin?tenantId=` es de `super_admin`.
-No hay filtro `dateFrom`/`dateTo`.
+`dateFrom` y `dateTo` son Instant UTC e inclusivos, en las tres rutas de listado. Si `dateFrom` es posterior a `dateTo`, **400**.
 Las tres rutas de listado devuelven `PageResponse` con `page` (base 0), como el resto de la API.
 
 ---
@@ -978,6 +993,7 @@ Solo `audit_actions` es editable. Los doce catálogos de enum y `MeasurementUnit
 | 429 | `RATE_LIMIT_EXCEEDED` | Header `Retry-After` |
 | 500 | `INTERNAL_ERROR` | Fallo inesperado o del proveedor de geocoding |
 | 502 | `ROUTING_ENGINE_UNAVAILABLE` | `routing/nearest` o `routing/messenger` sin OSRM. Ofrecer reintento |
+| 502 | `OTP_DELIVERY_FAILED` | Twilio o Brevo rechazaron el OTP. No hay `otpId`. Ofrecer reintento |
 | 502 | `STRIPE_INTEGRATION_ERROR` | Billing. Ofrecer reintento |
 
 ---

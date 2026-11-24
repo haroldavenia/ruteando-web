@@ -12,4 +12,4 @@ description: Crea o completa una spec atómica de historia a partir de la planti
 5. RF, CA (Dado … Cuando … Entonces, uno por error relevante del contrato), casos de prueba (unitaria, contrato, e2e, sonda API), archivos autorizados.
 6. Si hay interfaz, `/disenar-pantalla <ID>` y enlaza la maqueta.
 7. Registra endpoints y legacy en `specs/migracion-api-v1/trazabilidad/*.json`; `node tools/specs.mjs lint <ID>` y `trace` en PASS.
-8. Issue con el formulario "Historia"; anota el número. Deja `Borrador`; un humano la pasa a `Lista`.
+8. Issue: `node tools/specs.mjs issue <ID> --write` y el comando `gh issue create …` que imprime (con confirmación humana); anota el número en la spec. Deja `Borrador`; un humano la pasa a `Lista`. Si la spec cambia, actualiza el Issue con `gh issue edit <n> --body-file .tmp/issues/<ID>.md`.

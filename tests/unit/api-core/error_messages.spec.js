@@ -46,3 +46,11 @@ describe('ErrorMessages sin $translate (FND-002)', function () {
     expect(ErrorMessages.for(new ApiError(0, 'NETWORK_ERROR'))).toBe('errors.code.NETWORK_ERROR');
   }));
 });
+
+describe('ErrorMessages OTP (FND-002)', function () {
+  beforeEach(module('angle'));
+  it('[FND-002 CA-18] OTP_DELIVERY_FAILED (502) tiene texto propio y no el genérico de 502', inject(function (ErrorMessages, ApiError) {
+    expect(ErrorMessages.resolve(new ApiError(502, 'OTP_DELIVERY_FAILED')).key).toBe('errors.code.OTP_DELIVERY_FAILED');
+    expect(ErrorMessages.resolve(new ApiError(502, 'X_NUEVO')).key).toBe('errors.status.502');
+  }));
+});

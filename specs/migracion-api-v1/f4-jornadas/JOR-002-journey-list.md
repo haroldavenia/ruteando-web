@@ -10,7 +10,7 @@
 | Rama | `feat/<n>-journey-list` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
-| Endpoints `/api/v1` | `GET /journeys`, `DELETE /journeys/{id}` |
+| Endpoints `/api/v1` | `GET /journeys`, `DELETE /journeys/{id}`, `POST /journeys/batch-delete` |
 | Maqueta | `docs/ui/maquetas/index.html#jor-002` |
 | ADR relacionados | ADR-0002, ADR-0004, ADR-0006 |
 | Responsable | Ingeniería de Software |
@@ -25,7 +25,7 @@ Migrar `GET /journeys/summary` y `DELETE ?ids=` al listado paginado con filtro p
 | # | Comportamiento actual | Fichero | Destino |
 | --- | --- | --- | --- |
 | L1 | Listado `GET /journeys/summary` con búsqueda/paginación cliente/selección | `journeys_controller.js` | Cambia: `GET /journeys?page&size&status` |
-| L2 | Borrar una / varias (`deleteIds`) | `journeys_controller.js` | Cambia: N `DELETE` |
+| L2 | Borrar una / varias (`deleteIds`) | `journeys_controller.js` | Cambia: una petición `POST /journeys/batch-delete` (lotes de 100) con informe «Se eliminaron X de N» |
 | L3 | Ir a detalle, al mapa (`app.maps.route`), a rutas (`app.routes.list`) | `journeys_controller.js `goToDetail/goToMap/goToRoute`` | Cambia: detalle único (JOR-003) |
 | L4 | Exportar PDF/XLSX de la jornada desde el listado | `journeys_controller.js `exportPDf/exportXLSX`` | Se mantiene (JOR-005) |
 | L5 | Ir a gráfica (`goToChart`) y `getJourneys()` inexistente | `journeys_controller.js` | Cambia: métricas (JOR-004); se retira código roto |
@@ -37,6 +37,7 @@ Migrar `GET /journeys/summary` y `DELETE ?ids=` al listado paginado con filtro p
 | --- | --- | --- | --- | --- | --- |
 | GET | `/api/v1/journeys` | `?page&size&status` | Page<JourneySummary> (sin routes) | 401 | `get__journeys.json` |
 | DELETE | `/api/v1/journeys/{id}` | — | 204 soft | 404 | `delete__journeys__id.json` |
+| POST | `/api/v1/journeys/batch-delete` | `{ids}` (máx. 100) | 200 `{results:[{id,status:deleted\|not_found\|conflict,error?}]}`; `error` = el 409 (`CONFLICT`, `details.referencedBy`, `details.ids`) | 422 si hay más de 100 ids (no borra ninguno) | — (capturar con `capture-fixture`) |
 
 Reglas transversales: `docs/contracts/api-v1-catalog.md` · fuente canónica: `docs/contracts/source/migration-guide.md`.
 
@@ -93,10 +94,13 @@ Como operador, quiero ver, filtrar y borrar jornadas, para encontrar rápidament
 - **CA-1** (RF-1) — Dado `get__journeys.json`, Entonces filas con nombre, configuración, estado (etiqueta `JourneyStatus`), servicios y recursos
 - **CA-2** (RF-2) — Dado filtro `completed`, Entonces `GET /journeys?page=0&size=20&status=completed`
 - **CA-3** (RF-3) — Dado página desordenada, Entonces la tabla muestra la más reciente arriba
-- **CA-4** (RF-4) — Dado 2 seleccionadas, Entonces 2 `DELETE /journeys/{id}` e informe
+- **CA-4** (RF-4) — Dado 2 seleccionadas, Entonces `POST /journeys/batch-delete` e informe
 - **CA-5** (RF-5) — Dado una fila, Cuando «Ver», Entonces `app.journeys.detail({id})`
-- **CA-6** (RF-2) — Dado el filtro, Entonces ofrece `planning`, `in_progress`, `completed`, `failed`, `cancelled` con etiquetas de `JourneyStatus`
+- **CA-6** (RF-2) — Dado el filtro, Entonces ofrece solo `planning`, `in_progress`, `completed`, `failed`, `cancelled` con etiquetas de `JourneyStatus`; nunca envía `planned` ni `dispatched` (el backend responde 400)
 - **CA-7** (RF-3) — Dado el listado, Entonces `GET /journeys?…&sort=createdAt,desc` y el cliente ya no reordena
+- **CA-8** (RF-4) — Dado 3 seleccionados con un resultado `conflict` (`details.referencedBy`), Cuando confirmo, Entonces una sola petición `POST /journeys/batch-delete {ids:[…3]}`, aviso «Se eliminaron 2 de 3» y el detalle del que está en uso; un `not_found` cuenta como ya eliminado
+- **CA-9** (RF-4) — Dado 150 seleccionados, Entonces `ApiClient.batchDelete` envía 2 peticiones (100 y 50) y muestra un único informe; nunca se envía un lote de más de 100 (evita el 422)
+- **CA-10** (RF-2) — Dado una jornada recién planificada, Entonces su insignia es `planning` («Planificada»); Dado un `status` fuera del catálogo en datos antiguos (p. ej. `planned` en el fixture `get__journeys.json`), Entonces se muestra la clave tal cual sin romper la tabla; Dado `?status=planned` desde una URL guardada, Entonces se descarta y se lista sin filtro
 
 ## 6. Diseño y restricciones técnicas
 
@@ -122,6 +126,12 @@ Crear/ampliar `journeys.api.js`. Modificar `journeys_controller.js`. Eliminar `j
 | T-8 | CA-5 | e2e | Prueba `[JOR-002 CA-5]` en `tests/e2e/journey-list.e2e.mjs` |
 | T-9 | CA-6 | unitaria | Prueba `[JOR-002 CA-6]` en `tests/unit/journey-list/` |
 | T-10 | CA-7 | unitaria | Prueba `[JOR-002 CA-7]` en `tests/unit/journey-list/` |
+| T-11 | CA-8 | unitaria | Prueba `[JOR-002 CA-8]` en `tests/unit/journey-list/` |
+| T-12 | CA-8 | contrato | Prueba `[JOR-002 CA-8]` en `tests/integration/journey-list/` |
+| T-13 | CA-8 | e2e | Prueba `[JOR-002 CA-8]` en `tests/e2e/journey-list.e2e.mjs` |
+| T-14 | CA-9 | unitaria | Prueba `[JOR-002 CA-9]` en `tests/unit/journey-list/` |
+| T-15 | CA-10 | unitaria | Prueba `[JOR-002 CA-10]` en `tests/unit/journey-list/` |
+| T-16 | CA-10 | sonda API | Prueba `[JOR-002 CA-10]` en `tests/api/journey-list.api.test.mjs` |
 
 ## 8. Excepciones de cobertura
 
@@ -132,6 +142,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 - Dependencias: JOR-001.
 - Riesgos: D8.
 - Preguntas abiertas: ninguna.
+- Pregunta no bloqueante: Estado de una jornada recién planificada → Decisión propuesta: Resuelta (G19, 2026-11-24): `planning`; `planned` y `dispatched` dan 400 en el filtro
 
 ## 10. Trazabilidad (se completa al cerrar)
 
@@ -144,6 +155,9 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-5 | | | `evidencia/JOR-002/...` |
 | CA-6 | | | `evidencia/JOR-002/...` |
 | CA-7 | | | `evidencia/JOR-002/...` |
+| CA-8 | | | `evidencia/JOR-002/...` |
+| CA-9 | | | `evidencia/JOR-002/...` |
+| CA-10 | | | `evidencia/JOR-002/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -153,3 +167,6 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | v2: contrato real (migration-guide §9); huecos y preguntas resueltas | Documentación del backend | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (B8) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Borrado por lote con `POST /journeys/batch-delete` (M1): un resultado por id; sustituye los N `DELETE` | migration-guide §7 (M1) y endpoints.md | pendiente |
+| 2026-11-24 | Discrepancia `planned` / `planning` en el estado de jornada (G19) | Colección Postman del backend (2026-11-24) | pendiente |
+| 2026-11-24 | G19 cerrada: `planning` canónico; filtro sin `planned`/`dispatched` | migration-guide 2026-11-24 (G19–G23 cerradas) | pendiente |

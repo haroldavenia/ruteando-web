@@ -8,7 +8,7 @@ Base de datos: **hanoit** (MongoDB). Este documento resume el modelo relacional 
 
 ## Modelo Actual (Fase 1 + Fase 4)
 
-Veintiuna colecciones con multitenancy por `tenantId` (salvo los globales `master_domains`, `geocoding_config` y `refresh_tokens`, y las colecciones temporales `otp_codes` y `stripe_webhook_events`, que persisten para idempotencia y se purgan por TTL). Coordenadas en GeoJSON: **Point** y **Polygon** con índice **2dsphere** donde aplica.
+Veintidós colecciones con multitenancy por `tenantId` (salvo los globales `master_domains`, `geocoding_config` y `refresh_tokens`, y las colecciones temporales `otp_codes`, `stripe_webhook_events` y `journey_plan_jobs`, que se purgan por TTL). Coordenadas en GeoJSON: **Point** y **Polygon** con índice **2dsphere** donde aplica.
 
 ```mermaid
 erDiagram
@@ -366,6 +366,23 @@ erDiagram
         datetime expiresAt "TTL ~30 días"
     }
 
+    journey_plan_jobs {
+        ObjectId _id PK
+        ObjectId tenantId FK
+        ObjectId createdBy "FK users"
+        string mode "packages o messenger"
+        string status "queued running succeeded failed"
+        string settingsId
+        array packageIds
+        string name
+        string journeyId "FK journeys cuando succeeded"
+        string errorCode
+        string errorMessage
+        datetime createdAt "TTL 24 h"
+        datetime startedAt
+        datetime finishedAt
+    }
+
     vehicle_positions {
         ObjectId _id PK
         ObjectId tenantId FK
@@ -509,6 +526,7 @@ Tipos reutilizados dentro de documentos Fase 1 (no son colecciones propias):
 
 | Fecha | Cambio |
 |-------|--------|
+| 2026-11-23 | `journey_plan_jobs`: plan asíncrono de `POST /journeys/plan?async=true`. TTL 24 h en `createdAt`. Total: 22 colecciones. |
 | 2026-11-19 | Retiro del legacy. Nuevas `vehicle_positions` (GPS por conductor) y `geocoding_config` (singleton); `refresh_tokens` pasa al modelo vigente. Se quita el diagrama legacy y los runners de corrección (`TenantUnitsCleanupRunner`, `IdentifierTypeNormalizationRunner`, `EnumCatalogCleanupRunner`, `PackageGuideIndexMigrationRunner`): `IndexInitializer` crea `tenant_guide_unique_partial` y el resto lo cubre el script de `LEGACY_DB_CLEANUP.md`. Total: 21 colecciones. |
 | 2026-11-18 | Sin campos nuevos. El índice único `packages {tenantId, guideNumber}` pasa de `sparse` a parcial (`tenant_guide_unique_partial`, solo guías string); `PackageGuideIndexMigrationRunner` borra `tenant_guide` y `tenant_guide_unique_sparse`. La carga CSV informa las guías duplicadas como errores de fila. |
 | 2026-11-18 | Sin campos nuevos. `users.identifierType` se valida contra `IdentifierType`, que suma `license`; `IdentifierTypeNormalizationRunner` corrige al arrancar los valores guardados fuera del catálogo (alias a su clave, el resto a `code`). `places.type` y `resource_types.osrmProfile` se validan contra `PlaceType` y `OsrmProfile`. |

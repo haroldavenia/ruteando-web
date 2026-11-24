@@ -49,6 +49,8 @@ node tools/validate-harness.mjs .          # valida .agents/ y AGENTS.md
 node tools/specs.mjs lint <ID>             # Definition of Ready mecánica
 node tools/specs.mjs dod <ID>              # Definition of Done mecánica
 node tools/specs.mjs trace | next | status | legacy-scan
+node tools/specs.mjs issue <ID> --write    # cuerpo del Issue desde la spec → gh issue create …
+node tools/specs.mjs contract-diff --postman <colección.json>   # cobertura vs colección Postman del backend
 node tools/diff-coverage.mjs --lcov coverage/lcov.info --base <rama-base>
 npx -y eslint@10.15.0 -f json <archivos> > .tmp/eslint.json && node tools/lint-diff.mjs --report .tmp/eslint.json --base <rama-base>
 gh issue view <n> · gh pr create --draft    # requiere gh autenticado

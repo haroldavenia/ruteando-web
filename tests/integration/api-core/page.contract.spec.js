@@ -28,3 +28,20 @@ describe('Contrato de páginas /api/v1 (FND-002)', function () {
     expect(err.retryAfter).toBeNull();
   }));
 });
+
+describe('Contrato de borrado por lote (FND-002)', function () {
+  beforeEach(module('angle'));
+  it('[FND-002 CA-17] la forma documentada de batch-delete se resume sin perder ids', inject(function (ApiClient, $httpBackend) {
+    // Ejemplo de docs/contracts/source/endpoints.md (M1) hasta capturar el fixture real.
+    $httpBackend.whenPOST('/api/v1/settings/batch-delete').respond(200, { results: [
+      { id: 'a', status: 'deleted' },
+      { id: 'b', status: 'not_found' },
+      { id: 'c', status: 'conflict', error: { code: 'CONFLICT', message: 'in use', details: { referencedBy: 'journeys', ids: ['j1', 'j2'] } } }
+    ] });
+    var r;
+    ApiClient.batchDelete('settings', ['a', 'b', 'c']).then(function (x) { r = x; });
+    $httpBackend.flush();
+    expect([r.deleted, r.notFound, r.conflicts.map(function (c) { return c.id; })]).toEqual([['a'], ['b'], ['c']]);
+    expect(r.conflicts[0].error.details.ids.length).toBe(2);
+  }));
+});

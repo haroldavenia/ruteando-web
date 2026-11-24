@@ -30,7 +30,7 @@ Consultar auditoría de todas las empresas con filtro de empresa y actor.
 
 | Método | Ruta | Request | Response | Errores | Fixture |
 | --- | --- | --- | --- | --- | --- |
-| GET | `/api/v1/audit-logs/admin` | `?page&size&action&entityType&tenantId&actorId` | `PageResponse` (`page`) | 403 | `get__audit-logs__admin.json` |
+| GET | `/api/v1/audit-logs/admin` | `?page&size&action&entityType&tenantId&actorId&dateFrom&dateTo` (Instant UTC, inclusivos) | `PageResponse` (`page`) | 400 `dateFrom` > `dateTo`; 403 | `get__audit-logs__admin.json` |
 
 Reglas transversales: `docs/contracts/api-v1-catalog.md` · fuente canónica: `docs/contracts/source/migration-guide.md`.
 
@@ -69,6 +69,7 @@ Como administrador de la plataforma, quiero consultar la auditoría de todas las
 
 - **RF-1** — Listar eventos de todas las empresas
 - **RF-2** — Filtrar por empresa, acción, entidad y actor
+- **RF-3** — Filtrar por rango de fechas (desde/hasta) además de empresa, acción, entidad y actor
 
 **No funcionales**
 
@@ -81,6 +82,7 @@ Como administrador de la plataforma, quiero consultar la auditoría de todas las
 - **CA-1** (RF-1) — Dado super_admin, Entonces `GET /audit-logs/admin` y columna Empresa
 - **CA-2** (RF-2) — Dado empresa X, Entonces `tenantId=X` en la consulta
 - **CA-3** (RF-1) — Dado tenant_admin, Entonces el estado no es accesible (ACC-005)
+- **CA-4** (RF-3) — Dado un rango de fechas y una empresa, Entonces la consulta lleva `tenantId`, `dateFrom` y `dateTo` en UTC (inicio y fin del día local, inclusivos) con la misma utilidad que EMP-006; «desde» posterior a «hasta» no se envía
 
 ## 6. Diseño y restricciones técnicas
 
@@ -101,6 +103,7 @@ Ampliar `audit_logs.api.js`.
 | T-3 | CA-1 | e2e | Prueba `[PLA-002 CA-1]` en `tests/e2e/audit-global.e2e.mjs` |
 | T-4 | CA-2 | unitaria | Prueba `[PLA-002 CA-2]` en `tests/unit/audit-global/` |
 | T-5 | CA-3 | unitaria | Prueba `[PLA-002 CA-3]` en `tests/unit/audit-global/` |
+| T-6 | CA-4 | unitaria | Prueba `[PLA-002 CA-4]` en `tests/unit/audit-global/` |
 
 ## 8. Excepciones de cobertura
 
@@ -119,6 +122,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-1 | | | `evidencia/PLA-002/...` |
 | CA-2 | | | `evidencia/PLA-002/...` |
 | CA-3 | | | `evidencia/PLA-002/...` |
+| CA-4 | | | `evidencia/PLA-002/...` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -127,3 +131,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | Spec creada desde el inventario legacy y el contrato `/api/v1` | Migración | — |
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (C4) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
+| 2026-11-23 | Filtros `dateFrom`/`dateTo` (M4) | endpoints.md (M4) | pendiente |

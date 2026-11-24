@@ -133,8 +133,38 @@
       return deferred.promise;
     }
 
+    /**
+     * Borrado por lote (M1): POST /{recurso}/batch-delete en bloques de apiConfig.batchMax, en orden.
+     * Resuelve { results, deleted, notFound, conflicts:[{id, error:ApiError}] }; un 4xx/5xx de un bloque rechaza.
+     */
+    function batchDelete(resource, ids) {
+      var chunks = [];
+      for (var i = 0; i < ids.length; i += apiConfig.batchMax) {
+        chunks.push(ids.slice(i, i + apiConfig.batchMax));
+      }
+      var summary = { results: [], deleted: [], notFound: [], conflicts: [] };
+
+      function next(index) {
+        if (index >= chunks.length) { return $q.when(summary); }
+        return request('POST', '/' + resource + '/batch-delete', { data: { ids: chunks[index] } }).then(function (body) {
+          ((body && body.results) || []).forEach(function (r) {
+            summary.results.push(r);
+            if (r.status === 'deleted') { summary.deleted.push(r.id); }
+            else if (r.status === 'not_found') { summary.notFound.push(r.id); }
+            else {
+              var e = r.error || {};
+              summary.conflicts.push({ id: r.id, error: new ApiError(409, e.code || 'CONFLICT', e.message, { details: e.details }) });
+            }
+          });
+          return next(index + 1);
+        });
+      }
+      return next(0);
+    }
+
     return {
       request: request,
+      batchDelete: batchDelete,
       get: function (path, params) { return request('GET', path, { params: params }); },
       post: function (path, data, options) { return request('POST', path, angular.extend({ data: data }, options)); },
       put: function (path, data, options) { return request('PUT', path, angular.extend({ data: data }, options)); },

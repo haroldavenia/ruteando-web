@@ -51,8 +51,9 @@ export function createStore(fixtures) {
   };
   return {
     list: collection,
-    page(name, page = 0, size = 20) {
-      const all = collection(name);
+    page(name, page = 0, size = 20, q = '') {
+      const match = (x) => ['guideNumber', 'name', 'address'].some((k) => String(x[k] ?? '').toLowerCase().includes(q));
+      const all = q ? collection(name).filter(match) : collection(name);
       return { content: all.slice(page * size, page * size + size), totalElements: all.length, totalPages: Math.ceil(all.length / size), page, size };
     },
     find: (name, id) => collection(name).find((x) => x.id === id),
