@@ -60,6 +60,13 @@ describe('AssignedServiceListComponent', () => {
     expect(root().querySelectorAll('app-page-header .primary-action').length).toBe(1);
   });
 
+  it('ofrece ver los servicios en el mapa', () => {
+    setup();
+    expect(root().querySelector('app-page-header a[href="/assigned-services/map"]')?.textContent).toContain(
+      'Ver en el mapa'
+    );
+  });
+
   it('sin servicios muestra el aviso y el enlace para asignar la primera ruta', () => {
     setup({}, []);
     expect(root().textContent).toContain('Todavía no hay servicios asignados');

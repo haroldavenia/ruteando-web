@@ -1304,4 +1304,27 @@ export const EN: Readonly<Record<string, string>> = {
     '“{0}” will no longer be offered in the system selectors. You can activate it again later.',
   '1 catálogo': '1 catalog',
   '{0} catálogos': '{0} catalogs',
+  '1 servicio no se dibuja porque no se pudo leer su ruta.':
+    '1 service is not drawn because its route could not be read.',
+  '{0} servicios no se dibujan porque no se pudo leer su ruta.':
+    '{0} services are not drawn because their route could not be read.',
+  'Cargando el mapa…': 'Loading the map…',
+  'Mapa de servicios asignados': 'Assigned services map',
+  'Rutas asignadas': 'Assigned routes',
+  'Todavía no hay rutas asignadas que dibujar.': 'There are no assigned routes to draw yet.',
+  'Cómo crear el archivo, paso a paso': 'How to create the file, step by step',
+  'Descarga la plantilla.': 'Download the template.',
+  'Ya trae los nombres de las columnas en la primera fila: no los cambies.':
+    'It already has the column names in the first row: do not change them.',
+  'Ábrela en una hoja de cálculo.': 'Open it in a spreadsheet.',
+  'Sirve Excel, Google Sheets o LibreOffice.': 'Excel, Google Sheets or LibreOffice will do.',
+  'Escribe una fila por paquete.': 'Write one row per package.',
+  'Solo la dirección es obligatoria; si dejas vacías la longitud y la latitud, la aplicación las calcula.':
+    'Only the address is required; if you leave longitude and latitude empty, the application works them out.',
+  'Guárdala como CSV.': 'Save it as CSV.',
+  'En Excel: Guardar como, CSV UTF-8. En Google Sheets: Archivo, Descargar, Valores separados por comas (.csv).':
+    'In Excel: Save As, CSV UTF-8. In Google Sheets: File, Download, Comma-separated values (.csv).',
+  'Elígela aquí.': 'Choose it here.',
+  'Antes de importar verás cuántas filas son válidas, cuáles se rechazan y cuáles hay que ubicar.':
+    'Before importing you will see how many rows are valid, which are rejected and which need to be located.',
 };

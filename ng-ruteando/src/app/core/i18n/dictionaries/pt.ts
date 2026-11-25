@@ -1310,4 +1310,27 @@ export const PT: Readonly<Record<string, string>> = {
     '“{0}” deixará de ser oferecido nos seletores do sistema. Você pode ativá-lo novamente depois.',
   '1 catálogo': '1 catálogo',
   '{0} catálogos': '{0} catálogos',
+  '1 servicio no se dibuja porque no se pudo leer su ruta.':
+    '1 serviço não é desenhado porque sua rota não pôde ser lida.',
+  '{0} servicios no se dibujan porque no se pudo leer su ruta.':
+    '{0} serviços não são desenhados porque sua rota não pôde ser lida.',
+  'Cargando el mapa…': 'Carregando o mapa…',
+  'Mapa de servicios asignados': 'Mapa de serviços atribuídos',
+  'Rutas asignadas': 'Rotas atribuídas',
+  'Todavía no hay rutas asignadas que dibujar.': 'Ainda não há rotas atribuídas para desenhar.',
+  'Cómo crear el archivo, paso a paso': 'Como criar o arquivo, passo a passo',
+  'Descarga la plantilla.': 'Baixe o modelo.',
+  'Ya trae los nombres de las columnas en la primera fila: no los cambies.':
+    'Ele já traz os nomes das colunas na primeira linha: não os altere.',
+  'Ábrela en una hoja de cálculo.': 'Abra-o em uma planilha.',
+  'Sirve Excel, Google Sheets o LibreOffice.': 'Serve o Excel, o Google Sheets ou o LibreOffice.',
+  'Escribe una fila por paquete.': 'Escreva uma linha por pacote.',
+  'Solo la dirección es obligatoria; si dejas vacías la longitud y la latitud, la aplicación las calcula.':
+    'Somente o endereço é obrigatório; se você deixar a longitude e a latitude vazias, o aplicativo as calcula.',
+  'Guárdala como CSV.': 'Salve-o como CSV.',
+  'En Excel: Guardar como, CSV UTF-8. En Google Sheets: Archivo, Descargar, Valores separados por comas (.csv).':
+    'No Excel: Salvar como, CSV UTF-8. No Google Sheets: Arquivo, Fazer download, Valores separados por vírgulas (.csv).',
+  'Elígela aquí.': 'Escolha-o aqui.',
+  'Antes de importar verás cuántas filas son válidas, cuáles se rechazan y cuáles hay que ubicar.':
+    'Antes de importar você verá quantas linhas são válidas, quais são rejeitadas e quais precisam ser localizadas.',
 };
