@@ -20,10 +20,14 @@ export function newest(dir) {
   return max;
 }
 
+/** Archivos de configuración del build: si cambian, app/ también queda desactualizada. */
+export const BUILD_CONFIG = ['gulpfile.js', 'gulp-node-compat.cjs', 'bower.json', 'vendor.json', 'vendor.base.json'];
+
 export function needsBuild(rootDir = root) {
   const out = path.join(rootDir, 'app', 'js', 'app.js');
   if (!existsSync(out)) return true;
-  const sources = Math.max(newest(path.join(rootDir, 'master', 'js')), newest(path.join(rootDir, 'master', 'jade')));
+  const config = BUILD_CONFIG.map((f) => path.join(rootDir, 'master', f)).filter((f) => existsSync(f)).map((f) => statSync(f).mtimeMs);
+  const sources = Math.max(newest(path.join(rootDir, 'master', 'js')), newest(path.join(rootDir, 'master', 'jade')), ...config);
   return sources > statSync(out).mtimeMs;
 }
 

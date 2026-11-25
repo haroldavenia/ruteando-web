@@ -60,6 +60,10 @@ Como integrante del equipo de ingeniería, quiero ejecutar pruebas unitarias, de
 - `tools/diff-coverage.mjs`
 - `tools/test/diff-coverage.test.mjs`
 - `master/bower.json`
+- `.nvmrc`
+- `master/gulpfile.js`
+- `master/gulp-node-compat.cjs`
+- `docs/engineering/calidad-y-ci.md`
 - `tools/test/merge-lcov.test.mjs`
 - `tests/README.md`
 - `tests/helpers/**`
@@ -87,7 +91,7 @@ Como integrante del equipo de ingeniería, quiero ejecutar pruebas unitarias, de
 - **RF-6** — Producir JUnit y `coverage-summary.json` por suite y filtrar por spec (`--spec <ID>`)
 - **RF-7** — Etiquetar cada prueba con `[<ID> CA-<n>]` para que `node tools/specs.mjs dod <ID>` verifique que todo CA tiene prueba
 - **RF-8** — Generar `coverage/lcov.info` de la suite unitaria (Karma + istanbul) y de las pruebas de servidor (`node --test`) para `tools/diff-coverage.mjs` (≥ 90 % en líneas nuevas o modificadas)
-- **RF-9** — Compilar la app de forma reproducible en CI con Node 22 (bower + Gulp: scripts y plantillas Jade) para los E2E
+- **RF-9** — Compilar la app de forma reproducible en CI con Node 24 LTS (bower + Gulp: scripts y plantillas Jade) para los E2E
 
 **No funcionales**
 
@@ -106,7 +110,7 @@ Como integrante del equipo de ingeniería, quiero ejecutar pruebas unitarias, de
 - **CA-7** (RF-6) — Dado `--spec FND-001`, Cuando ejecuto una suite, Entonces solo corren las pruebas cuyo nombre contiene `[FND-001 ` y se genera JUnit en `reports/`
 - **CA-8** (RF-7) — Dado una historia con un CA sin prueba etiquetada, Cuando `node tools/specs.mjs dod <ID>`, Entonces falla y lista el CA
 - **CA-9** (RF-8) — Dado `npm run coverage:unit`, Entonces existe `coverage/lcov.info` con rutas relativas a la raíz del repo y `node tools/diff-coverage.mjs --lcov coverage/lcov.info --base angularjs-main` lo procesa sin error
-- **CA-10** (RF-9) — Dado un runner limpio con Node 22, Cuando corre el job `e2e` de CI, Entonces `bower install` y `gulp` generan `app/js/app.js` y las vistas, y la prueba de humo de login pasa
+- **CA-10** (RF-9) — Dado un runner limpio con Node 24, Cuando corre el job `e2e` de CI, Entonces `bower install` y `gulp` generan `app/js/app.js` y las vistas, y la prueba de humo de login pasa
 
 ## 6. Diseño y restricciones técnicas
 
@@ -142,7 +146,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 
 - Dependencias: —.
 - Riesgos: Versiones de karma modernas con AngularJS 1.3 (sin problemas conocidos). `base.js`/`app.js` compilados por Gulp: la suite unit carga las fuentes `master/js/**` en el orden del gulpfile + `app/js/base.js` (vendor).
-- Pregunta no bloqueante: ¿Node de referencia en los equipos? (Playwright exige ≥18) → Decisión propuesta: Node 22 LTS
+- Pregunta no bloqueante: ¿Node de referencia en los equipos? (Playwright exige ≥18) → Decisión propuesta: Resuelta (2026-11-25): Node 24 LTS (`.nvmrc`)
 - Pregunta no bloqueante: ¿CI disponible (GitHub Actions/Jenkins)? → Decisión propuesta: Añadir workflow en spec posterior; las suites corren en local
 
 ## 10. Trazabilidad (se completa al cerrar)
@@ -175,3 +179,5 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-24 | CA-9: la rama base de `diff-coverage` pasa de `--base main` a `--base angularjs-main` | La rama base de la línea AngularJS es `angularjs-main` (ADR-0001); `main` es la línea Angular 22 | Harold Avenia (instrucción del 2026-11-24) |
 | 2026-11-25 | Alcance: se añaden `tools/diff-coverage.mjs` y su prueba. En Windows `toRelative()` no relativizaba rutas cuando la letra de unidad difiere o falta (`tools/test/diff-coverage.test.mjs:131`, 1 !== 0) | `npm test` 46/47 en Windows (Node 25) | Harold Avenia |
 | 2026-11-25 | Alcance: se añade `master/bower.json` (bloque `resolutions`) para que `bower install` no interactivo de CI no aborte con `ECONFLICT` (d3, angular-ui-router, bootstrap, jspdf, angular-ui-utils, modernizr, angular-animate, angular-touch fijados a la versión que tenía instalada la app). `diff-coverage` excluye borrados y amplía el búfer (ENOBUFS en #69) | CI de #69: job e2e (`ECONFLICT d3`) y test-and-coverage (`ENOBUFS`) | Harold Avenia |
+| 2026-11-25 | Entorno: Node 24 LTS para desarrollo y CI (`.nvmrc` = 24, `engines` `^24`, `NODE_VERSION` 24 en `ci.yml`). El build legacy (Gulp + `gulp-minify-css`, 2015) usa `util.isRegExp` y otras `util.is*`, eliminadas en Node 23+; se añade `master/gulp-node-compat.cjs` (cargado al inicio de `master/gulpfile.js`) que las define solo si faltan y solo en el proceso de Gulp. Retirarlo al actualizar o sustituir esos plugins (deuda técnica) | `npm run test:e2e` con Node 25: `TypeError util.isRegExp is not a function`; con Node 24 + compat el build supera `vendor_app` | Harold Avenia |
+| 2026-11-25 | Build: `scripts_app` concatena con `\n;\n` entre archivos. Un archivo legacy termina en `}])` sin `;` y el siguiente archivo de F0 empieza por `(function(){`: en `app/js/app.js` quedaba `App.factory(...)(function(){…})`, la SPA no arrancaba (`App.factory(...) is not a function`, luego `Unknown provider: RouteHelpersProvider`) y CA-5/CA-10 fallaban con la página en blanco | Traza de Playwright de `npm run test:e2e` (Node 24, Windows) y job `e2e` de #70 | Harold Avenia (cambio dentro de `master/gulpfile.js`, ya autorizado) |

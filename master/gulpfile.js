@@ -1,3 +1,4 @@
+require('./gulp-node-compat.cjs'); // Node 24: util.is* para plugins legacy (FND-001)
 const gulp = require('gulp');
 const prettify = require('gulp-html-prettify');
 const args      = require('yargs').argv,
@@ -132,7 +133,7 @@ function scripts_app() {
   // Minify and copy all JavaScript (except vendor scripts)
   return gulp.src(source.scripts)
     .pipe($.if( useSourceMaps, $.sourcemaps.init() ))
-    .pipe($.concat( 'app.js' ))
+    .pipe($.concat( 'app.js', { newLine: '\n;\n' } )) // ';' entre archivos: un legacy sin ';' final no debe invocar la IIFE siguiente (FND-001)
     .pipe($.ngAnnotate())
     .on('error', handleError)
     .pipe($.if(isProduction, $.uglify({ mangle: true, output: {

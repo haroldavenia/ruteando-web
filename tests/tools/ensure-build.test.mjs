@@ -19,3 +19,19 @@ test('[FND-001 CA-10] ensure-build compila si falta app/js/app.js o si master/ e
   assert.equal(needsBuild(root), true);
   assert.equal(newest(path.join(root, 'nope')), 0);
 });
+
+test('[FND-001 CA-10] ensure-build recompila si cambia la configuración del build (gulpfile)', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'build-'));
+  mkdirSync(path.join(root, 'master', 'js'), { recursive: true });
+  mkdirSync(path.join(root, 'app', 'js'), { recursive: true });
+  const past = new Date(Date.now() - 60000);
+  writeFileSync(path.join(root, 'master', 'js', 'a.js'), '1');
+  writeFileSync(path.join(root, 'master', 'gulpfile.js'), '1');
+  utimesSync(path.join(root, 'master', 'js', 'a.js'), past, past);
+  utimesSync(path.join(root, 'master', 'gulpfile.js'), past, past);
+  writeFileSync(path.join(root, 'app', 'js', 'app.js'), '1');
+  assert.equal(needsBuild(root), false);
+  const future = new Date(Date.now() + 60000);
+  utimesSync(path.join(root, 'master', 'gulpfile.js'), future, future);
+  assert.equal(needsBuild(root), true);
+});

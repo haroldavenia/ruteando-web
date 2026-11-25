@@ -1,6 +1,6 @@
 # Controles de calidad y CI (ruteando-web)
 
-Decisión: ADR-0005. Node 22, `permissions` mínimos.
+Decisión: ADR-0005. Node 24 LTS (`.nvmrc`; el build legacy usa `master/gulp-node-compat.cjs`), `permissions` mínimos.
 
 | Control | Workflow / job | Herramienta | Bloqueante |
 | --- | --- | --- | --- |
