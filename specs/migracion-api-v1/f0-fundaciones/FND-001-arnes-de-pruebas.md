@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Estado | Lista |
+| Estado | En progreso |
 | Iniciativa / Fase | `migracion-api-v1` / `f0-fundaciones` |
 | Clave anterior | F0-01 · `SDD-TOOLING` |
 | Depende de | — |
-| Issue | #<n> (pendiente) |
-| Rama | `feat/<n>-arnes-de-pruebas` |
+| Issue | #67 |
+| Rama | `feat/67-arnes-de-pruebas` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
 | Endpoints `/api/v1` | — |
@@ -102,7 +102,7 @@ Como integrante del equipo de ingeniería, quiero ejecutar pruebas unitarias, de
 - **CA-6** (RF-5) — Dado `BACKEND_URL` sin definir, Cuando ejecuto `npm run test:api`, Entonces las sondas se marcan como no ejecutadas con mensaje claro y el proceso sale 0 sin generar falsos verdes en `junit-api.xml`
 - **CA-7** (RF-6) — Dado `--spec FND-001`, Cuando ejecuto una suite, Entonces solo corren las pruebas cuyo nombre contiene `[FND-001 ` y se genera JUnit en `reports/`
 - **CA-8** (RF-7) — Dado una historia con un CA sin prueba etiquetada, Cuando `node tools/specs.mjs dod <ID>`, Entonces falla y lista el CA
-- **CA-9** (RF-8) — Dado `npm run coverage:unit`, Entonces existe `coverage/lcov.info` con rutas relativas a la raíz del repo y `node tools/diff-coverage.mjs --lcov coverage/lcov.info --base main` lo procesa sin error
+- **CA-9** (RF-8) — Dado `npm run coverage:unit`, Entonces existe `coverage/lcov.info` con rutas relativas a la raíz del repo y `node tools/diff-coverage.mjs --lcov coverage/lcov.info --base angularjs-main` lo procesa sin error
 - **CA-10** (RF-9) — Dado un runner limpio con Node 22, Cuando corre el job `e2e` de CI, Entonces `bower install` y `gulp` generan `app/js/app.js` y las vistas, y la prueba de humo de login pasa
 
 ## 6. Diseño y restricciones técnicas
@@ -169,3 +169,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-20 | Archivos autorizados ajustados a lo implementado (CI, ESLint, `tools/merge-lcov.mjs`, `tests/e2e/ensure-build.mjs`, `tests/tools/**`); `master/js` no se toca. | Implementación F0 | pendiente |
 | 2026-11-20 | CA-5 y CA-10 requieren la app compilada (bower + Gulp): no ejecutables en el contenedor de la sesión; quedan pendientes de ejecución en el equipo o en CI (`ci / e2e`). | Entorno sin registro de bower | pendiente |
 | 2026-11-24 | Estado → Lista | — | Harold Avenia |
+| 2026-11-24 | CA-9: la rama base de `diff-coverage` pasa de `--base main` a `--base angularjs-main` | La rama base de la línea AngularJS es `angularjs-main` (ADR-0001); `main` es la línea Angular 22 | Harold Avenia (instrucción del 2026-11-24) |
