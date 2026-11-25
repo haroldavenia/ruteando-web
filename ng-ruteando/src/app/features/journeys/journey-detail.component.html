@@ -57,6 +57,15 @@
             <dd>{{ dateTime(journey.createdAt) }}</dd>
           </div>
         </dl>
+        @if (journey.routes.length > 0) {
+          <app-form-result [error]="report.error()" [success]="report.success()" />
+          <div class="form-actions">
+            <button mat-stroked-button type="button" [disabled]="report.busy()" (click)="report.xlsx(journey)">
+              <mat-icon aria-hidden="true">download</mat-icon
+              >{{ report.busy() ? ('Preparando…' | t) : ('Exportar a Excel' | t) }}
+            </button>
+          </div>
+        }
       </section>
 
       <!-- Desde 1100px el mapa queda fijo a un lado y las rutas al otro; por debajo, uno sobre otro -->

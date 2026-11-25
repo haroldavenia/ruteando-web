@@ -57,6 +57,25 @@
             <dd>{{ dateTime(route.finishRouteUtc) }}</dd>
           </div>
         </dl>
+        <app-form-result [error]="report.error()" [success]="report.success()" />
+        <div class="form-actions">
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="report.busy() || route.waypoints.length === 0"
+            (click)="report.routeXlsx(loader.record()!, route)"
+          >
+            <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar a Excel' | t }}
+          </button>
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="report.busy() || route.waypoints.length === 0"
+            (click)="report.routePdf(loader.record()!, route)"
+          >
+            <mat-icon aria-hidden="true">picture_as_pdf</mat-icon>{{ 'Exportar a PDF' | t }}
+          </button>
+        </div>
       </section>
 
       <section class="card" aria-labelledby="assignment-title">

@@ -127,6 +127,28 @@ describe('MasterDomainsService', () => {
     expect(second.length).toBe((list.response.body as MasterDomain[]).length);
   });
 
+  it('refresh vuelve a pedir los dominios aunque ya estuvieran en la caché y actualiza las lecturas', async () => {
+    const first = firstResult(service.load());
+    respondWith(controller.expectOne({ method: 'GET', url: '/gateway/master-domains' }), fx(list));
+    await first;
+    const before = service.values('PackageStatus').length;
+
+    const again = firstResult(service.refresh());
+    const domains = structuredClone(list.response.body) as MasterDomain[];
+    domains
+      .find((d) => d.code === 'PackageStatus')!
+      .values.push({
+        key: 'lost',
+        label: 'Lost',
+        description: null,
+        sortOrder: null,
+        active: true,
+      });
+    controller.expectOne({ method: 'GET', url: '/gateway/master-domains' }).flush(domains);
+    await again;
+    expect(service.values('PackageStatus').length).toBe(before + 1);
+  });
+
   it('dos cargas simultáneas comparten una sola petición', async () => {
     const a = firstResult(service.load());
     const b = firstResult(service.load());

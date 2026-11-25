@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { JourneysApi } from '../../core/api/data/journeys.api';
@@ -14,6 +15,7 @@ import { StatusBadgeComponent } from '../../shared/ui/status-badge.component';
 import { statusTone } from '../../shared/ui/status-tone';
 import { journeyStatusLabel } from './journey-labels';
 import { JourneyRoutesComponent } from './journey-routes.component';
+import { RouteReportExport } from './route-report-export';
 import { RoutesMapComponent, StopRef } from './routes-map.component';
 
 @Component({
@@ -24,6 +26,7 @@ import { RoutesMapComponent, StopRef } from './routes-map.component';
     FormHeadComponent,
     FormResultComponent,
     JourneyRoutesComponent,
+    MatIconModule,
     RoutesMapComponent,
     SkeletonComponent,
     StatusBadgeComponent,
@@ -37,6 +40,7 @@ export class JourneyDetailComponent {
   private readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id') as string;
 
   protected readonly loader = new RecordLoader<PlannedJourney>(this.id, (id) => this.api.get(id));
+  protected readonly report = new RouteReportExport();
 
   protected readonly status = journeyStatusLabel;
   protected readonly tone = (status: string) => statusTone('journey', status);

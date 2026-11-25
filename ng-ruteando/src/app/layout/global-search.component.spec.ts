@@ -69,6 +69,7 @@ describe('GlobalSearchComponent', () => {
       'Jornadas',
       'Servicios asignados',
       'Configuraciones',
+      'Catálogos',
       'Auditoría',
       'Seguridad',
     ]);
@@ -110,7 +111,7 @@ describe('GlobalSearchComponent', () => {
     expect(
       Array.from(panel().querySelectorAll('mat-optgroup .mat-mdc-optgroup-label')).map((el) => el.textContent?.trim())
     ).toEqual(['Ir a', 'Acciones']);
-    expect(panel().querySelectorAll('mat-option').length).toBe(15);
+    expect(panel().querySelectorAll('mat-option').length).toBe(16);
   });
 
   it('el panel tiene el ancho y la posición de la píldora entera, no solo los del campo', async () => {

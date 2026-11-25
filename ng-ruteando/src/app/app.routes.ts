@@ -110,6 +110,13 @@ export const routes: Routes = [
         loadChildren: () => import('./features/packages/packages.routes').then((m) => m.PACKAGES_ROUTES),
       },
       {
+        // Catálogos (listas de valores del gateway): los gestionan los administradores
+        path: 'catalogs',
+        canActivate: [roleGuard(ADMIN_ROLES)],
+        canActivateChild: [roleGuard(ADMIN_ROLES)],
+        loadChildren: () => import('./features/catalogs/catalogs.routes').then((m) => m.CATALOGS_ROUTES),
+      },
+      {
         // Servicios asignados: una ruta de una jornada con su vehículo, su conductor y su fecha; administradores y agentes
         path: 'assigned-services',
         canActivate: [roleGuard(OPERATIONS_ROLES)],
