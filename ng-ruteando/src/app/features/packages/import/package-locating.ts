@@ -110,7 +110,7 @@ export function importableRows(rows: readonly ReviewRow[]): LocatedImportRow[] {
   );
 }
 
-export const REVIEW_FILE_NAME = 'paquetes-con-ubicaciones.csv';
+export const REVIEW_FILE_NAME = 'paquetes-ubicados.csv';
 
 /**
  * Las filas con su ubicación y su estado, como las exportaba la app anterior: las columnas de la plantilla (así el archivo se
