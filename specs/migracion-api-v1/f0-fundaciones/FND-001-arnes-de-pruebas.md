@@ -153,16 +153,16 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 
 | CA | Prueba(s) | Commit(s) | Evidencia |
 | --- | --- | --- | --- |
-| CA-1 | `tests/helpers/bootstrap.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` |
-| CA-2 | `tests/helpers/bootstrap.spec.js`, `tests/tools/harness.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` |
-| CA-3 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` |
-| CA-4 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` |
-| CA-5 | `tests/e2e/arnes-de-pruebas.e2e.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` — **pendiente de ejecutar** (requiere build) |
-| CA-6 | `tests/api/arnes-de-pruebas.api.test.mjs`, `tests/tools/harness.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` |
-| CA-7 | `tests/tools/harness.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` |
-| CA-8 | `tests/tools/harness.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` |
-| CA-9 | `tests/tools/harness.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` |
-| CA-10 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/tools/ensure-build.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-001/2026-11-20-implementador.md` — **pendiente de ejecutar** (requiere build) |
+| CA-1 | `tests/helpers/bootstrap.spec.js` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-2 | `tests/helpers/bootstrap.spec.js`, `tests/tools/harness.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-3 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/server/proxy.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-4 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/server/proxy.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-5 | `tests/e2e/arnes-de-pruebas.e2e.mjs` | `fdefc680`, `40db6367` | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-6 | `tests/api/arnes-de-pruebas.api.test.mjs`, `tests/tools/harness.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-7 | `tests/tools/harness.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-8 | `tests/tools/harness.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-9 | `tests/tools/harness.test.mjs`, `tools/test/diff-coverage.test.mjs` | `bbf7c8e6`, `49972773`, `567c6899` | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-10 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/tools/ensure-build.test.mjs` | `567c6899`, `fdefc680`, `40db6367` | `evidencia/FND-001/2026-11-25-implementador.md` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
