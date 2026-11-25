@@ -48,6 +48,8 @@ test('normalizePath y toRelative', () => {
   assert.equal(normalizePath('.\\src\\a.js'), 'src/a.js');
   assert.equal(toRelative('/repo/src/a.js', '/repo/'), 'src/a.js');
   assert.equal(toRelative('src/a.js', '/otro'), 'src/a.js');
+  assert.equal(toRelative('/repo/src/a.js', 'C:\\repo'), 'src/a.js'); // root resuelto en Windows
+  assert.equal(toRelative('c:\\repo\\src\\a.js', 'C:\\repo'), 'src/a.js'); // unidad en minúscula
 });
 
 test('parseLcov suma hits de registros repetidos e ignora basura', () => {

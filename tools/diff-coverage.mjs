@@ -31,7 +31,11 @@ export function normalizePath(p) {
 export function toRelative(file, root) {
   const f = normalizePath(file);
   const r = normalizePath(root).replace(/\/$/, '');
-  if (r && f.startsWith(r + '/')) return f.slice(r.length + 1);
+  if (!r) return f;
+  if (f.startsWith(r + '/')) return f.slice(r.length + 1);
+  // Windows: la unidad (C:) puede faltar o variar en mayúsculas en uno de los lados.
+  const strip = (x) => x.replace(/^[A-Za-z]:(?=\/)/, '');
+  if (strip(f).startsWith(strip(r) + '/')) return strip(f).slice(strip(r).length + 1);
   return f;
 }
 
