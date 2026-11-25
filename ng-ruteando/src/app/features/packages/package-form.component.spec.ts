@@ -93,6 +93,23 @@ describe('PackageFormComponent', () => {
       expect(root().querySelector('app-form-head a.back')?.getAttribute('href')).toBe('/packages');
     });
 
+    it('«Ubicar la dirección en el mapa» usa la dirección, la ciudad y el país escritos y rellena las coordenadas', () => {
+      type('address', 'Carrera 7 # 71-21');
+      type('city', 'Bogotá');
+      const locate = Array.from(root().querySelectorAll('app-address-locator button')).find((b) =>
+        b.textContent?.includes('Ubicar la dirección')
+      ) as HTMLButtonElement;
+      locate.click();
+
+      const req = http.expectOne({ method: 'POST', url: '/gateway/geocoding' });
+      expect(req.request.body).toEqual({ address: 'Carrera 7 # 71-21', city: 'Bogotá' });
+      req.flush({ location: { type: 'Point', coordinates: [-74.07, 4.6] }, score: 0.95 });
+      fixture.detectChanges();
+
+      expect(form().getRawValue()['location']).toEqual({ lat: 4.6, lng: -74.07 });
+      expect(form().dirty).toBeTrue();
+    });
+
     it('los campos van en cuatro secciones con icono: identificación, dirección, carga y ubicación', () => {
       const sections = Array.from(root().querySelectorAll('form section.form-section'));
 

@@ -1,5 +1,5 @@
 import { PackageInput } from '../../../core/api/models';
-import { toGeoJsonPoint } from '../../../core/geo/lat-lng';
+import { GeoJsonPoint, toGeoJsonPoint } from '../../../core/geo/lat-lng';
 import { t } from '../../../core/i18n/i18n';
 import { toCsv } from '../../../shared/data/csv';
 
@@ -103,18 +103,18 @@ export const IMPORT_COLUMNS: readonly ImportColumn[] = [
     key: 'longitude',
     header: 'LONGITUD',
     aliases: ['longitud', 'lon', 'lng', 'longitude'],
-    required: true,
-    description: 'Longitud entre -180 y 180 (punto o coma decimal)',
-    fallback: '—',
+    required: false,
+    description: t('Longitud entre -180 y 180 (punto o coma decimal)'),
+    fallback: t('se calcula a partir de la dirección'),
     example: '-74.07728',
   },
   {
     key: 'latitude',
     header: 'LATITUD',
     aliases: ['latitud', 'lat', 'latitude'],
-    required: true,
-    description: 'Latitud entre -90 y 90 (punto o coma decimal)',
-    fallback: '—',
+    required: false,
+    description: t('Latitud entre -90 y 90 (punto o coma decimal)'),
+    fallback: t('se calcula a partir de la dirección'),
     example: '4.60872',
   },
   {
@@ -163,11 +163,19 @@ export interface RowError {
   message: string;
 }
 
+/** Paquete leído del archivo: sin `location` mientras no se ha ubicado su dirección. */
+export type DraftPackage = Omit<PackageInput, 'location'> & { location: GeoJsonPoint | null };
+
 export interface ImportRow {
   line: number;
-  input: PackageInput;
+  input: DraftPackage;
   /** Valores originales del registro, para el informe. */
   original: string[];
+}
+
+/** Fila lista para crear el paquete: ya tiene ubicación. */
+export interface LocatedImportRow extends ImportRow {
+  input: PackageInput;
 }
 
 export interface ValidationResult {
@@ -261,19 +269,23 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
       fail('address', t('La dirección es obligatoria'));
     }
 
+    // Sin coordenadas la fila es válida: su dirección se ubicará después. Con una sola de las dos, no se adivina la otra.
     const longitude = cell('longitude');
     const latitude = cell('latitude');
     const lon = longitude === '' ? null : parseNumber(longitude);
     const lat = latitude === '' ? null : parseNumber(latitude);
-    if (longitude === '') {
-      fail('longitude', t('La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)'));
-    } else if (lon === null || Math.abs(lon) > 180) {
-      fail('longitude', t('La longitud debe ser un número entre -180 y 180'));
-    }
-    if (latitude === '') {
-      fail('latitude', t('La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)'));
-    } else if (lat === null || Math.abs(lat) > 90) {
-      fail('latitude', t('La latitud debe ser un número entre -90 y 90'));
+    if ((longitude === '') !== (latitude === '')) {
+      fail(
+        longitude === '' ? 'longitude' : 'latitude',
+        t('Escribe la latitud y la longitud juntas, o déjalas vacías para ubicar la dirección')
+      );
+    } else if (longitude !== '') {
+      if (lon === null || Math.abs(lon) > 180) {
+        fail('longitude', t('La longitud debe ser un número entre -180 y 180'));
+      }
+      if (lat === null || Math.abs(lat) > 90) {
+        fail('latitude', t('La latitud debe ser un número entre -90 y 90'));
+      }
     }
 
     const service = cell('serviceType');
@@ -317,14 +329,17 @@ export function validateRows(table: { rows: string[][]; lines: number[] }): Vali
       }
     }
 
-    if (errors.length > 0 || !serviceType || lon === null || lat === null) {
+    if (errors.length > 0 || !serviceType) {
       result.errors.push(...errors);
       return;
     }
-    const location = toGeoJsonPoint({ lat, lng: lon });
-    if (!location) {
-      result.errors.push({ line, field: headerOf('latitude'), message: t('La ubicación no es válida') });
-      return;
+    let location: GeoJsonPoint | null = null;
+    if (lon !== null && lat !== null) {
+      location = toGeoJsonPoint({ lat, lng: lon });
+      if (!location) {
+        result.errors.push({ line, field: headerOf('latitude'), message: t('La ubicación no es válida') });
+        return;
+      }
     }
     const optional = {
       ...(guide ? { guideNumber: guide } : {}),

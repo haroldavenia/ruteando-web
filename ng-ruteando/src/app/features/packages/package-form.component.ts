@@ -28,6 +28,7 @@ import { FormActionsComponent } from '../../shared/form/form-actions.component';
 import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
+import { AddressLocatorComponent } from '../../shared/map/address-locator.component';
 import { createLocationGroup, LocationFieldsComponent } from '../../shared/map/location-fields.component';
 import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { DEFAULT_SERVICE_TYPES, serviceTypeLabel } from './package-labels';
@@ -85,6 +86,7 @@ export function buildUpdateBody(record: Package, edited: Partial<PackageInput>):
     FocusFirstInvalidDirective,
     FormResultComponent,
     LocationFieldsComponent,
+    AddressLocatorComponent,
     FormActionsComponent,
     FormHeadComponent,
     MatIconModule,

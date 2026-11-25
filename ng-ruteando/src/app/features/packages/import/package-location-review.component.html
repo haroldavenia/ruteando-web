@@ -1,0 +1,75 @@
+<p class="summary" role="status" aria-live="polite">
+  {{
+    '{0} filas: {1} ubicadas, {2} aproximadas, {3} manuales y {4} sin ubicar.'
+      | t: [counts().all, counts().match, counts().mean, counts().manual, counts().unmatch]
+  }}
+</p>
+@if (counts().mean > 0) {
+  <p class="note">{{ 'Las aproximadas pueden estar en otro punto: revísalas en el mapa antes de importar.' | t }}</p>
+}
+@if (counts().failed > 0) {
+  <p class="note warning" role="alert">
+    {{
+      'No se pudo consultar el servicio de ubicación para {0} filas. Vuelve a intentarlo o colócalas en el mapa.'
+        | t: [counts().failed]
+    }}
+    <button mat-button type="button" (click)="retry.emit()">
+      {{ 'Volver a intentarlo' | t }}
+    </button>
+  </p>
+}
+
+<app-data-table
+  [state]="state"
+  [columns]="columns"
+  [facet]="facet"
+  [selectable]="true"
+  [rowKey]="key"
+  [entityPlural]="'filas' | t"
+  [emptyMessage]="'No quedan filas por importar' | t"
+  [searchPlaceholder]="'Buscar por dirección o ciudad' | t"
+>
+  <ng-template #rowActions let-row>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="fix(row)"
+      [attr.aria-label]="('Corregir la ubicación de la línea ' | t) + row.line"
+    >
+      <mat-icon aria-hidden="true">pin_drop</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="remove([row.line])"
+      [attr.aria-label]="('Quitar de la importación la línea ' | t) + row.line"
+    >
+      <mat-icon aria-hidden="true">delete</mat-icon>
+    </button>
+  </ng-template>
+  <ng-template #selectionActions let-rows let-clear="clear">
+    <button mat-button type="button" (click)="remove(lineNumbers(rows)); clear()">
+      <mat-icon aria-hidden="true">delete</mat-icon>{{ 'Quitar de la importación' | t }}
+    </button>
+  </ng-template>
+</app-data-table>
+
+@if (skipped() > 0) {
+  <p class="note" role="status">
+    {{ '{0} filas sin ubicación no se importarán. Corrígelas o quítalas.' | t: [skipped()] }}
+  </p>
+}
+<div class="actions">
+  <button
+    mat-flat-button
+    class="primary-action"
+    type="button"
+    (click)="confirm.emit()"
+    [disabled]="importCount() === 0"
+  >
+    {{ 'Importar {0} paquetes' | t: [importCount()] }}
+  </button>
+  <button mat-stroked-button type="button" (click)="download()">
+    <mat-icon aria-hidden="true">download</mat-icon>{{ 'Descargar CSV con las ubicaciones' | t }}
+  </button>
+</div>

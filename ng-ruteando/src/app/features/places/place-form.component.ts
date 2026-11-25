@@ -21,6 +21,7 @@ import { FormActionsComponent } from '../../shared/form/form-actions.component';
 import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { notify } from '../../shared/form/notify';
+import { AddressLocatorComponent } from '../../shared/map/address-locator.component';
 import { createLocationGroup, LocationFieldsComponent } from '../../shared/map/location-fields.component';
 import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { PLACE_TYPE_LABELS, placeTypeLabel } from './place-labels';
@@ -47,6 +48,7 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
     FocusFirstInvalidDirective,
     FormResultComponent,
     LocationFieldsComponent,
+    AddressLocatorComponent,
     FormActionsComponent,
     FormHeadComponent,
     MatIconModule,
@@ -92,7 +94,6 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
             <mat-form-field subscriptSizing="dynamic">
               <mat-label>{{ 'Dirección (opcional)' | t }}</mat-label>
               <input matInput formControlName="address" autocomplete="off" />
-              <mat-hint>{{ 'Se guarda como texto: no se calcula la ubicación a partir de ella' | t }}</mat-hint>
             </mat-form-field>
             <mat-form-field>
               <mat-label>{{ 'Teléfono (opcional)' | t }}</mat-label>
@@ -106,6 +107,7 @@ const FIELD_ERRORS: Readonly<Record<string, string>> = {
           </section>
           <section class="form-section">
             <h2><mat-icon aria-hidden="true" fontIcon="pin_drop" />{{ 'Ubicación' | t }}</h2>
+            <app-address-locator [address]="form.controls.address" [location]="form.controls.location" />
             <app-location-fields [location]="form.controls.location" />
           </section>
           <app-form-result [error]="submit.error()" />

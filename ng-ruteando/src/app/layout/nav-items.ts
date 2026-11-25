@@ -33,6 +33,13 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: t('Zonas'), icon: 'hexagon', link: '/zones', roles: ADMIN_ROLES },
   { label: t('Paquetes'), icon: 'deployed_code', link: '/packages', roles: OPERATIONS_ROLES },
   { label: t('Jornadas'), icon: 'route', link: '/journeys', roles: OPERATIONS_ROLES },
+  {
+    label: t('Servicios asignados'),
+    short: t('Asignados'),
+    icon: 'task_alt',
+    link: '/assigned-services',
+    roles: OPERATIONS_ROLES,
+  },
   { label: t('Configuraciones'), short: t('Config.'), icon: 'tune', link: '/settings', roles: ADMIN_ROLES },
   { label: t('Auditoría'), icon: 'history', link: '/audit', roles: OPERATIONS_ROLES },
   { label: t('Seguridad'), icon: 'shield', link: '/security', roles: ADMIN_ROLES },

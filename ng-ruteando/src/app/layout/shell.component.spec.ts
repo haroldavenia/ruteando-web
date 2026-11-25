@@ -91,7 +91,7 @@ describe('ShellComponent', () => {
     });
 
     for (const role of ['tenant_admin', 'super_admin'] as const) {
-      it(`${role} ve Inicio, Flota, Lugares, Zonas, Paquetes, Jornadas, Config., Auditoría y Seguridad`, () => {
+      it(`${role} ve Inicio, Flota, Lugares, Zonas, Paquetes, Jornadas, Asignados, Config., Auditoría y Seguridad`, () => {
         withRole(role);
         expect(railLabels()).toEqual([
           'Inicio',
@@ -100,6 +100,7 @@ describe('ShellComponent', () => {
           'Zonas',
           'Paquetes',
           'Jornadas',
+          'Asignados',
           'Config.',
           'Auditoría',
           'Seguridad',
@@ -107,9 +108,9 @@ describe('ShellComponent', () => {
       });
     }
 
-    it('un agente ve Inicio, Paquetes, Jornadas y Auditoría, sin Flota ni Lugares', () => {
+    it('un agente ve Inicio, Paquetes, Jornadas, Asignados y Auditoría, sin Flota ni Lugares', () => {
       withRole('agent');
-      expect(railLabels()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
+      expect(railLabels()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Asignados', 'Auditoría']);
     });
 
     it('un conductor solo ve Inicio', () => {
@@ -133,6 +134,7 @@ describe('ShellComponent', () => {
         null,
         null,
         null,
+        'Servicios asignados',
         'Configuraciones',
         null,
         null,
@@ -326,16 +328,17 @@ describe('ShellComponent', () => {
         'Zonas',
         'Paquetes',
         'Jornadas',
+        'Servicios asignados',
         'Configuraciones',
         'Auditoría',
         'Seguridad',
       ]);
     });
 
-    it('un agente ve Inicio, Paquetes, Jornadas y Auditoría, sin sección Flota', () => {
+    it('un agente ve Inicio, Paquetes, Jornadas, Asignados y Auditoría, sin sección Flota', () => {
       withRole('agent');
       goNarrow();
-      expect(titles()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
+      expect(titles()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Servicios asignados', 'Auditoría']);
       expect(root().querySelector('mat-sidenav h3')).toBeNull();
     });
 

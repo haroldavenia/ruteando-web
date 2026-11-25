@@ -58,6 +58,7 @@ describe('RouteDetailComponent', () => {
     }
     fixture.detectChanges();
     http.match((r) => r.url === '/gateway/master-domains').forEach((r) => r.flush([]));
+    http.match((r) => r.url === '/gateway/assigned-services').forEach((r) => r.flush([]));
   }
 
   afterEach(() => http.verify());
@@ -155,10 +156,10 @@ describe('RouteDetailComponent', () => {
   });
 
   describe('presentación', () => {
-    it('el resumen, el mapa y las paradas van en tarjetas, con el resumen como rejilla de datos', () => {
+    it('el resumen, la asignación, el mapa y las paradas van en tarjetas, con el resumen como rejilla de datos', () => {
       setup('0');
       const ids = Array.from(root().querySelectorAll('section.card')).map((s) => s.getAttribute('aria-labelledby'));
-      expect(ids).toEqual(['summary-title', 'map-title', 'stops-title']);
+      expect(ids).toEqual(['summary-title', 'assignment-title', 'map-title', 'stops-title']);
       const grid = root().querySelector('dl.summary.stat-grid') as HTMLElement;
       expect(getComputedStyle(grid).display).toBe('grid');
     });

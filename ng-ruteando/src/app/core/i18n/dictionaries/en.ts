@@ -545,10 +545,6 @@ export const EN: Readonly<Record<string, string>> = {
   '1. Prepara el archivo': '1. Prepare the file',
   'El archivo debe ser un CSV en UTF-8 con una fila por paquete.':
     'The file must be a UTF-8 CSV with one row per package.',
-  'La aplicación no calcula la ubicación a partir de la dirección:':
-    'The application does not calculate the location from the address:',
-  'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.':
-    'each row needs its longitude and latitude. Maximum 2 MB and {0} rows.',
   'Descargar plantilla': 'Download template',
   'Columnas del archivo': 'File columns',
   'Columna': 'Column',
@@ -636,11 +632,7 @@ export const EN: Readonly<Record<string, string>> = {
   'Llamar al llegar': 'Call on arrival',
   'Supera los {0} caracteres': 'Exceeds {0} characters',
   'La dirección es obligatoria': 'The address is required',
-  'La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)':
-    'The longitude is required (the application does not calculate locations from addresses)',
   'La longitud debe ser un número entre -180 y 180': 'The longitude must be a number between -180 and 180',
-  'La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)':
-    'The latitude is required (the application does not calculate locations from addresses)',
   'La latitud debe ser un número entre -90 y 90': 'The latitude must be a number between -90 and 90',
   'El tipo de servicio debe ser Entrega, Recogida o Mixto': 'The service type must be Delivery, Pickup or Mixed',
   '{0} debe ser un número mayor o igual que 0': '{0} must be a number greater than or equal to 0',
@@ -659,8 +651,6 @@ export const EN: Readonly<Record<string, string>> = {
   'Número de guía (opcional)': 'Waybill number (optional)',
   'Único en tu empresa': 'Unique in your company',
   'Tipo de servicio': 'Service type',
-  'Se guarda como texto: no se calcula la ubicación a partir de ella':
-    'It is saved as text: the location is not calculated from it',
   'Ciudad (opcional)': 'City (optional)',
   'País (opcional)': 'Country (optional)',
   'Código postal (opcional)': 'Postal code (optional)',
@@ -1188,4 +1178,86 @@ export const EN: Readonly<Record<string, string>> = {
     'You will no longer be able to sign in with this account. You can link it again by signing in with it.',
   'Cuenta desvinculada: {0}': 'Account unlinked: {0}',
   'Este rol no puede entrar con el SSO de una empresa': 'This role cannot sign in with a company SSO',
+  'Corregir la ubicación de la línea {0}': 'Fix the location of line {0}',
+  'Elige un punto en el mapa o escribe la latitud y la longitud':
+    'Pick a point on the map or enter the latitude and longitude',
+  'La longitud y la latitud son opcionales:': 'Longitude and latitude are optional:',
+  'si las dejas vacías, la aplicación ubica la dirección y te deja revisar el resultado antes de importar. Máximo 2 MB y {0} filas.':
+    'if you leave them empty, the application locates the address and lets you review the result before importing. Maximum 2 MB and {0} rows.',
+  '{0} filas no traen coordenadas: se ubicarán a partir de su dirección.':
+    '{0} rows have no coordinates: they will be located from their address.',
+  'Ubicar direcciones y revisar': 'Locate addresses and review',
+  'Ubicando direcciones': 'Locating addresses',
+  'Progreso de la ubicación': 'Location progress',
+  'Ubicando… {0} de {1}': 'Locating… {0} of {1}',
+  'Detener y revisar': 'Stop and review',
+  'Revisa las ubicaciones': 'Review the locations',
+  'No se encontró la ubicación de la dirección': 'The location of the address was not found',
+  'Se ubicará a partir de la dirección': 'It will be located from the address',
+  '{0} filas: {1} ubicadas, {2} aproximadas, {3} manuales y {4} sin ubicar.':
+    '{0} rows: {1} located, {2} approximate, {3} manual and {4} not located.',
+  'Las aproximadas pueden estar en otro punto: revísalas en el mapa antes de importar.':
+    'Approximate ones may be at a different point: check them on the map before importing.',
+  'No se pudo consultar el servicio de ubicación para {0} filas. Vuelve a intentarlo o colócalas en el mapa.':
+    'The location service could not be reached for {0} rows. Try again or place them on the map.',
+  'Volver a intentarlo': 'Try again',
+  'filas': 'rows',
+  'No quedan filas por importar': 'No rows left to import',
+  'Buscar por dirección o ciudad': 'Search by address or city',
+  'Corregir la ubicación de la línea ': 'Fix the location of line ',
+  'Quitar de la importación la línea ': 'Remove from the import line ',
+  'Quitar de la importación': 'Remove from the import',
+  '{0} filas sin ubicación no se importarán. Corrígelas o quítalas.':
+    '{0} rows without a location will not be imported. Fix or remove them.',
+  'Descargar CSV con las ubicaciones': 'Download CSV with the locations',
+  'Ubicadas': 'Located',
+  'Aproximadas': 'Approximate',
+  'Manuales': 'Manual',
+  'No ubicadas': 'Not located',
+  'Dirección estandarizada': 'Standardized address',
+  'Sin respuesta del servicio': 'No response from the service',
+  'Longitud entre -180 y 180 (punto o coma decimal)': 'Longitude between -180 and 180 (decimal point or comma)',
+  'se calcula a partir de la dirección': 'calculated from the address',
+  'Latitud entre -90 y 90 (punto o coma decimal)': 'Latitude between -90 and 90 (decimal point or comma)',
+  'Escribe la latitud y la longitud juntas, o déjalas vacías para ubicar la dirección':
+    'Enter latitude and longitude together, or leave both empty to locate the address',
+  'Escribe primero la dirección': 'Enter the address first',
+  'No se encontró la dirección. Colócala en el mapa o escribe las coordenadas.':
+    'The address was not found. Place it on the map or enter the coordinates.',
+  'Ubicación aproximada: revisa el punto y muévelo si hace falta.':
+    'Approximate location: check the point and move it if needed.',
+  'Dirección ubicada como «{0}». Revisa el punto en el mapa.': 'Address located as “{0}”. Check the point on the map.',
+  'Dirección ubicada. Revisa el punto en el mapa.': 'Address located. Check the point on the map.',
+  'Elige primero un punto en el mapa o escribe la latitud y la longitud':
+    'Pick a point on the map or enter the latitude and longitude first',
+  'No hay una dirección conocida para ese punto.': 'There is no known address for that point.',
+  'Dirección tomada del punto elegido.': 'Address taken from the chosen point.',
+  'Ubicar la dirección en el mapa': 'Locate the address on the map',
+  'Tomar la dirección del punto': 'Take the address from the point',
+  'Buscando…': 'Searching…',
+  'Asignar ruta': 'Assign route',
+  'Editar servicio asignado': 'Edit assigned service',
+  'Servicios asignados': 'Assigned services',
+  'Todavía no hay jornadas. Primero': 'There are no journeys yet. First',
+  'planifica una': 'plan one',
+  'Cargando las rutas…': 'Loading the routes…',
+  'Vehículo y conductor': 'Vehicle and driver',
+  'Fecha del servicio': 'Service date',
+  'Ruta asignada': 'Route assigned',
+  'Servicio asignado guardado': 'Assigned service saved',
+  'servicio asignado': 'assigned service',
+  'servicios asignados': 'assigned services',
+  'Fecha': 'Date',
+  'Todavía no hay servicios asignados': 'There are no assigned services yet',
+  'Buscar por ruta, vehículo o conductor': 'Search by route, vehicle or driver',
+  'Editar servicio asignado ': 'Edit assigned service ',
+  'Eliminar servicio asignado ': 'Delete assigned service ',
+  'Asignar la primera ruta': 'Assign the first route',
+  'Ruta {0}': 'Route {0}',
+  'Servicio asignado': 'Assigned service',
+  'Cambiar': 'Change',
+  'Quitar asignación': 'Remove assignment',
+  'Esta ruta todavía no está asignada a un vehículo y un conductor.':
+    'This route is not assigned to a vehicle and a driver yet.',
+  'Asignados': 'Assigned',
 };

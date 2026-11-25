@@ -10,6 +10,7 @@ import { FormHeadComponent } from '../../shared/form/form-head.component';
 import { FormResultComponent } from '../../shared/form/form-result.component';
 import { formatCount, formatDateTime, formatDistance, formatDuration, formatPercent } from '../../shared/format';
 import { SkeletonComponent } from '../../shared/ui/skeleton.component';
+import { RouteAssignmentComponent } from './route-assignment.component';
 import { RouteVisitsComponent } from './route-visits.component';
 import { RoutesMapComponent, StopRef } from './routes-map.component';
 /**
@@ -24,6 +25,7 @@ import { RoutesMapComponent, StopRef } from './routes-map.component';
     FormHeadComponent,
     FormResultComponent,
     RoutesMapComponent,
+    RouteAssignmentComponent,
     RouteVisitsComponent,
     SkeletonComponent,
     TranslatePipe,

@@ -59,6 +59,10 @@
         </dl>
       </section>
 
+      <section class="card" aria-labelledby="assignment-title">
+        <app-route-assignment [journeyId]="journeyId" [routeIndex]="route.routeIndex" />
+      </section>
+
       <section #mapSection class="card" aria-labelledby="map-title">
         <h2 id="map-title">{{ 'Mapa de la ruta' | t }}</h2>
         <app-routes-map [routes]="routes()" [(selectedStop)]="selectedStop" />

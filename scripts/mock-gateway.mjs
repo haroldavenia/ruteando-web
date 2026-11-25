@@ -101,6 +101,7 @@ const db = {
   zones: [],
   journeys: [],
   drivers: [],
+  assignedServices: [],
 };
 
 const USERS = [
@@ -642,6 +643,66 @@ function handle(method, path, query, body, headers) {
       return { status: 204, body: null };
     }
     return { status: 200, body: enrich.resources(resource) };
+  }
+
+  // --- geocodificación (el contrato real no está documentado: ver geocoding-contract.ts en ng-ruteando)
+  if (path === '/geocoding' && method === 'POST') {
+    const address = String(body?.address ?? '').trim();
+    if (!address) return fail(400, 'BAD_REQUEST', 'address is required', path);
+    if (/nunca|inexistente|xxx/i.test(address)) return fail(404, 'NOT_FOUND', 'Address not found', path);
+    // Punto repetible alrededor de Bogotá: la misma dirección da siempre el mismo sitio
+    let hash = 0;
+    for (const char of address) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+    const lat = 4.61 + ((hash % 1000) / 1000 - 0.5) * 0.1;
+    const lng = -74.08 + (((hash >>> 10) % 1000) / 1000 - 0.5) * 0.1;
+    const exact = /\d/.test(address); // sin número de portal solo se encuentra la zona: aproximada
+    return {
+      status: 200,
+      body: {
+        address,
+        standardizedAddress: address.toUpperCase(),
+        location: { type: 'Point', coordinates: [Number(lng.toFixed(6)), Number(lat.toFixed(6))] },
+        score: exact ? 0.93 : 0.55,
+      },
+    };
+  }
+  if (path === '/reverse-geocoding' && method === 'POST') {
+    const [lng, lat] = body?.location?.coordinates ?? [];
+    if (typeof lng !== 'number' || typeof lat !== 'number')
+      return fail(400, 'BAD_REQUEST', 'location is required', path);
+    const near = `${Math.abs(Math.round(lat * 1000))} # ${Math.abs(Math.round(lng * 1000))}`;
+    return { status: 200, body: { address: `Calle simulada ${near}`, city: 'Bogotá', country: 'Colombia' } };
+  }
+
+  // --- servicios asignados (ruta + vehículo + conductor; el contrato de los objetos anidados no está documentado)
+  m = path.match(/^\/assigned-services(?:\/([^/]+))?$/);
+  if (m) {
+    const list = db.assignedServices;
+    const id = m[1];
+    if (!id && method === 'GET') return { status: 200, body: clone([...list].reverse()) };
+    if (!id && method === 'POST') {
+      if (!body?.route || !body?.vehicle || !body?.driver)
+        return fail(400, 'BAD_REQUEST', 'route, vehicle and driver are required', path);
+      const item = { state: 'ACTIVO', executionDate: null, ...clone(body), id: newId() };
+      list.push(item);
+      return { status: 201, body: clone(item) };
+    }
+    if (!id && method === 'DELETE') {
+      const ids = String(query.get('ids') ?? '')
+        .split(',')
+        .filter(Boolean);
+      db.assignedServices = list.filter((x) => !ids.includes(x.id));
+      return { status: 200, body: [] };
+    }
+    if (id === 'summary' && method === 'GET') return { status: 200, body: [] };
+    const item = list.find((x) => x.id === id);
+    if (!item) return notFound('AssignedService', id, path);
+    if (method === 'GET') return { status: 200, body: clone(item) };
+    if (method === 'PUT') return { status: 200, body: clone(Object.assign(item, clone(body), { id: item.id })) };
+    if (method === 'DELETE') {
+      list.splice(list.indexOf(item), 1);
+      return { status: 204, body: null };
+    }
   }
 
   // --- colecciones con CRUD

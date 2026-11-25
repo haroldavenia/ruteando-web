@@ -23,8 +23,11 @@
   <h2 id="guide-title">{{ '1. Prepara el archivo' | t }}</h2>
   <p>
     {{ 'El archivo debe ser un CSV en UTF-8 con una fila por paquete.' | t }}
-    <strong>{{ 'La aplicación no calcula la ubicación a partir de la dirección:' | t }}</strong>
-    {{ 'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.' | t: [maxRows] }}
+    <strong>{{ 'La longitud y la latitud son opcionales:' | t }}</strong>
+    {{
+      'si las dejas vacías, la aplicación ubica la dirección y te deja revisar el resultado antes de importar. Máximo 2 MB y {0} filas.'
+        | t: [maxRows]
+    }}
   </p>
   <button mat-stroked-button type="button" (click)="downloadTemplate()">
     <mat-icon aria-hidden="true">download</mat-icon>{{ 'Descargar plantilla' | t }}
@@ -66,7 +69,7 @@
     id="csv-file"
     type="file"
     accept=".csv,text/csv"
-    [disabled]="phase() === 'importing' || phase() === 'reading'"
+    [disabled]="phase() === 'importing' || phase() === 'reading' || phase() === 'locating'"
     (change)="onFile($event)"
   />
   @if (fileName()) {
@@ -78,8 +81,13 @@
   @if (problem(); as message) {
     <p class="error" role="alert">{{ message }}</p>
   }
-  @if (phase() === 'preview' || phase() === 'importing' || phase() === 'done') {
-    <button mat-button type="button" (click)="clearFile(file)" [disabled]="phase() === 'importing'">
+  @if (phase() === 'preview' || reviewing() || phase() === 'importing' || phase() === 'done') {
+    <button
+      mat-button
+      type="button"
+      (click)="clearFile(file)"
+      [disabled]="phase() === 'importing' || phase() === 'locating'"
+    >
       {{ 'Quitar archivo' | t }}
     </button>
   }
@@ -93,6 +101,11 @@
     </p>
     @for (warning of warnings(); track warning) {
       <p class="warning" role="status">{{ warning }}</p>
+    }
+    @if (pendingLocation() > 0 && phase() === 'preview') {
+      <p class="warning" role="status">
+        {{ '{0} filas no traen coordenadas: se ubicarán a partir de su dirección.' | t: [pendingLocation()] }}
+      </p>
     }
 
     @if (result.errors.length > 0) {
@@ -126,7 +139,7 @@
       }
     }
 
-    @if (preview().length > 0) {
+    @if (preview().length > 0 && !reviewing()) {
       <div class="scroll stack-scope">
         <table class="grid stack-table" role="table">
           <caption>
@@ -167,9 +180,21 @@
         <p class="error" role="alert">{{ 'Ninguna fila es válida: corrige el archivo y vuelve a elegirlo.' | t }}</p>
       }
       <div class="actions">
-        <button mat-flat-button class="primary-action" type="button" (click)="start()" [disabled]="validCount() === 0">
-          {{ 'Importar {0} paquetes' | t: [validCount()] }}
-        </button>
+        @if (pendingLocation() > 0) {
+          <button mat-flat-button class="primary-action" type="button" (click)="locate()">
+            <mat-icon aria-hidden="true">pin_drop</mat-icon>{{ 'Ubicar direcciones y revisar' | t }}
+          </button>
+        } @else {
+          <button
+            mat-flat-button
+            class="primary-action"
+            type="button"
+            (click)="start()"
+            [disabled]="validCount() === 0"
+          >
+            {{ 'Importar {0} paquetes' | t: [validCount()] }}
+          </button>
+        }
         @if (result.errors.length > 0) {
           <button mat-stroked-button type="button" (click)="downloadReport()">
             {{ 'Descargar informe de errores' | t }}
@@ -177,6 +202,26 @@
         }
       </div>
     }
+  </section>
+}
+
+@if (phase() === 'locating') {
+  <section class="card" aria-labelledby="locating-title">
+    <h2 id="locating-title">{{ 'Ubicando direcciones' | t }}</h2>
+    <mat-progress-bar
+      mode="determinate"
+      [value]="progress().total ? (progress().done / progress().total) * 100 : 0"
+      [attr.aria-label]="'Progreso de la ubicación' | t"
+    />
+    <p role="status" aria-live="polite">{{ 'Ubicando… {0} de {1}' | t: [progress().done, progress().total] }}</p>
+    <button mat-stroked-button type="button" (click)="stopLocating()">{{ 'Detener y revisar' | t }}</button>
+  </section>
+}
+
+@if (phase() === 'review') {
+  <section class="card" aria-labelledby="review-title">
+    <h2 id="review-title">{{ 'Revisa las ubicaciones' | t }}</h2>
+    <app-package-location-review [(rows)]="reviewRows" (confirm)="startFromReview()" (retry)="locate()" />
   </section>
 }
 

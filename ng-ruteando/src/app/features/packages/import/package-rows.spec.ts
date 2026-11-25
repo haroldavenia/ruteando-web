@@ -70,10 +70,24 @@ describe('package-rows', () => {
     });
 
     it('indica las columnas obligatorias que faltan y no valida ninguna fila', () => {
-      const result = validate('NOMBRE;DIRECCION\nAna;Calle 1');
-      expect(result.missingColumns).toEqual(['LONGITUD', 'LATITUD']);
+      const result = validate('NOMBRE;CIUDAD\nAna;Bogotá');
+      expect(result.missingColumns).toEqual(['DIRECCION']);
       expect(result.valid).toEqual([]);
       expect(result.errors).toEqual([]);
+    });
+
+    it('las coordenadas son opcionales: sin las columnas, la fila es válida y queda por ubicar', () => {
+      const result = validate('DIRECCION;CIUDAD\nCarrera 7 # 71-21;Bogotá');
+      expect(result.missingColumns).toEqual([]);
+      expect(result.errors).toEqual([]);
+      expect(result.valid[0].input.location).toBeNull();
+      expect(result.valid[0].input.city).toBe('Bogotá');
+    });
+
+    it('con las columnas pero las celdas vacías, la fila también queda por ubicar', () => {
+      const result = validate(`${HEADER}\nCalle 1;;\nCalle 2;-74;4.6`);
+      expect(result.errors).toEqual([]);
+      expect(result.valid.map((r) => r.input.location === null)).toEqual([true, false]);
     });
 
     it('lista las columnas desconocidas y las ignora', () => {
@@ -99,7 +113,7 @@ describe('package-rows', () => {
       expect(result.errors).toEqual([]);
       expect(result.valid.length).toBe(1);
       expect(result.valid[0].input.address).toBe('Fixture address');
-      expect(result.valid[0].input.location.coordinates).toEqual([-74.07728, 4.60872]);
+      expect(result.valid[0].input.location?.coordinates).toEqual([-74.07728, 4.60872]);
       // Columnas del export que no son de importación
       expect(result.ignoredColumns).toEqual(jasmine.arrayContaining(['ESTADO DE GEOCODIFICACION', 'ESTADO']));
     });
@@ -110,8 +124,8 @@ describe('package-rows', () => {
       const result = validate(`${HEADER}\n;-74;4.6\nCalle 2;;4.6\nCalle 3;-74;`);
       expect(errorsOf(result)).toEqual([
         '2:DIRECCION:La dirección es obligatoria',
-        jasmine.stringMatching(/^3:LONGITUD:La longitud es obligatoria/) as unknown as string,
-        jasmine.stringMatching(/^4:LATITUD:La latitud es obligatoria/) as unknown as string,
+        jasmine.stringMatching(/^3:LONGITUD:Escribe la latitud y la longitud juntas/) as unknown as string,
+        jasmine.stringMatching(/^4:LATITUD:Escribe la latitud y la longitud juntas/) as unknown as string,
       ]);
       expect(result.valid).toEqual([]);
     });
@@ -132,7 +146,7 @@ describe('package-rows', () => {
     it('acepta coma decimal entrecomillada y rechaza separadores de miles', () => {
       const result = validate(`${HEADER}\nA;"-74,07728";"4,60872"\nB;-74.0;1.234,56`);
       expect(result.valid.length).toBe(1);
-      expect(result.valid[0].input.location.coordinates).toEqual([-74.07728, 4.60872]);
+      expect(result.valid[0].input.location?.coordinates).toEqual([-74.07728, 4.60872]);
       expect(result.errors.map((e) => e.line)).toEqual([3]);
     });
 
@@ -211,7 +225,7 @@ describe('package-rows', () => {
     it('recorta espacios alrededor de las celdas', () => {
       const result = validate(`${HEADER}\n  Calle 1  ; -74 ; 4.6 `);
       expect(result.valid[0].input.address).toBe('Calle 1');
-      expect(result.valid[0].input.location.coordinates).toEqual([-74, 4.6]);
+      expect(result.valid[0].input.location?.coordinates).toEqual([-74, 4.6]);
     });
   });
 
