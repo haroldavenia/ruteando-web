@@ -172,14 +172,14 @@ export function parseArgs(argv) {
 
 export function run(argv, deps = {}) {
   const {
-    git = (cwd, a) => execFileSync('git', a, { cwd, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }),
+    git = (cwd, a) => execFileSync('git', a, { cwd, encoding: 'utf8', maxBuffer: 512 * 1024 * 1024 }),
     readText = (p) => readFileSync(p, 'utf8'),
     exists = existsSync,
   } = deps;
   const args = parseArgs(argv);
   const root = path.resolve(args.root);
   const lcovText = exists(args.lcov) ? readText(args.lcov) : '';
-  const diffText = git(root, ['diff', '-U0', '--no-color', '--no-ext-diff', `${args.base}...HEAD`, '--', '.']);
+  const diffText = git(root, ['diff', '-U0', '--no-color', '--no-ext-diff', '--diff-filter=d', `${args.base}...HEAD`, '--', '.']);
   const res = computeDiffCoverage({
     lcov: parseLcov(lcovText, root),
     diff: parseUnifiedDiff(diffText),

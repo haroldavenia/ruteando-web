@@ -122,7 +122,10 @@ test('parseArgs valida entradas', () => {
 
 test('run/main con dependencias inyectadas', () => {
   const deps = {
-    git: () => DIFF,
+    git: (cwd, a) => {
+      assert.ok(a.includes('--diff-filter=d'), 'los borrados no se piden: evitan ENOBUFS con diffs grandes');
+      return DIFF;
+    },
     readText: (p) => (p.endsWith('.lcov') ? LCOV : '// c\nfunction f() {\n  return 1;\n}\n'),
     exists: () => true,
   };

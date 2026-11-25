@@ -59,6 +59,7 @@ Como integrante del equipo de ingeniería, quiero ejecutar pruebas unitarias, de
 - `tools/merge-lcov.mjs`
 - `tools/diff-coverage.mjs`
 - `tools/test/diff-coverage.test.mjs`
+- `master/bower.json`
 - `tools/test/merge-lcov.test.mjs`
 - `tests/README.md`
 - `tests/helpers/**`
@@ -173,3 +174,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-24 | Estado → Lista | — | Harold Avenia |
 | 2026-11-24 | CA-9: la rama base de `diff-coverage` pasa de `--base main` a `--base angularjs-main` | La rama base de la línea AngularJS es `angularjs-main` (ADR-0001); `main` es la línea Angular 22 | Harold Avenia (instrucción del 2026-11-24) |
 | 2026-11-25 | Alcance: se añaden `tools/diff-coverage.mjs` y su prueba. En Windows `toRelative()` no relativizaba rutas cuando la letra de unidad difiere o falta (`tools/test/diff-coverage.test.mjs:131`, 1 !== 0) | `npm test` 46/47 en Windows (Node 25) | Harold Avenia |
+| 2026-11-25 | Alcance: se añade `master/bower.json` (bloque `resolutions`) para que `bower install` no interactivo de CI no aborte con `ECONFLICT` (d3, angular-ui-router, bootstrap, jspdf, angular-ui-utils, modernizr, angular-animate, angular-touch fijados a la versión que tenía instalada la app). `diff-coverage` excluye borrados y amplía el búfer (ENOBUFS en #69) | CI de #69: job e2e (`ECONFLICT d3`) y test-and-coverage (`ENOBUFS`) | Harold Avenia |
