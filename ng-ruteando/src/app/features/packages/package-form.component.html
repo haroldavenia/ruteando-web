@@ -44,7 +44,6 @@
         <mat-form-field subscriptSizing="dynamic">
           <mat-label>{{ 'Dirección' | t }}</mat-label>
           <input matInput formControlName="address" autocomplete="off" />
-          <mat-hint>{{ 'Se guarda como texto: no se calcula la ubicación a partir de ella' | t }}</mat-hint>
           <mat-error>{{ error('address') }}</mat-error>
         </mat-form-field>
         <div class="row">
@@ -88,6 +87,12 @@
       </section>
       <section class="form-section">
         <h2><mat-icon aria-hidden="true" fontIcon="pin_drop" />{{ 'Ubicación' | t }}</h2>
+        <app-address-locator
+          [address]="form.controls.address"
+          [city]="form.controls.city"
+          [country]="form.controls.country"
+          [location]="form.controls.location"
+        />
         <app-location-fields [location]="form.controls.location" />
       </section>
       <app-form-result [error]="submit.error()" />

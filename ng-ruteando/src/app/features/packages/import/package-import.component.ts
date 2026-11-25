@@ -3,8 +3,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 
+import { GeocodingApi } from '../../../core/api/data/geocoding.api';
 import { PackagesApi } from '../../../core/api/data/packages.api';
 import { t } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
@@ -13,11 +14,14 @@ import { HasUnsavedChanges } from '../../../shared/data/unsaved-changes.guard';
 import { FormHeadComponent } from '../../../shared/form/form-head.component';
 import { formatLatLng } from '../../../shared/format';
 import { RowResult, runImport } from './package-importer';
+import { importableRows, locateRows, needsLocating, ReviewRow, startReview } from './package-locating';
+import { PackageLocationReviewComponent } from './package-location-review.component';
 import {
   ERRORS_FILE_NAME,
   IMPORT_COLUMNS,
   importErrorsCsv,
   ImportRow,
+  LocatedImportRow,
   packageTemplateCsv,
   PREVIEW_ROWS,
   ReportEntry,
@@ -31,17 +35,26 @@ export const MAX_FILE_BYTES = 2 * 1024 * 1024;
 export const MAX_DATA_ROWS = 2000;
 const MAX_ERRORS_SHOWN = 200;
 
-type Phase = 'empty' | 'reading' | 'preview' | 'importing' | 'done';
+type Phase = 'empty' | 'reading' | 'preview' | 'locating' | 'review' | 'importing' | 'done';
 
 @Component({
   selector: 'app-package-import',
-  imports: [RouterLink, FormHeadComponent, MatButtonModule, MatIconModule, MatProgressBarModule, TranslatePipe],
+  imports: [
+    RouterLink,
+    FormHeadComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressBarModule,
+    PackageLocationReviewComponent,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './package-import.component.html',
   styleUrl: './package-import.component.scss',
 })
 export class PackageImportComponent implements HasUnsavedChanges {
   private readonly api = inject(PackagesApi);
+  private readonly geocoding = inject(GeocodingApi);
   private readonly platformId = inject(PLATFORM_ID);
 
   protected readonly columns = IMPORT_COLUMNS;
@@ -54,13 +67,16 @@ export class PackageImportComponent implements HasUnsavedChanges {
   protected readonly validation = signal<ValidationResult | null>(null);
   protected readonly results = signal<RowResult[]>([]);
   protected readonly progress = signal({ done: 0, total: 0 });
+  /** Las filas en la pantalla de revisión de ubicaciones (solo cuando alguna fila vino sin coordenadas). */
+  protected readonly reviewRows = signal<ReviewRow[]>([]);
+  private locating: Subscription | null = null;
   protected readonly cancelling = signal(false);
   private cancelled = false;
   private destroyed = false;
 
   /** Los cuatro pasos de la importación y en cuál va: la fase decide qué pasos están hechos, cuál es el actual y cuáles faltan. */
   protected readonly steps = computed(() => {
-    const current = { empty: 2, reading: 2, preview: 3, importing: 4, done: 4 }[this.phase()];
+    const current = { empty: 2, reading: 2, preview: 3, locating: 3, review: 3, importing: 4, done: 4 }[this.phase()];
     const labels = [t('Prepara el archivo'), t('Elige el archivo'), t('Revisa y confirma'), t('Importa')];
     return labels.map((label, index) => {
       const number = index + 1;
@@ -86,6 +102,11 @@ export class PackageImportComponent implements HasUnsavedChanges {
   );
   protected readonly preview = computed<ImportRow[]>(() => (this.validation()?.valid ?? []).slice(0, PREVIEW_ROWS));
   protected readonly validCount = computed(() => this.validation()?.valid.length ?? 0);
+  /** Filas válidas que no traen coordenadas: su dirección se ubica antes de importar. */
+  protected readonly pendingLocation = computed(
+    () => (this.validation()?.valid ?? []).filter((row) => row.input.location === null).length
+  );
+  protected readonly reviewing = computed(() => this.phase() === 'locating' || this.phase() === 'review');
   protected readonly invalidRows = computed(() => new Set((this.validation()?.errors ?? []).map((e) => e.line)).size);
 
   protected readonly counts = computed(() => {
@@ -105,6 +126,14 @@ export class PackageImportComponent implements HasUnsavedChanges {
   });
   protected readonly reportEntries = computed<ReportEntry[]>(() => [
     ...(this.validation()?.errors ?? []).map((e) => ({ ...e, original: this.originalOf(e.line) })),
+    ...this.reviewRows()
+      .filter(needsLocating)
+      .map((r) => ({
+        line: r.line,
+        field: '—',
+        message: t('No se encontró la ubicación de la dirección'),
+        original: r.original,
+      })),
     ...this.results()
       .filter((r) => r.status === 'failed' || r.status === 'skipped')
       .map((r) => ({ line: r.row.line, field: '—', message: r.message ?? '', original: r.row.original })),
@@ -114,6 +143,7 @@ export class PackageImportComponent implements HasUnsavedChanges {
     inject(DestroyRef).onDestroy(() => {
       this.destroyed = true;
       this.cancelled = true;
+      this.locating?.unsubscribe();
     });
   }
 
@@ -141,6 +171,9 @@ export class PackageImportComponent implements HasUnsavedChanges {
   }
 
   protected location(row: ImportRow): string {
+    if (!row.input.location) {
+      return t('Se ubicará a partir de la dirección');
+    }
     const [lng, lat] = row.input.location.coordinates;
     return formatLatLng({ lat, lng });
   }
@@ -214,10 +247,42 @@ export class PackageImportComponent implements HasUnsavedChanges {
     this.reset();
   }
 
+  /** Importa directamente: todas las filas ya traen sus coordenadas. */
   protected async start(): Promise<void> {
-    const rows = this.validation()?.valid ?? [];
     this.results.set([]);
-    await this.run(rows);
+    await this.run(importableRows(startReview(this.validation()?.valid ?? [])));
+  }
+
+  /**
+   * Ubica la dirección de las filas que vinieron sin coordenadas y pasa a revisarlas. Al volver a intentarlo solo se
+   * piden las que siguen sin ubicación y se conserva lo que ya se corrigió.
+   */
+  protected locate(): void {
+    const rows = this.reviewRows().length > 0 ? this.reviewRows() : startReview(this.validation()?.valid ?? []);
+    this.reviewRows.set(rows);
+    this.progress.set({ done: 0, total: rows.filter(needsLocating).length });
+    this.cancelling.set(false);
+    this.phase.set('locating');
+    this.locating?.unsubscribe();
+    this.locating = locateRows(rows, (query) => this.geocoding.geocode(query)).subscribe({
+      next: (located) => {
+        this.reviewRows.update((all) => all.map((r) => (r.line === located.line ? located : r)));
+        this.progress.update((p) => ({ ...p, done: p.done + 1 }));
+      },
+      complete: () => this.phase.set('review'),
+    });
+  }
+
+  /** Corta la ubicación: lo que ya se ubicó se conserva y el resto queda para corregir a mano. */
+  protected stopLocating(): void {
+    this.locating?.unsubscribe();
+    this.phase.set('review');
+  }
+
+  /** Confirma desde la revisión: se crean los paquetes que tienen ubicación. */
+  protected async startFromReview(): Promise<void> {
+    this.results.set([]);
+    await this.run(importableRows(this.reviewRows()));
   }
 
   protected async retryFailed(): Promise<void> {
@@ -232,7 +297,7 @@ export class PackageImportComponent implements HasUnsavedChanges {
     this.cancelling.set(true);
   }
 
-  private async run(rows: readonly ImportRow[]): Promise<void> {
+  private async run(rows: readonly LocatedImportRow[]): Promise<void> {
     this.cancelled = false;
     this.cancelling.set(false);
     this.phase.set('importing');
@@ -268,6 +333,8 @@ export class PackageImportComponent implements HasUnsavedChanges {
     this.validation.set(null);
     this.results.set([]);
     this.fileName.set('');
+    this.locating?.unsubscribe();
+    this.reviewRows.set([]);
     this.rawRows.clear();
   }
 }

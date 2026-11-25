@@ -49,23 +49,25 @@ describe('NavRailComponent', () => {
       'Zonas',
       'Paquetes',
       'Jornadas',
+      'Asignados',
       'Config.',
       'Auditoría',
       'Seguridad',
     ]);
     open('agent');
-    expect(labels()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
+    expect(labels()).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Asignados', 'Auditoría']);
   });
 
   it('«Flota» es un botón con menú y el resto son enlaces a su ruta', () => {
     const items = Array.from(root().querySelectorAll('.rail-item')) as HTMLElement[];
-    expect(items.map((item) => item.tagName)).toEqual(['A', 'BUTTON', 'A', 'A', 'A', 'A', 'A', 'A', 'A']);
+    expect(items.map((item) => item.tagName)).toEqual(['A', 'BUTTON', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A']);
     expect(items.filter((item) => item.tagName === 'A').map((item) => item.getAttribute('href'))).toEqual([
       '/',
       '/places',
       '/zones',
       '/packages',
       '/journeys',
+      '/assigned-services',
       '/settings',
       '/audit',
       '/security',

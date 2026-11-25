@@ -1,8 +1,8 @@
 import { PackageInput } from '../../../core/api/models';
 import { RowResult, runImport } from './package-importer';
-import { ImportRow } from './package-rows';
+import { LocatedImportRow } from './package-rows';
 
-const row = (line: number, guide?: string): ImportRow => ({
+const row = (line: number, guide?: string): LocatedImportRow => ({
   line,
   original: [String(line)],
   input: {
@@ -15,7 +15,7 @@ const row = (line: number, guide?: string): ImportRow => ({
     ...(guide ? { guideNumber: guide } : {}),
   },
 });
-const rows = (n: number, withGuide = false): ImportRow[] =>
+const rows = (n: number, withGuide = false): LocatedImportRow[] =>
   Array.from({ length: n }, (_, i) => row(i + 2, withGuide ? `G-${i}` : undefined));
 const http = (status: number, message = `HTTP ${status}`) => Object.assign(new Error(message), { status });
 const immediate = () => Promise.resolve();

@@ -547,10 +547,6 @@ export const PT: Readonly<Record<string, string>> = {
   '1. Prepara el archivo': '1. Prepare o arquivo',
   'El archivo debe ser un CSV en UTF-8 con una fila por paquete.':
     'O arquivo deve ser um CSV em UTF-8 com uma linha por pacote.',
-  'La aplicación no calcula la ubicación a partir de la dirección:':
-    'O aplicativo não calcula a localização a partir do endereço:',
-  'cada fila necesita su longitud y su latitud. Máximo 2 MB y {0} filas.':
-    'cada linha precisa de longitude e latitude. Máximo de 2 MB e {0} linhas.',
   'Descargar plantilla': 'Baixar modelo',
   'Columnas del archivo': 'Colunas do arquivo',
   'Columna': 'Coluna',
@@ -638,11 +634,7 @@ export const PT: Readonly<Record<string, string>> = {
   'Llamar al llegar': 'Ligar ao chegar',
   'Supera los {0} caracteres': 'Excede {0} caracteres',
   'La dirección es obligatoria': 'O endereço é obrigatório',
-  'La longitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)':
-    'A longitude é obrigatória (o aplicativo não calcula localizações a partir de endereços)',
   'La longitud debe ser un número entre -180 y 180': 'A longitude deve ser um número entre -180 e 180',
-  'La latitud es obligatoria (la aplicación no calcula ubicaciones a partir de direcciones)':
-    'A latitude é obrigatória (o aplicativo não calcula localizações a partir de endereços)',
   'La latitud debe ser un número entre -90 y 90': 'A latitude deve ser um número entre -90 e 90',
   'El tipo de servicio debe ser Entrega, Recogida o Mixto': 'O tipo de serviço deve ser Entrega, Coleta ou Misto',
   '{0} debe ser un número mayor o igual que 0': '{0} deve ser um número maior ou igual a 0',
@@ -661,8 +653,6 @@ export const PT: Readonly<Record<string, string>> = {
   'Número de guía (opcional)': 'Número da guia (opcional)',
   'Único en tu empresa': 'Único na sua empresa',
   'Tipo de servicio': 'Tipo de serviço',
-  'Se guarda como texto: no se calcula la ubicación a partir de ella':
-    'É salvo como texto: a localização não é calculada a partir dele',
   'Ciudad (opcional)': 'Cidade (opcional)',
   'País (opcional)': 'País (opcional)',
   'Código postal (opcional)': 'Código postal (opcional)',
@@ -1193,4 +1183,87 @@ export const PT: Readonly<Record<string, string>> = {
     'Você não poderá mais entrar com esta conta. Poderá vinculá-la de novo ao entrar com ela.',
   'Cuenta desvinculada: {0}': 'Conta desvinculada: {0}',
   'Este rol no puede entrar con el SSO de una empresa': 'Este papel não pode entrar com o SSO de uma empresa',
+  'Corregir la ubicación de la línea {0}': 'Corrigir a localização da linha {0}',
+  'Elige un punto en el mapa o escribe la latitud y la longitud':
+    'Escolha um ponto no mapa ou digite a latitude e a longitude',
+  'La longitud y la latitud son opcionales:': 'A longitude e a latitude são opcionais:',
+  'si las dejas vacías, la aplicación ubica la dirección y te deja revisar el resultado antes de importar. Máximo 2 MB y {0} filas.':
+    'se você as deixar vazias, o aplicativo localiza o endereço e deixa você revisar o resultado antes de importar. Máximo de 2 MB e {0} linhas.',
+  '{0} filas no traen coordenadas: se ubicarán a partir de su dirección.':
+    '{0} linhas não trazem coordenadas: serão localizadas a partir do endereço.',
+  'Ubicar direcciones y revisar': 'Localizar endereços e revisar',
+  'Ubicando direcciones': 'Localizando endereços',
+  'Progreso de la ubicación': 'Progresso da localização',
+  'Ubicando… {0} de {1}': 'Localizando… {0} de {1}',
+  'Detener y revisar': 'Parar e revisar',
+  'Revisa las ubicaciones': 'Revise as localizações',
+  'No se encontró la ubicación de la dirección': 'A localização do endereço não foi encontrada',
+  'Se ubicará a partir de la dirección': 'Será localizado a partir do endereço',
+  '{0} filas: {1} ubicadas, {2} aproximadas, {3} manuales y {4} sin ubicar.':
+    '{0} linhas: {1} localizadas, {2} aproximadas, {3} manuais e {4} sem localizar.',
+  'Las aproximadas pueden estar en otro punto: revísalas en el mapa antes de importar.':
+    'As aproximadas podem estar em outro ponto: confira-as no mapa antes de importar.',
+  'No se pudo consultar el servicio de ubicación para {0} filas. Vuelve a intentarlo o colócalas en el mapa.':
+    'Não foi possível consultar o serviço de localização para {0} linhas. Tente novamente ou coloque-as no mapa.',
+  'Volver a intentarlo': 'Tentar novamente',
+  'filas': 'linhas',
+  'No quedan filas por importar': 'Não há mais linhas para importar',
+  'Buscar por dirección o ciudad': 'Buscar por endereço ou cidade',
+  'Corregir la ubicación de la línea ': 'Corrigir a localização da linha ',
+  'Quitar de la importación la línea ': 'Remover da importação a linha ',
+  'Quitar de la importación': 'Remover da importação',
+  '{0} filas sin ubicación no se importarán. Corrígelas o quítalas.':
+    '{0} linhas sem localização não serão importadas. Corrija-as ou remova-as.',
+  'Descargar CSV con las ubicaciones': 'Baixar CSV com as localizações',
+  'Ubicadas': 'Localizadas',
+  'Aproximadas': 'Aproximadas',
+  'Manuales': 'Manuais',
+  'No ubicadas': 'Não localizadas',
+  'Dirección estandarizada': 'Endereço padronizado',
+  'Sin respuesta del servicio': 'Sem resposta do serviço',
+  'Longitud entre -180 y 180 (punto o coma decimal)': 'Longitude entre -180 e 180 (ponto ou vírgula decimal)',
+  'se calcula a partir de la dirección': 'calculado a partir do endereço',
+  'Latitud entre -90 y 90 (punto o coma decimal)': 'Latitude entre -90 e 90 (ponto ou vírgula decimal)',
+  'Escribe la latitud y la longitud juntas, o déjalas vacías para ubicar la dirección':
+    'Digite a latitude e a longitude juntas, ou deixe-as vazias para localizar o endereço',
+  'Escribe primero la dirección': 'Digite primeiro o endereço',
+  'No se encontró la dirección. Colócala en el mapa o escribe las coordenadas.':
+    'O endereço não foi encontrado. Coloque-o no mapa ou digite as coordenadas.',
+  'Ubicación aproximada: revisa el punto y muévelo si hace falta.':
+    'Localização aproximada: confira o ponto e mova-o se necessário.',
+  'Dirección ubicada como «{0}». Revisa el punto en el mapa.':
+    'Endereço localizado como “{0}”. Confira o ponto no mapa.',
+  'Dirección ubicada. Revisa el punto en el mapa.': 'Endereço localizado. Confira o ponto no mapa.',
+  'Elige primero un punto en el mapa o escribe la latitud y la longitud':
+    'Escolha primeiro um ponto no mapa ou digite a latitude e a longitude',
+  'No hay una dirección conocida para ese punto.': 'Não há um endereço conhecido para esse ponto.',
+  'Dirección tomada del punto elegido.': 'Endereço obtido do ponto escolhido.',
+  'Ubicar la dirección en el mapa': 'Localizar o endereço no mapa',
+  'Tomar la dirección del punto': 'Obter o endereço do ponto',
+  'Buscando…': 'Buscando…',
+  'Asignar ruta': 'Atribuir rota',
+  'Editar servicio asignado': 'Editar serviço atribuído',
+  'Servicios asignados': 'Serviços atribuídos',
+  'Todavía no hay jornadas. Primero': 'Ainda não há jornadas. Primeiro',
+  'planifica una': 'planeje uma',
+  'Cargando las rutas…': 'Carregando as rotas…',
+  'Vehículo y conductor': 'Veículo e motorista',
+  'Fecha del servicio': 'Data do serviço',
+  'Ruta asignada': 'Rota atribuída',
+  'Servicio asignado guardado': 'Serviço atribuído salvo',
+  'servicio asignado': 'serviço atribuído',
+  'servicios asignados': 'serviços atribuídos',
+  'Fecha': 'Data',
+  'Todavía no hay servicios asignados': 'Ainda não há serviços atribuídos',
+  'Buscar por ruta, vehículo o conductor': 'Buscar por rota, veículo ou motorista',
+  'Editar servicio asignado ': 'Editar serviço atribuído ',
+  'Eliminar servicio asignado ': 'Excluir serviço atribuído ',
+  'Asignar la primera ruta': 'Atribuir a primeira rota',
+  'Ruta {0}': 'Rota {0}',
+  'Servicio asignado': 'Serviço atribuído',
+  'Cambiar': 'Alterar',
+  'Quitar asignación': 'Remover atribuição',
+  'Esta ruta todavía no está asignada a un vehículo y un conductor.':
+    'Esta rota ainda não está atribuída a um veículo e um motorista.',
+  'Asignados': 'Atribuídos',
 };

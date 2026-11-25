@@ -67,6 +67,7 @@ describe('GlobalSearchComponent', () => {
       'Zonas',
       'Paquetes',
       'Jornadas',
+      'Servicios asignados',
       'Configuraciones',
       'Auditoría',
       'Seguridad',
@@ -92,7 +93,7 @@ describe('GlobalSearchComponent', () => {
 
   it('un agente solo encuentra lo que su rol puede abrir', () => {
     open('agent');
-    expect(labels('Ir a')).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
+    expect(labels('Ir a')).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Servicios asignados', 'Auditoría']);
     type('flota');
     expect(fixture.componentInstance.groups()).toEqual([]);
   });
@@ -109,7 +110,7 @@ describe('GlobalSearchComponent', () => {
     expect(
       Array.from(panel().querySelectorAll('mat-optgroup .mat-mdc-optgroup-label')).map((el) => el.textContent?.trim())
     ).toEqual(['Ir a', 'Acciones']);
-    expect(panel().querySelectorAll('mat-option').length).toBe(14);
+    expect(panel().querySelectorAll('mat-option').length).toBe(15);
   });
 
   it('el panel tiene el ancho y la posición de la píldora entera, no solo los del campo', async () => {

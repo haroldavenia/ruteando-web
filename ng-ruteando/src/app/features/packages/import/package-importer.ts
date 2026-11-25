@@ -1,11 +1,11 @@
 import { PackageInput } from '../../../core/api/models';
 import { t } from '../../../core/i18n/i18n';
-import { ImportRow } from './package-rows';
+import { LocatedImportRow } from './package-rows';
 
 export type RowStatus = 'created' | 'existed' | 'failed' | 'skipped';
 
 export interface RowResult {
-  row: ImportRow;
+  row: LocatedImportRow;
   status: RowStatus;
   /** Motivo del fallo (`failed`) o de que no se procesara (`skipped`). */
   message?: string;
@@ -45,7 +45,7 @@ const messageOf = (error: unknown): string =>
  * que están en vuelo terminan y el resto queda como «sin procesar». Devuelve los resultados en el orden de entrada.
  */
 export function runImport(
-  rows: readonly ImportRow[],
+  rows: readonly LocatedImportRow[],
   create: (input: PackageInput) => Promise<unknown>,
   options: ImportOptions = {}
 ): Promise<RowResult[]> {
@@ -67,7 +67,7 @@ export function runImport(
     options.onProgress?.({ done, total: rows.length });
   };
 
-  const attempt = async (row: ImportRow): Promise<RowResult> => {
+  const attempt = async (row: LocatedImportRow): Promise<RowResult> => {
     for (let n = 1; ; n++) {
       try {
         await create(row.input);

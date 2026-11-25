@@ -110,6 +110,14 @@ export const routes: Routes = [
         loadChildren: () => import('./features/packages/packages.routes').then((m) => m.PACKAGES_ROUTES),
       },
       {
+        // Servicios asignados: una ruta de una jornada con su vehículo, su conductor y su fecha; administradores y agentes
+        path: 'assigned-services',
+        canActivate: [roleGuard(OPERATIONS_ROLES)],
+        canActivateChild: [roleGuard(OPERATIONS_ROLES)],
+        loadChildren: () =>
+          import('./features/assigned-services/assigned-services.routes').then((m) => m.ASSIGNED_SERVICES_ROUTES),
+      },
+      {
         // Auditoría: qué se hizo, quién y cuándo. Administradores y agentes; cada rol ve los eventos que el gateway le permite
         path: 'audit',
         canActivate: [roleGuard(OPERATIONS_ROLES)],

@@ -14,6 +14,7 @@ describe('nav-items', () => {
           'Zonas',
           'Paquetes',
           'Jornadas',
+          'Servicios asignados',
           'Configuraciones',
           'Auditoría',
           'Seguridad',
@@ -21,8 +22,14 @@ describe('nav-items', () => {
       }
     });
 
-    it('el agente ve Inicio, Paquetes, Jornadas y Auditoría', () => {
-      expect(labels(navItemsFor('agent'))).toEqual(['Inicio', 'Paquetes', 'Jornadas', 'Auditoría']);
+    it('el agente ve Inicio, Paquetes, Jornadas, Servicios asignados y Auditoría', () => {
+      expect(labels(navItemsFor('agent'))).toEqual([
+        'Inicio',
+        'Paquetes',
+        'Jornadas',
+        'Servicios asignados',
+        'Auditoría',
+      ]);
     });
 
     it('el conductor y quien no tiene rol solo ven Inicio', () => {
@@ -41,6 +48,7 @@ describe('nav-items', () => {
         'Zonas',
         'Paquetes',
         'Jornadas',
+        'Servicios asignados',
         'Configuraciones',
         'Auditoría',
         'Seguridad',
@@ -51,17 +59,20 @@ describe('nav-items', () => {
       expect(areaLinksFor('super_admin').every((item) => !!item.link)).toBeTrue();
     });
 
-    it('el agente solo accede a Paquetes y Jornadas y el conductor a nada', () => {
-      expect(labels(areaLinksFor('agent'))).toEqual(['Paquetes', 'Jornadas', 'Auditoría']);
+    it('el agente solo accede a Paquetes, Jornadas y Servicios asignados y el conductor a nada', () => {
+      expect(labels(areaLinksFor('agent'))).toEqual(['Paquetes', 'Jornadas', 'Servicios asignados', 'Auditoría']);
       expect(areaLinksFor('driver')).toEqual([]);
       expect(areaLinksFor(null)).toEqual([]);
     });
   });
 
   describe('nombre corto del riel', () => {
-    it('solo Configuraciones lo necesita, y el nombre accesible sigue siendo el largo', () => {
+    it('solo Servicios asignados y Configuraciones lo necesitan, y el nombre accesible sigue siendo el largo', () => {
       const withShort = NAV_ITEMS.filter((item) => item.short);
-      expect(withShort.map((item) => [item.label, item.short])).toEqual([['Configuraciones', 'Config.']]);
+      expect(withShort.map((item) => [item.label, item.short])).toEqual([
+        ['Servicios asignados', 'Asignados'],
+        ['Configuraciones', 'Config.'],
+      ]);
     });
   });
 

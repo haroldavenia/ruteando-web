@@ -20,8 +20,21 @@ describe('statusTone', () => {
     expect(statusTone('visit', null)).toBe('neutral');
   });
 
+  it('geocodificación: ubicada es éxito, aproximada aviso, manual información y no ubicada peligro', () => {
+    expect(['match', 'mean', 'manual', 'unmatch'].map((k) => statusTone('geocoding', k))).toEqual([
+      'success',
+      'warning',
+      'info',
+      'danger',
+    ]);
+  });
+
+  it('servicio asignado: activo es éxito', () => {
+    expect(statusTone('assigned', 'ACTIVO')).toBe('success');
+  });
+
   it('un estado desconocido es neutro', () => {
-    for (const domain of ['package', 'journey', 'visit'] as const) {
+    for (const domain of ['package', 'journey', 'visit', 'geocoding', 'assigned'] as const) {
       expect(statusTone(domain, 'inventado')).toBe('neutral');
     }
   });

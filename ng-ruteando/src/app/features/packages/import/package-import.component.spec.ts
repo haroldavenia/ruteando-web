@@ -170,7 +170,7 @@ describe('PackageImportComponent', () => {
 
   describe('elegir y leer el archivo', () => {
     it('explica las columnas y avisa de que se necesitan las coordenadas', () => {
-      expect(text()).toContain('La aplicación no calcula la ubicación a partir de la dirección');
+      expect(text()).toContain('La longitud y la latitud son opcionales');
       const headers = Array.from(root().querySelectorAll('tbody th')).map((th) => th.textContent!.trim());
       expect(headers).toEqual(jasmine.arrayContaining(['DIRECCION', 'LONGITUD', 'LATITUD', 'ID_GUIA', 'PESO']));
       expect(root().querySelector('table caption')?.textContent).toContain('Columnas del archivo');
@@ -221,10 +221,8 @@ describe('PackageImportComponent', () => {
     });
 
     it('sin las columnas obligatorias dice cuáles faltan y no muestra la vista previa', async () => {
-      await choose('NOMBRE;DIRECCION\nAna;Calle 1');
-      expect(root().querySelector('[role="alert"]')?.textContent).toContain(
-        'Faltan columnas obligatorias: LONGITUD, LATITUD'
-      );
+      await choose('NOMBRE;CIUDAD\nAna;Bogotá');
+      expect(root().querySelector('[role="alert"]')?.textContent).toContain('Faltan columnas obligatorias: DIRECCION');
       expect(root().querySelector('#preview-title')).toBeNull();
     });
 
@@ -469,6 +467,117 @@ describe('PackageImportComponent', () => {
       first.forEach((req) => (req.cancelled ? undefined : created(req)));
       await wait(30);
       expect(http.match((r) => r.method === 'POST').length).toBe(0);
+    });
+  });
+  describe('direcciones sin coordenadas', () => {
+    const NO_COORDS = 'DIRECCION;CIUDAD\nCarrera 7 # 71-21;Bogotá\nCentro;Bogotá\nNunca jamás;Bogotá';
+    const point = (lng: number, lat: number) => ({ type: 'Point', coordinates: [lng, lat] });
+
+    /** Responde a todas las consultas de ubicación que haya pendientes con lo que decida `reply`. */
+    async function serveGeocoding(reply: (req: TestRequest) => void): Promise<void> {
+      for (let round = 0; round < 50; round++) {
+        await wait(5);
+        http.match((r) => r.method === 'POST' && r.url === '/gateway/geocoding').forEach(reply);
+        fixture.detectChanges();
+        if (root().querySelector('#review-title')) {
+          return;
+        }
+      }
+    }
+    const geocodeReply = (req: TestRequest) => {
+      const address = (req.request.body as { address: string }).address;
+      if (address === 'Nunca jamás') {
+        req.flush({}, { status: 404, statusText: 'x' });
+      } else if (address === 'Centro') {
+        req.flush({ location: point(-74.1, 4.7), score: 0.5, standardizedAddress: 'CENTRO' });
+      } else {
+        req.flush({ location: point(-74.07, 4.6), score: 0.95, standardizedAddress: 'CR 7 71 21' });
+      }
+    };
+
+    it('un archivo sin coordenadas es válido y ofrece ubicar las direcciones en vez de importar', async () => {
+      await choose(NO_COORDS);
+
+      expect(text()).toContain('3 filas leídas: 3 válidas y 0 rechazadas.');
+      expect(text()).toContain('3 filas no traen coordenadas');
+      expect(button('Ubicar direcciones y revisar')).toBeDefined();
+      expect(button('Importar 3 paquetes')).toBeUndefined();
+    });
+
+    it('ubica cada dirección con su ciudad y muestra la revisión con los estados y los recuentos', async () => {
+      await choose(NO_COORDS);
+      button('Ubicar direcciones y revisar')!.click();
+      fixture.detectChanges();
+      const bodies: unknown[] = [];
+      await serveGeocoding((req) => {
+        bodies.push(req.request.body);
+        geocodeReply(req);
+      });
+
+      expect(bodies).toContain(jasmine.objectContaining({ address: 'Carrera 7 # 71-21', city: 'Bogotá' }));
+      expect(text()).toContain('3 filas: 1 ubicadas, 1 aproximadas, 0 manuales y 1 sin ubicar.');
+      expect(text()).toContain('1 filas sin ubicación no se importarán');
+      expect(button('Importar 2 paquetes')).toBeDefined();
+      const states = Array.from(root().querySelectorAll('app-package-location-review tbody tr')).map((tr) =>
+        tr.textContent!.replace(/\s+/g, ' ')
+      );
+      expect(states.some((row) => row.includes('Carrera 7 # 71-21') && row.includes('Ubicada'))).toBeTrue();
+      expect(states.some((row) => row.includes('Centro') && row.includes('Aproximada'))).toBeTrue();
+      expect(states.some((row) => row.includes('Nunca jamás') && row.includes('No ubicada'))).toBeTrue();
+    });
+
+    it('importa solo las ubicadas, con la ubicación que dio el geocodificador, y deja las demás en el informe', async () => {
+      await choose(NO_COORDS);
+      button('Ubicar direcciones y revisar')!.click();
+      await serveGeocoding(geocodeReply);
+      button('Importar 2 paquetes')!.click();
+      const sent: { address: string; location: unknown }[] = [];
+      await serve((req) => {
+        sent.push(req.request.body as { address: string; location: unknown });
+        created(req);
+      });
+
+      expect(sent.map((p) => p.address).sort()).toEqual(['Carrera 7 # 71-21', 'Centro']);
+      expect(sent.find((p) => p.address === 'Centro')?.location).toEqual(point(-74.1, 4.7));
+      expect(resultSummary()).toContain('2 creados');
+      expect(button('Descargar informe de errores')).toBeDefined();
+    });
+
+    it('si el servicio de ubicación falla avisa cuántas filas quedaron sin respuesta y permite volver a intentarlo', async () => {
+      await choose(NO_COORDS);
+      button('Ubicar direcciones y revisar')!.click();
+      await serveGeocoding((req) => req.flush({}, { status: 500, statusText: 'x' }));
+
+      expect(root().querySelector('.note.warning[role="alert"]')?.textContent).toContain('3 filas');
+      expect(button('Importar 0 paquetes')?.disabled).toBeTrue();
+
+      button('Volver a intentarlo')!.click();
+      await serveGeocoding(geocodeReply);
+      expect(text()).toContain('3 filas: 1 ubicadas, 1 aproximadas, 0 manuales y 1 sin ubicar.');
+    });
+
+    it('quitar una fila de la revisión la saca de la importación', async () => {
+      await choose(NO_COORDS);
+      button('Ubicar direcciones y revisar')!.click();
+      await serveGeocoding(geocodeReply);
+      (root().querySelector('button[aria-label="Quitar de la importación la línea 4"]') as HTMLButtonElement).click();
+      fixture.detectChanges();
+
+      expect(text()).toContain('2 filas: 1 ubicadas, 1 aproximadas, 0 manuales y 0 sin ubicar.');
+      expect(root().textContent).not.toContain('sin ubicación no se importarán');
+    });
+
+    it('con una sola coordenada rechaza la fila en vez de adivinar la otra', async () => {
+      await choose('DIRECCION;LONGITUD;LATITUD\nCalle 1;-74;');
+      expect(text()).toContain('1 filas leídas: 0 válidas y 1 rechazadas.');
+      expect(text()).toContain('Escribe la latitud y la longitud juntas');
+    });
+
+    it('un archivo con todas las coordenadas se importa directamente, sin pasar por la revisión', async () => {
+      await choose(csvOf('G-1;Calle 1;-74;4.6'));
+      expect(button('Ubicar direcciones y revisar')).toBeUndefined();
+      expect(button('Importar 1 paquetes')).toBeDefined();
+      http.expectNone('/gateway/geocoding');
     });
   });
 });
