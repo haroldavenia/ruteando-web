@@ -101,7 +101,7 @@ Como integrante del equipo de ingeniería, quiero ejecutar pruebas unitarias, de
 
 ## 5. Criterios de aceptación
 
-- **CA-1** (RF-1) — Dado el repo limpio, Cuando ejecuto `npm run test:unit`, Entonces una prueba de humo que inyecta `$state` del módulo `angle` pasa en ChromeHeadless y se genera `reports/junit-unit.xml`
+- **CA-1** (RF-1) — Dado el repo limpio, Cuando ejecuto `npm run test:unit`, Entonces una prueba de humo inyecta un servicio migrado del módulo `angle` de prueba (`tests/helpers/app-shim.js` + `tests/helpers/sources.json`), pasa en ChromeHeadless y se genera `reports/junit-unit.xml`. La carga de la app real (rutas, `$state`) la cubren CA-5 y CA-10
 - **CA-2** (RF-2) — Dado `get__places__id.json`, Cuando una prueba llama `fixture('get__places__id')`, Entonces recibe el objeto con `response.body.location.coordinates` de longitud 2
 - **CA-3** (RF-3) — Dado mock-api arrancado, Cuando hago `GET /api/v1/places?page=0&size=20` con Bearer, Entonces responde 200 con forma de página; sin Bearer responde 401
 - **CA-4** (RF-3) — Dado mock-api y la cabecera `x-mock-scenario: 409`, Cuando hago `POST /api/v1/places`, Entonces responde 409 `{error:'CONFLICT'}`
@@ -140,9 +140,15 @@ Crear: `karma.conf.cjs`, `playwright.config.mjs`, `tests/helpers/fixtures.js`, `
 
 ## 8. Excepciones de cobertura
 
-Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
+| Archivo:línea | Motivo | Verificación alternativa | Retirada | Aprobó |
+| --- | --- | --- | --- | --- |
+| `master/gulpfile.js` (líneas añadidas en #70: carga de `gulp-node-compat.cjs`, `newLine` de `concat`, tarea `vendor_fixed`) | Configuración del build con Gulp: no se ejecuta en pruebas unitarias | E2E con build real (CA-5 local, CA-10 en CI) | Cuando el build se sustituya o tenga pruebas propias | Harold Avenia (2026-11-25) |
+
+Filtro de cobertura único: `npm run coverage:diff` (lo usan CI, agentes y personas); excluye `^master/gulpfile\.js$` por esta excepción.
 
 ## 9. Dependencias, riesgos y preguntas abiertas
+
+- Fuera de alcance, planificado en `specs/fabrica-agentica/f1-arnes/HAR-002-arnes-evidencia-sin-omisiones.md`: sondas API en un job con *secrets* (`API_REQUIRED=1`), «contexto limpio» obligatorio en los informes de revisión, `coverage:diff` en `AGENTS.md`, `E2E_FORCE_BUILD`, permisos del sandbox de Antigravity. El `401 INVALID_CREDENTIALS` de las sondas con el `.env` local es de credenciales, no de esta historia.
 
 - Dependencias: —.
 - Riesgos: Versiones de karma modernas con AngularJS 1.3 (sin problemas conocidos). `base.js`/`app.js` compilados por Gulp: la suite unit carga las fuentes `master/js/**` en el orden del gulpfile + `app/js/base.js` (vendor).
@@ -171,10 +177,10 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-17 | Spec creada desde el inventario legacy y el contrato `/api/v1` | Migración | — |
 | 2026-11-20 | v4: alineada al arnés harness-engineering (diff-coverage 90 %, CI) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
-| 2026-11-20 | Implementación propuesta de F0 a petición del usuario (alcance «Arnés + F0 implementado»), antes de la aprobación formal de la spec: los gates G0 (Lista) y G5 (merge) siguen pendientes de una persona. | Pedido explícito del usuario 2026-11-20 | pendiente |
-| 2026-11-20 | CA-1: Karma carga angular/angular-mocks 1.3.15 de npm y un módulo `angle` de prueba (`tests/helpers/app-shim.js`) con el código de `tests/helpers/sources.json`; la carga completa de la app (base.js de bower + app.js) pasa a E2E (CA-5/CA-10). RF-1 se lee así. | Bower no está en npm ni en CI sin `bower install`; las unitarias deben correr en cualquier equipo (ADR-0005) | pendiente |
-| 2026-11-20 | Archivos autorizados ajustados a lo implementado (CI, ESLint, `tools/merge-lcov.mjs`, `tests/e2e/ensure-build.mjs`, `tests/tools/**`); `master/js` no se toca. | Implementación F0 | pendiente |
-| 2026-11-20 | CA-5 y CA-10 requieren la app compilada (bower + Gulp): no ejecutables en el contenedor de la sesión; quedan pendientes de ejecución en el equipo o en CI (`ci / e2e`). | Entorno sin registro de bower | pendiente |
+| 2026-11-20 | Implementación propuesta de F0 a petición del usuario (alcance «Arnés + F0 implementado»), antes de la aprobación formal de la spec: los gates G0 (Lista) y G5 (merge) siguen pendientes de una persona. | Pedido explícito del usuario 2026-11-20 | Harold Avenia (2026-11-25, registro histórico: el flujo completo se recorrió después en #67/#70) |
+| 2026-11-20 | CA-1: Karma carga angular/angular-mocks 1.3.15 de npm y un módulo `angle` de prueba (`tests/helpers/app-shim.js`) con el código de `tests/helpers/sources.json`; la carga completa de la app (base.js de bower + app.js) pasa a E2E (CA-5/CA-10). RF-1 se lee así. | Bower no está en npm ni en CI sin `bower install`; las unitarias deben correr en cualquier equipo (ADR-0005) | Harold Avenia (2026-11-25; CA-1 reescrito) |
+| 2026-11-20 | Archivos autorizados ajustados a lo implementado (CI, ESLint, `tools/merge-lcov.mjs`, `tests/e2e/ensure-build.mjs`, `tests/tools/**`); `master/js` no se toca. | Implementación F0 | Harold Avenia (2026-11-25; el validador confirmó el diff dentro del alcance) |
+| 2026-11-20 | CA-5 y CA-10 requieren la app compilada (bower + Gulp): no ejecutables en el contenedor de la sesión; quedan pendientes de ejecución en el equipo o en CI (`ci / e2e`). | Entorno sin registro de bower | Resuelta 2026-11-25: verificados en local (build limpio) y en CI (`e2e`, run 45705320633) — Harold Avenia |
 | 2026-11-24 | Estado → Lista | — | Harold Avenia |
 | 2026-11-24 | CA-9: la rama base de `diff-coverage` pasa de `--base main` a `--base angularjs-main` | La rama base de la línea AngularJS es `angularjs-main` (ADR-0001); `main` es la línea Angular 22 | Harold Avenia (instrucción del 2026-11-24) |
 | 2026-11-25 | Alcance: se añaden `tools/diff-coverage.mjs` y su prueba. En Windows `toRelative()` no relativizaba rutas cuando la letra de unidad difiere o falta (`tools/test/diff-coverage.test.mjs:131`, 1 !== 0) | `npm test` 46/47 en Windows (Node 25) | Harold Avenia |
@@ -182,3 +188,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-25 | Entorno: Node 24 LTS para desarrollo y CI (`.nvmrc` = 24, `engines` `^24`, `NODE_VERSION` 24 en `ci.yml`). El build legacy (Gulp + `gulp-minify-css`, 2015) usa `util.isRegExp` y otras `util.is*`, eliminadas en Node 23+; se añade `master/gulp-node-compat.cjs` (cargado al inicio de `master/gulpfile.js`) que las define solo si faltan y solo en el proceso de Gulp. Retirarlo al actualizar o sustituir esos plugins (deuda técnica) | `npm run test:e2e` con Node 25: `TypeError util.isRegExp is not a function`; con Node 24 + compat el build supera `vendor_app` | Harold Avenia |
 | 2026-11-25 | Build: `scripts_app` concatena con `\n;\n` entre archivos. Un archivo legacy termina en `}])` sin `;` y el siguiente archivo de F0 empieza por `(function(){`: en `app/js/app.js` quedaba `App.factory(...)(function(){…})`, la SPA no arrancaba (`App.factory(...) is not a function`, luego `Unknown provider: RouteHelpersProvider`) y CA-5/CA-10 fallaban con la página en blanco | Traza de Playwright de `npm run test:e2e` (Node 24, Windows) y job `e2e` de #70 | Harold Avenia (cambio dentro de `master/gulpfile.js`, ya autorizado) |
 | 2026-11-25 | Build: tarea `vendor_fixed` copia a las rutas fijas que espera la app `bootstrap/dist/js/bootstrap.js` → `vendor/bootstrap/js/` (lo carga `resolveFor('bootstrap')` en el estado `access`) y `toastr.js/.css` → `app/js`, `app/css` (los enlaza `index.jade`). En CI (build limpio) faltaban: `vendor/bootstrap/js/bootstrap.js` daba 404, el estado no resolvía y la SPA quedaba en blanco; en local existían por copias manuales antiguas en `vendor/` (no versionado) | Traza del artefacto `e2e-report` del run 45693681529 (#70) | Harold Avenia (cambio dentro de `master/gulpfile.js`, ya autorizado) |
+| 2026-11-25 | Decisiones sobre el informe del validador: (a) CA-1 reescrito al alcance real de Karma; (b) prueba `node:test` de `gulp-node-compat.cjs`, excepción §8 para `master/gulpfile.js` y filtro único `npm run coverage:diff` en `package.json` y `ci.yml`; (c) filas del 2026-11-20 firmadas; (d) la prueba de CA-6 comprueba `junit-api.xml`; (e) mejoras del arnés a HAR-002 | `evidencia/FND-001/2026-11-25-validador.md` | Harold Avenia |

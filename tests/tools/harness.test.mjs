@@ -16,10 +16,17 @@ const require = createRequire(import.meta.url);
 test('[FND-001 CA-6] sin BACKEND_URL las sondas API se omiten con motivo y el proceso sale 0', () => {
   const env = { ...process.env, BACKEND_URL: '', SDD_NO_ENV_FILE: '1' };
   delete env.NODE_TEST_CONTEXT;
-  const r = spawnSync(process.execPath, ['--test', '--test-reporter=tap', 'tests/api/arnes-de-pruebas.api.test.mjs'], { cwd: root, encoding: 'utf8', env });
+  const junit = path.join(mkdtempSync(path.join(tmpdir(), 'api-')), 'junit-api.xml');
+  const r = spawnSync(process.execPath, ['--test', '--test-reporter=tap', '--test-reporter-destination=stdout', '--test-reporter=junit', `--test-reporter-destination=${junit}`, 'tests/api/arnes-de-pruebas.api.test.mjs'], { cwd: root, encoding: 'utf8', env });
   assert.equal(r.status, 0, r.stderr);
   assert.match(r.stdout, /# SKIP BACKEND_URL no está definido/);
   assert.match(r.stdout, /# pass 0/);
+  // JUnit sin falsos verdes: cada sonda figura como omitida y ninguna como fallo.
+  const xml = readFileSync(junit, 'utf8');
+  const cases = (xml.match(/<testcase\b/g) || []).length;
+  assert.ok(cases > 0, 'junit-api.xml sin casos');
+  assert.equal((xml.match(/<skipped\b/g) || []).length, cases);
+  assert.doesNotMatch(xml, /<failure\b/);
 });
 
 test('[FND-001 CA-7] --spec <ID> filtra Karma por "[<ID> " y separa JUnit por suite', () => {
