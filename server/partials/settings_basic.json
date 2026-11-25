@@ -1,0 +1,104 @@
+{
+    "tag":"fieldset",
+    "children":[
+        {
+            "tag":"div",
+            "class":"form-group",
+            "children":[
+                {
+                    "tag":"label",
+                    "class":"col-md-2 control-label",
+                    "html":"==Restricciones en el calculo de la ruta=="
+                },
+                {
+                    "tag":"div",
+                    "class":"col-md-6 col-md-offset-1",
+                    "children":[
+                        {
+                            "tag":"div",
+                            "class":"radio c-radio",
+                            "children":[
+                                {
+                                    "tag":"label",
+                                    "children":[
+                                        {
+                                            "tag":"input",
+                                            "type":"radio",
+                                            "name":"a",
+                                            "value":"option0",
+                                            "checked":"",
+                                            "html":""
+                                        },
+                                        {
+                                            "tag":"span",
+                                            "class":"fa fa-circle",
+                                            "html":""
+                                        },
+                                        {
+                                            "tag" : "text",
+                                            "html" : "Sin restricciones"
+                                        }                                   
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "tag":"div",
+                            "class":"radio c-radio",
+                            "children":[
+                                {
+                                    "tag":"label",
+                                    "children":[
+                                        {
+                                            "tag":"input",
+                                            "type":"radio",
+                                            "name":"a",
+                                            "value":"option1",
+                                            "html":""
+                                        },
+                                        {
+                                            "tag":"span",
+                                            "class":"fa fa-circle",
+                                            "html":""
+                                        },
+                                        {
+                                            "tag" : "text",
+                                            "html" : "==Tiempo=="
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "tag":"div",
+                            "class":"radio c-radio",
+                            "children":[
+                                {
+                                    "tag":"label",
+                                    "children":[
+                                        {
+                                            "tag":"input",
+                                            "type":"radio",
+                                            "name":"a",
+                                            "value":"option2",
+                                            "html":""
+                                        },
+                                        {
+                                            "tag":"span",
+                                            "class":"fa fa-circle",
+                                            "html":""
+                                        },
+                                        {
+                                            "tag" : "text",
+                                            "html" : "==Recurso=="
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

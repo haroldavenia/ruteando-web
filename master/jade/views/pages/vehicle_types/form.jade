@@ -1,0 +1,104 @@
+.container-fluid
+    .row
+        .col-md-12.col-sm-12
+            .panel.panel-primary
+                .panel-heading {{ "vehicleTypes.form.TITLE" | translate }}
+                .panel-body
+                    form.form-horizontal(role='form', name='vehicleTypeForm', novalidate)
+                        fieldset.mb-sm.pb-sm
+                            legend.mb-sm {{ "vehicleTypes.form.legend.BASIC_INFO" | translate }}
+                            div.mb-sm.clearfix
+                                label.col-md-2.control-label {{ "vehicleTypes.form.label.NAME" | translate }}
+                                .col-md-6(ng-class='{ "has-error": name_required }')
+                                    input.form-control(type='text', ng-model='vehicleType.model.name', name='name')
+                            div.mb-sm.clearfix
+                                label.col-md-2.control-label {{ "vehicleTypes.form.label.WEIGHT" | translate }}
+                                .col-md-6(ng-class='{ "has-error": weight_required }')
+                                    .input-group
+                                        input.form-control(type='number', name='weight', ng-model='vehicleType.model.weight', min='0', step='1')
+                                        //input.form-control(type='number', name='weight', ng-model='vehicleType.model.weight', min='0', step='1', pattern="[0-9]+", onkeyup="this.value=this.value.replace(/[^0-9]/g,'');")
+                                        span.input-group-addon kg
+                            div.mb-sm.clearfix
+                                label.col-md-2.control-label {{ 'vehicleTypes.LABEL.capacity' | translate }}
+                                .col-md-6
+                                    select.form-control(name='account', ng-model='vehicleType.model.capability')
+                                        option(value='volume') En Volumen
+                                        option(value='measure') En Medidas
+                        fieldset(ng-if="vehicleType.model.capability == 'volume'")
+                            legend {{ 'vehicleTypes.LABEL.volume' | translate }}
+                            .form-group
+                                label.col-md-2.control-label {{ 'vehicleTypes.LABEL.volume' | translate }}
+                                .col-md-6(ng-class='{ "has-error": volume_required }')
+                                    .input-group
+                                      input.form-control(type='number', name="volumen", min="0", ng-model='vehicleType.model.volume')
+                                      //input.form-control(type='number', name="volumen", min="0", ng-model='vehicleType.model.volume', onkeyup="this.value=this.value.replace(/[^0-9]/g,'');")
+                                      span.input-group-addon cm3
+                        fieldset(ng-if="vehicleType.model.capability == 'measure'")
+                            legend {{ "vehicleTypes.form.legend.MEASURES" | translate }}
+                            .form-group.mb-sm
+                                label.col-md-2.control-label {{ "vehicleTypes.form.label.WIDTH" | translate }}
+                                .col-md-6
+                                    .input-group
+                                        input.form-control(type='number', ng-model='vehicleType.model.measure.width', name='width', ng-required="vehicleType.model.capability == 'measure'", min='0', onkeyup="this.value=this.value.replace(/[^0-9]/g,'');" )
+                                        span.input-group-addon cm
+                            .form-group.mb-sm
+                                label.col-md-2.control-label {{ 'vehicleTypes.LABEL.high' | translate }}
+                                .col-md-6
+                                    .input-group
+                                        input.form-control(type='number', ng-model='vehicleType.model.measure.height', name='height', ng-required="vehicleType.model.capability == 'measure'", min='0', onkeyup="this.value=this.value.replace(/[^0-9]/g,'');")
+                                        span.input-group-addon cm
+                            .form-group.mb-sm
+                                label.col-md-2.control-label {{ 'vehicleTypes.LABEL.depth' | translate }}
+                                .col-md-6
+                                    .input-group
+                                        input.form-control(type='number', ng-model='vehicleType.model.measure.depth', name='depth', min='0', onkeyup="this.value=this.value.replace(/[^0-9]/g,'');")
+                                        span.input-group-addon cm
+                        fieldset
+                            legend {{ "vehicleTypes.form.legend.RESTRICTIONS" | translate }}
+                            .form-group
+                                label.col-md-2.control-label {{ 'vehicleTypes.LABEL.weight' | translate }} : 
+                                .col-md-6
+                                    .row
+                                        .col-md-6
+                                            .form-group
+                                                label.col-md-4.control-label {{ 'app.MIN' | translate }}
+                                                .col-md-8
+                                                    .input-group
+                                                        input.form-control(type='number', ng-model='vehicleType.model.restriction.minWeight', name='minWeight', min="0")
+                                                        span.input-group-addon Kg
+                                        .col-md-6
+                                            .form-group
+                                                label.col-md-4.control-label {{ 'app.MAX' | translate }}
+                                                .col-md-8
+                                                    .input-group
+                                                        input.form-control(type='number', ng-model='vehicleType.model.restriction.maxWeight', name='maxWeight', min="0")
+                                                        span.input-group-addon Kg
+                            br
+                            .form-group
+                                label.col-md-2.control-label {{ 'vehicleTypes.LABEL.volume' | translate }} :
+                                .col-md-6
+                                    .row
+                                        .col-md-6
+                                            .form-group
+                                                label.col-md-4.control-label {{ 'app.MIN' | translate }}
+                                                .col-md-8
+                                                    .input-group
+                                                        input.form-control(type='number', ng-model='vehicleType.model.restriction.minVolume', name='minVolume', min="0")
+                                                        span.input-group-addon cm3
+                                        .col-md-6
+                                            .form-group
+                                                label.col-md-4.control-label {{ 'app.MAX' | translate }}
+                                                .col-md-8
+                                                    .input-group
+                                                        input.form-control(type='number', ng-model='vehicleType.model.restriction.maxVolume', name='maxVolume', required, min='0')
+                                                        span.input-group-addon cm3
+                .panel-footer
+                    .row.text-center
+                        button.btn.btn-labeled.btn-success(type='button', ng-click='vehicleType.save()')
+                            span.btn-label
+                                i.fa.fa-check
+                            |   {{ "vehicleTypes.form.button.ACEPT" | translate }}
+                        button.btn.btn-labeled.btn-danger(type='button', ng-click='vehicleType.cancel()')
+                            span.btn-label
+                                i.fa.fa-times
+                            |   {{ "vehicleTypes.form.button.CANCEL" | translate }}

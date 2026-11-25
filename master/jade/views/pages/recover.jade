@@ -1,0 +1,24 @@
+.block-center.mt-xl.wd-xl
+  // START panel
+  .panel.panel-flat
+    .panel-heading.text-center
+      a(href="#")
+        img.block-center.img-rounded(src='app/img/logo.png', alt='Image')
+    .panel-body
+      p.text-center.pv {{ 'access.recovery.TITLE' | translate }}
+      form.form-validate(role='form', name="recoverForm", novalidate='', ng-submit="account.send()")
+        p.text-center {{ 'access.recovery.MESSAGE' | translate }}
+        .form-group.has-feedback
+          label.text-muted {{ "access.register.EMAIL_LABEL" | translate }}
+          input.form-control(type='email', name='email', autocomplete="off", ng-model="account.model.email", required='')
+          span.fa.fa-envelope.form-control-feedback.text-muted
+        button.btn.btn-danger.btn-block(type='submit') {{ 'access.recovery.CONTINUE' | translate }}
+            
+  // END panel
+  .p-lg.text-center
+    span &copy; 
+    span(ng-bind="app.year") 
+    span  - 
+    span(ng-bind="app.name")
+    br
+    span(ng-bind="app.description")

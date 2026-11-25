@@ -1,0 +1,51 @@
+.panel.col-lg-12.clearfix.pb
+  .panel-heading
+    .row
+            .input-group.m0.col-xs-6.col-sm-3.pull-left
+              span.input-group-addon.input-sm
+                em.icon-magnifier
+              input.form-control.input-sm(type='text' ng-change='vehicleTypes.filter()' ng-model='vehicleTypes.filterText' )
+            .form-group.m0.col-xs-6.col-sm-9
+              .pull-right
+                button.btn.btn-sm.btn-primary(type='button' ng-click='vehicleTypes.add()')
+                  span: em.icon-plus
+                  span.hidden-xs {{ 'app.ADD' | translate }}
+                button.btn.btn-sm.btn-default(type='button' ng-click='vehicleTypes.selectAll()')
+                  span: em.text-primary.icon-check
+                  span.hidden-xs {{ 'app.SELECT' | translate }}
+                button.btn.btn-sm.btn-default(type='button' ng-click='vehicleTypes.remove()')
+                  span: em.text-danger.icon-trash
+                  span.hidden-xs  {{ 'app.DELETE' | translate }}
+                button.btn.btn-danger.btn-sm(type='button', ng-click='exportPDf()', tooltip="{{ 'app.EXPORT_TO_PDF' | translate }}", tooltip-placement="bottom") 
+                  span: em.fa.fa-file-pdf-o
+                  // span.hidden-xs {{ 'app.EXPORT_TO_PDF' | translate }}
+  .panel-body.p0
+    .table-responsive.table-bordered
+      table.table.table-hover.wd-wide
+        tbody
+          td.height-lg(colspan="4", ng-show="vehicleTypes.loading")
+            p.text-center
+              i.fa.fa-spinner.fa-spin.fa-2x.text-muted
+            p.text-center.lead.text-primary {{ 'app.LOADING_TEXT' | translate }}
+          td.height-lg(colspan="4", ng-show="vehicleTypes.noData")
+            p.text-center.lead.text-primary {{ 'app.NO_DATA' | translate }}
+          tr(ng-repeat="item in vehicleTypes.data", ng-class="{true: 'active'}[item.check]")
+            td.wd-xxs
+              .checkbox.c-checkbox.m0
+                label
+                  input(type='checkbox',ng-model='item.check')
+                  span.fa.fa-check
+            td
+              .ph
+                h4.media-heading {{ item.name }}
+            td.col-sm-4
+              .ph
+                p.text-muted {{ 'vehicleTypes.TABLE_TITLE.weight' | translate }} : {{item.weight / 1000  }}  Kg
+                p.text-muted {{ 'vehicleTypes.TABLE_TITLE.volume' | translate }} : {{item.volume / 1000000 }} m3
+            td.wd-sm
+              .ph.m0.text-muted.visible-inline.pull-right
+                  em.icon-pencil.mr(tooltip="{{ 'vehicleTypes.LINKS.EDIT' | translate }}", tooltip-placement='bottom', ng-click='vehicleTypes.edit(item)')
+                  em.icon-trash.mr(tooltip="{{ 'vehicleTypes.LINKS.DELETE' | translate }}", tooltip-placement='bottom', ng-click='vehicleTypes.removeItem(item)')
+    .row
+      .col-lg-12(ng-hide='vehicleTypes.paginations.numPages == 1')
+          pagination.m.pagination-sm.pull-right(total-items='vehicleTypes.paginations.totalItems',ng-model='vehicleTypes.paginations.currentPage',max-size='vehicleTypes.paginations.maxSize',boundary-links='true',rotate='false',items-per-page='vehicleTypes.paginations.itemsPerPage',previous-text="‹", next-text="›", num-pages='vehicleTypes.paginations.numPages', ng-change='vehicleTypes.changePage()', first-text="«", last-text="»")

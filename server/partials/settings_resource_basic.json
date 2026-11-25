@@ -1,0 +1,107 @@
+[
+    {
+        "tag":"fieldset",
+        "children":[
+            {
+                "tag":"legend",
+                "html":"==Recursos=="
+            },
+            {
+                "tag":"div",
+                "class":"form-group",
+                "children":[
+                    {
+                        "tag":"label",
+                        "class":"col-md-2 control-label",
+                        "html":"==Tipo de vehiculo=="
+                    },
+                    {
+                        "tag":"div",
+                        "class":"col-md-6",
+                        "children":[
+                            {
+                                "tag" : "select",
+                                "class" : "form-control",
+                                "name" : "vehicleTypeID",
+                                "children" : [
+                                    {
+                                        "tag":"option",
+                                        "value":"0",
+                                        "html":"Triciclo"
+                                    },
+                                    {
+                                        "tag":"option",
+                                        "value":"1",
+                                        "html":"Carretilla"
+                                    },
+                                    {
+                                        "tag":"option",
+                                        "value":"2",
+                                        "html":"Carreta"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "tag":"div",
+                        "class":"col-md-4",
+                        "children":[
+                            {
+                                "tag":"button",
+                                "type":"button",
+                                "class":"btn btn-oval btn-info",
+                                "children":[
+                                    {
+                                        "tag":"span",
+                                        "class":"fa fa-plus-circle",
+                                        "html":""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "tag":"fieldset",
+        "children":[
+            {
+                "tag":"div",
+                "class":"form-group",
+                "children":[
+                    {
+                        "tag":"label",
+                        "class":"col-md-2 control-label",
+                        "html":"==Cantidad=="
+                    },
+                    {
+                        "tag":"div",
+                        "class":"col-md-6",
+                        "children":[
+                            {
+                                "tag":"div",
+                                "class":"input-group",
+                                "children":[
+                                    {
+                                        "tag":"input",
+                                        "type":"number",
+                                        "class":"form-control",
+                                        "html":""
+                                    },
+                                    {
+                                        "tag":"span",
+                                        "class":"input-group-addon",
+                                        "html":"uni"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

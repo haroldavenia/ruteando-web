@@ -1,0 +1,43 @@
+.panel.col-lg-12.clearfix.pb
+  .panel-heading
+    .row
+            .input-group.m0.col-xs-6.col-sm-3.pull-left
+              span.input-group-addon.input-sm
+                em.icon-magnifier
+              input.form-control.input-sm(type='text' ng-change='Routes.filter()' ng-model='Routes.filterText' )
+            label.col-sm-1.control-label.text-right {{ 'routes.LABEL.journey' | translate }} 
+            .col-sm-3
+                .input-group
+                  select.form-control.input-sm(ng-model="journeys.current", ng-options="journey.name for journey in journeys.data")
+                  span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'routes.LINKS.ADD_JOURNEY' | translate }}", tooltip-placement='bottom', ng-click='journeys.add()')
+                    em.icon-plus
+  .panel-body.p0
+    .table-responsive.table-bordered
+      table.table.table-hover.wd-wide
+        tbody
+          td.height-lg(colspan="2", ng-show="Routes.loading")
+            p.text-center
+              i.fa.fa-spinner.fa-spin.fa-2x.text-muted
+            p.text-center.lead.text-primary {{ 'app.LOADING_TEXT' | translate }}
+          td.height-lg(colspan="2", ng-show="Routes.noData")
+            p.text-center.lead.text-primary {{ 'app.NO_DATA' | translate }}
+          tr(ng-repeat="item in Routes.data", ng-class="{true: 'active'}[item.check]")
+            td
+              .ph {{ item.name }}
+                  p.text-muted {{ item.packages.length }} {{ 'routes.TABLE_TITLE.address' | translate }}
+            td(ng-show="journeys.current.routeRestrictionType !== 'FIXED_ROUTES'")
+              .ph
+                p.text-muted.mb-sm {{ 'routes.TABLE_TITLE.weightUsed' | translate }} :{{ item.weightUsed/1000 }} Km.
+                p.text-muted.mb-sm {{ 'routes.TABLE_TITLE.volumeUsed' | translate }} :{{ item.volumeUsed/1000000 }} m3.
+            td
+              .ph.m0.text-muted.visible-inline.pull-right
+                  em.icon-screen-smartphone.mr( tooltip="{{ 'routes.LINKS.ADD_SERVICE' | translate }}", tooltip-placement='bottom', ng-click='Routes.addService(item)')
+                  em.icon-info.mr( tooltip="{{ 'routes.LINKS.INFO_ROUTE' | translate }}", tooltip-placement='bottom', ng-click='Routes.info(item)')
+                  //em.icon-share.mr(tooltip="{{ 'routes.LINKS.SHARE' | translate }}", tooltip-placement='bottom', ng-click='Routes.share(item)')
+                  em.icon-map.mr( tooltip="{{ 'routes.LINKS.MAP' | translate }}", tooltip-placement='bottom', ng-click='Routes.goToMap(item)')
+                  em.icon-list.mr( tooltip="{{ 'routes.LINKS.LIST_VIEW' | translate }}", tooltip-placement='bottom', ng-click='Routes.listVists(item)')
+                  em.fa.fa-file-pdf-o.mr(tooltip="{{ 'app.EXPORT_TO_PDF' | translate }}", tooltip-placement="bottom", ng-click='Routes.exportPDf(item)')
+                  em.fa.fa-file-excel-o.mr(tooltip="{{ 'app.EXPORT_TO_XLSX' | translate }}", tooltip-placement="bottom", ng-click='Routes.exportXLSX(item)')
+    .row
+      .col-lg-12(ng-hide='Routes.paginations.numPages == 1')
+          pagination.m.pagination-sm.pull-right(total-items='Routes.paginations.totalItems',ng-model='Routes.paginations.currentPage',max-size='Routes.paginations.maxSize',boundary-links='true',rotate='false',items-per-page='Routes.paginations.itemsPerPage',previous-text="‹", next-text="›", num-pages='Routes.paginations.numPages', ng-change='Routes.changePage()', first-text="«", last-text="»")

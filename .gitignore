@@ -1,8 +1,9 @@
+master/node_modules
+master/bower_components
 node_modules
 start_server.sh
 cosas
 .idea/*
-<<<<<<< HEAD
 app
 !ruteando-ng/src/app/
 vendor
@@ -13,13 +14,3 @@ coverage/
 test-results/
 .tmp/
 playwright-report/
-=======
-.env
-.claude/settings.local.json
-
-# pnpm es el gestor de paquetes: un package-lock.json (npm install accidental) no se versiona
-package-lock.json
-
-# Almacén SQLite del segundo factor (política, factores y códigos de recuperación)
-/data/
->>>>>>> 4bcc752af1377e528ef13e04eb0d09cefe5dd0f7

@@ -1,0 +1,45 @@
+.content-fluid
+    .row
+        .col-sm-12.col-md-12
+            .panel.panel-primary
+                .panel-heading {{ "places.form.TITLE" | translate }}
+                .panel-body
+                    form.form-horizontal(role='form', name='placeForm', novalidate)
+                        fieldset.mb-sm.pb-sm
+                            .form-group.mb-sm
+                                label.col-md-1.control-label(for='input-id-1') {{ "places.form.label.NAME" | translate }}
+                                .col-md-6
+                                    input#input-id-1.form-control(type='text', ng-model='place.model.name', name='name', required, ng-minlength='2', ng-maxlength='140')
+                                    span.text-danger(ng-show='placeForm.name.$dirty && placeForm.name.$error.required') {{ "places.form.validation.NAME_REQUIRED" | translate }}
+                                    span.text-danger(ng-show='placeForm.name.$dirty && placeForm.name.$error.minlength') {{ "places.form.validation.NAME_LENGTH" | translate }}
+                            .form-group.mb-sm
+                                label.col-sm-1.control-label {{ "places.form.label.ADDRESS" | translate }}
+                                .col-sm-6
+                                  .input-group
+                                      input.form-control(type='text', name='address' required,readonly, ng-model='place.model.address')
+                                      span.text-danger(ng-show='placeForm.address.$dirty && placeForm.address.$error.required') {{ "address.form.validation.ADDRESS_REQUIRED" | translate }}
+                                      span.text-danger(ng-show='placeForm.address.$dirty && placeForm.address.$error.minlength') {{ "address.form.validation.ADDRESS_LENGTH" | translate }}
+                                      span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'places.form.tooltip.GEOCODING' | translate }}", tooltip-placement='bottom', ng-click='place.geocoding()')
+                                        em.icon-pencil
+                                      span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'places.form.tooltip.MAP' | translate }}", tooltip-placement='bottom', ng-click='place.goToMap()')
+                                        em.icon-map
+                                .col-sm-6.col-sm-offset-1.text-success(ng-show='place.model.longitude != 0 && place.model.latitude != 0' style='padding-left: 30px;'){{ place.model.longitude }} , {{ place.model.latitude }}
+                                
+                            .form-group.mb-sm
+                                label.col-md-1.control-label(for='input-id-1') {{ "places.form.label.PHONE" | translate }}
+                                .col-md-6
+                                    input#input-id-1.form-control(type='text', ng-model='place.model.phoneNumber', name='phone', required, ng-minlength='7', ng-maxlength='10', ng-pattern="/^[0-9]{7,10}$/")
+                                    span.text-danger(ng-show='placeForm.phone.$dirty && placeForm.phone.$error.required') {{ "places.form.validation.PHONE_REQUIRED" | translate }}
+                                    span.text-danger(ng-show='placeForm.phone.$dirty && placeForm.phone.$error.minlength') {{ "places.form.validation.PHONE_LENGTH" | translate }}
+                                    span.text-danger(ng-show='placeForm.phone.$dirty && placeForm.phone.$error.pattern') {{ "places.form.validation.PHONE_PATTERN" | translate }}
+                .panel-footer
+                    .row
+                      .col-sm-7.text-right
+                          button.btn.btn-labeled.btn-success(type='button', ng-click='place.save()')
+                            span.btn-label
+                                i.fa.fa-check
+                            |   {{ "places.form.button.ACEPT" | translate }}
+                          button.btn.btn-labeled.btn-danger(type='button', ng-click='place.cancel()')
+                            span.btn-label
+                                i.fa.fa-times
+                            |   {{ "places.form.button.CANCEL" | translate }}

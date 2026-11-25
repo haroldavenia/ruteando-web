@@ -1,0 +1,17 @@
+div(ng-include="'app/views/partials/loading.html'")
+// top navbar
+header.topnavbar-wrapper(ng-include="'app/views/partials/top-navbar.html'", ng-controller="LogoutController")
+
+// sidebar
+aside.aside(ng-include="'app/views/partials/sidebar.html'", ng-controller="SidebarController")
+
+// offsidebar
+aside.offsidebar(ng-include="'app/views/partials/offsidebar.html'", ng-controller="OffsidebarController")
+
+// Main section
+section
+
+  // Page content
+  div(ng-class="")
+    .content-wrapper(ui-view="", autoscroll="false", app.viewAnimation, ng-class="{'p0' : app.showingMap}")
+  // div(ui-view="", autoscroll="false", ng-class="app.viewAnimation")

@@ -1,0 +1,17 @@
+h3 
+  // START Language list
+  .pull-right
+    .btn-group(dropdown='', is-open='language.listIsOpen')
+      button.btn.btn-default(type='button', dropdown-toggle="")
+        | {{language.selected}}
+        span.caret
+      ul.dropdown-menu.dropdown-menu-right.animated.fadeInUpShort(role='menu')
+        li(ng-repeat='(localeId, langName) in language.available')
+          a(ng-click='language.set(localeId, $event)') {{langName}}
+  // END Language list    
+  small {{ 'dashboard.WELCOME' | translate:{ appName: app.name } }}  !
+
+.row
+  .col-xs-12.text-center
+    h2.text-thin Moderno, Flexible, Escalable!
+  p.col-sm-8.col-sm-offset-2.lead.text-center Servicio de planificación de rutas profesional de disposición en la nube, ofrece agilidad y confiabilidad a la hora de estimar y planificar las rutas, a la vez que incrementa la eficiencia en la planificación logística de sus recursos, útil en los sectores de abastecimiento, entrega y/o recolección de mercancía, visitas de clientes, etc. 

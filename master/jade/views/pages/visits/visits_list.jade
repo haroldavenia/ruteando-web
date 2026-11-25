@@ -1,0 +1,53 @@
+.panel.col-lg-12.clearfix.pb
+  .panel-heading
+    .row
+      .col-md-3.col-sm-3
+        .input-group.m0
+          span.input-group-addon.input-sm
+            em.icon-magnifier
+          input.form-control.input.sm(type='text' ng-change='Visits.filter()' ng-model='Visits.filterText' )
+      .col-md-3.col-sm-3
+        .input-group.m0
+          select.form-control.input-sm(ng-model="statusFilter.current",ng-change="Visits.filter()" ng-options="status.name for status in statusFilter.data")
+            option(value='') 
+          span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'visits.LINKS.FILTER' | translate }}", tooltip-placement='bottom', ng-click='Visits.filter()')
+            em.fa.fa-filter
+      .col-md-1.pull-right
+        a.btn.btn-sm.btn-danger.pull-right(ng-click="Visits.goToBack()") Regresar
+      //.col-md-6.col-sm-9
+        .form-group.m0
+          .pull-right
+            button.btn.btn-sm.btn-default(type='button' ng-click='Visits.selectAll()')
+              span: em.text-primary.icon-check
+              span.hidden-xs {{ 'app.SELECT' | translate }}
+            button.btn.btn-sm.btn-default(type='button' ng-click='Visits.remove()')
+              span: em.text-danger.icon-trash
+              span.hidden-xs  {{ 'app.DELETE' | translate }}
+  .panel-body.p0
+    .table-responsive.table-bordered
+      table.table.table-hover.wd-wide
+        tbody
+          td.height-lg(colspan="1", ng-show="Visits.loading")
+            p.text-center
+              i.fa.fa-spinner.fa-spin.fa-2x.text-muted
+            p.text-center.lead.text-primary {{ 'app.LOADING_TEXT' | translate }}
+          tr(ng-repeat="item in Visits.data", ng-class="{true: 'active'}[item.check]")
+            //td.wd-xxs
+              .checkbox.c-checkbox.m0
+                label
+                  input(type='checkbox',ng-model='item.check')
+                  span.fa.fa-check
+            td.wd-xxs
+              em.icon-notebook(ng-class="{ 'text-info': item.status == VISITED, 'text-success' : item.status == VISIT_FINISHED, 'text-warning' : item.status == VISIT_PENDING}")
+            td
+              .ph
+                small.text-muted {{item.address}}
+                br
+                small.text-muted {{item.longitude}} , {{item.latitude}}
+            td.wd-sm
+              .ph.m0.text-muted.visible-inline.pull-right
+                  em.icon-info.mr( tooltip="{{ 'visits.LINKS.INFO' | translate }}", tooltip-placement='bottom', ng-click='Visits.detail(item)')
+                  em.icon-map.mr( tooltip="{{ 'visits.LINKS.MAP' | translate }}", tooltip-placement='bottom', ng-click='Visits.goToMap(item)')
+    .row.m
+      .col-lg-12(ng-hide='Visits.paginations.numPages == 1')
+          pagination.m0.pagination-sm.pull-right(total-items='Visits.paginations.totalItems',ng-model='Visits.paginations.currentPage',max-size='Visits.paginations.maxSize',boundary-links='true',rotate='false',items-per-page='Visits.paginations.itemsPerPage', previous-text="‹", next-text="›", num-pages='Visits.paginations.numPages', ng-change='Visits.changePage()', first-text="«", last-text="»")

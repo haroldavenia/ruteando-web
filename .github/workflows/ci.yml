@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 name: ci
 
 # Controles bloqueantes de ruteando-web (línea AngularJS). Ver docs/engineering/calidad-y-ci.md y ADR-0005.
@@ -9,27 +8,10 @@ on:
     types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
   push:
     branches: [main, angularjs-main]
-=======
-name: CI
-
-# Verifica cada cambio antes de llegar a main: pruebas y compilación del frontend, pruebas del servidor, validación
-# estricta de las specs y auditoría de las dependencias de producción. La comprobación obligatoria de main es `ci`.
-on:
-  # Sin filtro de ramas: los pull requests están apilados y su base no siempre es main
-  pull_request:
-  push:
-    branches: [main]
-
-# Una ejecución nueva sobre la misma rama cancela la anterior
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
->>>>>>> 4bcc752af1377e528ef13e04eb0d09cefe5dd0f7
 
 permissions:
   contents: read
 
-<<<<<<< HEAD
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -169,114 +151,3 @@ jobs:
             exit 0
           fi
           exit "$status"
-=======
-env:
-  # Misma versión del CLI de specs que se usa en local; se actualiza a mano junto con ella
-  OPENSPEC_VERSION: 1.14.3
-
-# El ejecutor está fijado a ubuntu-24.04 (no `ubuntu-latest`, que migra a Ubuntu 26): se cambia a propósito, no por sorpresa
-# pnpm: la acción pnpm/action-setup toma la versión del campo `packageManager` de package.json (no se repite aquí).
-# Va después de checkout y antes de setup-node, que necesita pnpm para su caché.
-jobs:
-  frontend:
-    name: Frontend (pruebas y compilación)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: ng-ruteando/.nvmrc
-          cache: pnpm
-      # Raíz y frontend comparten un solo pnpm-lock.yaml; falla si no coincide con los package.json
-      - name: Instalar dependencias
-        run: pnpm install --frozen-lockfile
-      # ESLint (angular-eslint, imports ordenados) y Prettier: son rápidos, por eso van antes de las pruebas
-      - name: Lint
-        run: pnpm lint
-      - name: Formato
-        run: pnpm format
-      # Cada texto de la interfaz tiene traducción al inglés y al portugués, y no quedan textos en español sin traducir
-      - name: Traducciones
-        run: node scripts/i18n-check.mjs && node scripts/i18n-check.mjs --spanish
-      # Los iconos que el código declara están en la lista de `index.html` (si falta uno, se vería como texto)
-      - name: Iconos
-        run: node scripts/icon-names.mjs
-      - name: Pruebas (Chrome sin interfaz)
-        run: pnpm --filter ng-ruteando run test:ci
-      - name: Compilación de producción
-        run: pnpm --filter ng-ruteando run build
-
-  server:
-    name: Servidor (pruebas)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: ng-ruteando/.nvmrc
-          cache: pnpm
-      - name: Instalar dependencias
-        run: pnpm install --frozen-lockfile
-      - name: Pruebas del servidor
-        run: pnpm run test:server
-
-  specs:
-    name: Specs (validación estricta)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: ng-ruteando/.nvmrc
-      # Herramienta externa, no una dependencia del proyecto: se ejecuta con el npx que ya trae Node
-      - name: Validar las specs
-        run: npx --yes "@fission-ai/openspec@${OPENSPEC_VERSION}" validate --specs --strict
-
-  audit:
-    name: Auditoría (dependencias de producción)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: ng-ruteando/.nvmrc
-      # Solo producción y solo altas o críticas: las de desarrollo no llegan al producto. Un solo comando cubre la raíz
-      # y el frontend (comparten pnpm-lock.yaml) y no instala nada: lee el lockfile
-      - name: Auditar las dependencias
-        run: pnpm audit --prod --audit-level=high
-
-  # Comprobación única que exige la protección de main: solo está en verde si todas las demás lo están
-  ci:
-    name: ci
-    if: always()
-    needs: [frontend, server, specs, audit]
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - name: Resumen
-        env:
-          RESULTS: ${{ join(needs.*.result, ' ') }}
-        run: |
-          echo "Resultados: $RESULTS"
-          for result in $RESULTS; do
-            if [ "$result" != "success" ]; then
-              echo "Alguna comprobación no terminó en éxito (fallo, cancelada u omitida)"
-              exit 1
-            fi
-          done
->>>>>>> 4bcc752af1377e528ef13e04eb0d09cefe5dd0f7

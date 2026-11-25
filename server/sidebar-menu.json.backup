@@ -1,0 +1,89 @@
+[
+    {
+        "text": "Menu Heading",
+        "heading": "true",
+        "translate": "sidebar.heading.HEADER"
+    },
+    {
+        "text": "Single View",
+        "sref": "app.singleview",
+        "icon": "fa fa-file-o",
+        "translate": "sidebar.nav.SINGLEVIEW"
+    },
+    {
+        "text": "Menu",
+        "sref": "#",
+        "icon": "icon-folder",
+        "submenu": [
+            { 
+                "text": "Sub Menu", 
+                "sref": "app.submenu", 
+                "translate": "sidebar.nav.menu.SUBMENU" 
+            }    
+        ],
+        "translate": "sidebar.nav.menu.MENU"
+    },
+
+    {
+        "text" : "Maps",
+        "sref" : "app.maps",
+        "icon" : "icon-map",
+        "translate" : "sidebar.nav.MAPS"
+    },
+
+    {
+        "text" : "Visit List",
+        "sref" : "app.visitList",
+        "icon" : "icon-notebook",
+        "translate" : "sidebar.nav.VISIT_LIST"
+    },
+
+    {
+        "text" : "Journeys",
+        "sref" : "app.journeys",
+        "icon" : "icon-compass",
+        "translate" : "sidebar.nav.JOURNEYS"
+    },
+
+    {
+        "text" : "Settings",
+        "sref" : "app.settings",
+        "icon" : "fa fa-cogs",
+        "translate" : "sidebar.nav.SETTINGS"
+    },
+
+    {
+        "text" : "Vehicle types",
+        "sref" : "app.vehicleTypes",
+        "icon" : "fa fa-truck",
+        "translate" : "sidebar.nav.VEHICLE_TYPE"
+    },
+
+    {
+        "text" : "Places",
+        "sref" : "app.places",
+        "icon" : "fa fa-map-marker",
+        "translate" : "sidebar.nav.PLACES"
+    },
+
+    {
+        "text" : "Assigned Services",
+        "sref" : "app.assignedServices",
+        "icon" : "fa fa-check-square-o",
+        "translate" : "sidebar.nav.ASSIGNED_SERVICES"
+    },
+
+    {
+        "text" : "Vehicles",
+        "sref" : "app.vehicles",
+        "icon" : "fa fa-car",
+        "translate" : "sidebar.nav.VEHICLES"
+    },
+
+    {
+        "text" : "Visits unattended",
+        "sref" : "app.visitsUnattended",
+        "icon" : "fa fa-pencil-square-o",
+        "translate" : "sidebar.nav.VISITS_UNATTENDED"
+    }
+]
