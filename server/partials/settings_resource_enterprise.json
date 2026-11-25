@@ -1,0 +1,95 @@
+{
+    "tag":"fieldset",
+    "children":[
+        {
+            "tag":"div",
+            "class":"form-group",
+            "children":[
+                {
+                    "tag":"div",
+                    "class":"col-md-2",
+                    "html":""
+                },
+                {
+                    "tag":"div",
+                    "class":"col-md-6",
+                    "children":[
+                        {
+                            "tag":"div",
+                            "class":"row",
+                            "children":[
+                                {
+                                    "tag":"div",
+                                    "class":"col-md-4 col-md-offset-4",
+                                    "children":[
+                                        {
+                                            "tag":"button",
+                                            "type":"button",
+                                            "class":"btn btn-labeled btn-primary",
+                                            "children":[
+                                                {
+                                                    "tag":"span",
+                                                    "class":"btn-label",
+                                                    "children":[
+                                                        {
+                                                            "tag":"i",
+                                                            "class":"fa fa-plus",
+                                                            "html":""
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "tag" : "text",
+                                                    "html" : "Agregar"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "tag":"br",
+                            "html":""
+                        },
+                        {
+                            "tag":"div",
+                            "class":"row",
+                            "children":[
+                                {
+                                    "tag":"div",
+                                    "class":"col-md-12",
+                                    "children":[
+                                        {
+                                            "tag" : "select",
+                                            "class" : "form-control",
+                                            "multiple" :"",
+                                            "name" : "varName",
+                                            "children" : [
+                                                {
+                                                    "tag":"option",
+                                                    "value":"0",
+                                                    "html":"Triciclo"
+                                                },
+                                                {
+                                                    "tag":"option",
+                                                    "value":"1",
+                                                    "html":"Carretilla"
+                                                },
+                                                {
+                                                    "tag":"option",
+                                                    "value":"2",
+                                                    "html":"Carreta"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,56 @@
+.col-lg-12
+  .panel.panel-default
+    .panel-heading
+      | AGREGAR CONDUCTOR
+    .panel-body
+      form.form-horizontal(role='form', name='driverForm', novalidate)
+        .form-group.mb-sm.clearfix
+          label.col-md-3.control-label(for='input-id-1') {{ 'drivers.label.licenceNumber' | translate }}
+          .col-md-4(ng-class='{"has-error" : licenceNumber_required }')
+            input#input-id-1.form-control(type='text', name='licenceNumber', required, ng-model='driver.model.licenceNumber')
+        .form-group.mb-sm.clearfix
+          label.col-md-3.control-label(for='input-id-2') {{ 'drivers.label.firstName' | translate }}
+          .col-md-4(ng-class='{"has-error" : firstName_required }')
+            input#input-id-1.form-control(type='text', ng-model='driver.model.user.firstName')
+        .form-group.mb-sm.clearfix
+          label.col-md-3.control-label {{ 'drivers.label.lastName' | translate }}
+          .col-md-4(ng-class='{"has-error" : lastName_required }')
+            input#input-id-1.form-control(type='text', ng-model='driver.model.user.lastName')
+        .form-group.mb-sm.clearfix
+          label.col-md-3.control-label {{ 'drivers.label.identificationNumber' | translate }}
+          .col-md-4(ng-class='{"has-error" : identificationNumber_required }')
+            input#input-id-1.form-control(type='text', name='identificationNumber', required, ng-model='driver.model.identificationNumber')
+        .form-group.mb-sm.clearfix
+          label.col-md-3.control-label {{ 'drivers.label.phoneNumber' | translate }}
+          .col-md-4
+            input#input-id-1.form-control(type='text', name='phoneNumber', required, ng-model='driver.model.phoneNumber')
+        .form-group.mb-sm.clearfix
+          label.col-md-3.control-label {{ 'drivers.label.login' | translate }}
+          .col-md-4(ng-class='{"has-error" : login_required }')
+            input#input-id-1.form-control(type='email', ng-model='driver.model.user.login', ng-readonly="currentState == EDIT_STATE")
+          //div(ng-show="currentState == ADD_STATE")
+        div
+          .form-group.mb-sm.clearfix
+            label.col-md-3.control-label {{ 'drivers.label.password' | translate }}
+            .col-md-4(ng-class='{"has-error" : password_required }')
+              input#input-id-1.form-control(type='password', ng-model='driver.model.user.password')
+          .form-group.mb-sm.clearfix
+            label.col-md-3.control-label {{ 'drivers.label.repeatPassword' | translate }}
+            .col-md-4(ng-class='{"has-error" : repeatPassword_required }')
+              input#input-id-1.form-control(type='password', required, ng-model='driver.model.user.repeatPassword')
+        .form-group.mb-sm.clearfix
+          .checkbox.c-checkbox.col-sm-4.col-sm-offset-3
+            label
+              input(type='checkbox', ng-model='driver.model.user.active')
+              span.fa.fa-check
+              | {{ "drivers.label.active" | translate }}
+    .panel-footer
+      .row.text-center
+        button.btn.btn-labeled.btn-success(ng-click='driver.save()')
+          span.btn-label
+            i.fa.fa-check
+          |           {{ "app.ACEPT" | translate }}
+        button.btn.btn-labeled.btn-danger(ng-click='driver.cancel()')
+          span.btn-label
+            i.fa.fa-times
+          |           {{ "app.CANCEL" | translate }}

@@ -1,0 +1,80 @@
+h3.mt-sm.mb-sm.lead {{ Journey.name }}
+div
+  .panel.col-lg-12.clearfix.pb
+    .panel-heading
+      .row.mb-sm
+                label.col-sm-2.control-label.text-right {{ 'itinerary.START_POINT' | translate }} 
+                .col-sm-3
+                  .input-group(ng-class='{"has-error": place_required}')
+                    select.form-control.input-sm(name='place', ng-model='Journey.place', ng-options='place.name for place in places.data track by place.id')
+                    span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'itinerary.LINKS.ADD_PLACE' | translate }}", tooltip-placement='bottom', ng-click='places.add()')
+                      em.icon-plus
+                  span.text-danger(ng-show='place_required') {{ "itinerary.validation.PLACE_REQUIRED" | translate }}
+                label.col-sm-1.control-label.text-right {{ "itinerary.SETTINGS" | translate }} 
+                .col-sm-3
+                  .input-group(ng-class='{"has-error": setting_required}')
+                    select.form-control.input-sm(name='setting', ng-model='Journey.setting', ng-options='setting.description for setting in settings.data track by setting.id')
+                    span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'itinerary.LINKS.ADD_SETTING' | translate }}", tooltip-placement='bottom', ng-click='settings.add()')
+                      em.icon-plus
+                  span.text-danger(ng-show='setting_required') {{ "itinerary.validation.SETTING_REQUIRED" | translate }}
+      .row
+                label.col-sm-2.control-label.text-right {{ "itinerary.STATE_VISIT" | translate }} 
+                .col-xs-6.col-sm-3
+                  .input-group
+                    select.form-control.input-sm(ng-model="statusFilter.current",ng-change="Itinerary.filter()" ng-options="status.name for status in statusFilter.data")
+                    span.input-group-addon.input-sm.btn-primary( tooltip="{{ 'itinerary.LINKS.FILTER' | translate }}", tooltip-placement='bottom', ng-click='Itinerary.filter()')
+                      em.fa.fa-filter
+                label.col-sm-1.control-label.text-right Fecha
+                .col-sm-3
+                  .input-group
+                    input.form-control(type='text', datepicker-popup='{{format}}', ng-model='Journey.date', is-open='status.opened', datepicker-options='dateOptions', close-text='Cerrar', current-text='Hoy', clear-text='Borrar', readonly)
+                    span.input-group-btn
+                      button.btn.btn-sm.btn-default(type='button', ng-click='open($event)')
+                        i.fa.fa-calendar
+          .row
+                .form-group.m0.col-xs-6.col-sm-4                
+                    button.btn.btn-sm.btn-default(type='button' ng-click='Itinerary.goToAdd()')
+                      span: em.text-primary.icon-plus
+                      span.hidden-xs {{ 'app.ADD' | translate }}
+                    button.btn.btn-sm.btn-default(type='button' ng-click='Itinerary.selectAll()')
+                      span: em.text-primary.icon-check
+                      span.hidden-xs {{ 'app.SELECT' | translate }}
+                    button.btn.btn-sm.btn-default(type='button' ng-click='Itinerary.imprimirCsv()')
+                      span: em.text-primary.icon-arrow-down
+                      span.hidden-xs {{ 'app.SAVE' | translate }}
+                    button.btn.btn-sm.btn-default(type='button' ng-click='Itinerary.removeSelectedPakages()')
+                      span: em.text-danger.icon-trash
+                      span.hidden-xs  {{ 'app.DELETE' | translate }}
+    .panel-body.p0
+      .table-responsive.table-bordered
+        table.table.table-hover.wd-wide
+          tbody(ng-model="Itinerary.data")
+            td.height-lg(colspan="1", ng-show="Itinerary.data.length == undefined || Itinerary.data.length < 1")
+              p.text-center.lead.text-primary {{ 'itinerary.NO_DATA' | translate }}
+            tr(ng-repeat="item in Itinerary.data", ng-class="{true: 'active'}[item.check]")
+              td.wd-xxs
+                .checkbox.c-checkbox.m0
+                  label
+                    input(type='checkbox',ng-model='item.check')
+                    span.fa.fa-check
+              td.wd-xxs
+                em(ng-class="{'MATCH':'icon-check text-success','UNMATCH':'icon-close text-danger','MEAN':'icon-check text-mean-geo','MANUAL':'icon-check text-manual-geo'}[item.statusGeocoding]")
+              td
+                .ph
+                  h4.media-heading {{item.address}}
+                  small(ng-if='(item.status == true)').text-muted {{item.latitude}}, {{item.longitude}}
+                  small(ng-if='(item.status == false)').text-muted {{ 'itinerary.ST_GEO_POINTS.NOT_FINDED' | translate }}
+                  br
+                  small.text-danger {{ item.errorMessage }}
+              td.wd-sm
+                .ph.m0.text-muted.visible-inline.pull-right
+                    em.icon-map.mr( tooltip="{{ 'itinerary.LINKS.MAP' | translate }}", tooltip-placement='bottom', ng-click='Itinerary.goToMap(item)')
+                    em.icon-pencil.mr( tooltip="{{ 'itinerary.LINKS.EDIT' | translate }}", tooltip-placement='bottom', ng-click='Itinerary.goToEdit(item)')
+                    em.icon-trash.mr( tooltip="{{ 'itinerary.LINKS.DELETE' | translate }}", tooltip-placement='bottom', ng-click='Itinerary.removePackage(item)')
+      .row.m
+        .col-sm-6
+          button.mb-sm.btn.btn-primary.button-loading(type='button', ng-click='Itinerary.routing()', data-loading-text="{{ 'itinerary.ROUTER' | translate }}", loading-status="true") {{ 'itinerary.ROUTER' | translate }}
+          button.mb-sm.btn.btn-default(type='button', ng-click='Itinerary.optimize()') {{ 'itinerary.OPTIMAZE' | translate }}
+          button.mb-sm.btn.btn-danger(type='button', ng-click='Itinerary.cancel()') {{ 'app.CANCEL' | translate }}
+        .col-lg-6(ng-hide='Itinerary.paginations.numPages == 1')
+            pagination.m0.pagination-sm.pull-right(total-items='Itinerary.paginations.totalItems',ng-model='Itinerary.paginations.currentPage',max-size='Itinerary.paginations.maxSize',boundary-links='true',rotate='false',items-per-page='Itinerary.paginations.itemsPerPage', previous-text="‹", next-text="›", num-pages='Itinerary.paginations.numPages', ng-change='Itinerary.changePage()', first-text="«", last-text="»")

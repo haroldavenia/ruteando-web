@@ -1,0 +1,55 @@
+.panel.col-lg-12.clearfix.pb
+  .panel-heading
+    .row
+            .input-group.m0.col-xs-6.col-sm-3.pull-left
+              span.input-group-addon.input-sm
+                em.icon-magnifier
+              input.form-control.input-sm(type='text' ng-change='drivers.filter()' ng-model='drivers.filterText' )
+            .form-group.m0.col-xs-6.col-sm-9
+              .pull-right
+                button.btn.btn-sm.btn-primary(type='button' ng-click='drivers.add()')
+                  span: em.icon-plus
+                  span.hidden-xs {{ 'app.ADD' | translate }}
+                //button.btn.btn-sm.btn-default(type='button' ng-click='drivers.selectAll()')
+                  span: em.text-primary.icon-check
+                  span.hidden-xs {{ 'app.SELECT' | translate }}
+                //button.btn.btn-sm.btn-default(type='button' ng-click='drivers.remove()')
+                  span: em.text-danger.icon-trash
+                  span.hidden-xs  {{ 'app.DELETE' | translate }}
+  .panel-body.p0
+    .table-responsive.table-bordered
+      table.table.table-hover.wd-wide
+        thead
+          tr
+            th {{ 'drivers.label.firstName' | translate }}
+            th {{ 'drivers.label.lastName' | translate }}
+            th {{ 'drivers.label.login' | translate }}
+            th {{ 'drivers.label.licenceNumber' | translate }}
+            th {{ 'drivers.label.identificationNumber' | translate }}  
+            th {{ 'drivers.label.phoneNumber' | translate }}
+        tbody
+          td.height-lg(colspan="5", ng-show="drivers.loading")
+            p.text-center
+              i.fa.fa-spinner.fa-spin.fa-2x.text-muted
+            p.text-center.lead.text-primary {{ 'app.LOADING_TEXT' | translate }}
+          td.height-lg(colspan="5", ng-show="drivers.noData")
+            p.text-center.lead.text-primary {{ 'app.NO_DATA' | translate }}
+          tr(ng-repeat="item in drivers.data", ng-class="{true: 'active'}[item.check]")
+            //td.wd-xxs
+              .checkbox.c-checkbox.m0
+                label
+                  input(type='checkbox',ng-model='item.check')
+                  span.fa.fa-check
+            td {{ item.user.firstName }}
+            td {{ item.user.lastName }}
+            td {{ item.user.login }}
+            td {{ item.licenceNumber }}
+            td {{ item.identificationNumber }}
+            td {{ item.phoneNumber }}
+            td.wd-sm
+              .ph.m0.text-muted.visible-inline.pull-right
+                  em.icon-pencil.mr(tooltip="{{ 'drivers.LINKS.EDIT' | translate }}", tooltip-placement='bottom', ng-click='drivers.edit(item)')
+                  //em.icon-trash.mr(tooltip="{{ 'drivers.LINKS.DELETE' | translate }}", tooltip-placement='bottom', ng-click='drivers.removeItem(item)')
+    .row
+      .col-lg-12(ng-hide='drivers.paginations.numPages == 1')
+          pagination.m.pagination-sm.pull-right(total-items='drivers.paginations.totalItems',ng-model='drivers.paginations.currentPage',max-size='drivers.paginations.maxSize',boundary-links='true',rotate='false',items-per-page='drivers.paginations.itemsPerPage', previous-text="‹", next-text="›", num-pages='drivers.paginations.numPages', ng-change='drivers.changePage()', first-text="«", last-text="»")

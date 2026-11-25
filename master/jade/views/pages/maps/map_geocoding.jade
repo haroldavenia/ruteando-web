@@ -1,0 +1,34 @@
+#map
+.container-fluid.floating-panel.right
+    .row
+        .col-sm-12.col-md-12
+            .panel
+                .panel-heading.text-primary.mb-sm Geocodificar Dirección
+                .panel-body.p-sm
+                  p.lead.text-center.mb-sm {{ map.newAddress }}
+                    br
+                    span.text-sm {{ map.newCoordinates.longitude }} , {{ map.newCoordinates.latitude }}
+                    //.row
+                      h4 Coordenadas actuales
+                      p Longitud: 
+                        span {{ map.newCoordinates.longitud }}
+                      br
+                      p Latitud:
+                        span {{ map.newCoordinates.latitud }}
+                      p(ng-show="map.address") Direccion : 
+                        span {{ map.newAddress }}
+                .panel-footer
+                  .text-center
+                    button.btn.btn-labeled.btn-success(type='button', ng-click='save()')
+                      span.btn-label
+                        i.fa.fa-check
+                      | Aceptar
+                    //button.btn.btn-green.btn-lg(type='button', ng-click='inverseGeocoding()') Geocodificar
+                    //button.btn.btn-labeled(type='button', ng-click='reset()')
+                      span.btn-label
+                        i.fa.fa-circle
+                      | Regresar
+                    button.btn.btn-labeled.btn-danger(type='button', ng-click='cancel()')
+                      span.btn-label
+                        i.fa.fa-times
+                      | Cancelar

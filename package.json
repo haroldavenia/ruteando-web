@@ -2,7 +2,6 @@
   "name": "ruteando-web",
   "private": true,
   "version": "0.0.0",
-<<<<<<< HEAD
   "description": "Ruteando web (AngularJS 1.3) migrado a /api/v1 con arnés SDD",
   "license": "MIT",
   "devDependencies": {
@@ -57,43 +56,5 @@
   },
   "engines": {
     "node": ">=22.9"
-=======
-  "description": "Aplicación web de planificación de rutas: servidor que publica ng-ruteando y reenvía al HanoIT Gateway",
-  "license": "MIT",
-  "packageManager": "pnpm@10.34.9",
-  "engines": {
-    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
-  },
-  "dependencies": {
-    "colors": "^1.4.0",
-    "compression": "^1.8.2",
-    "express": "^4.22.3",
-    "http-proxy-middleware": "4.2.2",
-    "morgan": "^1.12.1",
-    "nodemailer": "^10.6.0"
-  },
-  "scripts": {
-    "start": "node server/server.js",
-    "build:web": "pnpm --filter ng-ruteando run build",
-    "test:server": "node --test server/test/*.test.js",
-    "mock:gateway": "node scripts/mock-gateway.mjs",
-    "docker:dev": "docker compose up",
-    "docker:test": "docker compose --profile test run --rm test",
-    "docker:down": "docker compose down",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
-    "format": "prettier --check .",
-    "format:fix": "prettier --write ."
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.39.5",
-    "angular-eslint": "^22.8.0",
-    "eslint": "^9.39.5",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-simple-import-sort": "^14.0.0",
-    "prettier": "^3.10.1",
-    "typescript-eslint": "^8.73.0"
->>>>>>> 4bcc752af1377e528ef13e04eb0d09cefe5dd0f7
   }
 }

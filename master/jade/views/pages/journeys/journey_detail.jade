@@ -1,0 +1,24 @@
+.row
+      .col-lg-12
+        .panel.panel-default
+          .panel-heading
+            h3.lead.m-sm DETALLE DEL TRAYECTO
+          .panel-body
+            .row
+            label.col-sm-3 Nombre
+            .col-sm-4  {{ journey.model.name }}
+            .row
+            label.col-sm-3 Fecha salida de itinerarios
+            .col-sm-4  {{ journey.model.date }}
+            .row
+            label.col-sm-3 Número total de rutas
+            .col-sm-4 {{ journey.model.countRoutes }}
+            .row
+            label.col-sm-3 Número clientes atendidos
+            .col-sm-4 0
+            .row
+            label.col-sm-3 Número clientes sin atender
+            .col-sm-4 0
+            .row
+            label.col-sm-3 Lugar de salida
+            .col-sm-4 {{ journey.model.place.address }}

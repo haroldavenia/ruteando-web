@@ -1,0 +1,27 @@
+{"assignedServices" : [
+  {
+    "id" : 1,
+    "plate" : "URE-767",
+    "initDate" : "12/08/2015 07:00",
+    "estimatedTime" : "05:23",
+    "status" : 1
+  },{
+    "id" : 2,
+    "plate" : "UVE-102",
+    "initDate" : "12/08/2015 07:00",
+    "estimatedTime" : "04:23",
+    "status": 2
+  },{
+    "id" : 3,
+    "plate" : "UYY-652",
+    "initDate" : "12/08/2015 07:00",
+    "estimatedTime" : "03:23",
+    "status": 3
+  },{
+    "id" : 4,
+    "plate" : "GER-662",
+    "initDate" : "11/08/2015 07:00",
+    "estimatedTime" : "06:23",
+    "status": 4
+  }
+  ]}
