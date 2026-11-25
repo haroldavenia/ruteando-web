@@ -293,7 +293,26 @@ function prod(done) {
 };
 
 // VENDOR BUILD
-var vendorTask = gulp.series(vendor_base, vendor_app);
+// Rutas fijas que espera la app y que vendor_app no produce (FND-001): sin ellas, un build limpio (CI)
+// deja la SPA en blanco. constants.js carga 'vendor/bootstrap/js/bootstrap.js' (resolveFor('bootstrap'))
+// e index.jade enlaza app/js/toastr.js y app/css/toastr.css.
+function vendor_fixed(done) {
+  log('Copying fixed-path vendor assets..');
+  const copies = [
+    ['bower_components/bootstrap/dist/js/bootstrap.js', '../vendor/bootstrap/js'],
+    ['bower_components/toastr/toastr.js', paths.app + 'js'],
+    ['bower_components/toastr/toastr.css', paths.app + 'css'],
+  ];
+  let pending = copies.length;
+  copies.forEach(function (c) {
+    gulp.src(c[0], { allowEmpty: false })
+      .on('error', handleError)
+      .pipe(gulp.dest(c[1]))
+      .on('finish', function () { if (--pending === 0) done(); });
+  });
+}
+
+var vendorTask = gulp.series(vendor_base, vendor_app, vendor_fixed);
 
 // i18n: diccionarios versionados en master/i18n → app/i18n (FND-002; app/ no se versiona)
 function i18n() {
