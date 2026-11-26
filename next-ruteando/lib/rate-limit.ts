@@ -13,6 +13,13 @@ export function rateLimit(key: string, max: number, windowMs: number, now = Date
 
 export const resetRateLimits = () => hits.clear();
 
-export function clientIp(request: Request): string {
-  return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'local';
+/**
+ * IP del cliente según X-Forwarded-For. Solo vale la entrada que añadió NUESTRO proxy: se cuenta desde la derecha con
+ * `TRUSTED_PROXY_HOPS` (1 por defecto: un solo proxy delante, como Render o nginx). Las entradas de la izquierda las escribe el cliente
+ * y se ignoran; con 0 saltos no se confía en la cabecera y todos comparten cubo (mejor eso que dejarse falsificar).
+ */
+export function clientIp(request: Request, hops = Number(process.env.TRUSTED_PROXY_HOPS ?? 1)): string {
+  if (!(hops > 0)) return 'local';
+  const chain = (request.headers.get('x-forwarded-for') ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+  return chain[chain.length - hops] ?? 'local';
 }

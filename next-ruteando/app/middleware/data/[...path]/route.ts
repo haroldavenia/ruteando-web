@@ -1,5 +1,6 @@
 import { isAllowed } from '@/lib/allowlist';
 import { ensureAccess } from '@/lib/auth-flow';
+import { readCapped } from '@/lib/body';
 import { verifySameOrigin } from '@/lib/csrf';
 import { GENERIC_5XX, jsonError } from '@/lib/errors';
 import { gatewayErrorResponse, gatewayFetch } from '@/lib/gateway';
@@ -22,8 +23,8 @@ async function handle(request: Request, { params }: { params: Promise<{ path: st
     if (!isAllowed(path, request.method, session.user.role)) return jsonError(404, 'No encontrado.');
 
     const hasBody = !['GET', 'HEAD'].includes(request.method);
-    const body = hasBody ? await request.arrayBuffer() : undefined;
-    if (body && body.byteLength > MAX_BODY) return jsonError(413, 'La solicitud es demasiado grande.');
+    const body = hasBody ? await readCapped(request, MAX_BODY) : undefined;
+    if (body === null) return jsonError(413, 'La solicitud es demasiado grande.');
 
     const headers = new Headers();
     for (const h of FORWARD) if (request.headers.has(h)) headers.set(h, request.headers.get(h)!);

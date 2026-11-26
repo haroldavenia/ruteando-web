@@ -109,3 +109,22 @@ test('refresh: varias peticiones con el mismo token comparten una sola llamada a
   expect(spy).toHaveBeenCalledTimes(2);
   vi.unstubAllEnvs();
 });
+
+test('IP del cliente: solo cuenta la entrada del proxy propio (por la derecha)', async () => {
+  const { clientIp } = await import('@/lib/rate-limit');
+  const req = (xff?: string) => new Request('http://a.test/', { headers: xff ? { 'x-forwarded-for': xff } : {} });
+  expect(clientIp(req('1.1.1.1, 9.9.9.9'), 1)).toBe('9.9.9.9'); // 1.1.1.1 lo escribió el cliente
+  expect(clientIp(req('6.6.6.6, 1.1.1.1, 9.9.9.9'), 2)).toBe('1.1.1.1');
+  expect(clientIp(req('1.1.1.1'), 0)).toBe('local'); // sin confianza: no se lee la cabecera
+  expect(clientIp(req(), 1)).toBe('local');
+});
+
+test('cuerpo: se aborta al pasar el tope, también sin Content-Length', async () => {
+  const { readCapped } = await import('@/lib/body');
+  const big = new Request('http://a.test/', { method: 'POST', body: 'x'.repeat(50) });
+  expect(await readCapped(big, 10)).toBeNull();
+  const ok = new Request('http://a.test/', { method: 'POST', body: 'hola' });
+  expect(new TextDecoder().decode((await readCapped(ok, 10))!)).toBe('hola');
+  const declared = new Request('http://a.test/', { method: 'POST', body: 'x', headers: { 'content-length': '999' } });
+  expect(await readCapped(declared, 10)).toBeNull();
+});
