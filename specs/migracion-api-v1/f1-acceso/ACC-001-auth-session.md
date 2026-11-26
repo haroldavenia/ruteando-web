@@ -173,6 +173,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 
 ## 9. Dependencias, riesgos y preguntas abiertas
 
+- Mock-api (hallazgo del contendiente de FND-001, 2026-11-25): `x-mock-scenario: 423` no devuelve `details.lockedUntil`. Ampliar `tests/mock-api/server.mjs` en esta historia si las pruebas del bloqueo de cuenta lo necesitan.
+
 - Dependencias: FND-002, FND-005.
 - Riesgos: Rotación estricta (C3): dos renovaciones concurrentes con el mismo token pierden una sesión; el single-flight y la sincronización entre pestañas son obligatorios.
 - Pregunta no bloqueante: Vida del refresh token → Decisión propuesta: Resuelta: 7 días; access 1 h (migration-guide §1)
