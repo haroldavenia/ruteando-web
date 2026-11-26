@@ -111,9 +111,11 @@ var compassOptsThemes = {
   image: 'app/img'
 };
 
-// Error handler
+// Error handler: en `watch` deja seguir; en `gulp build` el error se cuenta y build_stamp hace fallar la tarea (FND-001)
+var buildErrors = [];
 function handleError(err) {
   log(err.toString());
+  buildErrors.push(err.toString());
   this.emit('end');
 }
 
@@ -339,7 +341,12 @@ var assets = gulp.series(
 // build for production (minify)
 // Marca de build completo: tests/e2e/ensure-build.mjs la compara con las fuentes (FND-001)
 function build_stamp(done) {
-  require('fs').writeFileSync(path.join(paths.app, '.build-stamp'), new Date().toISOString() + '\n');
+  var stamp = path.join(paths.app, '.build-stamp');
+  if (buildErrors.length) {
+    if (require('fs').existsSync(stamp)) require('fs').utimesSync(stamp, 0, 0); // marca caducada: ensure-build recompilará
+    return done(new Error('build con ' + buildErrors.length + ' error(es): no se escribe app/.build-stamp'));
+  }
+  require('fs').writeFileSync(stamp, new Date().toISOString() + '\n');
   done();
 }
 

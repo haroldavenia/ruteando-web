@@ -2,10 +2,11 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createMockApi } from '../mock-api/server.mjs';
-import { sanitize, sanitizeRoute } from './capture-fixture.mjs';
+import { sanitize, sanitizeRoute, fixtureName } from './capture-fixture.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const auth = { authorization: 'Bearer t', 'content-type': 'application/json' };
@@ -30,6 +31,8 @@ test('[FND-001 CA-3] GET por id: 404 si no existe, si está mal formado o tras b
   for (const name of ['places', 'packages', 'users', 'zones']) {
     assert.equal((await fetch(`${base}/${name}/id`, { headers: auth })).status, 404, `${name}/id literal`);
   }
+  assert.equal((await fetch(`${base}/places/${created.id}/`, { headers: auth })).status, 404); // barra final tras borrar
+  assert.equal((await fetch(`${base}/places/no-existe/`, { headers: auth })).status, 404);
   assert.equal((await fetch(`${base}/places/nearby?lon=-74&lat=4.6`, { headers: auth })).status, 200);
 });
 
@@ -81,7 +84,31 @@ test('[FND-001 CA-2] capture-fixture anonimiza nombres de persona sin tocar nomb
   assert.notEqual(more.headers['x-api-key'], 'K');
   assert.notEqual(more.headers.authorization, 'Bearer J');
   assert.equal(sanitizeRoute('/auth/verify-email?token=REAL.JWT&x=1'), '/auth/verify-email?token=ficticio&x=1');
-  assert.equal(sanitizeRoute('/invitations/accept/4f9c2a7b1e8d4c3a9f0e'), '/invitations/accept/token-ficticio');
+  assert.equal(sanitizeRoute('/invitations/accept/4f9c2a7b1e8d4c3a9f0e'), '/invitations/accept/token');
+  assert.equal(sanitizeRoute('/invitations/accept/short123'), '/invitations/accept/token');
+  assert.equal(fixtureName('GET', '/invitations/accept/my-real-invite-token-xyz123'), 'get__invitations__accept__token');
+  const misc = sanitize({ taxId: '900123456-1', ipAddress: '190.24.10.5', description: 'Llamar al +573101234567' });
+  assert.equal(misc.taxId, '000000000-0');
+  assert.equal(misc.ipAddress, '0.0.0.0');
+  assert.equal(misc.description, 'Llamar al +570000000000');
+});
+
+test('[FND-001 CA-3] una URL mal formada responde 400 sin tumbar el mock', async () => {
+  const res = await new Promise((resolve) => {
+    const { request } = createRequire(import.meta.url)('node:http');
+    const r = request({ host: '127.0.0.1', port: mock.server.address().port, path: 'http://[bad', method: 'GET' }, resolve);
+    r.end();
+  });
+  assert.equal(res.statusCode, 400);
+  assert.equal((await fetch(`${base}/places`, { headers: auth })).status, 200); // sigue vivo
+});
+
+test('[FND-001 CA-6] con BACKEND_URL https y un PEM inválido, las sondas se omiten con motivo', () => {
+  const env = { ...process.env, BACKEND_URL: 'https://localhost:8443', BACKEND_CA_FILE: 'package.json', SDD_NO_ENV_FILE: '1' };
+  delete env.NODE_TEST_CONTEXT;
+  const r = spawnSync(process.execPath, ['--test', '--test-reporter=tap', 'tests/api/arnes-de-pruebas.api.test.mjs'], { cwd: root, encoding: 'utf8', env });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /# SKIP BACKEND_CA_FILE no es un certificado PEM válido/);
 });
 
 test('[FND-001 CA-6] con BACKEND_URL https y sin el PEM, las sondas se omiten con motivo (no fallan al cargar)', () => {

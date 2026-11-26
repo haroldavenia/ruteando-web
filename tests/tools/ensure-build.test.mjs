@@ -44,7 +44,7 @@ test('[FND-001 CA-10] ensure-build recompila si cambia la configuración del bui
 });
 
 test('[FND-001 CA-10] ensure-build recompila si falta un artefacto (vendor_fixed, index.html) aunque app.js sea reciente', () => {
-  for (const missingFile of ['vendor/bootstrap/js/bootstrap.js', 'app/js/toastr.js', 'index.html', 'app/views/pages/login.html', 'app/css/app.css', 'app/i18n/es.json', BUILD_STAMP]) {
+  for (const missingFile of ['vendor/bootstrap/js/bootstrap.js', 'app/js/toastr.js', 'index.html', 'app/views/pages/login2.html', 'app/css/app.css', 'app/css/bootstrap.css', 'app/i18n/es.json', 'app/i18n/en.json', 'app/i18n/es_AR.json', BUILD_STAMP]) {
     const root = mkdtempSync(path.join(tmpdir(), 'build-'));
     mkdirSync(path.join(root, 'master', 'js'), { recursive: true });
     const past = new Date(Date.now() - 60000);

@@ -42,7 +42,13 @@ export function createMockApi({ fixtures = loadFixtures() } = {}) {
   const requests = [];
 
   const handler = (req, res) => {
-    const url = new URL(req.url, 'http://mock');
+    let url;
+    try {
+      url = new URL(req.url, 'http://mock');
+    } catch {
+      return send(res, 400, errorJson(400, String(req.url), 'URL mal formada'));
+    }
+    if (url.pathname.length > 1) url.pathname = url.pathname.replace(/\/+$/, ''); // /places/{id}/ ≡ /places/{id}
     const chunks = [];
     let size = 0;
     req.on('data', (c) => { size += c.length; chunks.push(c); });

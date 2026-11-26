@@ -28,7 +28,7 @@ export const BUILD_SOURCES = ['js', 'jade', 'i18n', 'less', 'sass'];
 
 /** Artefactos sin los que la SPA no arranca: si falta alguno, se recompila aunque app.js sea reciente. */
 export const REQUIRED_OUTPUTS = ['app/js/app.js', 'app/js/base.js', 'index.html', 'vendor/bootstrap/js/bootstrap.js', 'app/js/toastr.js', 'app/css/toastr.css',
-  'app/css/app.css', 'app/views/pages/login.html', 'app/i18n/es.json'];
+  'app/css/app.css', 'app/css/bootstrap.css', 'app/views/pages/login2.html', 'app/i18n/es.json', 'app/i18n/en.json', 'app/i18n/es_AR.json'];
 
 /** Lo escribe `gulp build` al terminar sin errores (master/gulpfile.js): marca cuándo se compiló todo. */
 export const BUILD_STAMP = 'app/.build-stamp';
