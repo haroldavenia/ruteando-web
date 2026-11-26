@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, utimesSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { needsBuild, newest, REQUIRED_OUTPUTS } from '../e2e/ensure-build.mjs';
+import { needsBuild, newest, REQUIRED_OUTPUTS, BUILD_STAMP } from '../e2e/ensure-build.mjs';
 
 /** Crea todos los artefactos de salida de un build, con fecha `when`. */
 function writeOutputs(root, when = new Date()) {
-  for (const f of REQUIRED_OUTPUTS) {
+  for (const f of [...REQUIRED_OUTPUTS, BUILD_STAMP]) {
     mkdirSync(path.dirname(path.join(root, f)), { recursive: true });
     writeFileSync(path.join(root, f), '1');
     utimesSync(path.join(root, f), when, when);
@@ -44,7 +44,7 @@ test('[FND-001 CA-10] ensure-build recompila si cambia la configuración del bui
 });
 
 test('[FND-001 CA-10] ensure-build recompila si falta un artefacto (vendor_fixed, index.html) aunque app.js sea reciente', () => {
-  for (const missingFile of ['vendor/bootstrap/js/bootstrap.js', 'app/js/toastr.js', 'index.html']) {
+  for (const missingFile of ['vendor/bootstrap/js/bootstrap.js', 'app/js/toastr.js', 'index.html', 'app/views/pages/login.html', 'app/css/app.css', 'app/i18n/es.json', BUILD_STAMP]) {
     const root = mkdtempSync(path.join(tmpdir(), 'build-'));
     mkdirSync(path.join(root, 'master', 'js'), { recursive: true });
     const past = new Date(Date.now() - 60000);
@@ -70,4 +70,15 @@ test('[FND-001 CA-10] ensure-build recompila si cambian i18n o estilos', () => {
     utimesSync(path.join(root, 'master', dir, 'x'), future, future);
     assert.equal(needsBuild(root), true, dir);
   }
+});
+
+test('[FND-001 CA-10] ensure-build usa la marca del último build completo, no la fecha de app.js', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'build-'));
+  mkdirSync(path.join(root, 'master', 'jade'), { recursive: true });
+  const t = (s) => new Date(Date.now() + s * 1000);
+  writeOutputs(root, t(-120));
+  writeFileSync(path.join(root, 'master', 'jade', 'index.jade'), '1');
+  utimesSync(path.join(root, 'master', 'jade', 'index.jade'), t(-60), t(-60));
+  utimesSync(path.join(root, 'app', 'js', 'app.js'), t(-10), t(-10)); // app.js reciente, build completo antiguo
+  assert.equal(needsBuild(root), true);
 });

@@ -43,6 +43,7 @@ test('[FND-001 CA-7] --spec <ID> filtra Karma por "[<ID> " y separa JUnit por su
   };
   const unit = load(['start', '--spec', 'FND-001']);
   assert.deepEqual(unit.client.args, ['--grep', '[FND-001 ']);
+  assert.deepEqual(load(['start', '--spec=FND-001']).client.args, ['--grep', '[FND-001 ']);
   assert.equal(unit.junitReporter.outputFile, 'junit-unit.xml');
   assert.ok(unit.files.includes('tests/unit/**/*.spec.js'));
   const integ = load(['start'], { SUITE: 'integration', COVERAGE: '1', SPEC: 'MAE-001' });

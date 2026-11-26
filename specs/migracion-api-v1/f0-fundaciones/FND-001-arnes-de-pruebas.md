@@ -75,7 +75,6 @@ Como integrante del equipo de ingeniería, quiero ejecutar pruebas unitarias, de
 - `tests/e2e/arnes-de-pruebas.e2e.mjs`
 - `tests/fixtures/api-v1/**` (solo lectura; nuevos con capture-fixture)
 - `docs/engineering/estrategia-de-pruebas.md`
-- `docs/engineering/calidad-y-ci.md`
 - `docs/architecture/adr/0005-controles-de-calidad.md`
 - `specs/migracion-api-v1/f0-fundaciones/evidencia/FND-001/**`
 
@@ -137,6 +136,12 @@ Crear: `karma.conf.cjs`, `playwright.config.mjs`, `tests/helpers/fixtures.js`, `
 | T-13 | CA-9 | arnés | `tests/tools/harness.test.mjs` |
 | T-14 | CA-10 | e2e | `tests/e2e/arnes-de-pruebas.e2e.mjs` |
 | T-15 | CA-10 | arnés | `tests/tools/ensure-build.test.mjs` |
+| T-16 | CA-2 | arnés | `tests/tools/mock-api.test.mjs` (anonimización de `capture-fixture`) |
+| T-17 | CA-3 | arnés | `tests/tools/mock-api.test.mjs` (404, Bearer, 400, endpoints retirados) |
+| T-18 | CA-4 | arnés | `tests/tools/mock-api.test.mjs` (`x-mock-scenario` fuera de rango) |
+| T-19 | CA-6 | arnés | `tests/tools/mock-api.test.mjs` (PEM ausente) |
+| T-20 | CA-9 | arnés | `tools/test/diff-coverage.test.mjs` |
+| T-21 | CA-10 | arnés | `tests/tools/gulp-node-compat.test.mjs` |
 
 ## 8. Excepciones de cobertura
 
@@ -151,24 +156,24 @@ Filtro de cobertura único: `npm run coverage:diff` (lo usan CI, agentes y perso
 - Fuera de alcance, planificado en `specs/fabrica-agentica/f1-arnes/HAR-002-arnes-evidencia-sin-omisiones.md`: sondas API en un job con *secrets* (`API_REQUIRED=1`), «contexto limpio» obligatorio en los informes de revisión, `coverage:diff` en `AGENTS.md`, `E2E_FORCE_BUILD`, permisos del sandbox de Antigravity. El `401 INVALID_CREDENTIALS` de las sondas con el `.env` local es de credenciales, no de esta historia.
 
 - Dependencias: —.
-- Riesgos: Versiones de karma modernas con AngularJS 1.3 (sin problemas conocidos). `base.js`/`app.js` compilados por Gulp: la suite unit carga las fuentes `master/js/**` en el orden del gulpfile + `app/js/base.js` (vendor).
+- Riesgos: Versiones de karma modernas con AngularJS 1.3 (sin problemas conocidos). La suite unit carga solo el código migrado listado en `tests/helpers/sources.json` sobre un módulo `angle` de prueba; la app compilada completa la cubre el E2E (CA-5, CA-10). El build de estilos (`styles_app`) resuelve un `@import` de `fonts.googleapis.com`: sin salida a Internet `npm run build` falla (CI tiene red). Deuda del tema legacy en `master/less`, fuera del alcance de FND-001.
 - Pregunta no bloqueante: ¿Node de referencia en los equipos? (Playwright exige ≥18) → Decisión propuesta: Resuelta (2026-11-25): Node 24 LTS (`.nvmrc`)
-- Pregunta no bloqueante: ¿CI disponible (GitHub Actions/Jenkins)? → Decisión propuesta: Añadir workflow en spec posterior; las suites corren en local
+- Pregunta no bloqueante: ¿CI disponible (GitHub Actions/Jenkins)? → Decisión propuesta: Resuelta: GitHub Actions (`.github/workflows/ci.yml`, jobs `config`, `test-and-coverage`, `e2e`, `lint`)
 
 ## 10. Trazabilidad (se completa al cerrar)
 
 | CA | Prueba(s) | Commit(s) | Evidencia |
 | --- | --- | --- | --- |
-| CA-1 | `tests/helpers/bootstrap.spec.js` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-2 | `tests/helpers/bootstrap.spec.js`, `tests/tools/harness.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-3 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/server/proxy.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-4 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/server/proxy.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-5 | `tests/e2e/arnes-de-pruebas.e2e.mjs` | `fdefc680`, `40db6367` | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-6 | `tests/api/arnes-de-pruebas.api.test.mjs`, `tests/tools/harness.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-7 | `tests/tools/harness.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-8 | `tests/tools/harness.test.mjs` | `e72f50a7` (base), `40db6367` evaluado | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-9 | `tests/tools/harness.test.mjs`, `tools/test/diff-coverage.test.mjs` | `bbf7c8e6`, `49972773`, `567c6899` | `evidencia/FND-001/2026-11-25-implementador.md` |
-| CA-10 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/tools/ensure-build.test.mjs` | `567c6899`, `fdefc680`, `40db6367` | `evidencia/FND-001/2026-11-25-implementador.md` |
+| CA-1 | `tests/helpers/bootstrap.spec.js` | `5d3e8377` | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-2 | `tests/helpers/bootstrap.spec.js`, `tests/tools/harness.test.mjs`, `tests/tools/mock-api.test.mjs` | `ce051fb3`, ciclo 2 | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-3 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/server/proxy.test.mjs`, `tests/tools/mock-api.test.mjs` | `ce051fb3`, ciclo 2 | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-4 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/server/proxy.test.mjs`, `tests/tools/mock-api.test.mjs` | `ce051fb3`, ciclo 2 | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-5 | `tests/e2e/arnes-de-pruebas.e2e.mjs` | `fdefc680`, `40db6367`, `ce051fb3`, ciclo 2 | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-6 | `tests/api/arnes-de-pruebas.api.test.mjs`, `tests/tools/harness.test.mjs`, `tests/tools/mock-api.test.mjs` | `5d3e8377`, `ce051fb3` | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-7 | `tests/tools/harness.test.mjs` | `5d3e8377`, ciclo 2 | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-8 | `tests/tools/harness.test.mjs` | `e72f50a7` (base) | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-9 | `tests/tools/harness.test.mjs`, `tools/test/diff-coverage.test.mjs` | `49972773`, `567c6899`, `5d3e8377`, `ce051fb3` | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
+| CA-10 | `tests/e2e/arnes-de-pruebas.e2e.mjs`, `tests/tools/ensure-build.test.mjs`, `tests/tools/gulp-node-compat.test.mjs` | `567c6899`, `fdefc680`, `40db6367`, `ce051fb3`, ciclo 2 | `evidencia/FND-001/2026-11-25-implementador.md`, informes de revisión del 2026-11-25 |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -190,3 +195,4 @@ Filtro de cobertura único: `npm run coverage:diff` (lo usan CI, agentes y perso
 | 2026-11-25 | Build: tarea `vendor_fixed` copia a las rutas fijas que espera la app `bootstrap/dist/js/bootstrap.js` → `vendor/bootstrap/js/` (lo carga `resolveFor('bootstrap')` en el estado `access`) y `toastr.js/.css` → `app/js`, `app/css` (los enlaza `index.jade`). En CI (build limpio) faltaban: `vendor/bootstrap/js/bootstrap.js` daba 404, el estado no resolvía y la SPA quedaba en blanco; en local existían por copias manuales antiguas en `vendor/` (no versionado) | Traza del artefacto `e2e-report` del run 45693681529 (#70) | Harold Avenia (cambio dentro de `master/gulpfile.js`, ya autorizado) |
 | 2026-11-25 | Decisiones sobre el informe del validador: (a) CA-1 reescrito al alcance real de Karma; (b) prueba `node:test` de `gulp-node-compat.cjs`, excepción §8 para `master/gulpfile.js` y filtro único `npm run coverage:diff` en `package.json` y `ci.yml`; (c) filas del 2026-11-20 firmadas; (d) la prueba de CA-6 comprueba `junit-api.xml`; (e) mejoras del arnés a HAR-002 | `evidencia/FND-001/2026-11-25-validador.md` | Harold Avenia |
 | 2026-11-25 | Decisiones sobre las revisiones independientes (ciclo 1: contendiente FAIL; validador y calidad-seguridad PASS WITH GAPS). **A, se corrige en FND-001:** `vendor_fixed` falla si falta un origen (sin `handleError`); `ensure-build` recompila si falta un artefacto (`REQUIRED_OUTPUTS`) o cambian `i18n`/`less`/`sass`; ESLint aplica reglas a `master/*.cjs` y `master/gulpfile.js`; mock-api: 404 en GET por id inexistente o borrado, `/auth/me` y `/auth/change-password` exigen Bearer, 400 con `ids` no-array o cuerpo no-objeto, sin lote en `packages`/`zones`, `x-mock-scenario` fuera de 400–599 → 400, excepción interna → 500 sin caer; `toRelative()` sin distinguir mayúsculas y sin mezclar unidades; prueba de `gulp-node-compat` con casos `false` y sin `DEP0044`; `capture-fixture` anonimiza nombres de persona; `_client.mjs` omite las sondas con motivo si falta el PEM; CA-7, CA-9 y RF-3 reescritos; HAR-002 sale de este PR. **B, fuera:** Issue de Bootstrap 5 JS sobre app Bootstrap 3; realismo del mock (`lockedUntil`, `referencedBy`, `PUT /packages` parcial, paginación límite) en ACC-001, MAE-005 y PAQ-002; `try/finally` de `proxy.test.mjs` en FND-002. **C:** `dod` (etiquetas en comentarios/`skip`, informe más reciente) y permisos de sandbox de los revisores a HAR-002. **D:** repetir las tres revisiones con Claude Opus High en la sesión y salida del sandbox aprobada | Informes `evidencia/FND-001/2026-11-25-{validador,contendiente,calidad-seguridad}.md` | Harold Avenia |
+| 2026-11-25 | Ciclo 2 de revisión (contendiente FAIL; validador y calidad-seguridad PASS WITH GAPS; CI de `ce051fb3` en verde en todos los jobs). Se corrige dentro de FND-001 con el criterio ya aprobado (A): `x-mock-scenario` exige 400–599 (también rechaza `<400` y vacío); GET `/{colección}/id` literal → 404; POST/PUT exigen objeto JSON y `Content-Type: application/json` (PUT inexistente sigue en 404); `status` de `PATCH /packages/status` debe ser string; endpoints retirados en la trazabilidad → 404; `capture-fixture` anonimiza listas (`users[]`, `drivers[]`), `assignedUser`, `driverName`, documentos, `authorization`/`x-api-key` y tokens de la ruta; `ensure-build` compara con la marca `app/.build-stamp` que escribe `gulp build` y exige vistas, CSS e i18n; `karma.conf.cjs` acepta `--spec=ID`; §3, §7, §9 y §10 al día. Se mantiene diferido (B): paginación límite del mock (PAQ-002) y Bootstrap 5 (Issue). Se registra como riesgo: `styles_app` depende de `fonts.googleapis.com`. Último ciclo permitido: si el ciclo 3 vuelve a FAIL, la historia pasa a `Blocked` y decide una persona | Informes del ciclo 2 en `evidencia/FND-001/` | Harold Avenia |

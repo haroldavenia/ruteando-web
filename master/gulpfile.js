@@ -337,10 +337,17 @@ var assets = gulp.series(
 );
 
 // build for production (minify)
+// Marca de build completo: tests/e2e/ensure-build.mjs la compara con las fuentes (FND-001)
+function build_stamp(done) {
+  require('fs').writeFileSync(path.join(paths.app, '.build-stamp'), new Date().toISOString() + '\n');
+  done();
+}
+
 var building = gulp.series(
   prod,
   vendorTask,
-  assets
+  assets,
+  build_stamp
 )
 
 // default (no minify)

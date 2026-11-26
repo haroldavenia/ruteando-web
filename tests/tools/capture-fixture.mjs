@@ -17,10 +17,17 @@ export function fixtureName(method, route) {
   return [method.toLowerCase(), ...segments].join('__');
 }
 
-const SECRET_KEYS = /token|password|secret|apikey|api_key/i;
-const PERSON_KEYS = { email: 'usuario@example.invalid', firstName: 'Jane', lastName: 'Doe', phone: '+570000000000', phoneNumber: '+570000000000', contactName: 'Contacto ficticio', actorEmail: 'actor@example.invalid', inviterName: 'Persona ficticia', fullName: 'Persona ficticia', userName: 'Persona ficticia', recipientName: 'Persona ficticia', receiverName: 'Persona ficticia', senderName: 'Persona ficticia' };
+const SECRET_KEYS = /token|password|secret|api[-_]?key|authorization|cookie/i;
+const PERSON_KEYS = { email: 'usuario@example.invalid', firstName: 'Jane', lastName: 'Doe', phone: '+570000000000', phoneNumber: '+570000000000', contactName: 'Contacto ficticio', actorEmail: 'actor@example.invalid', inviterName: 'Persona ficticia', driverName: 'Persona ficticia', assignedUserName: 'Persona ficticia', identifierValue: '0000000000', documentNumber: '0000000000', fullName: 'Persona ficticia', userName: 'Persona ficticia', recipientName: 'Persona ficticia', receiverName: 'Persona ficticia', senderName: 'Persona ficticia' };
 // `name` es de persona dentro de estos objetos (receptor, remitente, contacto…); en lugares o planes no se toca.
-const PERSON_PARENTS = /^(receiver|sender|recipient|contact|customer|inviter|invitedBy|user|driver|createdBy|updatedBy|actor)$/i;
+const PERSON_PARENTS = /^(receiver|sender|recipient|contact|customer|inviter|invitedBy|user|driver|assignedUser|assignedDriver|owner|member|createdBy|updatedBy|actor)s?$/i;
+
+/** Quita tokens de la ruta guardada en el fixture (query `token`/`code` y `/invitations/accept/<token>`). */
+export function sanitizeRoute(route) {
+  return route
+    .replace(/([?&](token|code|otp)=)[^&]+/gi, '$1ficticio')
+    .replace(/(\/invitations\/(accept\/)?)[^/?]{16,}/, '$1token-ficticio');
+}
 
 /** Sanea recursivamente: secretos → "ficticio", datos personales → valores fijos. */
 export function sanitize(value, key = '', parent = '') {
@@ -53,7 +60,7 @@ async function main() {
   const r = await api(args.method, args.route, { token, body: args.body });
   const fixture = {
     name: `${args.method} /api/v1${args.route.split('?')[0]}`,
-    request: { method: args.method, url: `/api/v1${args.route}`, body: sanitize(args.body ?? null) },
+    request: { method: args.method, url: `/api/v1${sanitizeRoute(args.route)}`, body: sanitize(args.body ?? null) },
     response: { status: r.status, body: sanitize(r.body) },
   };
   const file = path.join(root, 'tests', 'fixtures', 'api-v1', `${args.name}.json`);

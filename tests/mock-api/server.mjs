@@ -11,7 +11,14 @@
  */
 import http from 'node:http';
 import { pathToFileURL } from 'node:url';
-import { loadFixtures, matchFixture, createStore } from './store.mjs';
+import { readFileSync, existsSync } from 'node:fs';
+import { loadFixtures, matchFixture, createStore, WILDCARDS } from './store.mjs';
+
+// Endpoints retirados por el backend (trazabilidad del proyecto): el mock responde 404 aunque haya fixture legacy.
+const COVERAGE = new URL('../../specs/migracion-api-v1/trazabilidad/endpoint-coverage.json', import.meta.url);
+export const RETIRED_PREFIXES = existsSync(COVERAGE)
+  ? [...new Set(JSON.parse(readFileSync(COVERAGE, 'utf8')).items.filter((e) => e.status === 'retired').map((e) => '/api/v1' + e.endpoint.split(' ')[1].split('/{')[0]))]
+  : [];
 
 const CODES = { 400: 'BAD_REQUEST', 401: 'UNAUTHORIZED', 403: 'FORBIDDEN', 404: 'NOT_FOUND', 409: 'CONFLICT', 410: 'GONE', 422: 'UNPROCESSABLE_ENTITY', 423: 'ACCOUNT_LOCKED', 429: 'RATE_LIMIT_EXCEEDED', 500: 'INTERNAL_ERROR', 502: 'ROUTING_ENGINE_UNAVAILABLE' };
 const PUBLIC = [
@@ -57,12 +64,13 @@ export function createMockApi({ fixtures = loadFixtures() } = {}) {
   function respond(req, res, url, raw) {
     const p = url.pathname;
     if (!p.startsWith('/api/v1/')) return send(res, 404, errorJson(404, p));
+    if (RETIRED_PREFIXES.some((r) => p === r || p.startsWith(r + '/'))) return send(res, 404, errorJson(404, p, 'Endpoint retirado por el backend'));
     const rawScenario = req.headers['x-mock-scenario'];
     const scenario = Number(rawScenario);
-    if (rawScenario !== undefined && (!Number.isInteger(scenario) || scenario > 599)) {
+    if (rawScenario !== undefined && (String(rawScenario).trim() === '' || !Number.isInteger(scenario) || scenario < 400 || scenario > 599)) {
       return send(res, 400, errorJson(400, p, 'x-mock-scenario debe ser un código HTTP entre 400 y 599'));
     }
-    if (scenario >= 400) {
+    if (rawScenario !== undefined) {
       const headers = scenario === 429 ? { 'retry-after': '30' } : {};
       return send(res, scenario, errorJson(scenario, p), headers);
     }
@@ -70,6 +78,9 @@ export function createMockApi({ fixtures = loadFixtures() } = {}) {
       return send(res, 401, errorJson(401, p, 'Full authentication is required'));
     }
     let body = null;
+    if (raw.length && !/json/.test(req.headers['content-type'] || '') && ['POST', 'PUT', 'PATCH'].includes(req.method) && !/\/upload$/.test(p)) {
+      return send(res, 400, errorJson(400, p, 'Content-Type debe ser application/json'));
+    }
     if (raw.length && /json/.test(req.headers['content-type'] || '')) {
       try { body = JSON.parse(raw.toString('utf8')); } catch { return send(res, 400, errorJson(400, p, 'JSON mal formado')); }
     }
@@ -103,7 +114,7 @@ export function createMockApi({ fixtures = loadFixtures() } = {}) {
   function packagesStatus(res, body, path) {
     if (!body || !isIdList(body.ids)) return send(res, 400, errorJson(400, path, 'ids debe ser un arreglo de strings'));
     const ids = body.ids;
-    if (ids.length > 100 || !body.status) return send(res, 422, errorJson(422, path, 'Petición de estado no válida'));
+    if (ids.length > 100 || typeof body.status !== 'string' || !body.status) return send(res, 422, errorJson(422, path, 'Petición de estado no válida'));
     const results = ids.map((id) => {
       const pkg = store.find('packages', id);
       if (!pkg) return { id, status: 'not_found' };
@@ -127,15 +138,15 @@ export function createMockApi({ fixtures = loadFixtures() } = {}) {
       const item = store.find(name, id);
       if (item) return [200, item];
       const literal = matchFixture(fixtures, 'GET', url.pathname);
-      if (literal && literal.tokens[1] === id) return null; // subruta del contrato (p. ej. places/nearby): su fixture
+      if (literal && literal.tokens[1] === id && !WILDCARDS.has(id)) return null; // subruta del contrato (p. ej. places/nearby): su fixture
       return [404, errorJson(404, url.pathname)];
     }
-    if ((method === 'POST' || method === 'PUT') && body !== null && !isPlainObject(body)) {
-      return [400, errorJson(400, url.pathname, 'El cuerpo debe ser un objeto JSON')];
-    }
-    if (method === 'POST' && !id) return [201, store.create(name, body || {}, template('POST'))];
+    const notObject = [400, errorJson(400, url.pathname, 'El cuerpo debe ser un objeto JSON')];
+    if (method === 'POST' && !id) return isPlainObject(body) ? [201, store.create(name, body, template('POST'))] : notObject;
     if (method === 'PUT' && id) {
-      const item = store.replace(name, id, body || {});
+      if (!store.find(name, id)) return [404, errorJson(404, url.pathname)];
+      if (!isPlainObject(body)) return notObject;
+      const item = store.replace(name, id, body);
       return item ? [200, item] : [404, errorJson(404, url.pathname)];
     }
     if (method === 'DELETE' && id) return store.remove(name, id) ? [204, null] : [404, errorJson(404, url.pathname)];
