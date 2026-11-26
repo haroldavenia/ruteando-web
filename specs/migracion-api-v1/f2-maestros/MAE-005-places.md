@@ -153,6 +153,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 
 ## 9. Dependencias, riesgos y preguntas abiertas
 
+- Mock-api (hallazgo del contendiente de FND-001, 2026-11-25): el 409 de borrado no trae `details.referencedBy`/`ids` salvo en `batch-delete` con `x-mock-conflict-ids`. Ampliar el mock en esta historia (aplica también al resto de MAE-* con borrado).
+
 - Dependencias: MAE-004, MAE-006.
 - Riesgos: —
 - Preguntas abiertas: ninguna.

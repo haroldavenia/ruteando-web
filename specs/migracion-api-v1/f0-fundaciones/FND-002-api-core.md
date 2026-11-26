@@ -174,6 +174,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 
 ## 9. Dependencias, riesgos y preguntas abiertas
 
+- Pruebas (hallazgo de calidad-seguridad de FND-001, 2026-11-25): en `tests/server/proxy.test.mjs` los servidores locales se cierran después de `await fetch(...)` sin `try/finally`; si `fetch` falla, el proceso queda colgado. Corregir al tocar esas pruebas.
+
 - Dependencias: FND-001.
 - Riesgos: El servidor actual depende de MongoDB para Satellizer: arrancar sin Mongo debe seguir funcionando (proxy y estáticos no dependen de Mongo).
 - Pregunta **bloqueante**: `app/` está en `.gitignore` y los diccionarios de runtime viven en `app/i18n/*.json` (no versionados). ¿Se mueven a `master/i18n/` y Gulp los copia? → Decisión propuesta: Sí: mover a `master/i18n/`, tarea de Gulp `i18n`, y versionarlos antes de que las specs añadan claves

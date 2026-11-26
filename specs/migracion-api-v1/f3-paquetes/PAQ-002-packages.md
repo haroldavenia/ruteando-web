@@ -181,6 +181,8 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 
 ## 9. Dependencias, riesgos y preguntas abiertas
 
+- Mock-api (hallazgo del contendiente de FND-001, 2026-11-25): `PUT /packages/{id}` reemplaza el objeto completo (pierde `status`/`pieceNumber` si no vienen) y la paginación no valida `page`/`size` límite (`size=0`, negativos). Ajustar el mock a la semántica del contrato en esta historia.
+
 - Dependencias: MAE-004, MAE-006, FND-003, MAE-009.
 - Riesgos: D2, D3, D8.
 - Pregunta no bloqueante: ¿Exponer `timeWindow` y `measure`? → Decisión propuesta: Sí, opcionales
