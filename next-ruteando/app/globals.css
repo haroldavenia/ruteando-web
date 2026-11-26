@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+
+/* Los tokens M3 de ng-ruteando/src/styles.scss se migran aquí (fase 4). */
+@theme {
+  --color-primary: #3f51b5;
+}

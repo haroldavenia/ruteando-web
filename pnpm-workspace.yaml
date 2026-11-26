@@ -1,5 +1,6 @@
 packages:
   - ng-ruteando
+  - next-ruteando
 
 # pnpm 10 no ejecuta los scripts de instalación de las dependencias salvo que se aprueben. Aquí ninguna los necesita:
 # core-js (de jspdf) solo muestra un aviso con su script. esbuild, lmdb, @parcel/watcher y msgpackr-extract traen su binario como paquete opcional por plataforma (verificado:
