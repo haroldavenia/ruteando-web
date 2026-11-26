@@ -18,17 +18,20 @@ export function fixtureName(method, route) {
 }
 
 const SECRET_KEYS = /token|password|secret|apikey|api_key/i;
-const PERSON_KEYS = { email: 'usuario@example.invalid', firstName: 'Jane', lastName: 'Doe', phone: '+570000000000', phoneNumber: '+570000000000', contactName: 'Contacto ficticio', actorEmail: 'actor@example.invalid' };
+const PERSON_KEYS = { email: 'usuario@example.invalid', firstName: 'Jane', lastName: 'Doe', phone: '+570000000000', phoneNumber: '+570000000000', contactName: 'Contacto ficticio', actorEmail: 'actor@example.invalid', inviterName: 'Persona ficticia', fullName: 'Persona ficticia', userName: 'Persona ficticia', recipientName: 'Persona ficticia', receiverName: 'Persona ficticia', senderName: 'Persona ficticia' };
+// `name` es de persona dentro de estos objetos (receptor, remitente, contacto…); en lugares o planes no se toca.
+const PERSON_PARENTS = /^(receiver|sender|recipient|contact|customer|inviter|invitedBy|user|driver|createdBy|updatedBy|actor)$/i;
 
 /** Sanea recursivamente: secretos → "ficticio", datos personales → valores fijos. */
-export function sanitize(value, key = '') {
-  if (Array.isArray(value)) return value.map((v) => sanitize(v, key));
+export function sanitize(value, key = '', parent = '') {
+  if (Array.isArray(value)) return value.map((v) => sanitize(v, key, parent));
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitize(v, k)]));
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitize(v, k, key)]));
   }
   if (typeof value === 'string') {
     if (SECRET_KEYS.test(key)) return `${key}-ficticio`;
     if (key in PERSON_KEYS) return PERSON_KEYS[key];
+    if (key === 'name' && PERSON_PARENTS.test(parent)) return 'Persona ficticia';
     return value.replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, 'usuario@example.invalid');
   }
   return value;

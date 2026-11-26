@@ -33,9 +33,16 @@ export function toRelative(file, root) {
   const r = normalizePath(root).replace(/\/$/, '');
   if (!r) return f;
   if (f.startsWith(r + '/')) return f.slice(r.length + 1);
-  // Windows: la unidad (C:) puede faltar o variar en mayúsculas en uno de los lados.
+  // Windows: sin distinguir mayúsculas; la unidad puede faltar en un lado, pero si ambos la traen debe coincidir.
+  const drive = (x) => (/^([A-Za-z]):\//.exec(x) || [])[1];
+  const df = drive(f);
+  const dr = drive(r);
+  if (!df && !dr) return f;
+  if (df && dr && df.toLowerCase() !== dr.toLowerCase()) return f;
   const strip = (x) => x.replace(/^[A-Za-z]:(?=\/)/, '');
-  if (strip(f).startsWith(strip(r) + '/')) return strip(f).slice(strip(r).length + 1);
+  const fs = strip(f);
+  const rs = strip(r);
+  if (fs.toLowerCase().startsWith(rs.toLowerCase() + '/')) return fs.slice(rs.length + 1);
   return f;
 }
 

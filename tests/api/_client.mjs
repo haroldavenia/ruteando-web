@@ -21,11 +21,14 @@ export const BACKEND_URL = (process.env.BACKEND_URL || '').replace(/\/+$/, '');
 const require = createRequire(import.meta.url);
 const { backendAgent } = require('../../server/proxy.js');
 const { resolveCaFile } = require('../../server/app.js');
-const agent = BACKEND_URL.startsWith('https:') ? backendAgent(resolveCaFile(process.env)) : undefined;
+const caFile = BACKEND_URL.startsWith('https:') ? resolveCaFile(process.env) : undefined;
+const caMissing = caFile && !existsSync(caFile) ? `BACKEND_CA_FILE no existe (${path.relative(root, caFile)}): sonda no ejecutada` : null;
+const agent = BACKEND_URL.startsWith('https:') && !caMissing ? backendAgent(caFile) : undefined;
 
 /** Motivo por el que no se puede sondear, o null. */
 export function missing(vars = []) {
   if (!BACKEND_URL) return 'BACKEND_URL no está definido (.env): sonda no ejecutada';
+  if (caMissing) return caMissing;
   const absent = vars.filter((v) => !process.env[v]);
   return absent.length ? `faltan variables ${absent.join(', ')} (.env): sonda no ejecutada` : null;
 }

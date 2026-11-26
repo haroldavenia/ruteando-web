@@ -50,6 +50,9 @@ test('normalizePath y toRelative', () => {
   assert.equal(toRelative('src/a.js', '/otro'), 'src/a.js');
   assert.equal(toRelative('/repo/src/a.js', 'C:\\repo'), 'src/a.js'); // root resuelto en Windows
   assert.equal(toRelative('c:\\repo\\src\\a.js', 'C:\\repo'), 'src/a.js'); // unidad en minúscula
+  assert.equal(toRelative('c:\\users\\harol\\repo\\tools\\a.mjs', 'C:\\Users\\harol\\repo'), 'tools/a.mjs'); // mayúsculas en Windows
+  assert.equal(toRelative('D:\\repo\\tools\\a.mjs', 'C:\\repo'), 'D:/repo/tools/a.mjs'); // otra unidad: no se relativiza
+  assert.equal(toRelative('/Repo/src/a.js', '/repo'), '/Repo/src/a.js'); // POSIX distingue mayúsculas
 });
 
 test('parseLcov suma hits de registros repetidos e ignora basura', () => {

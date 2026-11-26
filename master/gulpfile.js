@@ -296,19 +296,25 @@ function prod(done) {
 // Rutas fijas que espera la app y que vendor_app no produce (FND-001): sin ellas, un build limpio (CI)
 // deja la SPA en blanco. constants.js carga 'vendor/bootstrap/js/bootstrap.js' (resolveFor('bootstrap'))
 // e index.jade enlaza app/js/toastr.js y app/css/toastr.css.
+// Si falta un origen o falla la copia, la tarea falla (no usa handleError, que silencia el error).
+const VENDOR_FIXED = [
+  ['bower_components/bootstrap/dist/js/bootstrap.js', '../vendor/bootstrap/js'],
+  ['bower_components/toastr/toastr.js', paths.app + 'js'],
+  ['bower_components/toastr/toastr.css', paths.app + 'css'],
+];
+
 function vendor_fixed(done) {
   log('Copying fixed-path vendor assets..');
-  const copies = [
-    ['bower_components/bootstrap/dist/js/bootstrap.js', '../vendor/bootstrap/js'],
-    ['bower_components/toastr/toastr.js', paths.app + 'js'],
-    ['bower_components/toastr/toastr.css', paths.app + 'css'],
-  ];
-  let pending = copies.length;
-  copies.forEach(function (c) {
-    gulp.src(c[0], { allowEmpty: false })
-      .on('error', handleError)
-      .pipe(gulp.dest(c[1]))
-      .on('finish', function () { if (--pending === 0) done(); });
+  const missing = VENDOR_FIXED.filter(function (c) { return !require('fs').existsSync(c[0]); });
+  if (missing.length) return done(new Error('vendor_fixed: falta ' + missing.map(function (c) { return c[0]; }).join(', ') + ' (¿bower install?)'));
+  let pending = VENDOR_FIXED.length;
+  let failed = false;
+  VENDOR_FIXED.forEach(function (c) {
+    require('stream').pipeline(gulp.src(c[0], { allowEmpty: false }), gulp.dest(c[1]), function (err) {
+      if (failed) return;
+      if (err) { failed = true; return done(err); }
+      if (--pending === 0) done();
+    });
   });
 }
 
