@@ -12,24 +12,35 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 export function fixtureName(method, route) {
-  const segments = route.split('?')[0].replace(/^\/api\/v1/, '').split('/').filter(Boolean)
+  const segments = sanitizeRoute(route).split('?')[0].replace(/^\/api\/v1/, '').split('/').filter(Boolean)
     .map((s) => (/^[0-9a-f]{24}$/i.test(s) || /^\d+$/.test(s) ? 'id' : s));
   return [method.toLowerCase(), ...segments].join('__');
 }
 
-const SECRET_KEYS = /token|password|secret|apikey|api_key/i;
-const PERSON_KEYS = { email: 'usuario@example.invalid', firstName: 'Jane', lastName: 'Doe', phone: '+570000000000', phoneNumber: '+570000000000', contactName: 'Contacto ficticio', actorEmail: 'actor@example.invalid' };
+const SECRET_KEYS = /token|password|secret|api[-_]?key|authorization|cookie/i;
+const PERSON_KEYS = { email: 'usuario@example.invalid', firstName: 'Jane', lastName: 'Doe', phone: '+570000000000', phoneNumber: '+570000000000', contactName: 'Contacto ficticio', actorEmail: 'actor@example.invalid', inviterName: 'Persona ficticia', driverName: 'Persona ficticia', assignedUserName: 'Persona ficticia', identifierValue: '0000000000', documentNumber: '0000000000', taxId: '000000000-0', nit: '000000000-0', ipAddress: '0.0.0.0', ip: '0.0.0.0', fullName: 'Persona ficticia', userName: 'Persona ficticia', recipientName: 'Persona ficticia', receiverName: 'Persona ficticia', senderName: 'Persona ficticia' };
+// `name` es de persona dentro de estos objetos (receptor, remitente, contacto…); en lugares o planes no se toca.
+const PERSON_PARENTS = /^(receiver|sender|recipient|contact|customer|inviter|invitedBy|user|driver|assignedUser|assignedDriver|owner|member|createdBy|updatedBy|actor)s?$/i;
+
+/** Quita tokens de la ruta guardada en el fixture (query `token`/`code` y `/invitations/accept/<token>`). */
+export function sanitizeRoute(route) {
+  return route
+    .replace(/([?&](token|code|otp)=)[^&]+/gi, '$1ficticio')
+    .replace(/(\/invitations\/accept\/)[^/?]+/, '$1token')
+    .replace(/(\/invitations\/)(?!accept\b)([^/?]{12,})(?=\/resend\b)/, '$1token');
+}
 
 /** Sanea recursivamente: secretos → "ficticio", datos personales → valores fijos. */
-export function sanitize(value, key = '') {
-  if (Array.isArray(value)) return value.map((v) => sanitize(v, key));
+export function sanitize(value, key = '', parent = '') {
+  if (Array.isArray(value)) return value.map((v) => sanitize(v, key, parent));
   if (value && typeof value === 'object') {
-    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitize(v, k)]));
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitize(v, k, key)]));
   }
   if (typeof value === 'string') {
     if (SECRET_KEYS.test(key)) return `${key}-ficticio`;
     if (key in PERSON_KEYS) return PERSON_KEYS[key];
-    return value.replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, 'usuario@example.invalid');
+    if (key === 'name' && PERSON_PARENTS.test(parent)) return 'Persona ficticia';
+    return value.replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, 'usuario@example.invalid').replace(/\+\d{10,13}\b/g, '+570000000000');
   }
   return value;
 }
@@ -49,8 +60,8 @@ async function main() {
   const token = args.isPublic ? undefined : (await login()).accessToken;
   const r = await api(args.method, args.route, { token, body: args.body });
   const fixture = {
-    name: `${args.method} /api/v1${args.route.split('?')[0]}`,
-    request: { method: args.method, url: `/api/v1${args.route}`, body: sanitize(args.body ?? null) },
+    name: `${args.method} /api/v1${sanitizeRoute(args.route).split('?')[0]}`,
+    request: { method: args.method, url: `/api/v1${sanitizeRoute(args.route)}`, body: sanitize(args.body ?? null) },
     response: { status: r.status, body: sanitize(r.body) },
   };
   const file = path.join(root, 'tests', 'fixtures', 'api-v1', `${args.name}.json`);

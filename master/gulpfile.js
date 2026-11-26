@@ -1,3 +1,4 @@
+require('./gulp-node-compat.cjs'); // Node 24: util.is* para plugins legacy (FND-001)
 const gulp = require('gulp');
 const prettify = require('gulp-html-prettify');
 const args      = require('yargs').argv,
@@ -110,9 +111,11 @@ var compassOptsThemes = {
   image: 'app/img'
 };
 
-// Error handler
+// Error handler: en `watch` deja seguir; en `gulp build` el error se cuenta y build_stamp hace fallar la tarea (FND-001)
+var buildErrors = [];
 function handleError(err) {
   log(err.toString());
+  buildErrors.push(err.toString());
   this.emit('end');
 }
 
@@ -132,7 +135,7 @@ function scripts_app() {
   // Minify and copy all JavaScript (except vendor scripts)
   return gulp.src(source.scripts)
     .pipe($.if( useSourceMaps, $.sourcemaps.init() ))
-    .pipe($.concat( 'app.js' ))
+    .pipe($.concat( 'app.js', { newLine: '\n;\n' } )) // ';' entre archivos: un legacy sin ';' final no debe invocar la IIFE siguiente (FND-001)
     .pipe($.ngAnnotate())
     .on('error', handleError)
     .pipe($.if(isProduction, $.uglify({ mangle: true, output: {
@@ -292,7 +295,32 @@ function prod(done) {
 };
 
 // VENDOR BUILD
-var vendorTask = gulp.series(vendor_base, vendor_app);
+// Rutas fijas que espera la app y que vendor_app no produce (FND-001): sin ellas, un build limpio (CI)
+// deja la SPA en blanco. constants.js carga 'vendor/bootstrap/js/bootstrap.js' (resolveFor('bootstrap'))
+// e index.jade enlaza app/js/toastr.js y app/css/toastr.css.
+// Si falta un origen o falla la copia, la tarea falla (no usa handleError, que silencia el error).
+const VENDOR_FIXED = [
+  ['bower_components/bootstrap/dist/js/bootstrap.js', '../vendor/bootstrap/js'],
+  ['bower_components/toastr/toastr.js', paths.app + 'js'],
+  ['bower_components/toastr/toastr.css', paths.app + 'css'],
+];
+
+function vendor_fixed(done) {
+  log('Copying fixed-path vendor assets..');
+  const missing = VENDOR_FIXED.filter(function (c) { return !require('fs').existsSync(c[0]); });
+  if (missing.length) return done(new Error('vendor_fixed: falta ' + missing.map(function (c) { return c[0]; }).join(', ') + ' (¿bower install?)'));
+  let pending = VENDOR_FIXED.length;
+  let failed = false;
+  VENDOR_FIXED.forEach(function (c) {
+    require('stream').pipeline(gulp.src(c[0], { allowEmpty: false }), gulp.dest(c[1]), function (err) {
+      if (failed) return;
+      if (err) { failed = true; return done(err); }
+      if (--pending === 0) done();
+    });
+  });
+}
+
+var vendorTask = gulp.series(vendor_base, vendor_app, vendor_fixed);
 
 // i18n: diccionarios versionados en master/i18n → app/i18n (FND-002; app/ no se versiona)
 function i18n() {
@@ -311,10 +339,22 @@ var assets = gulp.series(
 );
 
 // build for production (minify)
+// Marca de build completo: tests/e2e/ensure-build.mjs la compara con las fuentes (FND-001)
+function build_stamp(done) {
+  var stamp = path.join(paths.app, '.build-stamp');
+  if (buildErrors.length) {
+    if (require('fs').existsSync(stamp)) require('fs').utimesSync(stamp, 0, 0); // marca caducada: ensure-build recompilará
+    return done(new Error('build con ' + buildErrors.length + ' error(es): no se escribe app/.build-stamp'));
+  }
+  require('fs').writeFileSync(stamp, new Date().toISOString() + '\n');
+  done();
+}
+
 var building = gulp.series(
   prod,
   vendorTask,
-  assets
+  assets,
+  build_stamp
 )
 
 // default (no minify)

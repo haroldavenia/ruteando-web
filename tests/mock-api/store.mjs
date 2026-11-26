@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { randomBytes } from 'node:crypto';
 
 export const FIXTURES_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'fixtures', 'api-v1');
-const WILDCARDS = new Set(['id', 'code', 'key', 'token', 'slug', 'driverId', 'journeyId', 'routeIndex', 'status']);
+export const WILDCARDS = new Set(['id', 'code', 'key', 'token', 'slug', 'driverId', 'journeyId', 'routeIndex', 'status']);
 
 export function loadFixtures(dir = FIXTURES_DIR) {
   if (!existsSync(dir)) return [];

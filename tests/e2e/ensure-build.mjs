@@ -20,11 +20,25 @@ export function newest(dir) {
   return max;
 }
 
+/** Archivos de configuración del build: si cambian, app/ también queda desactualizada. */
+export const BUILD_CONFIG = ['gulpfile.js', 'gulp-node-compat.cjs', 'bower.json', 'vendor.json', 'vendor.base.json'];
+
+/** Carpetas fuente de master/ que generan app/ (scripts, vistas, i18n y estilos). */
+export const BUILD_SOURCES = ['js', 'jade', 'i18n', 'less', 'sass'];
+
+/** Artefactos sin los que la SPA no arranca: si falta alguno, se recompila aunque app.js sea reciente. */
+export const REQUIRED_OUTPUTS = ['app/js/app.js', 'app/js/base.js', 'index.html', 'vendor/bootstrap/js/bootstrap.js', 'app/js/toastr.js', 'app/css/toastr.css',
+  'app/css/app.css', 'app/css/bootstrap.css', 'app/views/pages/login2.html', 'app/i18n/es.json', 'app/i18n/en.json', 'app/i18n/es_AR.json'];
+
+/** Lo escribe `gulp build` al terminar sin errores (master/gulpfile.js): marca cuándo se compiló todo. */
+export const BUILD_STAMP = 'app/.build-stamp';
+
 export function needsBuild(rootDir = root) {
-  const out = path.join(rootDir, 'app', 'js', 'app.js');
-  if (!existsSync(out)) return true;
-  const sources = Math.max(newest(path.join(rootDir, 'master', 'js')), newest(path.join(rootDir, 'master', 'jade')));
-  return sources > statSync(out).mtimeMs;
+  if ([...REQUIRED_OUTPUTS, BUILD_STAMP].some((f) => !existsSync(path.join(rootDir, f)))) return true;
+  const built = statSync(path.join(rootDir, BUILD_STAMP)).mtimeMs;
+  const config = BUILD_CONFIG.map((f) => path.join(rootDir, 'master', f)).filter((f) => existsSync(f)).map((f) => statSync(f).mtimeMs);
+  const sources = Math.max(...BUILD_SOURCES.map((d) => newest(path.join(rootDir, 'master', d))), ...config);
+  return sources > built;
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {

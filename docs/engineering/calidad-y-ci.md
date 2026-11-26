@@ -1,6 +1,6 @@
 # Controles de calidad y CI (ruteando-web)
 
-Decisión: ADR-0005. Node 22, `permissions` mínimos.
+Decisión: ADR-0005. Node 24 LTS (`.nvmrc`; el build legacy usa `master/gulp-node-compat.cjs`), `permissions` mínimos.
 
 | Control | Workflow / job | Herramienta | Bloqueante |
 | --- | --- | --- | --- |
@@ -30,7 +30,7 @@ Convierte en aviso la cobertura y el lint del diff en PR que solo mueven o incor
 npm ci --ignore-scripts
 npm test && npm run test:unit && npm run test:integration && npm run test:server
 npm run coverage:unit && npm run coverage:server && npm run coverage:tools && npm run coverage:merge
-node tools/diff-coverage.mjs --lcov coverage/lcov.info --base angularjs-main
+npm run coverage:diff -- --base angularjs-main   # mismo filtro que CI (package.json)
 npm run test:e2e        # requiere master/bower_components (bower install) o app/ ya compilado
 npm run test:api        # requiere .env con BACKEND_URL y la cuenta de pruebas
 ```

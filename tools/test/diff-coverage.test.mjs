@@ -48,6 +48,11 @@ test('normalizePath y toRelative', () => {
   assert.equal(normalizePath('.\\src\\a.js'), 'src/a.js');
   assert.equal(toRelative('/repo/src/a.js', '/repo/'), 'src/a.js');
   assert.equal(toRelative('src/a.js', '/otro'), 'src/a.js');
+  assert.equal(toRelative('/repo/src/a.js', 'C:\\repo'), 'src/a.js'); // root resuelto en Windows
+  assert.equal(toRelative('c:\\repo\\src\\a.js', 'C:\\repo'), 'src/a.js'); // unidad en minúscula
+  assert.equal(toRelative('c:\\users\\harol\\repo\\tools\\a.mjs', 'C:\\Users\\harol\\repo'), 'tools/a.mjs'); // mayúsculas en Windows
+  assert.equal(toRelative('D:\\repo\\tools\\a.mjs', 'C:\\repo'), 'D:/repo/tools/a.mjs'); // otra unidad: no se relativiza
+  assert.equal(toRelative('/Repo/src/a.js', '/repo'), '/Repo/src/a.js'); // POSIX distingue mayúsculas
 });
 
 test('parseLcov suma hits de registros repetidos e ignora basura', () => {
@@ -120,7 +125,10 @@ test('parseArgs valida entradas', () => {
 
 test('run/main con dependencias inyectadas', () => {
   const deps = {
-    git: () => DIFF,
+    git: (cwd, a) => {
+      assert.ok(a.includes('--diff-filter=d'), 'los borrados no se piden: evitan ENOBUFS con diffs grandes');
+      return DIFF;
+    },
     readText: (p) => (p.endsWith('.lcov') ? LCOV : '// c\nfunction f() {\n  return 1;\n}\n'),
     exists: () => true,
   };

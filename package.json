@@ -42,9 +42,10 @@
     "test:api": "node -e \"require('fs').mkdirSync('reports',{recursive:true})\" && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=reports/junit-api.xml \"tests/api/*.api.test.mjs\"",
     "test:all": "npm test && npm run test:unit && npm run test:integration && npm run test:server",
     "coverage": "npm run coverage:tools",
-    "coverage:tools": "node -e \"require('fs').mkdirSync('coverage/tools',{recursive:true})\" && node --test --experimental-test-coverage --test-coverage-include=\"tools/*.mjs\" --test-coverage-lines=90 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/tools/lcov.info \"tools/test/*.test.mjs\"",
+    "coverage:tools": "node -e \"require('fs').mkdirSync('coverage/tools',{recursive:true})\" && node --test --experimental-test-coverage --test-coverage-include=\"tools/*.mjs\" --test-coverage-include=\"master/gulp-node-compat.cjs\" --test-coverage-lines=90 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/tools/lcov.info \"tools/test/*.test.mjs\" \"tests/tools/gulp-node-compat.test.mjs\"",
     "coverage:unit": "cross-env COVERAGE=1 karma start karma.conf.cjs --single-run",
     "coverage:server": "node -e \"require('fs').mkdirSync('coverage/server',{recursive:true})\" && node --test --experimental-test-coverage --test-coverage-include=\"server/app.js\" --test-coverage-include=\"server/proxy.js\" --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/server/lcov.info \"tests/server/*.test.mjs\"",
+    "coverage:diff": "node tools/diff-coverage.mjs --lcov coverage/lcov.info --threshold 90 --include \"^((master/js|server|tools)/.*|master/[^/]+)\\.(c|m)?js$\" --exclude \"(^|/)(node_modules|bower_components|tests?|coverage)/|\\.(test|spec)\\.(c|m)?js$|^server/legacy-satellizer\\.js$|^master/gulpfile\\.js$\"",
     "coverage:merge": "node tools/merge-lcov.mjs coverage/lcov.info coverage/unit/lcov.info coverage/server/lcov.info coverage/tools/lcov.info",
     "mock-api": "node tests/mock-api/server.mjs",
     "specs": "node tools/specs.mjs",
@@ -55,6 +56,6 @@
     "bufferutil": "^4.0.7"
   },
   "engines": {
-    "node": ">=22.9"
+    "node": "^24"
   }
 }

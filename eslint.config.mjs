@@ -47,6 +47,12 @@ export default [
     languageOptions: { ecmaVersion: 2024, sourceType: 'commonjs', globals: nodeGlobals },
     rules: { ...core, 'no-var': 'error', 'prefer-const': 'error' },
   },
+  // Build de la app legacy (Gulp, CommonJS): solo cuentan las líneas cambiadas; var heredado permitido
+  {
+    files: ['master/*.cjs', 'master/gulpfile.js'],
+    languageOptions: { ecmaVersion: 2020, sourceType: 'commonjs', globals: nodeGlobals },
+    rules: { ...core, 'no-var': 'off', 'prefer-const': 'off' },
+  },
   { files: ['**/*.mjs'], languageOptions: { sourceType: 'module' } },
   // El módulo de prueba declara el global App (master/js/app.init.js en la app real)
   { files: ['tests/helpers/app-shim.js'], rules: { 'no-redeclare': 'off' } },

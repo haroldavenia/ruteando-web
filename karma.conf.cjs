@@ -22,6 +22,8 @@ function chromeBin() {
 process.env.CHROME_BIN = chromeBin() || '';
 
 function specFilter(argv) {
+  const eq = argv.find((a) => a.startsWith('--spec='));
+  if (eq) return eq.slice('--spec='.length);
   const i = argv.indexOf('--spec');
   return i >= 0 && argv[i + 1] ? argv[i + 1] : process.env.SPEC || '';
 }

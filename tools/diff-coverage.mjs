@@ -31,7 +31,18 @@ export function normalizePath(p) {
 export function toRelative(file, root) {
   const f = normalizePath(file);
   const r = normalizePath(root).replace(/\/$/, '');
-  if (r && f.startsWith(r + '/')) return f.slice(r.length + 1);
+  if (!r) return f;
+  if (f.startsWith(r + '/')) return f.slice(r.length + 1);
+  // Windows: sin distinguir mayúsculas; la unidad puede faltar en un lado, pero si ambos la traen debe coincidir.
+  const drive = (x) => (/^([A-Za-z]):\//.exec(x) || [])[1];
+  const df = drive(f);
+  const dr = drive(r);
+  if (!df && !dr) return f;
+  if (df && dr && df.toLowerCase() !== dr.toLowerCase()) return f;
+  const strip = (x) => x.replace(/^[A-Za-z]:(?=\/)/, '');
+  const fs = strip(f);
+  const rs = strip(r);
+  if (fs.toLowerCase().startsWith(rs.toLowerCase() + '/')) return fs.slice(rs.length + 1);
   return f;
 }
 
@@ -168,14 +179,14 @@ export function parseArgs(argv) {
 
 export function run(argv, deps = {}) {
   const {
-    git = (cwd, a) => execFileSync('git', a, { cwd, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }),
+    git = (cwd, a) => execFileSync('git', a, { cwd, encoding: 'utf8', maxBuffer: 512 * 1024 * 1024 }),
     readText = (p) => readFileSync(p, 'utf8'),
     exists = existsSync,
   } = deps;
   const args = parseArgs(argv);
   const root = path.resolve(args.root);
   const lcovText = exists(args.lcov) ? readText(args.lcov) : '';
-  const diffText = git(root, ['diff', '-U0', '--no-color', '--no-ext-diff', `${args.base}...HEAD`, '--', '.']);
+  const diffText = git(root, ['diff', '-U0', '--no-color', '--no-ext-diff', '--diff-filter=d', `${args.base}...HEAD`, '--', '.']);
   const res = computeDiffCoverage({
     lcov: parseLcov(lcovText, root),
     diff: parseUnifiedDiff(diffText),

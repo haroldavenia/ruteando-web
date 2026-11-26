@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: "22"
+  NODE_VERSION: "24"
   ESLINT_VERSION: "10.15.0"
 
 jobs:
@@ -81,10 +81,8 @@ jobs:
         run: |
           set -uo pipefail
           status=0
-          node tools/diff-coverage.mjs --lcov coverage/lcov.info --base "origin/${{ github.base_ref }}" --threshold 90 \
-            \
-            --include '^(master/js|server|tools)/.*\.(c|m)?js$' \
-            --exclude '(^|/)(node_modules|bower_components|tests?|coverage)/|\.(test|spec)\.(c|m)?js$|^server/legacy-satellizer\.js$' | tee -a "$GITHUB_STEP_SUMMARY" || status=$?
+          # Mismo filtro que en local: npm run coverage:diff (package.json). master/gulpfile.js: excepción en FND-001 §8.
+          npm run --silent coverage:diff -- --base "origin/${{ github.base_ref }}" | tee -a "$GITHUB_STEP_SUMMARY" || status=$?
           if [ "$status" -eq 1 ] && [ "$HEREDADO" = "true" ]; then
             echo "::warning::Cobertura de diff bajo el umbral, aceptada por la etiqueta codigo-heredado (requiere aprobación humana)."
             exit 0

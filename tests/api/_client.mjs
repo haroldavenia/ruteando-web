@@ -21,11 +21,22 @@ export const BACKEND_URL = (process.env.BACKEND_URL || '').replace(/\/+$/, '');
 const require = createRequire(import.meta.url);
 const { backendAgent } = require('../../server/proxy.js');
 const { resolveCaFile } = require('../../server/app.js');
-const agent = BACKEND_URL.startsWith('https:') ? backendAgent(resolveCaFile(process.env)) : undefined;
+const caFile = BACKEND_URL.startsWith('https:') ? resolveCaFile(process.env) : undefined;
+const caMissing = caFile && !existsSync(caFile) ? `BACKEND_CA_FILE no existe (${path.relative(root, caFile)}): sonda no ejecutada` : null;
+let caError = caMissing;
+let agent;
+if (BACKEND_URL.startsWith('https:') && !caMissing) {
+  try {
+    agent = backendAgent(caFile);
+  } catch (err) {
+    caError = `BACKEND_CA_FILE no es un certificado PEM válido (${err.message}): sonda no ejecutada`;
+  }
+}
 
 /** Motivo por el que no se puede sondear, o null. */
 export function missing(vars = []) {
   if (!BACKEND_URL) return 'BACKEND_URL no está definido (.env): sonda no ejecutada';
+  if (caError) return caError;
   const absent = vars.filter((v) => !process.env[v]);
   return absent.length ? `faltan variables ${absent.join(', ')} (.env): sonda no ejecutada` : null;
 }
