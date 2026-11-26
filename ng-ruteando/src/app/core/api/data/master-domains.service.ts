@@ -46,6 +46,12 @@ export class MasterDomainsService {
     return this.values(code).filter((value) => value.active);
   }
 
+  /** Vuelve a pedir los dominios (cambiaron en el gateway, por ejemplo al añadir o apagar un valor) y actualiza las lecturas. */
+  refresh(): Observable<MasterDomain[]> {
+    this.loaded = null;
+    return this.load();
+  }
+
   /** Carga los dominios una sola vez; si falla no se cachea el fallo y se conservan los valores actuales. */
   load(): Observable<MasterDomain[]> {
     if (this.loaded) {

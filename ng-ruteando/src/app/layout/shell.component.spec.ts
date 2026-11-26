@@ -91,7 +91,7 @@ describe('ShellComponent', () => {
     });
 
     for (const role of ['tenant_admin', 'super_admin'] as const) {
-      it(`${role} ve Inicio, Flota, Lugares, Zonas, Paquetes, Jornadas, Asignados, Config., Auditoría y Seguridad`, () => {
+      it(`${role} ve Inicio, Flota, Lugares, Zonas, Paquetes, Jornadas, Asignados, Config., Catálogos, Auditoría y Seguridad`, () => {
         withRole(role);
         expect(railLabels()).toEqual([
           'Inicio',
@@ -102,6 +102,7 @@ describe('ShellComponent', () => {
           'Jornadas',
           'Asignados',
           'Config.',
+          'Catálogos',
           'Auditoría',
           'Seguridad',
         ]);
@@ -136,6 +137,7 @@ describe('ShellComponent', () => {
         null,
         'Servicios asignados',
         'Configuraciones',
+        null,
         null,
         null,
       ]);
@@ -330,6 +332,7 @@ describe('ShellComponent', () => {
         'Jornadas',
         'Servicios asignados',
         'Configuraciones',
+        'Catálogos',
         'Auditoría',
         'Seguridad',
       ]);

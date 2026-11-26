@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { downloadBlob } from './report-files';
 
 const BOM = '﻿';
 const SEPARATOR = ';';
@@ -30,17 +30,7 @@ export function toCsv(
 
 /** Descarga el texto como fichero; no hace nada fuera del navegador. Devuelve si se inició la descarga. */
 export function downloadCsv(fileName: string, csv: string, platformId: object | string): boolean {
-  if (!isPlatformBrowser(platformId)) {
-    return false;
-  }
-  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url));
-  return true;
+  return downloadBlob(fileName, new Blob([csv], { type: 'text/csv;charset=utf-8' }), platformId);
 }
 
 export interface ParsedCsv {

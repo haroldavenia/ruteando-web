@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { JourneysApi } from '../../core/api/data/journeys.api';
@@ -11,6 +12,7 @@ import { FormResultComponent } from '../../shared/form/form-result.component';
 import { formatCount, formatDateTime, formatDistance, formatDuration, formatPercent } from '../../shared/format';
 import { SkeletonComponent } from '../../shared/ui/skeleton.component';
 import { RouteAssignmentComponent } from './route-assignment.component';
+import { RouteReportExport } from './route-report-export';
 import { RouteVisitsComponent } from './route-visits.component';
 import { RoutesMapComponent, StopRef } from './routes-map.component';
 /**
@@ -24,6 +26,7 @@ import { RoutesMapComponent, StopRef } from './routes-map.component';
     MatButtonModule,
     FormHeadComponent,
     FormResultComponent,
+    MatIconModule,
     RoutesMapComponent,
     RouteAssignmentComponent,
     RouteVisitsComponent,
@@ -44,6 +47,7 @@ export class RouteDetailComponent {
     : null;
 
   protected readonly loader = new RecordLoader<PlannedJourney>(this.journeyId, (id) => this.api.get(id));
+  protected readonly report = new RouteReportExport();
 
   protected readonly route = computed<DomainRoute | null>(() => {
     const journey = this.loader.record();

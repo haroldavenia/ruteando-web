@@ -50,6 +50,9 @@ import {
       <button mat-stroked-button type="button" (click)="exportFiltered()" [disabled]="state.total() === 0">
         <mat-icon aria-hidden="true">download</mat-icon>{{ 'Exportar CSV' | t }}
       </button>
+      <a mat-stroked-button routerLink="/assigned-services/map">
+        <mat-icon aria-hidden="true">map</mat-icon>{{ 'Ver en el mapa' | t }}
+      </a>
       <a mat-flat-button class="primary-action" routerLink="/assigned-services/new"
         ><mat-icon aria-hidden="true">add</mat-icon>{{ 'Asignar ruta' | t }}</a
       >

@@ -546,6 +546,35 @@ function handle(method, path, query, body, headers) {
   if (path === '/auth/me' && method === 'GET') return { status: 200, body: clone(user) };
   if (path === '/master-domains' && method === 'GET') return { status: 200, body: masterDomains };
 
+  // --- un catálogo, sus valores, alta de un valor y alternar si está activo (responden con el catálogo completo)
+  const md = path.match(/^\/master-domains\/([^/]+)(?:\/values(?:\/([^/]+)\/toggle)?)?$/);
+  if (md) {
+    const domain = masterDomains.find((d) => d.code === md[1]);
+    if (!domain) return notFound('MasterDomain', md[1], path);
+    const isValues = path.endsWith('/values');
+    if (method === 'GET') return { status: 200, body: clone(isValues ? domain.values : domain) };
+    if (method === 'POST' && isValues) {
+      const key = String(body?.key ?? '').trim();
+      const label = String(body?.label ?? '').trim();
+      if (!key || !label) return fail(400, 'BAD_REQUEST', 'key and label are required', path);
+      if (domain.values.some((v) => v.key === key)) return fail(409, 'CONFLICT', `Value already exists: ${key}`, path);
+      domain.values.push({
+        key,
+        label,
+        description: body.description ?? null,
+        sortOrder: body.sortOrder ?? null,
+        active: true,
+      });
+      return { status: 201, body: clone(domain) };
+    }
+    if (method === 'PATCH' && md[2]) {
+      const value = domain.values.find((v) => v.key === md[2]);
+      if (!value) return notFound('DomainValue', md[2], path);
+      value.active = !value.active;
+      return { status: 200, body: clone(domain) };
+    }
+  }
+
   // --- paquetes: cambio de estado (rechaza las claves inactivas, como el gateway real)
   let m = path.match(/^\/packages\/([^/]+)\/status\/([^/]+)$/);
   if (m && method === 'PATCH') {

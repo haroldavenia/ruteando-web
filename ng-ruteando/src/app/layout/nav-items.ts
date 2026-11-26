@@ -41,6 +41,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     roles: OPERATIONS_ROLES,
   },
   { label: t('Configuraciones'), short: t('Config.'), icon: 'tune', link: '/settings', roles: ADMIN_ROLES },
+  { label: t('Catálogos'), icon: 'list', link: '/catalogs', roles: ADMIN_ROLES },
   { label: t('Auditoría'), icon: 'history', link: '/audit', roles: OPERATIONS_ROLES },
   { label: t('Seguridad'), icon: 'shield', link: '/security', roles: ADMIN_ROLES },
 ];

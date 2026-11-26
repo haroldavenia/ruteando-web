@@ -16,6 +16,7 @@ describe('nav-items', () => {
           'Jornadas',
           'Servicios asignados',
           'Configuraciones',
+          'Catálogos',
           'Auditoría',
           'Seguridad',
         ]);
@@ -50,6 +51,7 @@ describe('nav-items', () => {
         'Jornadas',
         'Servicios asignados',
         'Configuraciones',
+        'Catálogos',
         'Auditoría',
         'Seguridad',
       ]);

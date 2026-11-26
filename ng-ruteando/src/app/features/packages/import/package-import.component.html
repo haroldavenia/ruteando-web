@@ -32,6 +32,36 @@
   <button mat-stroked-button type="button" (click)="downloadTemplate()">
     <mat-icon aria-hidden="true">download</mat-icon>{{ 'Descargar plantilla' | t }}
   </button>
+  <details class="howto">
+    <summary>{{ 'Cómo crear el archivo, paso a paso' | t }}</summary>
+    <ol>
+      <li>
+        <strong>{{ 'Descarga la plantilla.' | t }}</strong>
+        {{ 'Ya trae los nombres de las columnas en la primera fila: no los cambies.' | t }}
+      </li>
+      <li>
+        <strong>{{ 'Ábrela en una hoja de cálculo.' | t }}</strong>
+        {{ 'Sirve Excel, Google Sheets o LibreOffice.' | t }}
+      </li>
+      <li>
+        <strong>{{ 'Escribe una fila por paquete.' | t }}</strong>
+        {{
+          'Solo la dirección es obligatoria; si dejas vacías la longitud y la latitud, la aplicación las calcula.' | t
+        }}
+      </li>
+      <li>
+        <strong>{{ 'Guárdala como CSV.' | t }}</strong>
+        {{
+          'En Excel: Guardar como, CSV UTF-8. En Google Sheets: Archivo, Descargar, Valores separados por comas (.csv).'
+            | t
+        }}
+      </li>
+      <li>
+        <strong>{{ 'Elígela aquí.' | t }}</strong>
+        {{ 'Antes de importar verás cuántas filas son válidas, cuáles se rechazan y cuáles hay que ubicar.' | t }}
+      </li>
+    </ol>
+  </details>
   <div class="scroll stack-scope">
     <table class="grid stack-table" role="table">
       <caption>
