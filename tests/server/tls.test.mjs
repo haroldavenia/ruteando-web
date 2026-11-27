@@ -27,14 +27,17 @@ describe('backend HTTPS autofirmado', { skip }, () => {
     await new Promise((r) => backend.listen(0, '127.0.0.1', r));
     port = backend.address().port;
   });
-  after(() => shut(backend));
+  after(() => backend && shut(backend));
 
   async function through(env) {
     const { server, url } = await listen(createApp(env));
-    const res = await fetch(`${url}/api/v1/units`);
-    const body = await res.json();
-    await shut(server);
-    return { status: res.status, body };
+    try {
+      const res = await fetch(`${url}/api/v1/units`);
+      const body = await res.json();
+      return { status: res.status, body };
+    } finally {
+      await shut(server);
+    }
   }
 
   test('[FND-002 CA-2] con BACKEND_CA_FILE el proxy confía en el certificado del backend', async () => {

@@ -14,7 +14,7 @@ const auth = { authorization: 'Bearer prueba' };
 describe('proxy /api/v1 → BACKEND_URL', () => {
   let stack;
   before(async () => { stack = await startStack({ BACKEND_API_KEY: 'clave-ficticia' }); });
-  after(() => stack.close());
+  after(() => stack?.close());
 
   test('[FND-001 CA-3] mock-api sirve páginas con Bearer y 401 sin Bearer', async () => {
     const ok = await fetch(`${stack.mockUrl}/api/v1/places?page=0&size=20`, { headers: auth });
@@ -84,37 +84,49 @@ describe('proxy /api/v1 → BACKEND_URL', () => {
 describe('errores del proxy', () => {
   test('[FND-002 CA-4] sin BACKEND_URL responde 503 SERVICE_UNAVAILABLE', async () => {
     const { server, url } = await listen(createApp({}));
-    const res = await fetch(`${url}/api/v1/places`);
-    assert.equal(res.status, 503);
-    const body = await res.json();
-    assert.equal(body.error, 'SERVICE_UNAVAILABLE');
-    assert.equal(body.path, '/api/v1/places');
-    const health = await (await fetch(`${url}/healthz`)).json();
-    assert.equal(health.backend, 'missing');
-    await shut(server);
+    try {
+      const res = await fetch(`${url}/api/v1/places`);
+      assert.equal(res.status, 503);
+      const body = await res.json();
+      assert.equal(body.error, 'SERVICE_UNAVAILABLE');
+      assert.equal(body.path, '/api/v1/places');
+      const health = await (await fetch(`${url}/healthz`)).json();
+      assert.equal(health.backend, 'missing');
+    } finally {
+      await shut(server);
+    }
   });
 
   test('[FND-002 CA-5] backend lento → 504; backend caído → 502', async () => {
     const stack = await startStack({ BACKEND_TIMEOUT_MS: '150' });
-    const slow = await fetch(`${stack.webUrl}/api/v1/places`, { headers: { ...auth, 'x-mock-delay': '600' } });
-    assert.equal(slow.status, 504);
-    assert.equal((await slow.json()).error, 'GATEWAY_TIMEOUT');
-    await stack.close();
+    try {
+      const slow = await fetch(`${stack.webUrl}/api/v1/places`, { headers: { ...auth, 'x-mock-delay': '600' } });
+      assert.equal(slow.status, 504);
+      assert.equal((await slow.json()).error, 'GATEWAY_TIMEOUT');
+    } finally {
+      await stack.close();
+    }
 
     const { server, url } = await listen(createApp({ BACKEND_URL: 'http://127.0.0.1:1' }));
-    const down = await fetch(`${url}/api/v1/places`);
-    assert.equal(down.status, 502);
-    assert.equal((await down.json()).error, 'BAD_GATEWAY');
-    await shut(server);
+    try {
+      const down = await fetch(`${url}/api/v1/places`);
+      assert.equal(down.status, 502);
+      assert.equal((await down.json()).error, 'BAD_GATEWAY');
+    } finally {
+      await shut(server);
+    }
   });
 
   test('[FND-002 CA-15] POST /journeys/plan usa BACKEND_PLAN_TIMEOUT_MS; el resto el general', async () => {
     const stack = await startStack({ BACKEND_TIMEOUT_MS: '150', BACKEND_PLAN_TIMEOUT_MS: '2000' });
-    const plan = await fetch(`${stack.webUrl}/api/v1/journeys/plan`, { method: 'POST', headers: { ...auth, 'x-mock-delay': '500', 'content-type': 'application/json' }, body: '{}' });
-    assert.notEqual(plan.status, 504);
-    const other = await fetch(`${stack.webUrl}/api/v1/journeys`, { headers: { ...auth, 'x-mock-delay': '500' } });
-    assert.equal(other.status, 504);
-    await stack.close();
+    try {
+      const plan = await fetch(`${stack.webUrl}/api/v1/journeys/plan`, { method: 'POST', headers: { ...auth, 'x-mock-delay': '500', 'content-type': 'application/json' }, body: '{}' });
+      assert.notEqual(plan.status, 504);
+      const other = await fetch(`${stack.webUrl}/api/v1/journeys`, { headers: { ...auth, 'x-mock-delay': '500' } });
+      assert.equal(other.status, 504);
+    } finally {
+      await stack.close();
+    }
   });
 
   test('[FND-002 CA-15] sin BACKEND_PLAN_TIMEOUT_MS el plan corta a los 240 000 ms y el resto a los 60 000 ms', async (t) => {
@@ -155,10 +167,28 @@ describe('errores del proxy', () => {
   test('[FND-002 CA-5] si el backend corta tras enviar cabeceras se cierra la conexión', async () => {
     const backend = http.createServer((req, res) => { res.writeHead(200, { 'content-type': 'application/json' }); res.write('{"a":'); setTimeout(() => res.destroy(), 20); });
     const b = await listen(backend);
-    const { server, url } = await listen(createApp({ BACKEND_URL: b.url + '/' }));
-    await assert.rejects(async () => { const r = await fetch(`${url}/api/v1/x`); await r.text(); });
-    await shut(server);
-    await shut(b.server);
+    try {
+      const { server, url } = await listen(createApp({ BACKEND_URL: b.url + '/' }));
+      try {
+        // La conexión con el proxy debe establecerse: un error de conexión local (EACCES, ECONNREFUSED…)
+        // rechaza aquí y hace fallar la prueba. Como las cabeceras ya salieron, el proxy no puede
+        // cambiar el estado a 502/504: reenvía el 200 del backend y corta el cuerpo.
+        const r = await fetch(`${url}/api/v1/x`);
+        assert.equal(r.status, 200);
+        assert.equal(r.headers.get('content-type'), 'application/json');
+        // El cuerpo truncado no se entrega como respuesta válida: la lectura termina con error de socket.
+        await assert.rejects(r.text(), (err) => {
+          assert.equal(err.name, 'TypeError');
+          assert.equal(err.message, 'terminated');
+          assert.ok(!['EACCES', 'ECONNREFUSED', 'EPERM'].includes(err.cause?.code), `error de conexión local: ${err.cause?.code}`);
+          return true;
+        });
+      } finally {
+        await shut(server);
+      }
+    } finally {
+      await shut(b.server);
+    }
   });
 
   test('[FND-002 CA-4] errorBody y createProxy usan el formato del backend y la ruta base del destino', async () => {
@@ -166,38 +196,47 @@ describe('errores del proxy', () => {
     assert.deepEqual(Object.keys(body), ['error', 'message', 'timestamp', 'path', 'details']);
     const backend = http.createServer((req, res) => { res.writeHead(200, { 'content-type': 'text/plain', connection: 'close' }); res.end(req.url); });
     const b = await listen(backend);
-    const proxy = createProxy({ backendUrl: `${b.url}/base/` });
-    const front = http.createServer((req, res) => proxy(req, res));
-    const f = await listen(front);
-    assert.equal(await (await fetch(`${f.url}/api/v1/units`)).text(), '/base/api/v1/units');
-    await shut(f.server);
-    await shut(b.server);
+    try {
+      const proxy = createProxy({ backendUrl: `${b.url}/base/` });
+      const front = http.createServer((req, res) => proxy(req, res));
+      const f = await listen(front);
+      try {
+        assert.equal(await (await fetch(`${f.url}/api/v1/units`)).text(), '/base/api/v1/units');
+      } finally {
+        await shut(f.server);
+      }
+    } finally {
+      await shut(b.server);
+    }
   });
 });
 
 describe('redirecciones de correo y estáticos', () => {
   test('[FND-002 CA-14] /verify-email y /reset-password redirigen a la SPA conservando el token', async () => {
     const { server, url } = await listen(createApp({ BACKEND_URL: 'http://127.0.0.1:1' }));
-    const verify = await fetch(`${url}/verify-email?token=abc`, { redirect: 'manual' });
-    assert.equal(verify.status, 302);
-    assert.equal(verify.headers.get('location'), '/#/access/verify?token=abc');
-    const reset = await fetch(`${url}/reset-password?token=x%2Fy`, { redirect: 'manual' });
-    assert.equal(reset.headers.get('location'), '/#/access/reset?token=x%2Fy');
-    const invite = await fetch(`${url}/invitations/accept`, { redirect: 'manual' });
-    assert.equal(invite.headers.get('location'), '/#/access/invitation');
-    const post = await fetch(`${url}/verify-email`, { method: 'POST', redirect: 'manual' });
-    assert.equal(post.status, 404);
-    const index = await fetch(`${url}/`);
-    assert.equal(index.status, 200);
-    assert.match(await index.text(), /data-ng-app="angle"/);
-    await shut(server);
+    try {
+      const verify = await fetch(`${url}/verify-email?token=abc`, { redirect: 'manual' });
+      assert.equal(verify.status, 302);
+      assert.equal(verify.headers.get('location'), '/#/access/verify?token=abc');
+      const reset = await fetch(`${url}/reset-password?token=x%2Fy`, { redirect: 'manual' });
+      assert.equal(reset.headers.get('location'), '/#/access/reset?token=x%2Fy');
+      const invite = await fetch(`${url}/invitations/accept`, { redirect: 'manual' });
+      assert.equal(invite.headers.get('location'), '/#/access/invitation');
+      const post = await fetch(`${url}/verify-email`, { method: 'POST', redirect: 'manual' });
+      assert.equal(post.status, 404);
+      const index = await fetch(`${url}/`);
+      assert.equal(index.status, 200);
+      assert.match(await index.text(), /data-ng-app="angle"/);
+    } finally {
+      await shut(server);
+    }
   });
 });
 
 describe('mock-api: lotes y búsqueda (contrato 2026-11-23)', () => {
   let stack;
   before(async () => { stack = await startStack(); });
-  after(() => stack.close());
+  after(() => stack?.close());
   const json = { ...auth, 'content-type': 'application/json' };
 
   test('[FND-002 CA-17] POST /{recurso}/batch-delete devuelve un resultado por id y 422 con más de 100', async () => {
