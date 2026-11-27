@@ -1342,4 +1342,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Enlace de restablecimiento enviado a {0}': 'Reset link sent to {0}',
   'el conductor': 'the driver',
   'No se puede eliminar: el lugar está en uso': 'Cannot delete: the place is in use',
+  'Ocultar las paradas de {0}': 'Hide the stops of {0}',
+  'Ver las paradas de {0}': 'Show the stops of {0}',
+  'Cargando 1 paquete…': 'Loading 1 package…',
+  'Cargando {0} paquetes…': 'Loading {0} packages…',
 };

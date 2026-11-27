@@ -1348,4 +1348,8 @@ export const PT: Readonly<Record<string, string>> = {
   'Enlace de restablecimiento enviado a {0}': 'Link de redefinição enviado para {0}',
   'el conductor': 'o motorista',
   'No se puede eliminar: el lugar está en uso': 'Não é possível excluir: o local está em uso',
+  'Ocultar las paradas de {0}': 'Ocultar as paradas de {0}',
+  'Ver las paradas de {0}': 'Ver as paradas de {0}',
+  'Cargando 1 paquete…': 'Carregando 1 pacote…',
+  'Cargando {0} paquetes…': 'Carregando {0} pacotes…',
 };

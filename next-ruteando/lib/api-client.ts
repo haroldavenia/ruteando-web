@@ -8,7 +8,9 @@ export class ApiError extends Error {
   constructor(
     readonly status: number,
     message: string,
-    readonly code?: string
+    readonly code?: string,
+    /** El cuerpo de la respuesta de error tal como llegó (el gateway pone ahí su mensaje técnico). */
+    readonly details?: unknown
   ) {
     super(message);
   }
@@ -87,7 +89,8 @@ export async function requestJson<T>(
     throw new ApiError(
       res.status,
       failureMessage(res.status, code, data.code ? data.message : undefined, t, messages),
-      code
+      code,
+      data
     );
   }
   return data as T;
