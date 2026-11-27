@@ -84,6 +84,9 @@ importers:
       nodemailer:
         specifier: ^10.6.0
         version: 10.6.0
+      ol:
+        specifier: ^10.11.0
+        version: 10.11.0
       react:
         specifier: ^19.3.1
         version: 19.3.1

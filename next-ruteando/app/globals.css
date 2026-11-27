@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'ol/ol.css';
 
 /*
  * Tokens de Ruteando: los mismos valores que la aplicación Angular (Material 3, semilla violeta y rosa; ver «Ruteando - Guia de diseno»).
@@ -141,4 +142,79 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+/*
+ * Mapas (OpenLayers). Sus controles y su capa de teselas se crean fuera de React, así que se ajustan aquí con los tokens del tema y las
+ * variables `--ol-*` de su hoja (importada arriba, antes que estas reglas).
+ */
+:root {
+  --ol-background-color: var(--color-surface-container-high);
+  --ol-accent-background-color: var(--color-surface-container);
+  --ol-subtle-background-color: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  /* La atribución del proveedor va sobre este fondo: con casi toda la superficie del tema se lee igual sobre cualquier tesela */
+  --ol-partial-background-color: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  --ol-foreground-color: var(--color-on-surface);
+  --ol-subtle-foreground-color: var(--color-on-surface-variant);
+  --ol-brand-color: var(--color-primary);
+}
+
+/*
+ * Teselas oscurecidas con el tema oscuro, elegido a mano o del sistema. Solo la capa base lleva la clase (`className: 'app-tiles'`): las
+ * rutas, las paradas, los marcadores y los polígonos conservan sus colores. Se invierte la luminosidad y se devuelve el tono.
+ */
+html[data-theme='dark'] .app-tiles {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .app-tiles {
+    filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92);
+  }
+}
+
+/* Zoom con botones de 44px (los de OpenLayers miden 22px) y esquinas del sistema */
+.ol-viewport .ol-zoom {
+  top: 12px;
+  left: 12px;
+  border-radius: 12px;
+}
+
+.ol-viewport .ol-control button {
+  width: 44px;
+  height: 44px;
+  margin: 1px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 10px;
+}
+
+.ol-viewport .ol-zoom .ol-zoom-in {
+  border-radius: 11px 11px 2px 2px;
+}
+
+.ol-viewport .ol-zoom .ol-zoom-out {
+  border-radius: 2px 2px 11px 11px;
+}
+
+.ol-viewport .ol-control button:hover {
+  outline: none;
+  background-color: color-mix(in srgb, var(--color-primary) 12%, var(--ol-background-color));
+}
+
+/* El foco del teclado, como el del resto de la aplicación */
+.ol-viewport .ol-control button:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.ol-viewport .ol-control button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Los enlaces de la atribución se distinguen del texto sin depender del color */
+.ol-viewport .ol-attribution a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
