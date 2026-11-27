@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/field';
+import { Form } from '@/components/ui/form';
 import { Icon } from '@/components/ui/icon';
 import { listSsoProviders, type SsoProvider, ssoStartUrl } from '@/lib/auth-client';
 import { cn } from '@/lib/cn';
@@ -55,7 +56,7 @@ export function SsoButtons({ returnUrl }: { returnUrl?: string | null }) {
       {providers.map((p) =>
         p.id === 'enterprise' ? (
           asking ? (
-            <form key={p.id} onSubmit={enterprise} noValidate className="flex flex-col gap-2">
+            <Form key={p.id} onSubmit={enterprise} className="flex flex-col gap-2">
               <Input
                 label={t('Correo de tu empresa')}
                 type="email"
@@ -69,7 +70,7 @@ export function SsoButtons({ returnUrl }: { returnUrl?: string | null }) {
               <Button type="submit" variant="outlined">
                 {t('Continuar')}
               </Button>
-            </form>
+            </Form>
           ) : (
             <Button key={p.id} variant="outlined" onClick={() => setAsking(true)}>
               <Icon icon={RiProfileLine} size={20} />

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { AccessPitch } from '@/components/access/access-pitch';
+import { LegalLinks } from '@/components/legal/legal-links';
 import { Brand } from '@/components/ui/brand';
 import { LanguageToggle } from '@/components/ui/language-toggle';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -29,9 +30,7 @@ export default async function AccessLayout({ children }: { children: ReactNode }
             <p className="mt-1 text-sm text-on-surface-variant">{t('Planifica y sigue tus rutas')}</p>
           </div>
           {children}
-          <p className="mt-2 text-center text-xs text-on-surface-variant">
-            © {new Date().getFullYear()} Ruteando by Hanoit, LLC
-          </p>
+          <LegalLinks />
         </div>
       </main>
       <aside className="hidden items-center justify-center bg-surface-container/60 p-10 access:flex access:[grid-area:art]">

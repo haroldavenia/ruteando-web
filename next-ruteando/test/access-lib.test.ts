@@ -280,7 +280,7 @@ describe('mensajes del SSO', () => {
     }
     expect(ssoErrorKey('INVENTADO')).toBe(ssoErrorKey(null));
     expect(ssoErrorKey('EMAIL_MISSING')).toBe(ssoErrorKey('EMAIL_NOT_VERIFIED'));
-    for (const key of Object.values(SSO_ERRORS)) expect(EN[key!], key).toBeTruthy();
+    for (const key of Object.values(SSO_ERRORS)) expect(EN[key as string], String(key)).toBeTruthy();
   });
 });
 

@@ -24,6 +24,8 @@ export const EN: Readonly<Record<string, string>> = {
   'Un símbolo ({0})': 'A symbol ({0})',
   'Tu sesión ha caducado': 'Your session has expired',
   'Cerrar': 'Close',
+  'Notificaciones': 'Notifications',
+  'Requisitos de la contraseña': 'Password requirements',
   'No hay token de refresco': 'There is no refresh token',
   'Hay una versión nueva de Ruteando': 'A new version of Ruteando is available',
   'Recargar': 'Reload',

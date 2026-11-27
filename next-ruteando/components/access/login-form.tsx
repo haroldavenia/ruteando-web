@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { AccessTitle, Lead } from '@/components/access/step';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/field';
+import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
 import { PasswordField } from '@/components/ui/password-field';
 import { ApiError } from '@/lib/api-client';
@@ -109,7 +110,7 @@ export function LoginForm({ returnUrl }: { returnUrl?: string | null }) {
     <>
       <AccessTitle>{t('Bienvenido de nuevo')}</AccessTitle>
       <Lead>{t('Inicia sesión para seguir tus rutas.')}</Lead>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <Input
           label={t('Correo electrónico')}
           type="email"
@@ -140,7 +141,7 @@ export function LoginForm({ returnUrl }: { returnUrl?: string | null }) {
         >
           {t('Iniciar sesión')}
         </Button>
-      </form>
+      </Form>
       <SsoButtons returnUrl={returnUrl} />
       <p className="text-center text-sm">
         {t('¿No tienes cuenta?')}{' '}

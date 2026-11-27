@@ -1,6 +1,7 @@
-import { type FailureMessages, postJson } from './api-client';
+import { type FailureMessages, type MessageSpec, postJson } from './api-client';
 import type { TFunction } from './i18n/core';
 import type { MfaChallengeMethod, MfaMethod } from './mfa-labels';
+import { PASSWORD_POLICY_TEXT } from './password-policy';
 import { SSO_ERRORS } from './sso-messages';
 
 /** Opción de un reto de segundo factor; el destino va enmascarado (`a•••@correo`, `+57•••••4567`) y es `null` en TOTP y recuperación. */
@@ -113,3 +114,72 @@ export async function logout(): Promise<boolean> {
     return false;
   }
 }
+
+// ---------- cuenta: registro, verificación de correo, recuperar y restablecer contraseña ----------
+
+const REVIEW_DATA = 'Revisa los datos e inténtalo de nuevo';
+export const INVALID_LINK = 'El enlace no es válido o ha caducado';
+/** Cuando el gateway rechaza la contraseña (`PASSWORD_POLICY_VIOLATION`): la regla, no un error genérico. */
+const PASSWORD_REJECTED: MessageSpec = {
+  key: 'La contraseña no cumple la política. {0}',
+  args: [PASSWORD_POLICY_TEXT],
+};
+
+const REGISTER_ERRORS: FailureMessages = {
+  409: 'Ya existe una cuenta con ese correo',
+  429: TOO_MANY_ATTEMPTS,
+  400: REVIEW_DATA,
+  PASSWORD_POLICY_VIOLATION: PASSWORD_REJECTED,
+};
+
+/**
+ * Enlaces de un solo uso (verificar el correo, restablecer la contraseña). El gateway no documenta qué estado usa para un token inválido:
+ * `INVALID_TOKEN` y los habituales; un 400 sin código se sigue leyendo como enlace no válido, pero un 400 por la contraseña o por datos
+ * no válidos no.
+ */
+const LINK_ERRORS: FailureMessages = {
+  INVALID_TOKEN: INVALID_LINK,
+  PASSWORD_POLICY_VIOLATION: PASSWORD_REJECTED,
+  VALIDATION_ERROR: REVIEW_DATA,
+  429: TOO_MANY_ATTEMPTS,
+  400: INVALID_LINK,
+  401: INVALID_LINK,
+  404: INVALID_LINK,
+  410: INVALID_LINK,
+};
+
+export interface RegisterInput {
+  firstName: string;
+  lastName: string;
+  tenantName: string;
+  email: string;
+  password: string;
+}
+
+/** Crea la cuenta y su empresa. No inicia sesión: eso ocurre al verificar el correo. */
+export async function register(input: RegisterInput, t: TFunction): Promise<void> {
+  await postJson('/middleware/auth/register', input, t, REGISTER_ERRORS);
+}
+
+/** Verifica el correo con el token del enlace; si el gateway entrega una sesión pasa por el 2FA como un login. */
+export async function verifyEmail(token: string, t: TFunction): Promise<LoginResult> {
+  return toLoginResult(await postJson('/middleware/auth/verify-email', { token }, t, LINK_ERRORS));
+}
+
+export async function resendVerification(email: string, t: TFunction): Promise<void> {
+  await postJson('/middleware/auth/resend-verification', { email }, t, { 429: TOO_MANY_ATTEMPTS });
+}
+
+export async function forgotPassword(email: string, t: TFunction): Promise<void> {
+  await postJson('/middleware/auth/forgot-password', { email }, t, { 429: TOO_MANY_ATTEMPTS });
+}
+
+/** Fija la contraseña nueva con el token del correo. No inicia sesión. */
+export async function resetPassword(token: string, newPassword: string, t: TFunction): Promise<void> {
+  await postJson('/middleware/auth/reset-password', { token, newPassword }, t, LINK_ERRORS);
+}
+
+/** Estados con los que el gateway indica que el enlace ya no sirve (no documenta cuál usa). */
+export const LINK_STATUSES = [400, 401, 404, 410];
+/** Códigos de un 400 que culpan a la contraseña o a los datos escritos, no al enlace: el token sigue valiendo. */
+export const FORM_ERROR_CODES = ['PASSWORD_POLICY_VIOLATION', 'VALIDATION_ERROR'];

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AccessTitle, Lead } from '@/components/access/step';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/field';
+import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
 import { Icon } from '@/components/ui/icon';
 import { LinkButton } from '@/components/ui/link-button';
@@ -183,7 +184,7 @@ export function MfaVerifyStep({ challenge, onVerified, onCancelled }: Props) {
     <>
       <AccessTitle>{t('Verificación en dos pasos')}</AccessTitle>
       <Lead>{prompt}</Lead>
-      <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+      <Form onSubmit={submit} className="flex flex-col gap-4">
         <Input
           ref={inputRef}
           label={method === 'recovery' ? t('Código de recuperación') : t('Código')}
@@ -198,7 +199,7 @@ export function MfaVerifyStep({ challenge, onVerified, onCancelled }: Props) {
         <Button type="submit" variant="primary" size="lg" loading={loading}>
           {t('Verificar')}
         </Button>
-      </form>
+      </Form>
       {canResend ? (
         <p className="text-center text-sm">
           <LinkButton disabled={loading} onClick={() => send(method)}>

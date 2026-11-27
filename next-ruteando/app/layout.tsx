@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from 'next';
 import { Manrope, Roboto } from 'next/font/google';
 import type { ReactNode } from 'react';
 
+import { ToastProvider } from '@/components/ui/toast';
 import { I18nProvider } from '@/lib/i18n/client';
 import { dictionaryOf } from '@/lib/i18n/dictionary';
 import { getLanguage } from '@/lib/i18n/server';
@@ -38,7 +39,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={lang} data-theme={themeAttribute(theme)} className={`${manrope.variable} ${roboto.variable}`}>
       <body>
         <I18nProvider lang={lang} dictionary={dictionaryOf(lang)}>
-          {children}
+          <ToastProvider>{children}</ToastProvider>
         </I18nProvider>
       </body>
     </html>

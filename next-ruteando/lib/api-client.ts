@@ -14,10 +14,22 @@ export class ApiError extends Error {
   }
 }
 
+/** Un mensaje (clave de `t()`), o la clave con los valores de sus marcadores `{0}`. */
+export type MessageSpec = string | { key: string; args: readonly (string | number | MessageSpec)[] };
+
 export interface FailureMessages {
   /** Mensaje por estado HTTP (`401`) o por código del servicio (`CHALLENGE_EXPIRED`); manda el código sobre el estado. */
-  [statusOrCode: string]: string | undefined;
+  [statusOrCode: string]: MessageSpec | undefined;
 }
+
+/** Los argumentos que son un mensaje se traducen antes de entrar en el marcador (una frase dentro de otra). */
+export const render = (spec: MessageSpec, t: TFunction): string =>
+  typeof spec === 'string'
+    ? t(spec)
+    : t(
+        spec.key,
+        spec.args.map((a) => (typeof a === 'object' ? render(a, t) : a))
+      );
 
 /**
  * Qué decirle a la persona ante un fallo. Orden: el mensaje que la operación declaró para ese código o estado; los fallos del servicio
@@ -30,8 +42,8 @@ export function failureMessage(
   t: TFunction,
   own?: FailureMessages
 ): string {
-  if (code && own?.[code]) return t(own[code]!);
-  if (own?.[String(status)]) return t(own[String(status)]!);
+  if (code && own?.[code]) return render(own[code]!, t);
+  if (own?.[String(status)]) return render(own[String(status)]!, t);
   if (status === 0) return t('No hay conexión con el servidor');
   if (status >= 500) return t('El servicio no está disponible, inténtalo más tarde');
   // Los servicios propios (MFA, SSO) dan su `code` y un mensaje ya pensado para la persona: manda sobre el genérico del estado
