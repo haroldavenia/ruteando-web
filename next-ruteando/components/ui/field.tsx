@@ -58,9 +58,13 @@ export interface InputProps extends FieldProps, Omit<ComponentProps<'input'>, 'p
   trailing?: ReactNode;
 }
 
+/** Estos tipos siempre muestran algo (`--:--`, `dd/mm/aaaa`): la etiqueta va siempre arriba, como en un `select`. */
+const ALWAYS_FILLED = new Set(['date', 'time', 'datetime-local', 'month', 'week']);
+
 export function Input({ label, hint, error, className, id, leading, trailing, ...props }: InputProps) {
   const generated = useId();
   const fieldId = id ?? generated;
+  const raised = ALWAYS_FILLED.has(props.type ?? '');
   return (
     <Shell id={fieldId} hint={hint} error={error} className={className}>
       {/* `placeholder=" "` activa la etiqueta flotante (`peer-placeholder-shown`); el texto visible es la etiqueta */}
@@ -72,7 +76,14 @@ export function Input({ label, hint, error, className, id, leading, trailing, ..
         className={cn(control, leading && 'pl-12', trailing && 'pr-14')}
         {...props}
       />
-      <label htmlFor={fieldId} className={cn(floating, leading && 'left-12')}>
+      <label
+        htmlFor={fieldId}
+        className={cn(
+          floating,
+          leading && 'left-12',
+          raised && 'top-1.5 text-xs peer-placeholder-shown:top-1.5 peer-placeholder-shown:text-xs'
+        )}
+      >
         {label}
       </label>
       {leading ? (

@@ -1338,4 +1338,7 @@ export const EN: Readonly<Record<string, string>> = {
   'Algo salió mal': 'Something went wrong',
   'No se pudo mostrar esta pantalla. Puedes intentarlo de nuevo.':
     'This screen could not be displayed. You can try again.',
+  'Mínimo {0} caracteres': 'At least {0} characters',
+  'Enlace de restablecimiento enviado a {0}': 'Reset link sent to {0}',
+  'el conductor': 'the driver',
 };
