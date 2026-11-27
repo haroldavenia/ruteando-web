@@ -67,3 +67,4 @@ Ninguna.
 | Fecha | Cambio | Motivo | Aprobó |
 | --- | --- | --- | --- |
 | 2026-11-20 | Spec creada | Adopción de harness-engineering | pendiente |
+| 2026-11-25 | `orquestador.md`: se añade `invoke_subagent` a `tools`. La lista `tools` es explícita y no lo incluía, así que el orquestador no podía delegar en implementador ni revisores (detectado al lanzar las revisiones de FND-001) | Documentación de subagentes de Antigravity (`tools`: lista explícita de herramientas permitidas) | Harold Avenia |
