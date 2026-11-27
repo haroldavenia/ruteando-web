@@ -1367,4 +1367,6 @@ export const PT: Readonly<Record<string, string>> = {
   'revocada': 'revogada',
   'aceptado': 'aceito',
   'aceptada': 'aceita',
+  'Escribe una dirección https válida': 'Digite um endereço https válido',
+  '{0} atendidos': '{0} atendidos',
 };

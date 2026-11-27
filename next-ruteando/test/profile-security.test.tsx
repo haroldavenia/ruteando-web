@@ -344,7 +344,9 @@ describe('seguridad', () => {
   });
 
   test('exigir por roles obliga a elegir al menos uno y guarda solo cuando cambió algo', async () => {
-    const gateway = mockGateway(routes({ 'PUT /middleware/mfa/policy': (call: Call) => policy(call.body as Record<string, unknown>) }));
+    const gateway = mockGateway(
+      routes({ 'PUT /middleware/mfa/policy': (call: Call) => policy(call.body as Record<string, unknown>) })
+    );
     withToasts(<Security />);
     expect(await screen.findByText('Métodos permitidos')).toBeInTheDocument();
     const save = screen.getByRole('button', { name: 'Guardar cambios' });

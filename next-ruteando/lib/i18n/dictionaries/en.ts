@@ -1361,4 +1361,6 @@ export const EN: Readonly<Record<string, string>> = {
   'revocada': 'revoked',
   'aceptado': 'accepted',
   'aceptada': 'accepted',
+  'Escribe una dirección https válida': 'Enter a valid https address',
+  '{0} atendidos': '{0} attended',
 };

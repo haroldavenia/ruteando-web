@@ -1,17 +1,20 @@
 'use client';
 
+import { RiFileExcel2Line } from '@remixicon/react';
 import Link from 'next/link';
 import { useCallback, useRef, useState } from 'react';
 
 import { RoutesMap, type StopRef } from '@/components/map/routes-map';
 import { FormHead } from '@/components/page/form-kit';
 import { StatusBadge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardTitle } from '@/components/ui/card';
 import { FormResult } from '@/components/ui/form-result';
+import { Icon } from '@/components/ui/icon';
 import { Loading, Skeleton } from '@/components/ui/skeleton';
 import { useFormat } from '@/lib/hooks/use-format';
 import { useRecord } from '@/lib/hooks/use-record';
+import { useReportExport } from '@/lib/hooks/use-report-export';
 import { useT } from '@/lib/i18n/client';
 import { getJourney } from '@/lib/journeys/journey-api';
 import { journeyStatusLabel } from '@/lib/journeys/labels';
@@ -28,6 +31,7 @@ export function JourneyDetail({ id }: { id: string }) {
   const [selectedRoute, setSelectedRoute] = useState<number | null>(null);
   const [selectedStop, setSelectedStop] = useState<StopRef | null>(null);
   const mapSection = useRef<HTMLElement>(null);
+  const exporter = useReportExport();
 
   /** Lleva la vista al mapa; el foco se queda en el botón que se pulsó (la ficha se lo devuelve al cerrarse). */
   const showMap = () => mapSection.current?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
@@ -71,6 +75,19 @@ export function JourneyDetail({ id }: { id: string }) {
   return (
     <div className="flex flex-col gap-4">
       <FormHead title={journey.name} backLabel={t('Jornadas')} backHref="/journeys" />
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          variant="outlined"
+          loading={exporter.busy}
+          disabled={routes.length === 0}
+          onClick={() => void exporter.journeyXlsx(journey)}
+        >
+          <Icon icon={RiFileExcel2Line} size={20} />
+          {t('Exportar a Excel')}
+        </Button>
+        <FormResult error={exporter.error} success={exporter.success} />
+      </div>
 
       <Card aria-labelledby="summary-title">
         <CardTitle id="summary-title" className="mb-3">

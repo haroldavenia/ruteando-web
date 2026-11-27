@@ -1,17 +1,20 @@
 'use client';
 
+import { RiFileExcel2Line, RiFilePdf2Line } from '@remixicon/react';
 import Link from 'next/link';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { RoutesMap, type StopRef } from '@/components/map/routes-map';
 import { FormHead } from '@/components/page/form-kit';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardTitle } from '@/components/ui/card';
 import { FormResult } from '@/components/ui/form-result';
+import { Icon } from '@/components/ui/icon';
 import { Loading, Skeleton } from '@/components/ui/skeleton';
 import type { DomainRoute } from '@/lib/api/models';
 import { useFormat } from '@/lib/hooks/use-format';
 import { useRecord } from '@/lib/hooks/use-record';
+import { useReportExport } from '@/lib/hooks/use-report-export';
 import { useT } from '@/lib/i18n/client';
 import { getJourney } from '@/lib/journeys/journey-api';
 
@@ -29,6 +32,7 @@ export function RouteDetail({ journeyId, routeIndex }: { journeyId: string; rout
   const state = useRecord(journeyId, fetcher);
   const [selectedStop, setSelectedStop] = useState<StopRef | null>(null);
   const mapSection = useRef<HTMLElement>(null);
+  const exporter = useReportExport();
   /** `null` si el parámetro no es un entero no negativo. */
   const index = /^\d+$/.test(routeIndex) ? Number(routeIndex) : null;
   const journey = state.status === 'ready' ? state.record : null;
@@ -78,6 +82,18 @@ export function RouteDetail({ journeyId, routeIndex }: { journeyId: string; rout
   return (
     <div className="flex flex-col gap-4">
       <FormHead title={route.name} backLabel={t('Jornada ') + journey.name} backHref={back} />
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Button variant="outlined" loading={exporter.busy} onClick={() => void exporter.routeXlsx(journey, route)}>
+          <Icon icon={RiFileExcel2Line} size={20} />
+          {t('Exportar a Excel')}
+        </Button>
+        <Button variant="outlined" loading={exporter.busy} onClick={() => void exporter.routePdf(journey, route)}>
+          <Icon icon={RiFilePdf2Line} size={20} />
+          {t('Exportar a PDF')}
+        </Button>
+        <FormResult error={exporter.error} success={exporter.success} />
+      </div>
 
       <Card aria-labelledby="summary-title">
         <CardTitle id="summary-title" className="mb-3">

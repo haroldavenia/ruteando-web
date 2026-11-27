@@ -26,6 +26,8 @@
     "@remixicon/react": "^4.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.9",
     "next": "^16.4.6",
     "nodemailer": "^10.6.0",
     "ol": "^10.11.0",
@@ -34,6 +36,7 @@
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.92.0",
     "tailwind-merge": "^3.7.1",
+    "write-excel-file": "^4.1.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {

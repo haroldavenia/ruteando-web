@@ -1,6 +1,7 @@
 import { RiAddLine } from '@remixicon/react';
 import Link from 'next/link';
 
+import { HomeDashboard } from '@/components/home/home-dashboard';
 import { buttonVariants } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
@@ -44,6 +45,7 @@ export default async function Home() {
           </div>
         ) : null}
       </section>
+      {canOperate ? <HomeDashboard /> : null}
       {noAreas ? <Card>{t('Tu rol no tiene áreas disponibles en la aplicación web.')}</Card> : null}
     </div>
   );
