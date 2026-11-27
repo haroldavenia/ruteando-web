@@ -1,5 +1,4 @@
 packages:
-  - ng-ruteando
   - next-ruteando
 
 # pnpm 10 no ejecuta los scripts de instalación de las dependencias salvo que se aprueben. Aquí ninguna los necesita:

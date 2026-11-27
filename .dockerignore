@@ -1,7 +1,4 @@
 node_modules
-ng-ruteando/node_modules
-ng-ruteando/dist
-ng-ruteando/.angular
 .git
 .env
 .claude

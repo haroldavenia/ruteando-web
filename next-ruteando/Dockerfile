@@ -20,8 +20,6 @@ RUN npm install -g "pnpm@$(node -p "require('./package.json').packageManager.spl
 # ---------- deps: solo lo que next-ruteando necesita, con el lockfile congelado ----------
 FROM base AS deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-# El lockfile describe todo el workspace: hacen falta los package.json de sus paquetes, aunque solo se instale uno
-COPY ng-ruteando/package.json ng-ruteando/package.json
 COPY next-ruteando/package.json next-ruteando/package.json
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile --filter next-ruteando...
