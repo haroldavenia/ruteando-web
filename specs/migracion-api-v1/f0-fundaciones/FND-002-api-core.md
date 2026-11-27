@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Estado | Borrador |
+| Estado | En progreso |
 | Iniciativa / Fase | `migracion-api-v1` / `f0-fundaciones` |
 | Clave anterior | F0-02 · `API-CORE` |
 | Depende de | FND-001 |
-| Issue | #<n> (pendiente) |
-| Rama | `feat/<n>-api-core` |
+| Issue | #80 |
+| Rama | `feat/80-api-core` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
 | Endpoints `/api/v1` | — |
@@ -81,6 +81,8 @@ Como desarrollador del frontend, quiero una sola puerta al backend `/api/v1` con
 - `tests/mock-api/server.mjs`
 - `tests/mock-api/store.mjs`
 - `specs/migracion-api-v1/f0-fundaciones/evidencia/FND-002/**`
+- `docs/contracts/known-backend-defects.md` (D9: solo 180 s → 240 s en la línea 20)
+- `specs/migracion-api-v1/f4-jornadas/JOR-001-journey-plan.md` (D9: solo 180 s → 240 s en la línea 164 y su fila de la §11)
 
 ## 4. Requisitos
 
@@ -97,7 +99,7 @@ Como desarrollador del frontend, quiero una sola puerta al backend `/api/v1` con
 - **RF-9** — Tratar 201/202/204 sin cuerpo como éxito
 - **RF-10** — Enviar `sort=campo,asc|desc` en los seis listados paginados (lista blanca por recurso) y tratar 400 `BAD_REQUEST` de un campo no permitido
 - **RF-11** — Redirigir en `server.js` las rutas sin `#` de los correos (`/verify-email?token=`, `/reset-password?token=`) a las rutas de la SPA, conservando el token
-- **RF-12** — Aplicar a `POST /api/v1/journeys/plan` un timeout propio del proxy (`BACKEND_PLAN_TIMEOUT_MS`, 180 000 por defecto) distinto del general
+- **RF-12** — Aplicar a `POST /api/v1/journeys/plan` un timeout propio del proxy (`BACKEND_PLAN_TIMEOUT_MS`, 240 000 por defecto) distinto del general
 - **RF-13** — Ofrecer `ApiClient.batchDelete(recurso, ids)` sobre `POST /{recurso}/batch-delete` en lotes de 100, con resultado unificado `{deleted, notFound, conflicts, results}`
 
 **No funcionales**
@@ -129,9 +131,15 @@ Como desarrollador del frontend, quiero una sola puerta al backend `/api/v1` con
 
 ## 6. Diseño y restricciones técnicas
 
-Crear: `master/js/modules/services/api_config.js`, `api_client.js`, `api_error.js`, `error_messages.js`, `master/jade/views/partials/list-state.jade`. Modificar: `server/server.js` (proxy con `http-proxy-middleware` antes de body-parser), `server/config.js`, `.env.example`, `app/i18n/{es,en,es_AR}.json` (`errors.*`). Pruebas: `tests/unit/core/*.spec.js`, `tests/e2e/proxy.e2e.mjs`.
+Implementado (ver §11, decisiones D3 a D5):
 
-**Pantallas y flujos.** Transversal: todos los listados muestran estados `cargando / vacío / error con Reintentar`. Componente/plantilla compartida `views/partials/list-state.jade`. Todo listado o acción implementa los estados cargando, vacío, error con «Reintentar» y éxito con aviso (`docs/ui/sistema-ui.md`).
+- Cliente: `master/js/modules/services/api_config.js`, `api_client.js` (`get/post/put/patch/del`, `page`, `listAll`, `runBulk`, `batchDelete`), `api_error.js`, `error_messages.js`; `authResponseInterceptor.js` deja el hueco para ACC-001.
+- Servidor: `server/app.js` (redirecciones de correo y montaje del proxy), `server/proxy.js` (proxy con `http`/`https` nativos, streaming, sin `Origin`, `X-Api-Key` opcional, `BACKEND_TIMEOUT_MS` general y `BACKEND_PLAN_TIMEOUT_MS` = 240 000 ms para `POST /journeys/plan` (D7), 502/503/504), `server/server.js` (arranque; Satellizer/MongoDB solo con `LEGACY_SATELLIZER=1` en `server/legacy-satellizer.js`).
+- i18n: diccionarios versionados en `master/i18n/{es,en,es_AR}.json`, copiados a `app/i18n` por la tarea Gulp `i18n`.
+- Estados de listado: directiva `rw-list-state` (FND-005), no `list-state.jade`.
+- Pruebas: `tests/unit/api-core/*.spec.js`, `tests/integration/api-core/page.contract.spec.js`, `tests/server/proxy.test.mjs` (node:test sobre mock-api), `tests/e2e/api-core.e2e.mjs`, `tests/api/api-core.api.test.mjs` (sondas contra el backend real), `tests/tools/i18n.test.mjs`.
+
+**Pantallas y flujos.** Transversal: todo listado o acción implementa los estados cargando, vacío, error con «Reintentar» y éxito con aviso (`docs/ui/sistema-ui.md`) mediante `rw-list-state`.
 
 ## 7. Casos de prueba esperados
 
@@ -175,33 +183,34 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 ## 9. Dependencias, riesgos y preguntas abiertas
 
 - Dependencias: FND-001.
+- Regularización: el código se integró en `angularjs-main` antes de aprobar la spec (commits `e72f50a7` y `c78fed16`, sin PR). Falta: revisión independiente (validador, contendiente, calidad-seguridad), fixture real de `post__places__batch-delete` (hoy es el ejemplo documentado) ejecución de `npm run test:api` contra el backend real, y ajuste de D7 en el código: valor por defecto de `server/proxy.js`, `.env.example` y ADR-0002 de 180 000 a 240 000 ms, con prueba del valor por defecto.
 - Riesgos: El servidor actual depende de MongoDB para Satellizer: arrancar sin Mongo debe seguir funcionando (proxy y estáticos no dependen de Mongo).
-- Pregunta **bloqueante**: `app/` está en `.gitignore` y los diccionarios de runtime viven en `app/i18n/*.json` (no versionados). ¿Se mueven a `master/i18n/` y Gulp los copia? → Decisión propuesta: Sí: mover a `master/i18n/`, tarea de Gulp `i18n`, y versionarlos antes de que las specs añadan claves
-- Pregunta no bloqueante: Timeout de planificación → Decisión propuesta: 60 s por defecto, configurable
+- Pregunta resuelta (antes bloqueante; ver §11, decisión D2): `app/` está en `.gitignore` y los diccionarios de runtime viven en `app/i18n/*.json` (no versionados). ¿Se mueven a `master/i18n/` y Gulp los copia? → Decisión propuesta: Sí: mover a `master/i18n/`, tarea de Gulp `i18n`, y versionarlos antes de que las specs añadan claves
+- Pregunta no bloqueante: Timeout de planificación → Resuelta (§11, D7): 240 000 ms (`BACKEND_PLAN_TIMEOUT_MS`), configurable
 - Pregunta no bloqueante: ¿CORS o proxy? → Decisión propuesta: Resuelta (E4): proxy del mismo origen; el backend no amplía CORS
 
 ## 10. Trazabilidad (se completa al cerrar)
 
 | CA | Prueba(s) | Commit(s) | Evidencia |
 | --- | --- | --- | --- |
-| CA-1 | `tests/unit/api-core/api_client.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-2 | `tests/e2e/api-core.e2e.mjs`, `tests/server/proxy.test.mjs`, `tests/unit/api-core/api_client.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-3 | `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-4 | `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-5 | `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-6 | `tests/integration/api-core/page.contract.spec.js`, `tests/unit/api-core/api_client.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-7 | `tests/api/api-core.api.test.mjs`, `tests/integration/api-core/page.contract.spec.js`, `tests/unit/api-core/api_client.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-8 | `tests/unit/api-core/api_client.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-9 | `tests/unit/api-core/api_client.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-10 | `tests/tools/i18n.test.mjs`, `tests/unit/api-core/api_client.spec.js`, `tests/unit/api-core/error_messages.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-11 | `tests/unit/api-core/error_messages.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-12 | `tests/unit/api-core/api_client.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-13 | `tests/api/api-core.api.test.mjs`, `tests/unit/api-core/api_client.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-14 | `tests/e2e/api-core.e2e.mjs`, `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-15 | `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-16 | `tests/api/api-core.api.test.mjs`, `tests/unit/api-core/api_client.spec.js`, `tests/unit/api-core/auth_response_interceptor.spec.js` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-17 | `tests/unit/api-core/api_client.spec.js`, `tests/integration/api-core/page.contract.spec.js`, `tests/server/proxy.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-23-implementador.md` |
-| CA-18 | `tests/unit/api-core/error_messages.spec.js`, `tests/tools/i18n.test.mjs` | sin commit (ADR-0001 pendiente) | `evidencia/FND-002/2026-11-23-implementador.md` |
+| CA-1 | `tests/unit/api-core/api_client.spec.js`, `tests/server/legacy-urls.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo), `c3fadcc0` | `evidencia/FND-002/2026-11-20-implementador.md`, `evidencia/FND-002/2026-11-27-implementador.md` |
+| CA-2 | `tests/e2e/api-core.e2e.mjs`, `tests/server/proxy.test.mjs`, `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-3 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-4 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-5 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo), `67cdb196` | `evidencia/FND-002/2026-11-20-implementador.md`, `evidencia/FND-002/2026-11-27-implementador.md` |
+| CA-6 | `tests/integration/api-core/page.contract.spec.js`, `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-7 | `tests/api/api-core.api.test.mjs`, `tests/integration/api-core/page.contract.spec.js`, `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-8 | `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-9 | `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-10 | `tests/tools/i18n.test.mjs`, `tests/unit/api-core/api_client.spec.js`, `tests/unit/api-core/error_messages.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-11 | `tests/unit/api-core/error_messages.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-12 | `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-13 | `tests/api/api-core.api.test.mjs`, `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-14 | `tests/e2e/api-core.e2e.mjs`, `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-15 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo), `41413e07` (D7), `f04bfeb2` (D9) | `evidencia/FND-002/2026-11-20-implementador.md`, `evidencia/FND-002/2026-11-27-implementador.md` |
+| CA-16 | `tests/api/api-core.api.test.mjs`, `tests/unit/api-core/api_client.spec.js`, `tests/unit/api-core/auth_response_interceptor.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-17 | `tests/unit/api-core/api_client.spec.js`, `tests/integration/api-core/page.contract.spec.js`, `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-23-implementador.md` |
+| CA-18 | `tests/unit/api-core/error_messages.spec.js`, `tests/tools/i18n.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo), `c3fadcc0` | `evidencia/FND-002/2026-11-23-implementador.md`, `evidencia/FND-002/2026-11-27-implementador.md` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
@@ -212,9 +221,13 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (E3, E4, B8, C1, D1, D11) | Documentación del backend | — |
 | 2026-11-20 | v4: formato de la plantilla harness-engineering | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
-| 2026-11-20 | Implementación propuesta de F0 a petición del usuario (alcance «Arnés + F0 implementado»), antes de la aprobación formal de la spec: los gates G0 (Lista) y G5 (merge) siguen pendientes de una persona. | Pedido explícito del usuario 2026-11-20 | pendiente |
-| 2026-11-20 | Resuelta la pregunta bloqueante de i18n: diccionarios versionados en `master/i18n/*.json` y tarea Gulp `i18n` que los copia a `app/i18n`; se autoriza `master/gulpfile.js`. | Decisión propuesta de la propia spec | pendiente |
-| 2026-11-20 | Proxy con `http`/`https` nativos (`server/proxy.js`) en lugar de `http-proxy-middleware`: sin dependencia nueva y con control de timeouts por ruta. El ejemplo Satellizer/MongoDB se mueve sin cambios a `server/legacy-satellizer.js` (solo con `LEGACY_SATELLIZER=1`). | server.js dependía de MongoDB y servía la build de Angular 21 | pendiente |
-| 2026-11-20 | Las pruebas de CA-2…CA-5 y CA-14/15 se hacen como pruebas de servidor (`tests/server/proxy.test.mjs`, node:test sobre mock-api) más E2E de navegador para CA-2 y CA-14. | Más rápidas y deterministas que E2E | pendiente |
-| 2026-11-20 | `list-state.jade` se sustituye por la directiva `rw-list-state` de FND-005. | Un único componente de estados | pendiente |
-| 2026-11-23 | `batchDelete` (M1) y código `OTP_DELIVERY_FAILED` en `ErrorMessages` | migration-guide §7, §15 | pendiente |
+| 2026-11-20 | **[D1]** Implementación propuesta de F0 a petición del usuario (alcance «Arnés + F0 implementado»), antes de la aprobación formal de la spec: los gates G0 (Lista) y G5 (merge) siguen pendientes de una persona. | Pedido explícito del usuario 2026-11-20 | Harold Avenia (2026-11-27) |
+| 2026-11-20 | **[D2]** Resuelta la pregunta bloqueante de i18n: diccionarios versionados en `master/i18n/*.json` y tarea Gulp `i18n` que los copia a `app/i18n`; se autoriza `master/gulpfile.js`. | Decisión propuesta de la propia spec | Harold Avenia (2026-11-27) |
+| 2026-11-20 | **[D3]** Proxy con `http`/`https` nativos (`server/proxy.js`) en lugar de `http-proxy-middleware`: sin dependencia nueva y con control de timeouts por ruta. El ejemplo Satellizer/MongoDB se mueve sin cambios a `server/legacy-satellizer.js` (solo con `LEGACY_SATELLIZER=1`). | server.js dependía de MongoDB y servía la build de Angular 21 | Harold Avenia (2026-11-27) |
+| 2026-11-20 | **[D4]** Las pruebas de CA-2…CA-5 y CA-14/15 se hacen como pruebas de servidor (`tests/server/proxy.test.mjs`, node:test sobre mock-api) más E2E de navegador para CA-2 y CA-14. | Más rápidas y deterministas que E2E | Harold Avenia (2026-11-27) |
+| 2026-11-20 | **[D5]** `list-state.jade` se sustituye por la directiva `rw-list-state` de FND-005. | Un único componente de estados | Harold Avenia (2026-11-27) |
+| 2026-11-23 | **[D6]** `batchDelete` (M1) y código `OTP_DELIVERY_FAILED` en `ErrorMessages` | migration-guide §7, §15 | Harold Avenia (2026-11-27) |
+| 2026-11-27 | **[D7]** Timeout de planificación del proxy: 240 000 ms (`BACKEND_PLAN_TIMEOUT_MS`). RF-12 pasa de 180 000 a 240 000; el código (`server/proxy.js`, `.env.example`) y ADR-0002 se ajustan en la implementación. | Margen para planes grandes; la §9 proponía 60 s y el código usaba 180 s | Harold Avenia (2026-11-27) |
+| 2026-11-27 | Regularización: §6 y §10 alineadas con lo implementado; la historia pasa por las puertas G0–G7 sobre el código ya integrado. | El código entró en la base sin PR (`e72f50a7`, `c78fed16`) | — |
+| 2026-11-27 | Estado → Lista | — | Harold Avenia |
+| 2026-11-27 | **[D9]** Alcance: se autorizan `docs/contracts/known-backend-defects.md` y `specs/migracion-api-v1/f4-jornadas/JOR-001-journey-plan.md` solo para cambiar el timeout síncrono de planificación de 180 s a 240 s (`known-backend-defects.md:20`, `JOR-001:164`), coherente con D7. | Esos documentos seguían citando 180 s tras D7 (informe del implementador 2026-11-27) | Harold Avenia (2026-11-27) |

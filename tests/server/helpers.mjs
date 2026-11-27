@@ -21,8 +21,14 @@ export function shut(server) {
 export async function startStack(env = {}) {
   const mock = createMockApi();
   const m = await listen(mock.server);
-  const app = createApp({ BACKEND_URL: m.url, ...env });
-  const w = await listen(app);
+  let w;
+  try {
+    const app = createApp({ BACKEND_URL: m.url, ...env });
+    w = await listen(app);
+  } catch (err) {
+    await shut(m.server);
+    throw err;
+  }
   return {
     mock, mockUrl: m.url, webUrl: w.url,
     async close() {

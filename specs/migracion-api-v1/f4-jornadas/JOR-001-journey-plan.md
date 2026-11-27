@@ -161,7 +161,7 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 ## 9. Dependencias, riesgos y preguntas abiertas
 
 - Dependencias: PAQ-001, PAQ-002.
-- Riesgos: Tiempos medidos (D11): 100 paquetes 5,5 s, 500 en 31 s, 2000 en 137 s. Por encima de 500 se usa `async=true` (sin corte del proxy). En síncrono el proxy da 180 s (FND-002); si aun así corta, la jornada puede haberse creado en el servidor (CA-11). Un job interrumpido por un reinicio del backend queda `failed`: el usuario lo reenvía. Los jobs se purgan a las 24 h.
+- Riesgos: Tiempos medidos (D11): 100 paquetes 5,5 s, 500 en 31 s, 2000 en 137 s. Por encima de 500 se usa `async=true` (sin corte del proxy). En síncrono el proxy da 240 s (FND-002, D7); si aun así corta, la jornada puede haberse creado en el servidor (CA-11). Un job interrumpido por un reinicio del backend queda `failed`: el usuario lo reenvía. Los jobs se purgan a las 24 h.
 - Pregunta no bloqueante: ¿`date` afecta al plan? → Decisión propuesta: Resuelta: metadato `Instant` UTC opcional
 - Pregunta no bloqueante: Legacy `fixedRoutes == 1` usaba `optimalRouteOfPointCloud` → Decisión propuesta: Persistir con `plan?mode=messenger`; la variante efímera queda en JOR-007 (`/routing/optimizations`)
 - Pregunta no bloqueante: ¿Modo asíncrono? → Decisión propuesta: Resuelta (D11 cerrado 2026-11-23): `async=true` por encima de 500 paquetes; consulta cada 3 s
@@ -196,3 +196,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-19 | v3: respuesta del backend 2026-11-19 (B2, D11) | Documentación del backend | — |
 | 2026-11-20 | Formato y claves de la plantilla harness-engineering | Adopción del arnés (HAR-001) | — |
 | 2026-11-23 | Plan asíncrono (D11): `async=true` + `GET /journeys/plan/jobs/{jobId}` por encima de 500 paquetes; 429 de cola llena; recuperación tras recargar | migration-guide §9, endpoints.md, BACKEND_PENDIENTES D11 | pendiente |
+| 2026-11-27 | §9: el timeout síncrono del proxy para `POST /journeys/plan` pasa de 180 s a 240 s (`BACKEND_PLAN_TIMEOUT_MS` = 240 000 por defecto) | FND-002 D7 y D9 (#80) | Harold Avenia (2026-11-27) |

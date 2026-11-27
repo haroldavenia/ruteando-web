@@ -1,6 +1,6 @@
 # ADR-0001: GitHub Flow y rama base de la línea AngularJS
 
-- Estado: **Propuesto — requiere decisión humana**
+- Estado: **Aceptado** — 2026-11-27, Harold Avenia (decisión D8 de la regularización de FND-002). `angularjs-main` existe y es la base desde el PR #69.
 - Fecha: 2026-11-20
 
 ## Contexto

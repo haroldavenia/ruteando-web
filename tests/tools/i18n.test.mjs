@@ -20,6 +20,16 @@ test('[FND-002 CA-10] cada código de ErrorMessages tiene texto en es, en y es_A
   }
 });
 
+test('[FND-002 CA-18] OTP_DELIVERY_FAILED tiene texto propio, distinto del genérico de 502, en es, en y es_AR', () => {
+  for (const lang of ['es', 'en', 'es_AR']) {
+    const d = dict(lang);
+    const own = d.errors.code.OTP_DELIVERY_FAILED;
+    assert.equal(typeof own, 'string', `${lang}: errors.code.OTP_DELIVERY_FAILED`);
+    assert.ok(own.trim().length > 0, `${lang}: texto vacío`);
+    assert.notEqual(own, d.errors.status['502'], `${lang}: igual al genérico de 502`);
+  }
+});
+
 test('[FND-005 CA-1] las claves ui.* y errors.* coinciden en los tres idiomas', () => {
   const base = flat({ ui: dict('es').ui, errors: dict('es').errors }).sort();
   for (const lang of ['en', 'es_AR']) {
