@@ -193,11 +193,11 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 
 | CA | Prueba(s) | Commit(s) | Evidencia |
 | --- | --- | --- | --- |
-| CA-1 | `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-1 | `tests/unit/api-core/api_client.spec.js`, `tests/server/legacy-urls.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo), `c3fadcc0` | `evidencia/FND-002/2026-11-20-implementador.md`, `evidencia/FND-002/2026-11-27-implementador.md` |
 | CA-2 | `tests/e2e/api-core.e2e.mjs`, `tests/server/proxy.test.mjs`, `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-3 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-4 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-5 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-5 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo), `67cdb196` | `evidencia/FND-002/2026-11-20-implementador.md`, `evidencia/FND-002/2026-11-27-implementador.md` |
 | CA-6 | `tests/integration/api-core/page.contract.spec.js`, `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-7 | `tests/api/api-core.api.test.mjs`, `tests/integration/api-core/page.contract.spec.js`, `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-8 | `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
@@ -207,10 +207,10 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | CA-12 | `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-13 | `tests/api/api-core.api.test.mjs`, `tests/unit/api-core/api_client.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-14 | `tests/e2e/api-core.e2e.mjs`, `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
-| CA-15 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
+| CA-15 | `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo), `41413e07` (D7), `f04bfeb2` (D9) | `evidencia/FND-002/2026-11-20-implementador.md`, `evidencia/FND-002/2026-11-27-implementador.md` |
 | CA-16 | `tests/api/api-core.api.test.mjs`, `tests/unit/api-core/api_client.spec.js`, `tests/unit/api-core/auth_response_interceptor.spec.js` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-20-implementador.md` |
 | CA-17 | `tests/unit/api-core/api_client.spec.js`, `tests/integration/api-core/page.contract.spec.js`, `tests/server/proxy.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-23-implementador.md` |
-| CA-18 | `tests/unit/api-core/error_messages.spec.js`, `tests/tools/i18n.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo; se completa al cerrar) | `evidencia/FND-002/2026-11-23-implementador.md` |
+| CA-18 | `tests/unit/api-core/error_messages.spec.js`, `tests/tools/i18n.test.mjs` | `e72f50a7`, `c78fed16` (antes del flujo), `c3fadcc0` | `evidencia/FND-002/2026-11-23-implementador.md`, `evidencia/FND-002/2026-11-27-implementador.md` |
 
 ## 11. Registro de decisiones y cambios de alcance
 
