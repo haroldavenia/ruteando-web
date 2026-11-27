@@ -1,3 +1,4 @@
+import { readCapped } from '@/lib/body';
 import { verifySameOrigin } from '@/lib/csrf';
 import { GENERIC_5XX, jsonError } from '@/lib/errors';
 import { gatewayErrorResponse, gatewayFetch } from '@/lib/gateway';
@@ -18,12 +19,16 @@ export async function POST(request: Request) {
   if (!verifySameOrigin(request)) return jsonError(403, 'Origen no permitido.');
   if (!rateLimit(`login:${clientIp(request)}`, 20, 15 * 60_000)) return jsonError(429, 'Demasiados intentos. Prueba más tarde.');
 
+  // Sin sesión y con `Origin` falsificable por cualquier cliente que no sea un navegador: el cuerpo se lee con tope (20 KB) y se aborta.
   let body: { email?: unknown; password?: unknown };
   try {
-    body = await request.json();
+    const raw = await readCapped(request, 20 * 1024);
+    if (raw === null) return jsonError(413, 'La solicitud es demasiado grande.');
+    body = JSON.parse(new TextDecoder().decode(raw));
   } catch {
     return jsonError(400, 'Solicitud no válida.');
   }
+  if (!body || typeof body !== 'object') return jsonError(400, 'Solicitud no válida.');
   if (typeof body.email !== 'string' || typeof body.password !== 'string') return jsonError(400, 'Solicitud no válida.');
   // Además del límite por IP (que se reparte entre muchas), uno por cuenta contra el adivinado de contraseñas.
   if (!rateLimit(`login-acct:${body.email.trim().toLowerCase()}`, 10, 15 * 60_000)) {

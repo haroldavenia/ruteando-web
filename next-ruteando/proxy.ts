@@ -1,6 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { unpackUser } from '@/lib/session-token';
+
 const PUBLIC = [/^\/access(\/|$)/, /^\/legal(\/|$)/, /^\/middleware(\/|$)/, /^\/gateway\/sso(\/|$)/];
+/** Respuestas de autenticación y de datos: nunca se guardan en cachés (del navegador ni compartidas). */
+const NO_STORE = [/^\/middleware(\/|$)/, /^\/gateway\/sso(\/|$)/];
 
 /** CSP con nonce por petición. `CSP_MODE`: report-only (por defecto), enforce u off. */
 export function buildCsp(nonce: string) {
@@ -24,9 +28,11 @@ export function buildCsp(nonce: string) {
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  // Guard de acceso: sin sesión (ni refresh token para renovarla) las páginas privadas llevan a /access. Los Route Handlers de
-  // /middleware se protegen solos (401 en JSON, no redirección).
-  const hasSession = request.cookies.has('rt_refresh') || request.cookies.has('rt_access');
+  // Guardia de acceso: sin una sesión creada por este servidor (cookie `rt_user` con firma válida y una de las dos de token) las páginas
+  // privadas llevan a /access. No sustituye a la comprobación de cada página que muestre datos, y los Route Handlers de /middleware se
+  // protegen solos (401 en JSON, no redirección).
+  const signed = unpackUser(request.cookies.get('rt_user')?.value);
+  const hasSession = Boolean(signed) && (request.cookies.has('rt_refresh') || request.cookies.has('rt_access'));
   if (!hasSession && !PUBLIC.some((re) => re.test(pathname))) {
     const url = request.nextUrl.clone();
     url.pathname = '/access';
@@ -48,6 +54,13 @@ export function proxy(request: NextRequest) {
   response.headers.set('x-content-type-options', 'nosniff');
   response.headers.set('referrer-policy', 'strict-origin-when-cross-origin');
   response.headers.set('x-frame-options', 'DENY');
+  response.headers.set('cross-origin-opener-policy', 'same-origin');
+  response.headers.set('permissions-policy', 'camera=(), microphone=(), geolocation=()');
+  // HSTS solo si la petición llegó por https (detrás de un proxy, por X-Forwarded-Proto): por http el navegador lo ignoraría.
+  if (request.headers.get('x-forwarded-proto') === 'https' || request.nextUrl.protocol === 'https:') {
+    response.headers.set('strict-transport-security', 'max-age=15552000; includeSubDomains');
+  }
+  if (NO_STORE.some((re) => re.test(pathname))) response.headers.set('cache-control', 'no-store');
   return response;
 }
 
