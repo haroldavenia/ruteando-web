@@ -17,7 +17,7 @@ Estado al 2026-11-23 según `source/BACKEND_PENDIENTES_RESPUESTA.md`. Un defecto
 | D11 | `GET /auth/verify-email` devuelve HTML | ACC-002 | Documentado (D1) | Redirección de `/verify-email` en `server.js` |
 | D12 | Correos no llegan | ACC-002, ACC-003, EMP-002 | **Corregido (B1, comprobado 2026-11-23)** | Prueba en vivo con la cuenta `sdd-test` |
 | D13 | `TOKEN_EXPIRED` vs `INVALID_TOKEN` | ACC-002, ACC-003 | Documentado (C2): ambos, con significado distinto | Mensajes distintos |
-| D14 | `journeys/plan` con 2000 paquetes tarda 137 s | JOR-001 | **Corregido (D11, 2026-11-23)**: `async=true` + `GET /journeys/plan/jobs/{jobId}` | Asíncrono por encima de 500 paquetes; el timeout de 180 s queda para el modo síncrono |
+| D14 | `journeys/plan` con 2000 paquetes tarda 137 s | JOR-001 | **Corregido (D11, 2026-11-23)**: `async=true` + `GET /journeys/plan/jobs/{jobId}` | Asíncrono por encima de 500 paquetes; el timeout de 240 s queda para el modo síncrono |
 | D15 | OTP devolvía 200 aunque el proveedor no enviara | EMP-005 | **Corregido (2026-11-23)**: 502 `OTP_DELIVERY_FAILED` sin `otpId` | Mensaje propio y reintento / canal correo |
 
 Nota: la numeración «D» de esta tabla es del frontend; en `BACKEND_PENDIENTES_RESPUESTA.md` D12 es el push web y D13 Stripe.

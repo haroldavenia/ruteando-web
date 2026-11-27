@@ -81,6 +81,8 @@ Como desarrollador del frontend, quiero una sola puerta al backend `/api/v1` con
 - `tests/mock-api/server.mjs`
 - `tests/mock-api/store.mjs`
 - `specs/migracion-api-v1/f0-fundaciones/evidencia/FND-002/**`
+- `docs/contracts/known-backend-defects.md` (D9: solo 180 s → 240 s en la línea 20)
+- `specs/migracion-api-v1/f4-jornadas/JOR-001-journey-plan.md` (D9: solo 180 s → 240 s en la línea 164 y su fila de la §11)
 
 ## 4. Requisitos
 
@@ -228,3 +230,4 @@ Ninguna. (Si hay, cada una con archivo:línea, motivo y aprobador humano.)
 | 2026-11-27 | **[D7]** Timeout de planificación del proxy: 240 000 ms (`BACKEND_PLAN_TIMEOUT_MS`). RF-12 pasa de 180 000 a 240 000; el código (`server/proxy.js`, `.env.example`) y ADR-0002 se ajustan en la implementación. | Margen para planes grandes; la §9 proponía 60 s y el código usaba 180 s | Harold Avenia (2026-11-27) |
 | 2026-11-27 | Regularización: §6 y §10 alineadas con lo implementado; la historia pasa por las puertas G0–G7 sobre el código ya integrado. | El código entró en la base sin PR (`e72f50a7`, `c78fed16`) | — |
 | 2026-11-27 | Estado → Lista | — | Harold Avenia |
+| 2026-11-27 | **[D9]** Alcance: se autorizan `docs/contracts/known-backend-defects.md` y `specs/migracion-api-v1/f4-jornadas/JOR-001-journey-plan.md` solo para cambiar el timeout síncrono de planificación de 180 s a 240 s (`known-backend-defects.md:20`, `JOR-001:164`), coherente con D7. | Esos documentos seguían citando 180 s tras D7 (informe del implementador 2026-11-27) | Harold Avenia (2026-11-27) |
