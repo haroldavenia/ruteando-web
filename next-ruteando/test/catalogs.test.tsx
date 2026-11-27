@@ -9,7 +9,7 @@ import type { MasterDomain } from '@/lib/api/models';
 import { keyError, sortValues, valuesText } from '@/lib/catalogs/values';
 import { resetMasterDomainsCache } from '@/lib/hooks/use-master-domain';
 
-import { mockGateway } from './gateway-mock';
+import { type Call, mockGateway } from './gateway-mock';
 import { renderWithI18n } from './render';
 
 const withToasts = (ui: React.ReactElement) => renderWithI18n(<ToastProvider>{ui}</ToastProvider>);
@@ -60,7 +60,7 @@ describe('catálogos', () => {
     const gateway = mockGateway({
       'GET /middleware/data/master-domains/PlaceType': domain(),
       'GET /middleware/data/master-domains': [],
-      'POST /middleware/data/master-domains/PlaceType/values': (call) =>
+      'POST /middleware/data/master-domains/PlaceType/values': (call: Call) =>
         (call.body as { key: string }).key === 'dup'
           ? { status: 409, body: { error: 'CONFLICT' } }
           : domain({ values: [...domain().values, value('kiosk', 'Kiosco', 3)] }),
