@@ -4,6 +4,7 @@ export interface Call {
   method: string;
   path: string;
   body: unknown;
+  headers: Record<string, string>;
 }
 
 type Reply = unknown | { status: number; body?: unknown } | ((call: Call) => unknown);
@@ -17,7 +18,12 @@ export function mockGateway(routes: Record<string, Reply>) {
   vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, init) => {
     const method = (init?.method ?? 'GET').toUpperCase();
     const path = String(url);
-    const call: Call = { method, path, body: init?.body ? JSON.parse(String(init.body)) : undefined };
+    const call: Call = {
+      method,
+      path,
+      body: init?.body ? JSON.parse(String(init.body)) : undefined,
+      headers: Object.fromEntries(new Headers(init?.headers).entries()),
+    };
     calls.push(call);
     const entry = routes[`${method} ${path}`];
     if (entry === undefined) return new Response(JSON.stringify({ error: 'NOT_FOUND' }), { status: 404 });
