@@ -9,6 +9,7 @@
  * Apagado sin `SSO_ENABLED_PROVIDERS`, `SSO_REDIRECT_BASE_URL` o `MFA_SECRET_KEY`.
  */
 import crypto from 'node:crypto';
+import dns from 'node:dns';
 import path from 'node:path';
 
 import { readCapped } from '../body';
@@ -30,6 +31,15 @@ const FLOW_TTL_MS = 10 * 60 * 1000;
 const TICKET_TTL_MS = 5 * 60 * 1000;
 const MAX_PENDING = 500;
 export const SSO_COOKIE = 'ruteando_sso';
+/** Dominios de correo públicos: nadie puede ser «dueño» de ellos, así que nunca se aceptan (ni verificables por casualidad). */
+const PUBLIC_DOMAINS = new Set([
+  'gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com', 'yahoo.com', 'yahoo.es', 'ymail.com',
+  'icloud.com', 'me.com', 'mac.com', 'proton.me', 'protonmail.com', 'aol.com', 'gmx.com', 'gmx.net', 'mail.com', 'zoho.com',
+  'yandex.com', 'yandex.ru', 'qq.com', '163.com', 'hotmail.es', 'outlook.es', 'live.com.mx', 'hotmail.com.mx',
+]);
+/** Para demostrar que controla el dominio, el administrador publica `ruteando-verify=<valor>` como TXT en `_ruteando-verify.<dominio>`. */
+const VERIFY_LABEL = '_ruteando-verify';
+const DNS_TIMEOUT_MS = 5000;
 const DOMAIN = /^(?=.{3,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/;
 
 type Env = Record<string, string | undefined>;
@@ -40,6 +50,8 @@ export interface SsoOverrides {
   fetchImpl?: FetchLike;
   gateway?: GatewayCall;
   store?: SsoStore;
+  /** Resolución de registros TXT (pruebas); por defecto, el DNS del sistema. */
+  resolveTxt?: (host: string) => Promise<string[][]>;
   /** Con el segundo factor activo, el SSO pasa por el mismo segundo paso. */
   mfa?: { enabled: boolean; afterLogin(session: GatewaySession): MfaOut | null } | null;
 }
@@ -147,6 +159,9 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
     overrides.store ||
     openSsoStore(env.SSO_DB_PATH || path.join(process.cwd(), 'data', 'sso.sqlite'), { now: () => new Date(now()) });
   const mfa = overrides.mfa || null;
+  const resolveTxt =
+    overrides.resolveTxt ||
+    ((host: string) => Promise.race([dns.promises.resolveTxt(host), new Promise<string[][]>((_, no) => setTimeout(() => no(new Error('dns')), DNS_TIMEOUT_MS))]));
   const flows = createExpiringMap<Flow>(FLOW_TTL_MS, now);
   const tickets = createExpiringMap<GatewaySession>(TICKET_TTL_MS, now);
   const secureCookie = rawBase.startsWith('https:');
@@ -287,7 +302,10 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
     if (typeof params.code !== 'string' || !params.code) return redirect(failTo('PROVIDER_ERROR'));
 
     try {
-      const client = flow.name === 'enterprise' ? enterpriseClient(flow.enterprise!) : clientFor(flow.name);
+      // Lo guardado AHORA, no lo de hace unos minutos: si el administrador cambió el emisor o quitó el dominio, ese flujo ya no vale.
+      const enterprise = flow.tenantId ? store.getEnterprise(flow.tenantId) : null;
+      if (flow.tenantId && !enterprise) return redirect(failTo('NO_PROVIDER'));
+      const client = flow.name === 'enterprise' ? enterpriseClient(enterprise!) : clientFor(flow.name);
       const identity = await client.complete({
         code: params.code,
         redirectUri: redirectUri(flow.name),
@@ -299,7 +317,7 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
         // Empresa: su propio proveedor es la autoridad de sus dominios (algunos, como Azure AD, no mandan `email_verified`)
         const domain = identity.email.split('@')[1];
         if (identity.emailVerified === false) return redirect(failTo('EMAIL_NOT_VERIFIED'));
-        if (!flow.enterprise!.domains.includes(domain)) return redirect(failTo('WRONG_DOMAIN'));
+        if (!enterprise!.verifiedDomains.includes(domain)) return redirect(failTo('WRONG_DOMAIN'));
       } else if (identity.emailVerified !== true) {
         return redirect(failTo('EMAIL_NOT_VERIFIED')); // nunca se vincula por un correo que el proveedor no verificó
       }
@@ -346,6 +364,9 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
     throw new Fail(403, 'FORBIDDEN', 'No puedes actuar sobre otra empresa.');
   }
 
+  /** Valor del TXT: derivado de la clave maestra, la empresa y el dominio (no hay nada que guardar y no se puede adivinar ni copiar de otra empresa). */
+  const domainProof = (tenantId: string, domain: string) => `ruteando-verify=${codec.hash('sso-domain', `${tenantId}:${domain}`).slice(0, 48)}`;
+
   const enterpriseView = (tenantId: string) => {
     const e = store.getEnterprise(tenantId);
     return {
@@ -355,7 +376,13 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       issuer: e?.issuer ?? '',
       clientId: e?.clientId ?? '',
       hasSecret: Boolean(e?.secretEnc), // el secreto nunca vuelve al navegador
-      domains: e?.domains ?? [],
+      domains: (e?.domains ?? []).map((domain) => ({
+        domain,
+        verified: e!.verifiedDomains.includes(domain),
+        // Lo que debe publicar en DNS para demostrar que el dominio es suyo
+        txtHost: `${VERIFY_LABEL}.${domain}`,
+        txtValue: domainProof(tenantId, domain),
+      })),
       redirectUri: redirectUri('enterprise'),
     };
   };
@@ -440,6 +467,9 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       if (domains.length < 1 || domains.length > 10 || domains.some((d) => !DOMAIN.test(d))) {
         throw invalid('Escribe entre 1 y 10 dominios de correo válidos, por ejemplo empresa.com.');
       }
+      const publicDomain = domains.find((d) => PUBLIC_DOMAINS.has(d));
+      if (publicDomain) throw invalid(`${publicDomain} es un correo público: solo se admiten dominios propios de la empresa.`);
+      // Solo choca con un dominio que otra empresa ya VERIFICÓ; reclamar es libre pero no sirve de nada hasta demostrarlo
       const taken = domains.find((d) => {
         const owner = store.domainOwner(d);
         return owner && owner !== tenantId;
@@ -457,6 +487,24 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       });
       if (changed) store.deleteProviderIdentities(tenantId, `enterprise:${tenantId}`);
       store.addEvent({ userId: user.id, tenantId, kind: 'enterprise_saved', detail: issuer });
+      return out(200, enterpriseView(tenantId));
+    }
+    if (method === 'POST' && p === '/enterprise/verify') {
+      adminOnly();
+      needEnterprise();
+      const tenantId = targetTenant(user, query.get('tenantId') || body.tenantId);
+      const domain = String(body.domain || '').trim().toLowerCase();
+      const current = store.getEnterprise(tenantId);
+      if (!current?.domains.includes(domain)) throw new Fail(404, 'NOT_FOUND', 'Ese dominio no está en la lista de la empresa.');
+      if (current.verifiedDomains.includes(domain)) return out(200, enterpriseView(tenantId));
+      const expected = domainProof(tenantId, domain);
+      const records = await resolveTxt(`${VERIFY_LABEL}.${domain}`).catch(() => [] as string[][]);
+      // Cada registro TXT llega partido en trozos de 255 bytes: se unen antes de comparar
+      if (!records.some((chunks) => equal(chunks.join('').trim(), expected))) {
+        throw new Fail(409, 'DOMAIN_NOT_VERIFIED', `No se encontró el registro TXT. Publica ${expected} en ${VERIFY_LABEL}.${domain} y vuelve a intentarlo (el DNS puede tardar unos minutos).`);
+      }
+      if (!store.verifyDomain(tenantId, domain)) throw new Fail(409, 'DOMAIN_TAKEN', `El dominio ${domain} ya lo verificó otra empresa.`);
+      store.addEvent({ userId: user.id, tenantId, kind: 'domain_verified', detail: domain });
       return out(200, enterpriseView(tenantId));
     }
     if (method === 'DELETE' && p === '/enterprise') {

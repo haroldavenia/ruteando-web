@@ -1,5 +1,9 @@
 // @vitest-environment node
 import crypto from 'node:crypto';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -23,6 +27,7 @@ function mint(claims: object, header: object = { alg: 'RS256', kid: 'k1' }, key:
 }
 
 let nextClaims: Record<string, unknown> = {};
+let txt: Record<string, string[][]> = {}; // registros TXT que «publica» cada dominio
 let tokenStatus = 200;
 const calls: string[] = [];
 const fakeFetch: NonNullable<SsoOverrides['fetchImpl']> = async (url, init) => {
@@ -67,6 +72,7 @@ function build(env: Record<string, string | undefined> = {}, over: SsoOverrides 
     {
       now: () => clock,
       fetchImpl: fakeFetch,
+      resolveTxt: async (host) => txt[host] ?? [],
       store: openSsoStore(':memory:'),
       gateway: async (_path, init) => {
         exchanged.push(JSON.parse(String(init?.body)));
@@ -105,6 +111,7 @@ beforeEach(() => {
   exchangeStatus = 200;
   exchangeUser = user();
   exchanged = [];
+  txt = {};
   tokenStatus = 200;
   calls.length = 0;
 });
@@ -300,12 +307,27 @@ describe('proveedor de empresa', () => {
   const put = (sso: ReturnType<typeof build>, body: object, auth = admin, tenant = '') =>
     sso.manage(new Request(`http://app.test/m${tenant}`, { method: 'PUT', body: JSON.stringify(body) }), '/enterprise', auth);
   const config = { name: 'Acme', issuer: ISS, clientId: 'cid', clientSecret: 's3cr3t', domains: ['acme.test'] };
+  type DomainView = { domain: string; verified: boolean; txtHost: string; txtValue: string };
+  const view = async (sso: ReturnType<typeof build>, auth = admin) =>
+    ((await sso.manage(new Request('http://app.test/m'), '/enterprise', auth)).json as { domains: DomainView[] }).domains;
+  const verifyReq = (sso: ReturnType<typeof build>, domain: string, auth = admin) =>
+    sso.manage(new Request('http://app.test/m', { method: 'POST', body: JSON.stringify({ domain }) }), '/enterprise/verify', auth);
+  /** Hace lo que haría el administrador: publica el TXT que pide la vista y pulsa «Verificar». */
+  async function verify(sso: ReturnType<typeof build>, domain = 'acme.test', auth = admin) {
+    const d = (await view(sso, auth)).find((x) => x.domain === domain)!;
+    txt[d.txtHost] = [[d.txtValue]];
+    return verifyReq(sso, domain, auth);
+  }
 
   test('alta: valida, cifra el secreto y nunca lo devuelve', async () => {
     const sso = build();
     const res = await put(sso, config);
     expect(res.status).toBe(200);
-    expect(res.json).toMatchObject({ configured: true, hasSecret: true, domains: ['acme.test'] });
+    expect(res.json).toMatchObject({
+      configured: true,
+      hasSecret: true,
+      domains: [{ domain: 'acme.test', verified: false, txtHost: '_ruteando-verify.acme.test' }],
+    });
     expect(JSON.stringify(res.json)).not.toContain('s3cr3t');
     expect(sso.store.getEnterprise('t1')?.secretEnc).not.toContain('s3cr3t'); // cifrado en el almacén
     // editar sin secreto conserva el anterior
@@ -329,9 +351,10 @@ describe('proveedor de empresa', () => {
     expect((await put(sso, { ...config, ...over })).status).toBe(400);
   });
 
-  test('un dominio de otra empresa da 409; el secreto es obligatorio la primera vez', async () => {
+  test('un dominio que otra empresa ya verificó da 409; el secreto es obligatorio la primera vez', async () => {
     const sso = build();
     await put(sso, config);
+    await verify(sso);
     const other = { user: user({ tenantId: 't2' }), accessToken: 'tok' };
     expect((await put(sso, config, other)).status).toBe(409);
     expect((await put(build(), { ...config, clientSecret: '' })).status).toBe(400);
@@ -348,6 +371,7 @@ describe('proveedor de empresa', () => {
   async function enterpriseLogin(over: Record<string, unknown> = {}, who: Partial<SessionUser> = {}, email = 'ada@acme.test') {
     const sso = build();
     await put(sso, config);
+    await verify(sso);
     exchangeUser = user(who);
     const { q, cookie, location } = await begin(sso, 'enterprise', email);
     expect(location.startsWith(`${ISS}/auth`)).toBe(true);
@@ -365,6 +389,7 @@ describe('proveedor de empresa', () => {
   test('start: dominio desconocido y SSO apagado dan el mismo error (no revela qué empresas lo tienen)', async () => {
     const sso = build();
     await put(sso, config);
+    await verify(sso);
     const unknown = await sso.start('enterprise', 'x@otro.test');
     sso.store.setPolicy({ tenantId: 't1', enabled: false });
     const off = await sso.start('enterprise', 'ada@acme.test');
@@ -395,6 +420,165 @@ describe('proveedor de empresa', () => {
     expect(sso.store.getEnterprise('t1')).toBeNull();
     expect(sso.store.getIdentity('enterprise:t1', 's')).toBeNull();
     expect(sso.store.domainOwner('acme.test')).toBeNull();
+  });
+});
+
+describe('verificación de dominios', () => {
+  const t1 = { user: user(), accessToken: 'tok' };
+  const t2 = { user: user({ tenantId: 't2' }), accessToken: 'tok' };
+  const config = { name: 'Acme', issuer: ISS, clientId: 'cid', clientSecret: 's', domains: ['acme.test'] };
+  const put = (sso: ReturnType<typeof build>, body: object, auth = t1) =>
+    sso.manage(new Request('http://app.test/m', { method: 'PUT', body: JSON.stringify(body) }), '/enterprise', auth);
+  const get = async (sso: ReturnType<typeof build>, auth = t1) =>
+    ((await sso.manage(new Request('http://app.test/m'), '/enterprise', auth)).json as { domains: { domain: string; verified: boolean; txtHost: string; txtValue: string }[] }).domains;
+  const verifyReq = (sso: ReturnType<typeof build>, domain: string, auth = t1) =>
+    sso.manage(new Request('http://app.test/m', { method: 'POST', body: JSON.stringify({ domain }) }), '/enterprise/verify', auth);
+  const publish = async (sso: ReturnType<typeof build>, auth = t1, domain = 'acme.test') => {
+    const d = (await get(sso, auth)).find((x) => x.domain === domain)!;
+    txt[d.txtHost] = [[d.txtValue]];
+    return d;
+  };
+
+  test('un dominio solo reclamado no enruta ni valida: hace falta demostrarlo', async () => {
+    const sso = build();
+    await put(sso, config);
+    expect(hashOf((await sso.start('enterprise', 'ada@acme.test')).location).error).toBe('NO_PROVIDER');
+    expect(sso.store.domainOwner('acme.test')).toBeNull();
+    await publish(sso);
+    expect((await verifyReq(sso, 'acme.test')).status).toBe(200);
+    expect(sso.store.domainOwner('acme.test')).toBe('t1');
+    expect((await sso.start('enterprise', 'ada@acme.test')).location.startsWith(`${ISS}/auth`)).toBe(true);
+  });
+
+  test('sin TXT, con otro valor o en otro dominio: 409 con las instrucciones', async () => {
+    const sso = build();
+    await put(sso, config);
+    const none = await verifyReq(sso, 'acme.test');
+    expect(none.status).toBe(409);
+    expect(none.json).toMatchObject({ code: 'DOMAIN_NOT_VERIFIED' });
+    expect(JSON.stringify(none.json)).toContain('_ruteando-verify.acme.test');
+    txt['_ruteando-verify.acme.test'] = [['ruteando-verify=algo-que-no-es']];
+    expect((await verifyReq(sso, 'acme.test')).status).toBe(409);
+    txt['_ruteando-verify.otro.test'] = [['x']];
+    expect((await verifyReq(sso, 'otro.test')).status).toBe(404); // ni está en la lista de la empresa
+  });
+
+  test('el valor depende de la empresa: el TXT de una no sirve para otra', async () => {
+    const sso = build();
+    await put(sso, config);
+    await put(sso, config, t2);
+    const mine = await publish(sso, t1);
+    const theirs = (await get(sso, t2))[0];
+    expect(theirs.txtValue).not.toBe(mine.txtValue);
+    // t2 intenta verificar con lo que publicó t1
+    expect((await verifyReq(sso, 'acme.test', t2)).status).toBe(409);
+    expect(sso.store.domainOwner('acme.test')).toBeNull();
+  });
+
+  test('el TXT partido en trozos (255 bytes) se une antes de comparar', async () => {
+    const sso = build();
+    await put(sso, config);
+    const d = (await get(sso))[0];
+    txt[d.txtHost] = [[d.txtValue.slice(0, 10), d.txtValue.slice(10)]];
+    expect((await verifyReq(sso, 'acme.test')).status).toBe(200);
+  });
+
+  test('reclamar es libre pero gana quien lo demuestra: el otro recibe DOMAIN_TAKEN', async () => {
+    const sso = build();
+    await put(sso, config); // t1 reclama (pendiente)
+    await put(sso, config, t2); // t2 también: no está verificado, no choca
+    await publish(sso, t2);
+    expect((await verifyReq(sso, 'acme.test', t2)).status).toBe(200);
+    await publish(sso, t1);
+    const late = await verifyReq(sso, 'acme.test', t1);
+    expect(late.status).toBe(409);
+    expect(late.json).toMatchObject({ code: 'DOMAIN_TAKEN' });
+    expect(sso.store.domainOwner('acme.test')).toBe('t2');
+    // y a partir de ahí t1 ya no puede ni reclamarlo
+    expect((await put(sso, config, t1)).status).toBe(409);
+  });
+
+  test('los dominios de correo públicos se rechazan aunque publiquen el TXT', async () => {
+    const sso = build();
+    for (const d of ['gmail.com', 'outlook.com', 'icloud.com', 'hotmail.es']) {
+      expect((await put(sso, { ...config, domains: [d] })).status, d).toBe(400);
+    }
+    expect(sso.store.getEnterprise('t1')).toBeNull();
+  });
+
+  test('al guardar de nuevo se conserva lo verificado, lo nuevo queda pendiente y lo quitado se borra', async () => {
+    const sso = build();
+    await put(sso, { ...config, domains: ['acme.test', 'viejo.test'] });
+    await publish(sso);
+    await verifyReq(sso, 'acme.test');
+    await put(sso, { ...config, domains: ['acme.test', 'nuevo.test'] });
+    const now = await get(sso);
+    expect(now.map((d) => [d.domain, d.verified])).toEqual([['acme.test', true], ['nuevo.test', false]]);
+    // verificar dos veces es inofensivo
+    expect((await verifyReq(sso, 'acme.test')).status).toBe(200);
+  });
+
+  test('un dominio que se verificó puede dejar de serlo al quitarlo: ya no enruta', async () => {
+    const sso = build();
+    await put(sso, config);
+    await publish(sso);
+    await verifyReq(sso, 'acme.test');
+    await put(sso, { ...config, domains: ['otro.test'] });
+    expect(sso.store.domainOwner('acme.test')).toBeNull();
+    expect(hashOf((await sso.start('enterprise', 'ada@acme.test')).location).error).toBe('NO_PROVIDER');
+  });
+
+  test('si el administrador quita el dominio a mitad de un flujo, ese flujo ya no vale', async () => {
+    const sso = build();
+    await put(sso, config);
+    await publish(sso);
+    await verifyReq(sso, 'acme.test');
+    exchangeUser = user();
+    const { q, cookie } = await begin(sso, 'enterprise', 'ada@acme.test');
+    nextClaims = claimsFor(q, { email: 'ada@acme.test', email_verified: undefined });
+    await put(sso, { ...config, domains: ['otro.test'] }); // lo quita antes del regreso
+    const back = await sso.callback('enterprise', { state: q.state, code: 'c' }, cookie);
+    expect(hashOf(back.location).error).toBe('WRONG_DOMAIN');
+    expect(exchanged).toHaveLength(0);
+  });
+
+  test('solo administradores verifican, y solo la empresa de quien llama (o super_admin con tenantId)', async () => {
+    const sso = build();
+    await put(sso, config);
+    await publish(sso);
+    expect((await verifyReq(sso, 'acme.test', { user: user({ role: 'agent' }), accessToken: 't' })).status).toBe(403);
+    expect((await verifyReq(sso, 'acme.test', { user: null as never, accessToken: '' })).status).toBe(401);
+    // un administrador de otra empresa no verifica el dominio de t1
+    expect((await verifyReq(sso, 'acme.test', t2)).status).toBe(404);
+  });
+
+  test('el SSO empresarial apagado en el servidor responde 503', async () => {
+    const sso = build({ SSO_ENABLED_PROVIDERS: 'google' });
+    expect((await verifyReq(sso, 'acme.test')).status).toBe(503);
+  });
+});
+
+describe('migración del almacén', () => {
+  test('una base anterior (dominios sin verificar) se actualiza y sus dominios quedan PENDIENTES', () => {
+    const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'sso-')), 'sso.sqlite');
+    openSsoStore(file).close(); // crea el esquema actual...
+    const raw = new DatabaseSync(file); // ...y se devuelve a la versión 1, como la dejó la aplicación anterior
+    raw.exec(`
+      DROP INDEX sso_domain_verified; DROP TABLE sso_enterprise_domain;
+      CREATE TABLE sso_enterprise_domain (domain TEXT PRIMARY KEY, tenant_id TEXT NOT NULL);
+      INSERT INTO sso_enterprise_domain VALUES ('acme.test', 't1'), ('otra.test', 't2');
+      INSERT INTO sso_enterprise VALUES ('t1', 'Acme', 'https://idp.test', 'cid', NULL, 'x');
+      PRAGMA user_version = 1;`);
+    raw.close();
+
+    const store = openSsoStore(file);
+    expect(store.schemaVersion()).toBe(2);
+    expect(store.getEnterprise('t1')).toMatchObject({ domains: ['acme.test'], verifiedDomains: [] });
+    expect(store.domainOwner('acme.test')).toBeNull(); // nadie lo demostró: hay que verificarlo de nuevo
+    expect(store.verifyDomain('t1', 'acme.test')).toBe(true);
+    expect(store.domainOwner('acme.test')).toBe('t1');
+    expect(store.verifyDomain('t2', 'acme.test')).toBe(false); // el índice único parcial: un solo dueño
+    store.close();
   });
 });
 

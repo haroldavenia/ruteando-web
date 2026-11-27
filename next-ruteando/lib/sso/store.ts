@@ -23,7 +23,10 @@ export interface Enterprise {
   issuer: string;
   clientId: string;
   secretEnc: string | null;
+  /** Dominios reclamados (verificados o no). */
   domains: string[];
+  /** Solo los que la empresa demostró controlar (TXT en DNS): son los únicos que enrutan y validan el correo. */
+  verifiedDomains: string[];
 }
 
 export type SsoStore = ReturnType<typeof openSsoStore>;
@@ -67,6 +70,21 @@ const MIGRATIONS = [
     kind TEXT NOT NULL,
     detail TEXT
   );
+  `,
+  // 2: los dominios se reclaman pendientes y se verifican con un TXT en DNS. La clave pasa a (dominio, empresa) para que dos empresas
+  // puedan reclamar el mismo y gane la que lo demuestre: el índice único parcial solo deja un dueño verificado. Lo que había queda
+  // PENDIENTE (nadie lo demostró): hay que verificarlo de nuevo.
+  `
+  CREATE TABLE sso_enterprise_domain_v2 (
+    domain TEXT NOT NULL,
+    tenant_id TEXT NOT NULL,
+    verified_at TEXT,
+    PRIMARY KEY (domain, tenant_id)
+  );
+  INSERT INTO sso_enterprise_domain_v2 (domain, tenant_id) SELECT domain, tenant_id FROM sso_enterprise_domain;
+  DROP TABLE sso_enterprise_domain;
+  ALTER TABLE sso_enterprise_domain_v2 RENAME TO sso_enterprise_domain;
+  CREATE UNIQUE INDEX sso_domain_verified ON sso_enterprise_domain (domain) WHERE verified_at IS NOT NULL;
   `,
 ];
 
@@ -112,9 +130,11 @@ export function openSsoStore(file: string, { now = () => new Date() }: { now?: (
          secret_enc = excluded.secret_enc, updated_at = excluded.updated_at`
     ),
     delEnterprise: db.prepare('DELETE FROM sso_enterprise WHERE tenant_id = ?'),
-    domainsOf: db.prepare('SELECT domain FROM sso_enterprise_domain WHERE tenant_id = ? ORDER BY domain'),
-    domainOwner: db.prepare('SELECT tenant_id FROM sso_enterprise_domain WHERE domain = ?'),
-    addDomain: db.prepare('INSERT INTO sso_enterprise_domain (domain, tenant_id) VALUES (?, ?)'),
+    domainsOf: db.prepare('SELECT domain, verified_at FROM sso_enterprise_domain WHERE tenant_id = ? ORDER BY domain'),
+    domainOwner: db.prepare('SELECT tenant_id FROM sso_enterprise_domain WHERE domain = ? AND verified_at IS NOT NULL'),
+    addDomain: db.prepare('INSERT OR IGNORE INTO sso_enterprise_domain (domain, tenant_id) VALUES (?, ?)'),
+    delDomain: db.prepare('DELETE FROM sso_enterprise_domain WHERE domain = ? AND tenant_id = ?'),
+    verifyDomain: db.prepare('UPDATE sso_enterprise_domain SET verified_at = ? WHERE domain = ? AND tenant_id = ? AND verified_at IS NULL'),
     delDomains: db.prepare('DELETE FROM sso_enterprise_domain WHERE tenant_id = ?'),
     addEvent: db.prepare('INSERT INTO sso_event (at, user_id, tenant_id, kind, detail) VALUES (?, ?, ?, ?, ?)'),
     events: db.prepare('SELECT * FROM sso_event WHERE user_id = ? ORDER BY id DESC LIMIT ?'),
@@ -169,24 +189,38 @@ export function openSsoStore(file: string, { now = () => new Date() }: { now?: (
     getEnterprise(tenantId: string): Enterprise | null {
       const r = q.enterprise.get(tenantId) as Row | undefined;
       if (!r) return null;
+      const domains = q.domainsOf.all(tenantId) as { domain: string; verified_at: string | null }[];
       return {
         tenantId,
         name: r.name as string,
         issuer: r.issuer as string,
         clientId: r.client_id as string,
         secretEnc: r.secret_enc as string | null,
-        domains: (q.domainsOf.all(tenantId) as { domain: string }[]).map((d) => d.domain),
+        domains: domains.map((d) => d.domain),
+        verifiedDomains: domains.filter((d) => d.verified_at).map((d) => d.domain),
       };
     },
-    /** Dueña de un dominio de correo, o `null`. */
+    /** Dueña VERIFICADA de un dominio de correo, o `null` (un dominio solo reclamado no tiene dueña). */
     domainOwner: (domain: string) => ((q.domainOwner.get(domain) as { tenant_id: string } | undefined)?.tenant_id ?? null),
-    /** Guarda el proveedor de la empresa y sustituye sus dominios; el llamador ya comprobó que no son de otra empresa. */
-    putEnterprise(e: Enterprise) {
+    /**
+     * Guarda el proveedor de la empresa y sustituye sus dominios: los que ya tenía conservan su verificación, los nuevos quedan
+     * pendientes y los que se quitan se borran. El llamador ya comprobó que no son de otra empresa.
+     */
+    putEnterprise(e: Pick<Enterprise, 'tenantId' | 'name' | 'issuer' | 'clientId' | 'secretEnc' | 'domains'>) {
       transaction(() => {
         q.putEnterprise.run(e.tenantId, e.name, e.issuer, e.clientId, e.secretEnc ?? null, stamp());
-        q.delDomains.run(e.tenantId);
+        const current = (q.domainsOf.all(e.tenantId) as { domain: string }[]).map((d) => d.domain);
+        for (const d of current) if (!e.domains.includes(d)) q.delDomain.run(d, e.tenantId);
         for (const d of e.domains) q.addDomain.run(d, e.tenantId);
       });
+    },
+    /** Marca el dominio como verificado para esa empresa; `false` si otra empresa ya lo tiene verificado o no estaba reclamado. */
+    verifyDomain(tenantId: string, domain: string): boolean {
+      try {
+        return Number(q.verifyDomain.run(stamp(), domain, tenantId).changes) === 1;
+      } catch {
+        return false; // el índice único parcial: otra empresa lo verificó antes
+      }
     },
     deleteEnterprise(tenantId: string) {
       transaction(() => {

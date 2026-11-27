@@ -2,7 +2,7 @@ import { ensureAccess } from '@/lib/auth-flow';
 import { readCapped } from '@/lib/body';
 import { verifySameOrigin } from '@/lib/csrf';
 import { jsonError } from '@/lib/errors';
-import { getMfa } from '@/lib/mfa/service';
+import { loginGate } from '@/lib/login-flow';
 import { clientIp, rateLimit } from '@/lib/rate-limit';
 import { writeSession } from '@/lib/session';
 import { getSso, SSO_COOKIE, type SsoRedirect } from '@/lib/sso/service';
@@ -54,7 +54,8 @@ async function handle(request: Request, { params }: { params: Promise<{ path: st
 
   if (method === 'POST' && route === '/complete') {
     // Falla CERRADO como el login: sin segundo factor este canje entregaría la sesión con solo el ticket del proveedor.
-    if (!getMfa().enabled && process.env.ALLOW_LOGIN_WITHOUT_MFA !== 'true') return jsonError(503, 'El acceso no está habilitado todavía.');
+    const closed = loginGate();
+    if (closed) return closed;
     let ticket: unknown;
     try {
       const raw = await readCapped(request, 20 * 1024);
