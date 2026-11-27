@@ -11,6 +11,7 @@ tools:
   - replace_file_content
   - run_command
   - manage_task
+  - invoke_subagent
 skills:
   - skills/entregar-historia
   - skills/nueva-spec
