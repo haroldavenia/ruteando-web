@@ -14,3 +14,13 @@ coverage/
 test-results/
 .tmp/
 playwright-report/
+
+# Ajenos al arnés (línea AngularJS)
+build/
+Claude outputs/
+.vscode/settings.json
+.cursor/
+.claude/
+openspec/
+ng-ruteando/
+scripts/
