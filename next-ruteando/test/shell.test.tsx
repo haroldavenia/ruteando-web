@@ -48,8 +48,10 @@ const shell = (user = admin, node: ReactElement = <p>contenido</p>) =>
   );
 
 describe('Brand', () => {
-  test('el nombre es texto real aunque se oculte en pantallas muy estrechas; el emblema es decorativo', () => {
-    const { container } = render(<Brand />);
+  test('el nombre es texto real y siempre se ve en la marca grande; en la compacta se oculta en pantallas muy estrechas; el emblema es decorativo', () => {
+    const { container, rerender } = render(<Brand />);
+    expect(screen.getByText('Ruteando')).not.toHaveClass('sr-only');
+    rerender(<Brand size="compact" />);
     expect(screen.getByText('Ruteando')).toHaveClass('sr-only', 'xs:not-sr-only');
     expect(container.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
   });

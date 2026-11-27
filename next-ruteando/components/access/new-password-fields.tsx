@@ -43,6 +43,7 @@ export function NewPasswordFields({
     <>
       <PasswordField
         label={passwordLabel ?? t('Contraseña')}
+        requiredMark
         autoComplete="new-password"
         leading={RiLockLine}
         error={passwordError}
@@ -58,6 +59,7 @@ export function NewPasswordFields({
       {open ? <PasswordRequirements id={listId} value={value} touched={touched || submitted} /> : null}
       <PasswordField
         label={t('Confirmar contraseña')}
+        requiredMark
         autoComplete="new-password"
         leading={RiLockLine}
         error={confirmError}

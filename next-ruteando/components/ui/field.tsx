@@ -18,6 +18,8 @@ const floating =
 
 interface FieldProps {
   label: string;
+  /** Pinta un asterisco tras la etiqueta (campo obligatorio) y marca el campo con `aria-required`: es solo visual, la validación es del formulario. */
+  requiredMark?: boolean;
   hint?: string;
   error?: string;
   className?: string;
@@ -61,7 +63,7 @@ export interface InputProps extends FieldProps, Omit<ComponentProps<'input'>, 'p
 /** Estos tipos siempre muestran algo (`--:--`, `dd/mm/aaaa`): la etiqueta va siempre arriba, como en un `select`. */
 const ALWAYS_FILLED = new Set(['date', 'time', 'datetime-local', 'month', 'week']);
 
-export function Input({ label, hint, error, className, id, leading, trailing, ...props }: InputProps) {
+export function Input({ label, requiredMark, hint, error, className, id, leading, trailing, ...props }: InputProps) {
   const generated = useId();
   const fieldId = id ?? generated;
   const raised = ALWAYS_FILLED.has(props.type ?? '');
@@ -72,22 +74,25 @@ export function Input({ label, hint, error, className, id, leading, trailing, ..
         id={fieldId}
         placeholder=" "
         aria-invalid={error ? true : undefined}
+        aria-required={requiredMark || undefined}
         aria-describedby={error || hint ? `${fieldId}-msg` : undefined}
-        className={cn(control, leading && 'pl-12', trailing && 'pr-14')}
+        className={cn(control, leading && 'pl-[52px]', trailing && 'pr-14')}
         {...props}
       />
       <label
         htmlFor={fieldId}
         className={cn(
           floating,
-          leading && 'left-12',
+          leading && 'left-[52px]',
+          // El asterisco es de adorno (CSS): `aria-required` ya dice que es obligatorio y no ensucia el nombre accesible
+          requiredMark && "after:content-['*']",
           raised && 'top-1.5 text-xs peer-placeholder-shown:top-1.5 peer-placeholder-shown:text-xs'
         )}
       >
         {label}
       </label>
       {leading ? (
-        <Icon icon={leading} className="pointer-events-none absolute top-4 left-4 text-on-surface-variant" />
+        <Icon icon={leading} className="pointer-events-none absolute top-4 left-3.5 text-on-surface-variant" />
       ) : null}
       {trailing ? <div className="absolute top-1.5 right-1.5">{trailing}</div> : null}
     </Shell>

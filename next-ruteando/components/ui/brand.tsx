@@ -36,7 +36,7 @@ export function Emblem({ size = 44, className }: { size?: number; className?: st
 
 /**
  * La marca: emblema y nombre. `default` mide 44px; `compact` 32px (barra de pantallas estrechas); `mark` es solo el emblema (riel de
- * iconos). Bajo 480px de ancho el nombre se oculta pero sigue ahí para los lectores de pantalla («Ruteando» es texto real; el emblema
+ * iconos). En la variante `compact`, bajo 480px de ancho el nombre se oculta pero sigue ahí para los lectores de pantalla («Ruteando» es texto real; el emblema
  * es decorativo).
  */
 export function Brand({ size = 'default', className }: { size?: 'default' | 'compact' | 'mark'; className?: string }) {
@@ -46,9 +46,9 @@ export function Brand({ size = 'default', className }: { size?: 'default' | 'com
       <Emblem size={px} />
       <span
         className={cn(
-          'font-brand font-extrabold tracking-[0.14em] text-on-surface uppercase',
-          size === 'compact' ? 'text-base' : 'text-xl',
-          size === 'mark' ? 'sr-only' : 'sr-only xs:not-sr-only'
+          'font-sans font-medium tracking-[0.06em] text-on-surface uppercase',
+          size === 'compact' ? 'text-xl/none' : 'text-[1.75rem]/none',
+          size === 'mark' ? 'sr-only' : size === 'compact' && 'sr-only xs:not-sr-only'
         )}
       >
         Ruteando

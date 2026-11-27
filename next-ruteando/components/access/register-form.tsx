@@ -89,35 +89,41 @@ export function RegisterForm() {
     <>
       <AccessTitle>{t('Crea tu cuenta')}</AccessTitle>
       <Lead>{t('Empieza a planificar tus rutas.')}</Lead>
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="grid gap-4 sm:grid-cols-2">
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7">
+        <div className="grid gap-x-3 gap-y-5 sm:grid-cols-2">
           <Input
             label={t('Nombre||pila')}
+            requiredMark
             autoComplete="given-name"
             error={errors.firstName?.message}
             {...register('firstName')}
           />
           <Input
             label={t('Apellidos')}
+            requiredMark
             autoComplete="family-name"
             error={errors.lastName?.message}
             {...register('lastName')}
           />
+          <Input
+            label={t('Nombre de la empresa')}
+            requiredMark
+            className="sm:col-span-2"
+            autoComplete="organization"
+            error={errors.tenantName?.message}
+            {...register('tenantName')}
+          />
+          <Input
+            label={t('Correo electrónico')}
+            requiredMark
+            className="sm:col-span-2"
+            type="email"
+            autoComplete="username"
+            leading={RiMailLine}
+            error={errors.email?.message}
+            {...register('email')}
+          />
         </div>
-        <Input
-          label={t('Nombre de la empresa')}
-          autoComplete="organization"
-          error={errors.tenantName?.message}
-          {...register('tenantName')}
-        />
-        <Input
-          label={t('Correo electrónico')}
-          type="email"
-          autoComplete="username"
-          leading={RiMailLine}
-          error={errors.email?.message}
-          {...register('email')}
-        />
         <NewPasswordFields
           passwordProps={register('password')}
           confirmProps={register('confirm')}
@@ -126,7 +132,7 @@ export function RegisterForm() {
           passwordError={errors.password?.message}
           confirmError={errors.confirm?.message}
         />
-        <p className="text-sm text-on-surface-variant">
+        <p className="text-xs/4 text-on-surface-variant">
           {t(
             'Al crear tu cuenta aceptas los términos, la política de privacidad y los mensajes SMS de verificación. Léelos aquí:'
           )}{' '}
@@ -155,7 +161,7 @@ export function RegisterForm() {
           {t('Crear cuenta')}
         </Button>
       </Form>
-      <p className="text-center text-sm">
+      <p className="mt-6 text-center">
         {t('¿Ya tienes cuenta?')}{' '}
         <Link href="/access" className="text-primary underline underline-offset-3">
           {t('Iniciar sesión')}

@@ -91,7 +91,7 @@ export function ResetForm({ token }: { token: string | null }) {
   return (
     <>
       <AccessTitle>{t('Restablecer contraseña')}</AccessTitle>
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7">
         <NewPasswordFields
           passwordProps={register('password')}
           confirmProps={register('confirm')}

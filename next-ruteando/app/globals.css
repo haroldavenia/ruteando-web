@@ -218,3 +218,71 @@ html[data-theme='dark'] .app-tiles {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* Ilustración de rutas de las pantallas de acceso (RouteBackdrop): fondo con el resplandor de marca y rutas que se dibujan al entrar */
+[data-route-backdrop] {
+  background:
+    radial-gradient(60% 55% at 85% 10%, color-mix(in srgb, var(--color-primary) 16%, transparent), transparent),
+    radial-gradient(50% 50% at 5% 95%, color-mix(in srgb, var(--color-tertiary) 12%, transparent), transparent),
+    var(--color-surface-container-low);
+}
+[data-route-backdrop] [data-rb='zone'] {
+  fill: color-mix(in srgb, var(--color-primary) 9%, transparent);
+  stroke: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+[data-route-backdrop] [data-rb='route'] {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+}
+[data-route-backdrop] [data-rb='stop'] circle {
+  fill: var(--c);
+  stroke: var(--color-surface);
+  stroke-width: 3;
+}
+[data-route-backdrop] [data-rb='depot'] circle {
+  fill: var(--color-surface);
+  stroke: var(--color-primary);
+  stroke-width: 5;
+}
+[data-route-backdrop] text {
+  font:
+    700 11px var(--font-roboto),
+    Roboto,
+    sans-serif;
+  text-anchor: middle;
+  dominant-baseline: central;
+  /* Sobre el color de la ruta: blanco en claro y casi negro en oscuro, donde los tonos son más luminosos */
+  fill: light-dark(#fff, #1d1b1e);
+}
+[data-route-backdrop] [data-rb='depot'] text {
+  font-size: 24px;
+  fill: var(--color-primary);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-route-backdrop] [data-rb='route'] {
+    animation: rb-draw 1.4s ease-out both;
+  }
+  [data-route-backdrop] [data-rb='stop'],
+  [data-route-backdrop] [data-rb='depot'] {
+    animation: rb-appear 0.6s ease-out 0.9s both;
+  }
+  @keyframes rb-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes rb-appear {
+    from {
+      opacity: 0;
+    }
+  }
+}

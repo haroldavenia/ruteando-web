@@ -59,9 +59,10 @@ export function RecoverForm() {
         <>
           <AccessTitle>{t('Recuperar contraseña')}</AccessTitle>
           <Lead>{t('Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.')}</Lead>
-          <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7">
             <Input
               label={t('Correo electrónico')}
+              requiredMark
               type="email"
               autoComplete="username"
               leading={RiMailLine}
@@ -81,7 +82,7 @@ export function RecoverForm() {
           </Form>
         </>
       )}
-      <p className="text-center text-sm">
+      <p className="mt-6 text-center">
         <Link href="/access" className="text-primary underline underline-offset-3">
           {t('Volver a iniciar sesión')}
         </Link>

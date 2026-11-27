@@ -110,9 +110,10 @@ export function LoginForm({ returnUrl }: { returnUrl?: string | null }) {
     <>
       <AccessTitle>{t('Bienvenido de nuevo')}</AccessTitle>
       <Lead>{t('Inicia sesión para seguir tus rutas.')}</Lead>
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7">
         <Input
           label={t('Correo electrónico')}
+          requiredMark
           type="email"
           autoComplete="username"
           leading={RiMailLine}
@@ -121,13 +122,17 @@ export function LoginForm({ returnUrl }: { returnUrl?: string | null }) {
         />
         <PasswordField
           label={t('Contraseña')}
+          requiredMark
           autoComplete="current-password"
           leading={RiLockLine}
           error={errors.password?.message}
           {...register('password')}
         />
-        <p className="-mt-2 text-end text-sm">
-          <Link href="/access/recover" className="text-primary underline underline-offset-3">
+        <p className="-mt-1.5 -mb-5.5 flex justify-end">
+          <Link
+            href="/access/recover"
+            className="inline-flex min-h-11 items-center text-primary underline underline-offset-3"
+          >
             {t('¿Olvidaste tu contraseña?')}
           </Link>
         </p>
@@ -136,6 +141,7 @@ export function LoginForm({ returnUrl }: { returnUrl?: string | null }) {
           type="submit"
           variant="primary"
           size="lg"
+          className="w-full"
           loading={loading}
           aria-label={loading ? t('Iniciando sesión') : undefined}
         >
@@ -143,7 +149,7 @@ export function LoginForm({ returnUrl }: { returnUrl?: string | null }) {
         </Button>
       </Form>
       <SsoButtons returnUrl={returnUrl} />
-      <p className="text-center text-sm">
+      <p className="mt-6 text-center">
         {t('¿No tienes cuenta?')}{' '}
         <Link href="/access/register" className="text-primary underline underline-offset-3">
           {t('Crear cuenta')}
