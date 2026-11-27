@@ -58,10 +58,12 @@ export function failureMessage(
 }
 
 /**
- * POST con cuerpo JSON. El navegador añade solo `Origin`, que es lo que comprueba `verifySameOrigin`. Devuelve el JSON de la respuesta;
- * ante un fallo lanza `ApiError` con el mensaje ya redactado (`messages` declara los propios de la operación).
+ * Petición JSON al BFF. El navegador añade solo `Origin`, que es lo que comprueba `verifySameOrigin`. Devuelve el JSON de la respuesta
+ * (`{}` si no hay cuerpo, p. ej. un 204); ante un fallo lanza `ApiError` con el mensaje ya redactado (`messages` declara los propios de
+ * la operación).
  */
-export async function postJson<T>(
+export async function requestJson<T>(
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   path: string,
   body: unknown,
   t: TFunction,
@@ -71,9 +73,9 @@ export async function postJson<T>(
   let res: Response;
   try {
     res = await fetch(path, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', ...extraHeaders },
-      body: JSON.stringify(body),
+      method,
+      headers: { ...(body === undefined ? {} : { 'content-type': 'application/json' }), ...extraHeaders },
+      body: body === undefined ? undefined : JSON.stringify(body),
     });
   } catch {
     throw new ApiError(0, failureMessage(0, undefined, undefined, t, messages));
@@ -90,3 +92,22 @@ export async function postJson<T>(
   }
   return data as T;
 }
+
+/** POST con cuerpo JSON. */
+export const postJson = <T>(
+  path: string,
+  body: unknown,
+  t: TFunction,
+  messages?: FailureMessages,
+  extraHeaders?: Record<string, string>
+) => requestJson<T>('POST', path, body, t, messages, extraHeaders);
+
+/** GET de un recurso del gateway por el proxy de datos del BFF (`/middleware/data/<recurso>`). */
+export const getData = <T>(resource: string, t: TFunction, messages?: FailureMessages) =>
+  requestJson<T>(
+    'GET',
+    `/middleware/data/${resource.startsWith('/') ? resource.slice(1) : resource}`,
+    undefined,
+    t,
+    messages
+  );
