@@ -521,7 +521,9 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
         if (err instanceof Fail) return failOut(err);
         if (err instanceof GatewayUnavailable) return failOut(new Fail(err.status, 'GATEWAY_ERROR', 'El servicio no está disponible.'));
         // Mensaje genérico: ni el SMTP, ni Twilio, ni nada interno llegan al navegador
-        console.error('[mfa]', err instanceof Error ? err.message : err);
+        // Solo la clase y el código: el mensaje de nodemailer/Twilio puede citar destinatarios, números o credenciales.
+        const code = (err as { code?: unknown })?.code;
+        console.error('[mfa]', err instanceof Error ? err.name : typeof err, typeof code === 'string' ? code : '');
         return failOut(new Fail(500, 'MFA_ERROR', 'No se pudo completar la operación.'));
       }
     },

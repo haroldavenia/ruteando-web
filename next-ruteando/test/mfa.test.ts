@@ -289,10 +289,11 @@ describe('sin sesión y administración', () => {
   test('errores internos no filtran detalles; JSON roto da 400', async () => {
     const boom = new Error('smtp://usuario:clave@host');
     const mfa = build({}, { mailer: { available: true, send: async () => Promise.reject(boom) } });
-    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const res = await call(mfa, 'POST', '/email/setup', {}, { user: user() });
     expect(res.status).toBe(500);
     expect(JSON.stringify(res.json)).not.toContain('clave');
+    expect(JSON.stringify(logged.mock.calls)).not.toContain('clave'); // ni al registro del servidor
     const bad = new Request('http://app.test/m', { method: 'POST', body: '{no es json' });
     expect((await mfa.handle(bad, '/login/send', { user: null })).status).toBe(400);
     vi.restoreAllMocks();
