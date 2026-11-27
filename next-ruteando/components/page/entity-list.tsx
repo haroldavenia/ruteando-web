@@ -2,7 +2,7 @@
 
 import { RiAddLine, RiDeleteBinLine, RiDownloadLine, RiEdit2Line } from '@remixicon/react';
 import Link from 'next/link';
-import { type ReactNode, useCallback, useRef } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { DataTable, type DataTableProps } from '@/components/data/data-table';
 import { PageHead } from '@/components/page/page-head';
@@ -17,11 +17,12 @@ import { csvFileName, downloadCsv } from '@/lib/csv';
 import { useDelete } from '@/lib/hooks/use-delete';
 import { useT } from '@/lib/i18n/client';
 import type { Page } from '@/lib/list/fetch-all';
+import type { Facet } from '@/lib/list/list-logic';
 import { useFullList } from '@/lib/list/use-full-list';
 
 export interface EntityListProps<T extends { id: string }> extends Pick<
   DataTableProps<T>,
-  'columns' | 'facet' | 'card' | 'filter' | 'onFilterChange' | 'facetKey' | 'onFacetChange' | 'onFiltered'
+  'columns' | 'card' | 'filter' | 'onFilterChange' | 'facetKey' | 'onFacetChange' | 'onFiltered'
 > {
   /** Título de la pantalla (lo pinta la barra del marco; aquí solo bajo 1024px). */
   title: string;
@@ -30,8 +31,12 @@ export interface EntityListProps<T extends { id: string }> extends Pick<
   plural: string;
   /** «vehículos»: cómo se nombran en «Cargando …» y en la paginación. */
   fetchPage: (page: number, size: number) => Promise<Page<T>>;
+  /** Chips de estado; con una función se calculan sobre las filas cargadas (tipos que solo se conocen al traerlas). */
+  facet?: Facet<T> | ((rows: readonly T[]) => Facet<T>);
   /** Pestañas, filtros u otro contenido bajo la cabecera. */
   above?: ReactNode;
+  /** Contenido a un lado de la tabla (un mapa): fijo en una columna desde 1100px y encima de la tabla por debajo. Recibe lo cargado y lo filtrado. */
+  aside?: (context: { rows: readonly T[]; filtered: readonly T[]; reload: () => void }) => ReactNode;
   newHref?: string;
   newLabel?: string;
   emptyMessage: string;
@@ -62,14 +67,21 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
   const t = useT();
   const notify = useNotify();
   const list = useFullList(props.fetchPage);
-  const filteredRef = useRef<readonly T[]>([]);
+  const [filtered, setFiltered] = useState<readonly T[]>([]);
   const { onFiltered } = props;
   const track = useCallback(
     (rows: readonly T[]) => {
-      filteredRef.current = rows;
+      // Solo si cambió lo filtrado: una lista nueva con las mismas filas no debe volver a pintar (ni a avisar) en bucle
+      setFiltered((current) =>
+        current.length === rows.length && current.every((row, index) => row === rows[index]) ? current : rows
+      );
       onFiltered?.(rows);
     },
     [onFiltered]
+  );
+  const facet = useMemo(
+    () => (typeof props.facet === 'function' ? props.facet(list.rows) : props.facet),
+    [props.facet, list.rows]
   );
 
   const remover = props.remove;
@@ -102,7 +114,7 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
     <>
       <PageHead title={props.title} subtitle={subtitle}>
         {canExport ? (
-          <Button variant="outlined" disabled={total === 0} onClick={() => exportRows(filteredRef.current)}>
+          <Button variant="outlined" disabled={total === 0} onClick={() => exportRows(filtered)}>
             <Icon icon={RiDownloadLine} size={20} />
             {t('Exportar CSV')}
           </Button>
@@ -119,63 +131,74 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
       <div className="mb-3 empty:hidden">
         <FormResult error={deleter.error} />
       </div>
-      <DataTable
-        list={list}
-        columns={props.columns}
-        entityPlural={props.plural}
-        emptyMessage={props.emptyMessage}
-        searchPlaceholder={props.searchPlaceholder}
-        facet={props.facet}
-        card={props.card}
-        selectable={canDelete || canExport}
-        filter={props.filter}
-        onFilterChange={props.onFilterChange}
-        facetKey={props.facetKey}
-        onFacetChange={props.onFacetChange}
-        onFiltered={track}
-        emptyAction={
-          props.newHref && props.emptyActionLabel ? (
-            <Link href={props.newHref} className={buttonVariants({ variant: 'outlined' })}>
-              {props.emptyActionLabel}
-            </Link>
-          ) : undefined
+      <div
+        className={
+          props.aside && list.rows.length > 0
+            ? 'grid items-start gap-4 xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]'
+            : undefined
         }
-        rowActions={(row) => (
-          <>
-            {props.extraActions?.(row)}
-            {props.editHref ? (
-              <IconLink
-                href={props.editHref(row)}
-                icon={RiEdit2Line}
-                label={props.editLabel?.(row) ?? t('Editar') + ' ' + props.rowLabel(row)}
-              />
-            ) : null}
-            {canDelete ? (
-              <IconButton
-                icon={RiDeleteBinLine}
-                label={t('Eliminar') + ' ' + props.rowLabel(row)}
-                onClick={() => void deleter.one(row)}
-              />
-            ) : null}
-          </>
-        )}
-        selectionActions={(rows, clear) => (
-          <>
-            {canDelete ? (
-              <Button variant="text" onClick={() => void deleter.many(rows, clear)}>
-                <Icon icon={RiDeleteBinLine} size={20} />
-                {t('Eliminar')}
-              </Button>
-            ) : null}
-            {canExport ? (
-              <Button variant="text" onClick={() => exportRows(rows)}>
-                <Icon icon={RiDownloadLine} size={20} />
-                {t('Exportar')}
-              </Button>
-            ) : null}
-          </>
-        )}
-      />
+      >
+        {props.aside && list.rows.length > 0 ? (
+          <div className="xl:sticky xl:top-4">{props.aside({ rows: list.rows, filtered, reload: list.reload })}</div>
+        ) : null}
+        <DataTable
+          list={list}
+          columns={props.columns}
+          entityPlural={props.plural}
+          emptyMessage={props.emptyMessage}
+          searchPlaceholder={props.searchPlaceholder}
+          facet={facet}
+          card={props.card}
+          selectable={canDelete || canExport}
+          filter={props.filter}
+          onFilterChange={props.onFilterChange}
+          facetKey={props.facetKey}
+          onFacetChange={props.onFacetChange}
+          onFiltered={track}
+          emptyAction={
+            props.newHref && props.emptyActionLabel ? (
+              <Link href={props.newHref} className={buttonVariants({ variant: 'outlined' })}>
+                {props.emptyActionLabel}
+              </Link>
+            ) : undefined
+          }
+          rowActions={(row) => (
+            <>
+              {props.extraActions?.(row)}
+              {props.editHref ? (
+                <IconLink
+                  href={props.editHref(row)}
+                  icon={RiEdit2Line}
+                  label={props.editLabel?.(row) ?? t('Editar') + ' ' + props.rowLabel(row)}
+                />
+              ) : null}
+              {canDelete ? (
+                <IconButton
+                  icon={RiDeleteBinLine}
+                  label={t('Eliminar') + ' ' + props.rowLabel(row)}
+                  onClick={() => void deleter.one(row)}
+                />
+              ) : null}
+            </>
+          )}
+          selectionActions={(rows, clear) => (
+            <>
+              {canDelete ? (
+                <Button variant="text" onClick={() => void deleter.many(rows, clear)}>
+                  <Icon icon={RiDeleteBinLine} size={20} />
+                  {t('Eliminar')}
+                </Button>
+              ) : null}
+              {canExport ? (
+                <Button variant="text" onClick={() => exportRows(rows)}>
+                  <Icon icon={RiDownloadLine} size={20} />
+                  {t('Exportar')}
+                </Button>
+              ) : null}
+            </>
+          )}
+        />
+      </div>
       {props.below}
       {deleter.dialog}
     </>

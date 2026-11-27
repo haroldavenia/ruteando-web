@@ -1,11 +1,12 @@
 'use client';
 
 import { RiLockPasswordLine } from '@remixicon/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { EntityList } from '@/components/page/entity-list';
 import { IconButton } from '@/components/ui/icon-button';
 import { useNotify } from '@/components/ui/toast';
+import { arrayPage } from '@/lib/api/array-page';
 import type { User, UserInput } from '@/lib/api/models';
 import { getData, requestJson } from '@/lib/api-client';
 import { driversToCsv } from '@/lib/fleet/export';
@@ -26,14 +27,7 @@ export function DriverList() {
   const [error, setError] = useState<string | null>(null);
   const assigned = t('No se puede eliminar: el conductor está asignado a un vehículo');
 
-  const fetchPage = useCallback(
-    async (page: number) => {
-      // El recurso responde con todos los conductores a la vez: se entrega como una sola página y las siguientes vacías
-      const rows = page === 0 ? await getData<User[]>('users/drivers', t) : [];
-      return { content: rows, totalElements: page === 0 ? rows.length : 0 };
-    },
-    [t]
-  );
+  const fetchPage = useMemo(() => arrayPage(() => getData<User[]>('users/drivers', t)), [t]);
 
   const columns = useMemo<Column<User>[]>(
     () => [

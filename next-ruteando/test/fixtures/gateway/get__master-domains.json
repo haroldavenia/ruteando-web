@@ -1,0 +1,817 @@
+{
+  "name": "GET /api/v1/master-domains",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/master-domains",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": [
+      {
+        "id": "6ab754bd194b475fe7627b37",
+        "code": "OsrmProfile",
+        "description": "OSRM routing profiles",
+        "system": true,
+        "values": [
+          {
+            "key": "driving",
+            "label": "Driving",
+            "description": "OSRM engine for motorized vehicles",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "cycling",
+            "label": "Cycling",
+            "description": "OSRM engine for bicycles",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "walking",
+            "label": "Walking",
+            "description": "OSRM engine for pedestrians",
+            "sortOrder": 3,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b38",
+        "code": "RouteTopology",
+        "description": "Route topology configurations",
+        "system": true,
+        "values": [
+          {
+            "key": "depot_to_depot",
+            "label": "Depot To Depot",
+            "description": "Route between two depots (A→B)",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "round_trip",
+            "label": "Round Trip",
+            "description": "Circular route with return to base (A→A)",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "open_delivery",
+            "label": "Open Delivery",
+            "description": "Last mile without return (A→last)",
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "open_pickup",
+            "label": "Open Pickup",
+            "description": "Consolidation towards hub (first→B)",
+            "sortOrder": 4,
+            "active": true
+          },
+          {
+            "key": "flexible",
+            "label": "Flexible",
+            "description": "No mandatory depots",
+            "sortOrder": 5,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b39",
+        "code": "RestrictionType",
+        "description": "Planning restriction types",
+        "system": true,
+        "values": [
+          {
+            "key": "fixed_routes",
+            "label": "Fixed Routes",
+            "description": "Planning with fixed number of routes",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "resource_vs_time",
+            "label": "Resource Vs Time",
+            "description": "Planning by capacity and shift",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "time_windows",
+            "label": "Time Windows",
+            "description": "Full CVRPTW planning",
+            "sortOrder": 3,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b3a",
+        "code": "TypeLengthOfStay",
+        "description": "Length of stay calculation types",
+        "system": true,
+        "values": [
+          {
+            "key": "fixed",
+            "label": "Fixed",
+            "description": "Fixed length of stay from configuration",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "define_itinerary",
+            "label": "Define Of Itinerary",
+            "description": "Length defined per package/service",
+            "sortOrder": 2,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b3b",
+        "code": "IdentifierType",
+        "description": "Document/resource identifier types",
+        "system": true,
+        "values": [
+          {
+            "key": "citizen_id",
+            "label": "Citizen Identifier",
+            "description": "National identity document",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "itin",
+            "label": "ITIN",
+            "description": "Tax identification number",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "plate",
+            "label": "Plate",
+            "description": "Vehicle plate number",
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "code",
+            "label": "Code",
+            "description": "Internal/random code",
+            "sortOrder": 4,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b3c",
+        "code": "ServiceType",
+        "description": "Package service types",
+        "system": true,
+        "values": [
+          {
+            "key": "pickup",
+            "label": "Pickup",
+            "description": "Package pickup",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "delivery",
+            "label": "Delivery",
+            "description": "Package delivery",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "mixed",
+            "label": "Mixed",
+            "description": "Mixed pickup/delivery service",
+            "sortOrder": 3,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b3d",
+        "code": "PackageStatus",
+        "description": "Package lifecycle statuses",
+        "system": true,
+        "values": [
+          {
+            "key": "pending",
+            "label": "Pending",
+            "description": "Package pending attention. Migrated from PENDIENTE",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "attended",
+            "label": "Attended",
+            "description": "Package delivered/attended. Migrated from ENTREGADO",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "unattended",
+            "label": "Unattended",
+            "description": "Package rejected/unattended. Migrated from RECHAZADO",
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "cancelled",
+            "label": "Cancelled",
+            "description": "Package cancelled. New status",
+            "sortOrder": 4,
+            "active": true
+          },
+          {
+            "key": "returned",
+            "label": "Returned",
+            "description": "Package returned to sender",
+            "sortOrder": 5,
+            "active": false
+          },
+          {
+            "key": "demo_1791043220908",
+            "label": "Demo value",
+            "description": "Valor de dominio agregado desde Postman",
+            "sortOrder": 5,
+            "active": false
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b3e",
+        "code": "GeocodingStatus",
+        "description": "Geocoding result statuses",
+        "system": true,
+        "values": [
+          {
+            "key": "match",
+            "label": "Match",
+            "description": "Exact geocoding match",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "mean",
+            "label": "Mean",
+            "description": "Approximate geocoding result",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "unmatch",
+            "label": "Unmatch",
+            "description": "No geocoding match found",
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "manual",
+            "label": "Manual",
+            "description": "Manually placed coordinates",
+            "sortOrder": 4,
+            "active": true
+          },
+          {
+            "key": "unprocessed",
+            "label": "Unprocessed",
+            "description": "Not yet geocoded",
+            "sortOrder": 5,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b3f",
+        "code": "Role",
+        "description": "User roles for RBAC authorization",
+        "system": true,
+        "values": [
+          {
+            "key": "SUPER_ADMIN",
+            "label": "Super Admin",
+            "description": "Platform-wide administrator",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "TENANT_ADMIN",
+            "label": "Tenant Admin",
+            "description": "Tenant administrator with full tenant access",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "AGENT",
+            "label": "Agent",
+            "description": "Operational agent with limited management",
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "DRIVER",
+            "label": "Driver",
+            "description": "Mobile driver with route execution access",
+            "sortOrder": 4,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b40",
+        "code": "JourneyStatus",
+        "description": "Journey lifecycle statuses",
+        "system": true,
+        "values": [
+          {
+            "key": "planning",
+            "label": "Planning",
+            "description": "Journey is being planned",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "in_progress",
+            "label": "In Progress",
+            "description": "Journey execution is in progress",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "description": "Journey completed successfully",
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "failed",
+            "label": "Failed",
+            "description": "Journey planning failed",
+            "sortOrder": 4,
+            "active": true
+          },
+          {
+            "key": "cancelled",
+            "label": "Cancelled",
+            "description": "Journey was cancelled",
+            "sortOrder": 5,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b41",
+        "code": "PlaceType",
+        "description": "Place classification types",
+        "system": true,
+        "values": [
+          {
+            "key": "depot",
+            "label": "Depot",
+            "description": "Main warehouse or distribution center",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "warehouse",
+            "label": "Warehouse",
+            "description": "Secondary storage location",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "store",
+            "label": "Store",
+            "description": "Retail store location",
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "office",
+            "label": "Office",
+            "description": "Office or administrative location",
+            "sortOrder": 4,
+            "active": true
+          },
+          {
+            "key": "custom",
+            "label": "Custom",
+            "description": "User-defined place type",
+            "sortOrder": 5,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b42",
+        "code": "StopType",
+        "description": "Waypoint stop types in routes",
+        "system": true,
+        "values": [
+          {
+            "key": "depot",
+            "label": "Depot",
+            "description": "Route start/end depot stop",
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "delivery",
+            "label": "Delivery",
+            "description": "Package delivery stop",
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "pickup",
+            "label": "Pickup",
+            "description": "Package pickup stop",
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "service",
+            "label": "Service",
+            "description": "Service or maintenance stop",
+            "sortOrder": 4,
+            "active": true
+          }
+        ]
+      },
+      {
+        "id": "6ab754bd194b475fe7627b43",
+        "code": "audit_actions",
+        "description": "Audit log action keys with category grouping",
+        "system": true,
+        "values": [
+          {
+            "key": "tenant.register",
+            "label": "Registro de tenant",
+            "description": null,
+            "sortOrder": 1,
+            "active": true
+          },
+          {
+            "key": "tenant.update",
+            "label": "Actualización de tenant",
+            "description": null,
+            "sortOrder": 2,
+            "active": true
+          },
+          {
+            "key": "tenant.deactivate",
+            "label": "Desactivación de tenant",
+            "description": null,
+            "sortOrder": 3,
+            "active": true
+          },
+          {
+            "key": "tenant.activate",
+            "label": "Reactivación de tenant",
+            "description": null,
+            "sortOrder": 4,
+            "active": true
+          },
+          {
+            "key": "tenant.plan.change",
+            "label": "Cambio de plan",
+            "description": null,
+            "sortOrder": 5,
+            "active": true
+          },
+          {
+            "key": "user.create",
+            "label": "Creación de usuario",
+            "description": null,
+            "sortOrder": 6,
+            "active": true
+          },
+          {
+            "key": "user.invite",
+            "label": "Invitación enviada",
+            "description": null,
+            "sortOrder": 7,
+            "active": true
+          },
+          {
+            "key": "user.invite.accept",
+            "label": "Invitación aceptada",
+            "description": null,
+            "sortOrder": 8,
+            "active": true
+          },
+          {
+            "key": "user.invite.revoke",
+            "label": "Invitación revocada",
+            "description": null,
+            "sortOrder": 9,
+            "active": true
+          },
+          {
+            "key": "user.update",
+            "label": "Actualización de usuario",
+            "description": null,
+            "sortOrder": 10,
+            "active": true
+          },
+          {
+            "key": "user.deactivate",
+            "label": "Desactivación de usuario",
+            "description": null,
+            "sortOrder": 11,
+            "active": true
+          },
+          {
+            "key": "user.activate",
+            "label": "Reactivación de usuario",
+            "description": null,
+            "sortOrder": 12,
+            "active": true
+          },
+          {
+            "key": "user.delete",
+            "label": "Eliminación de usuario",
+            "description": null,
+            "sortOrder": 13,
+            "active": true
+          },
+          {
+            "key": "user.password.change",
+            "label": "Cambio de contraseña",
+            "description": null,
+            "sortOrder": 14,
+            "active": true
+          },
+          {
+            "key": "user.password.reset",
+            "label": "Reset de contraseña",
+            "description": null,
+            "sortOrder": 15,
+            "active": true
+          },
+          {
+            "key": "auth.login",
+            "label": "Inicio de sesión",
+            "description": null,
+            "sortOrder": 16,
+            "active": true
+          },
+          {
+            "key": "auth.login.failed",
+            "label": "Login fallido",
+            "description": null,
+            "sortOrder": 17,
+            "active": true
+          },
+          {
+            "key": "auth.logout",
+            "label": "Cierre de sesión",
+            "description": null,
+            "sortOrder": 18,
+            "active": true
+          },
+          {
+            "key": "billing.subscription.create",
+            "label": "Suscripción creada",
+            "description": null,
+            "sortOrder": 19,
+            "active": true
+          },
+          {
+            "key": "billing.subscription.update",
+            "label": "Suscripción actualizada",
+            "description": null,
+            "sortOrder": 20,
+            "active": true
+          },
+          {
+            "key": "billing.subscription.cancel",
+            "label": "Suscripción cancelada",
+            "description": null,
+            "sortOrder": 21,
+            "active": true
+          },
+          {
+            "key": "billing.payment.success",
+            "label": "Pago exitoso",
+            "description": null,
+            "sortOrder": 22,
+            "active": true
+          },
+          {
+            "key": "billing.payment.failed",
+            "label": "Pago fallido",
+            "description": null,
+            "sortOrder": 23,
+            "active": true
+          },
+          {
+            "key": "billing.trial.start",
+            "label": "Trial iniciado",
+            "description": null,
+            "sortOrder": 24,
+            "active": true
+          },
+          {
+            "key": "billing.trial.expiring",
+            "label": "Trial por vencer",
+            "description": null,
+            "sortOrder": 25,
+            "active": true
+          },
+          {
+            "key": "billing.trial.expired",
+            "label": "Trial expirado",
+            "description": null,
+            "sortOrder": 26,
+            "active": true
+          },
+          {
+            "key": "billing.trial.converted",
+            "label": "Trial convertido a pago",
+            "description": null,
+            "sortOrder": 27,
+            "active": true
+          },
+          {
+            "key": "notification.otp.sent",
+            "label": "OTP enviado",
+            "description": null,
+            "sortOrder": 28,
+            "active": true
+          },
+          {
+            "key": "notification.otp.verified",
+            "label": "OTP verificado",
+            "description": null,
+            "sortOrder": 29,
+            "active": true
+          },
+          {
+            "key": "notification.push.registered",
+            "label": "Device token registrado",
+            "description": null,
+            "sortOrder": 30,
+            "active": true
+          },
+          {
+            "key": "notification.preferences.updated",
+            "label": "Preferencias actualizadas",
+            "description": null,
+            "sortOrder": 31,
+            "active": true
+          },
+          {
+            "key": "journey.plan",
+            "label": "Planificación de rutas",
+            "description": null,
+            "sortOrder": 32,
+            "active": true
+          },
+          {
+            "key": "journey.dispatch",
+            "label": "Despacho de rutas",
+            "description": null,
+            "sortOrder": 33,
+            "active": true
+          },
+          {
+            "key": "journey.cancel",
+            "label": "Journey cancelado",
+            "description": null,
+            "sortOrder": 34,
+            "active": true
+          },
+          {
+            "key": "journey.delete",
+            "label": "Journey eliminado",
+            "description": null,
+            "sortOrder": 35,
+            "active": true
+          },
+          {
+            "key": "package.create",
+            "label": "Paquete creado",
+            "description": null,
+            "sortOrder": 36,
+            "active": true
+          },
+          {
+            "key": "package.upload",
+            "label": "CSV de paquetes subido",
+            "description": null,
+            "sortOrder": 37,
+            "active": true
+          },
+          {
+            "key": "package.update",
+            "label": "Paquete actualizado",
+            "description": null,
+            "sortOrder": 38,
+            "active": true
+          },
+          {
+            "key": "package.status.change",
+            "label": "Estado de paquete cambiado",
+            "description": null,
+            "sortOrder": 39,
+            "active": true
+          },
+          {
+            "key": "package.geocode",
+            "label": "Geocodificación ejecutada",
+            "description": null,
+            "sortOrder": 40,
+            "active": true
+          },
+          {
+            "key": "settings.create",
+            "label": "Configuración creada",
+            "description": null,
+            "sortOrder": 41,
+            "active": true
+          },
+          {
+            "key": "settings.update",
+            "label": "Configuración actualizada",
+            "description": null,
+            "sortOrder": 42,
+            "active": true
+          },
+          {
+            "key": "settings.delete",
+            "label": "Configuración eliminada",
+            "description": null,
+            "sortOrder": 43,
+            "active": true
+          },
+          {
+            "key": "resource.create",
+            "label": "Recurso creado",
+            "description": null,
+            "sortOrder": 44,
+            "active": true
+          },
+          {
+            "key": "resource.update",
+            "label": "Recurso actualizado",
+            "description": null,
+            "sortOrder": 45,
+            "active": true
+          },
+          {
+            "key": "resource.delete",
+            "label": "Recurso eliminado",
+            "description": null,
+            "sortOrder": 46,
+            "active": true
+          },
+          {
+            "key": "resource.assign.driver",
+            "label": "Conductor asignado",
+            "description": null,
+            "sortOrder": 47,
+            "active": true
+          },
+          {
+            "key": "resource.unassign.driver",
+            "label": "Conductor desasignado",
+            "description": null,
+            "sortOrder": 48,
+            "active": true
+          },
+          {
+            "key": "place.create",
+            "label": "Lugar creado",
+            "description": null,
+            "sortOrder": 49,
+            "active": true
+          },
+          {
+            "key": "place.update",
+            "label": "Lugar actualizado",
+            "description": null,
+            "sortOrder": 50,
+            "active": true
+          },
+          {
+            "key": "place.delete",
+            "label": "Lugar eliminado",
+            "description": null,
+            "sortOrder": 51,
+            "active": true
+          }
+        ]
+      }
+    ]
+  }
+}

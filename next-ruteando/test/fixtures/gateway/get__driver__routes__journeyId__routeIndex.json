@@ -1,0 +1,32 @@
+{
+  "name": "GET /api/v1/driver/routes/{journeyId}/{routeIndex}",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/driver/routes/{journey_id}/{route_index}",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "journeyId": "5f6f1325079242c7807dd3c4",
+      "journeyName": "Postman journey",
+      "routeIndex": 0,
+      "name": "Postman route",
+      "resourceId": "6acb99b48275a26dbdf8fcf5",
+      "geoJson": null,
+      "startRouteUtc": null,
+      "finishRouteUtc": null,
+      "distanceTraveled": 1000,
+      "duration": 600,
+      "weightUsed": null,
+      "volumeUsed": null,
+      "status": "planned",
+      "waypoints": [],
+      "navigation": {
+        "osrmVersion": "v4",
+        "instructionsLegacy": [],
+        "viaPointsLegacy": []
+      }
+    }
+  }
+}

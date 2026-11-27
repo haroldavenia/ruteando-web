@@ -1,0 +1,16 @@
+{
+  "name": "POST /api/v1/auth/logout",
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/auth/logout",
+    "body": {
+      "refreshToken": "refresco-ficticio"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "message": "Logout exitoso"
+    }
+  }
+}

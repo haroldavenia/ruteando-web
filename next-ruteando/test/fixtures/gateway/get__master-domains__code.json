@@ -1,0 +1,26 @@
+{
+  "name": "GET /api/v1/master-domains/{code}",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/master-domains/{master_domain_code}",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "6acb99b4d8443e387b33cb9b",
+      "code": "postman-5f6f1325079242c7807dd3c411677b3c",
+      "description": "Postman fixture",
+      "system": false,
+      "values": [
+        {
+          "key": "pending",
+          "label": "Pending",
+          "description": null,
+          "sortOrder": null,
+          "active": true
+        }
+      ]
+    }
+  }
+}

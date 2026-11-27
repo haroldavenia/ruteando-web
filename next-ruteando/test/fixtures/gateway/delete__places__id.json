@@ -1,0 +1,12 @@
+{
+  "name": "DELETE /api/v1/places/{id}",
+  "request": {
+    "method": "DELETE",
+    "url": "/api/v1/places/{place_id}",
+    "body": null
+  },
+  "response": {
+    "status": 204,
+    "body": null
+  }
+}

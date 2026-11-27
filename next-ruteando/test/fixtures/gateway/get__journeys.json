@@ -1,0 +1,42 @@
+{
+  "name": "GET /api/v1/journeys",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/journeys",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "content": [
+        {
+          "id": "5f6f1325079242c7807dd3c4",
+          "tenantId": "6acb99aca2fa810fb39fb599",
+          "createdBy": null,
+          "settingsId": "6acb99b48275a26dbdf8fcf7",
+          "settings": {
+            "id": "6acb99b48275a26dbdf8fcf7",
+            "name": "Postman settings",
+            "routeTopology": "round_trip",
+            "restrictionType": "fixed_routes"
+          },
+          "name": "Postman journey",
+          "status": "planned",
+          "totalServices": null,
+          "totalResources": null,
+          "totalZones": null,
+          "stats": null,
+          "invalidPackageIds": null,
+          "routes": null,
+          "resourceSummary": null,
+          "createdAt": "2026-10-11T14:14:13.770Z",
+          "updatedAt": "2026-10-11T14:14:13.770Z"
+        }
+      ],
+      "page": 0,
+      "size": 20,
+      "totalElements": 1,
+      "totalPages": 1
+    }
+  }
+}

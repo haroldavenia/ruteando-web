@@ -1,0 +1,28 @@
+{
+  "name": "GET /api/v1/positions/{driverId}",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/positions/{driver_id}",
+    "body": null
+  },
+  "response": {
+    "status": 202,
+    "body": {
+      "id": "caf1dabd64f745cdbcf512b2",
+      "userId": "6acb99aca2fa810fb39fb59a",
+      "driver": {
+        "id": "4d7ce9a7ff3147b5b6bc0b36",
+        "userId": "6acb99aca2fa810fb39fb59a",
+        "name": "Postman driver"
+      },
+      "address": {
+        "location": {
+          "x": -74.07728,
+          "y": 4.60872
+        }
+      },
+      "date": "2026-10-11 14:14",
+      "assignedService": null
+    }
+  }
+}

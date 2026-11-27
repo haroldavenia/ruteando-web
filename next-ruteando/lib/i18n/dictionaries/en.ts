@@ -1341,4 +1341,5 @@ export const EN: Readonly<Record<string, string>> = {
   'Mínimo {0} caracteres': 'At least {0} characters',
   'Enlace de restablecimiento enviado a {0}': 'Reset link sent to {0}',
   'el conductor': 'the driver',
+  'No se puede eliminar: el lugar está en uso': 'Cannot delete: the place is in use',
 };

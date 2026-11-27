@@ -1347,4 +1347,5 @@ export const PT: Readonly<Record<string, string>> = {
   'Mínimo {0} caracteres': 'Mínimo de {0} caracteres',
   'Enlace de restablecimiento enviado a {0}': 'Link de redefinição enviado para {0}',
   'el conductor': 'o motorista',
+  'No se puede eliminar: el lugar está en uso': 'Não é possível excluir: o local está em uso',
 };

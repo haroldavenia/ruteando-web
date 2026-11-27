@@ -1,0 +1,12 @@
+{
+  "name": "DELETE /api/v1/assigned-services",
+  "request": {
+    "method": "DELETE",
+    "url": "/api/v1/assigned-services?ids={assigned_service_id}",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": []
+  }
+}

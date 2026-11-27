@@ -1,0 +1,33 @@
+{
+  "name": "GET /api/v1/resource-types",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/resource-types",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "content": [
+        {
+          "id": "6acb99b48275a26dbdf8fcf4",
+          "tenantId": "6acb99aca2fa810fb39fb599",
+          "category": "van",
+          "name": "Postman van",
+          "osrmProfile": "driving",
+          "capacity": null,
+          "measure": null,
+          "restriction": null,
+          "gasMileage": null,
+          "active": true,
+          "createdAt": "2026-10-11T14:14:12.044Z",
+          "updatedAt": "2026-10-11T14:14:12.044Z"
+        }
+      ],
+      "totalElements": 1,
+      "totalPages": 1,
+      "page": 0,
+      "size": 20
+    }
+  }
+}

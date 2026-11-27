@@ -1,0 +1,20 @@
+{
+  "name": "GET /api/v1/master-domains/{code}/values",
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/master-domains/{master_domain_code}/values",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": [
+      {
+        "key": "pending",
+        "label": "Pending",
+        "description": null,
+        "sortOrder": null,
+        "active": true
+      }
+    ]
+  }
+}
