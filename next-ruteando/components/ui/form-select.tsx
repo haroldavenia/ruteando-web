@@ -14,10 +14,7 @@ export function FormSelect<T extends FieldValues>({
   control,
   name,
   ...props
-}: { control: Control<T>; name: FieldPath<T> } & Omit<
-  ComponentProps<typeof Select>,
-  'name' | 'value' | 'onChange' | 'onBlur'
->) {
+}: { control: Control<T>; name: FieldPath<T> } & Omit<ComponentProps<typeof Select>, 'name' | 'value' | 'onBlur'>) {
   return (
     <Controller
       control={control}
@@ -28,7 +25,11 @@ export function FormSelect<T extends FieldValues>({
           name={field.name}
           ref={field.ref}
           value={(field.value as string | null | undefined) ?? ''}
-          onChange={(event) => field.onChange(event.target.value)}
+          onChange={(event) => {
+            field.onChange(event.target.value);
+            // Lo que quien lo usa quiera hacer además (cargar las rutas de la jornada elegida, proponer un conductor...)
+            props.onChange?.(event);
+          }}
           onBlur={field.onBlur}
         />
       )}

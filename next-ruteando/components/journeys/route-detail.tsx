@@ -15,6 +15,7 @@ import { useRecord } from '@/lib/hooks/use-record';
 import { useT } from '@/lib/i18n/client';
 import { getJourney } from '@/lib/journeys/journey-api';
 
+import { RouteAssignment } from './route-assignment';
 import { RouteVisits } from './route-visits';
 
 /**
@@ -92,6 +93,10 @@ export function RouteDetail({ journeyId, routeIndex }: { journeyId: string; rout
           {stat(t('Inicio||hora'), format.dateTime(route.startRouteUtc))}
           {stat(t('Fin'), format.dateTime(route.finishRouteUtc))}
         </dl>
+      </Card>
+
+      <Card>
+        <RouteAssignment journeyId={journeyId} routeIndex={route.routeIndex} />
       </Card>
 
       <section ref={mapSection} aria-labelledby="map-title">
