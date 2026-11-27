@@ -1,0 +1,22 @@
+# Ruteando
+
+> Ruteando es una aplicación web para planificar rutas de reparto y recogida, administrar la flota (vehículos, tipos de vehículo y conductores) y seguir cada visita de una jornada hasta que se atiende. Disponible en español, inglés y portugués; instalable como aplicación (PWA).
+
+Solo las páginas listadas aquí son públicas. El resto de la aplicación exige iniciar sesión y no contiene contenido para indexar.
+
+## Páginas públicas
+
+- [Qué es Ruteando](/about): qué permite hacer el producto y preguntas frecuentes.
+- [Iniciar sesión](/access): acceso con contraseña, verificación en dos pasos e inicio de sesión único.
+- [Crear una cuenta](/access/register): alta de una empresa.
+- [Política de privacidad](/legal/privacy)
+- [Términos del servicio](/legal/terms)
+- [Consentimiento de mensajes SMS de verificación](/legal/sms)
+
+## Datos clave
+
+- Planificación de jornadas con rutas y paradas sobre un mapa.
+- Seguimiento del estado de cada paquete (pendiente, atendido, sin atender, cancelado, devuelto).
+- Importación y exportación de paquetes en CSV; reportes de rutas en Excel y PDF.
+- Verificación en dos pasos (correo, SMS o aplicación autenticadora) e inicio de sesión único (Google, GitHub, Apple o el proveedor de la empresa).
+- Producto de Hanoit, LLC.

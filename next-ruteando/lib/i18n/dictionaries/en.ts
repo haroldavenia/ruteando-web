@@ -1363,4 +1363,38 @@ export const EN: Readonly<Record<string, string>> = {
   'aceptada': 'accepted',
   'Escribe una dirección https válida': 'Enter a valid https address',
   '{0} atendidos': '{0} attended',
+  'Qué puedes hacer': 'What you can do',
+  'Preguntas frecuentes': 'Frequently asked questions',
+  'Sin conexión': 'Offline',
+  'No hay conexión a internet. Los datos y la sesión siempre se piden en línea: vuelve a intentarlo cuando se restablezca.':
+    'There is no internet connection. Data and your session are always requested online: try again when it is back.',
+  'Ruteando: planificación de rutas, flota y jornadas': 'Ruteando: route, fleet and journey planning',
+  'Ruteando es una aplicación web para planificar rutas de reparto y recogida, administrar la flota y seguir cada visita hasta que se atiende.':
+    'Ruteando is a web application to plan delivery and pickup routes, manage your fleet and follow each visit until it is completed.',
+  'Planificar jornadas': 'Plan journeys',
+  'Eliges una configuración y los paquetes, y Ruteando calcula las rutas y sus paradas.':
+    'You choose a configuration and the packages, and Ruteando calculates the routes and their stops.',
+  'Seguir cada visita': 'Follow each visit',
+  'El estado de cada paquete se actualiza y se ve en un mapa, ruta por ruta.':
+    'The status of each package is updated and shown on a map, route by route.',
+  'Administrar la flota': 'Manage the fleet',
+  'Vehículos, tipos de vehículo y conductores, con su capacidad y sus restricciones.':
+    'Vehicles, vehicle types and drivers, with their capacity and restrictions.',
+  'Organizar lugares y zonas': 'Organize places and zones',
+  'Puntos de interés y polígonos de cobertura dibujados sobre el mapa.':
+    'Points of interest and coverage polygons drawn on the map.',
+  'Exportar reportes': 'Export reports',
+  'Cada ruta o jornada se descarga en Excel, y cada ruta también en PDF.':
+    'Each route or journey downloads as Excel, and each route also as PDF.',
+  '¿Qué es Ruteando?': 'What is Ruteando?',
+  'Es una aplicación web para planificar rutas, administrar la flota y seguir las visitas de cada jornada.':
+    'It is a web application to plan routes, manage the fleet and follow the visits of each journey.',
+  '¿Se puede instalar en el teléfono?': 'Can it be installed on a phone?',
+  'Sí. Es una aplicación instalable: desde el menú del navegador elige «Instalar aplicación» o «Añadir a la pantalla de inicio».':
+    'Yes. It is an installable app: from the browser menu choose “Install app” or “Add to home screen”.',
+  '¿En qué idiomas está?': 'Which languages is it available in?',
+  'En español, inglés y portugués.': 'In Spanish, English and Portuguese.',
+  '¿Cómo se protege el acceso?': 'How is access protected?',
+  'Con verificación en dos pasos (correo, SMS o aplicación autenticadora), opcional u obligatoria según la empresa, y con inicio de sesión único con Google, GitHub, Apple o el proveedor de la empresa.':
+    "With two-step verification (email, SMS or authenticator app), optional or mandatory depending on the company, and single sign-on with Google, GitHub, Apple or the company's own provider.",
 };

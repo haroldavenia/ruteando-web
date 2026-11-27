@@ -1369,4 +1369,38 @@ export const PT: Readonly<Record<string, string>> = {
   'aceptada': 'aceita',
   'Escribe una dirección https válida': 'Digite um endereço https válido',
   '{0} atendidos': '{0} atendidos',
+  'Qué puedes hacer': 'O que você pode fazer',
+  'Preguntas frecuentes': 'Perguntas frequentes',
+  'Sin conexión': 'Sem conexão',
+  'No hay conexión a internet. Los datos y la sesión siempre se piden en línea: vuelve a intentarlo cuando se restablezca.':
+    'Não há conexão com a internet. Os dados e a sessão são sempre solicitados online: tente novamente quando ela voltar.',
+  'Ruteando: planificación de rutas, flota y jornadas': 'Ruteando: planejamento de rotas, frota e jornadas',
+  'Ruteando es una aplicación web para planificar rutas de reparto y recogida, administrar la flota y seguir cada visita hasta que se atiende.':
+    'O Ruteando é um aplicativo web para planejar rotas de entrega e coleta, administrar a frota e acompanhar cada visita até ser atendida.',
+  'Planificar jornadas': 'Planejar jornadas',
+  'Eliges una configuración y los paquetes, y Ruteando calcula las rutas y sus paradas.':
+    'Você escolhe uma configuração e os pacotes, e o Ruteando calcula as rotas e suas paradas.',
+  'Seguir cada visita': 'Acompanhar cada visita',
+  'El estado de cada paquete se actualiza y se ve en un mapa, ruta por ruta.':
+    'O status de cada pacote é atualizado e exibido em um mapa, rota por rota.',
+  'Administrar la flota': 'Administrar a frota',
+  'Vehículos, tipos de vehículo y conductores, con su capacidad y sus restricciones.':
+    'Veículos, tipos de veículo e motoristas, com sua capacidade e restrições.',
+  'Organizar lugares y zonas': 'Organizar locais e zonas',
+  'Puntos de interés y polígonos de cobertura dibujados sobre el mapa.':
+    'Pontos de interesse e polígonos de cobertura desenhados no mapa.',
+  'Exportar reportes': 'Exportar relatórios',
+  'Cada ruta o jornada se descarga en Excel, y cada ruta también en PDF.':
+    'Cada rota ou jornada é baixada em Excel, e cada rota também em PDF.',
+  '¿Qué es Ruteando?': 'O que é o Ruteando?',
+  'Es una aplicación web para planificar rutas, administrar la flota y seguir las visitas de cada jornada.':
+    'É um aplicativo web para planejar rotas, administrar a frota e acompanhar as visitas de cada jornada.',
+  '¿Se puede instalar en el teléfono?': 'Pode ser instalado no celular?',
+  'Sí. Es una aplicación instalable: desde el menú del navegador elige «Instalar aplicación» o «Añadir a la pantalla de inicio».':
+    'Sim. É um aplicativo instalável: no menu do navegador escolha “Instalar aplicativo” ou “Adicionar à tela inicial”.',
+  '¿En qué idiomas está?': 'Em quais idiomas está disponível?',
+  'En español, inglés y portugués.': 'Em espanhol, inglês e português.',
+  '¿Cómo se protege el acceso?': 'Como o acesso é protegido?',
+  'Con verificación en dos pasos (correo, SMS o aplicación autenticadora), opcional u obligatoria según la empresa, y con inicio de sesión único con Google, GitHub, Apple o el proveedor de la empresa.':
+    'Com verificação em duas etapas (e-mail, SMS ou aplicativo autenticador), opcional ou obrigatória conforme a empresa, e login único com Google, GitHub, Apple ou o provedor da empresa.',
 };

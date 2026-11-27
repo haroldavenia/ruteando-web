@@ -13,9 +13,9 @@ import { Icon } from '@/components/ui/icon';
 import { Loading, Skeleton } from '@/components/ui/skeleton';
 import type { Journey, Package } from '@/lib/api/models';
 import { getData } from '@/lib/api-client';
+import { fetchLatestJourneys, FIGURES_SAMPLE_SIZE, type PackageFigures, packageFigures } from '@/lib/home/figures';
 import { useFormat } from '@/lib/hooks/use-format';
 import { useT } from '@/lib/i18n/client';
-import { FIGURES_SAMPLE_SIZE, fetchLatestJourneys, type PackageFigures, packageFigures } from '@/lib/home/figures';
 import { journeyStatusLabel } from '@/lib/journeys/labels';
 import type { Page } from '@/lib/list/fetch-all';
 import { statusTone } from '@/lib/status-tone';
@@ -33,7 +33,10 @@ function useLoad<T>(fetcher: () => Promise<T>): [Load<T>, () => void] {
       (value) => current && setState({ status: 'ready', value }),
       (err: unknown) =>
         current &&
-        setState({ status: 'error', error: err instanceof Error ? err.message : t('No se pudo completar la solicitud') })
+        setState({
+          status: 'error',
+          error: err instanceof Error ? err.message : t('No se pudo completar la solicitud'),
+        })
     );
     return () => {
       current = false;
@@ -57,8 +60,7 @@ export function HomeDashboard() {
   const t = useT();
   const format = useFormat();
   const figuresFetcher = useCallback(
-    async () =>
-      packageFigures(await getData<Page<Package>>(`packages?page=0&size=${FIGURES_SAMPLE_SIZE}`, t)),
+    async () => packageFigures(await getData<Page<Package>>(`packages?page=0&size=${FIGURES_SAMPLE_SIZE}`, t)),
     [t]
   );
   const journeysFetcher = useCallback(
@@ -91,7 +93,11 @@ export function HomeDashboard() {
       <Card aria-labelledby="journeys-title" className="flex flex-col gap-3 lg:col-start-1 lg:row-start-1">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle id="journeys-title">{t('Últimas jornadas')}</CardTitle>
-          <Link href="/journeys" aria-label={t('Ver todas las jornadas')} className={buttonVariants({ variant: 'outlined' })}>
+          <Link
+            href="/journeys"
+            aria-label={t('Ver todas las jornadas')}
+            className={buttonVariants({ variant: 'outlined' })}
+          >
             {t('Ver todas')}
           </Link>
         </div>
@@ -121,7 +127,10 @@ export function HomeDashboard() {
                 className="flex flex-wrap items-center justify-between gap-3 rounded-control border border-outline-variant px-4 py-3"
               >
                 <div className="flex min-w-0 flex-col gap-0.5">
-                  <Link href={`/journeys/${encodeURIComponent(journey.id)}`} className="font-medium text-primary hover:underline">
+                  <Link
+                    href={`/journeys/${encodeURIComponent(journey.id)}`}
+                    className="font-medium text-primary hover:underline"
+                  >
                     {journey.name}
                   </Link>
                   <span className="text-sm text-on-surface-variant">{details(journey)}</span>
