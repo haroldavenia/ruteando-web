@@ -32,7 +32,8 @@ export async function publicEndpoint(request: Request, o: PublicEndpoint): Promi
   const blocked = o.guard?.();
   if (blocked) return blocked;
   if (!verifySameOrigin(request)) return jsonError(403, 'Origen no permitido.');
-  if (!rateLimit(`${o.bucket}:${clientIp(request)}`, o.ipMax ?? 20, WINDOW_MS)) return jsonError(429, 'Demasiados intentos. Prueba más tarde.');
+  if (!rateLimit(`${o.bucket}:${clientIp(request)}`, o.ipMax ?? 20, WINDOW_MS))
+    return jsonError(429, 'Demasiados intentos. Prueba más tarde.');
 
   let input: Record<string, unknown>;
   try {
@@ -50,7 +51,10 @@ export async function publicEndpoint(request: Request, o: PublicEndpoint): Promi
     if (typeof v !== 'string' || v === '' || v.length > max) return jsonError(400, 'Solicitud no válida.');
     body[name] = v;
   }
-  if (o.accountField && !rateLimit(`${o.bucket}-acct:${body[o.accountField].trim().toLowerCase()}`, o.accountMax ?? 5, WINDOW_MS)) {
+  if (
+    o.accountField &&
+    !rateLimit(`${o.bucket}-acct:${body[o.accountField].trim().toLowerCase()}`, o.accountMax ?? 5, WINDOW_MS)
+  ) {
     return jsonError(429, 'Demasiados intentos. Prueba más tarde.');
   }
 
@@ -70,4 +74,5 @@ export async function publicEndpoint(request: Request, o: PublicEndpoint): Promi
 }
 
 /** Respuesta de los endpoints que no abren sesión: solo el mensaje, aunque el gateway devolviera algo más (tokens, por ejemplo). */
-export const messageOnly = (data: Record<string, unknown>) => Response.json({ message: typeof data.message === 'string' ? data.message : null });
+export const messageOnly = (data: Record<string, unknown>) =>
+  Response.json({ message: typeof data.message === 'string' ? data.message : null });

@@ -26,9 +26,12 @@ export function validateConfig(env: Env = process.env): string[] {
   const problems: string[] = [];
   const cfg = readConfig(env);
   if (cfg.sessionSecret.length < MIN_SESSION_SECRET) {
-    problems.push(`SESSION_SECRET es obligatoria y debe tener al menos ${MIN_SESSION_SECRET} caracteres (openssl rand -base64 32)`);
+    problems.push(
+      `SESSION_SECRET es obligatoria y debe tener al menos ${MIN_SESSION_SECRET} caracteres (openssl rand -base64 32)`
+    );
   }
   if (!cfg.gatewayModeValid) problems.push('GATEWAY_MODE debe ser "real" o "mock"');
-  if (env.SSO_ALLOW_INSECURE === 'true') problems.push('SSO_ALLOW_INSECURE=true solo es para desarrollo: desactiva el filtro contra SSRF');
+  if (env.SSO_ALLOW_INSECURE === 'true')
+    problems.push('SSO_ALLOW_INSECURE=true solo es para desarrollo: desactiva el filtro contra SSRF');
   return problems;
 }

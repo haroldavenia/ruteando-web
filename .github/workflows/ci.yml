@@ -1,6 +1,7 @@
 name: CI
 
-# Verifica cada cambio antes de llegar a main: pruebas y compilación del frontend, pruebas del servidor, validación
+# Verifica cada cambio antes de llegar a main: pruebas y compilación del frontend, calidad y pruebas del BFF en Next.js
+# (next-ruteando, con su imagen de producción), pruebas del servidor, validación
 # estricta de las specs y auditoría de las dependencias de producción. La comprobación obligatoria de main es `ci`.
 on:
   # Sin filtro de ramas: los pull requests están apilados y su base no siempre es main
@@ -56,6 +57,37 @@ jobs:
       - name: Compilación de producción
         run: pnpm --filter ng-ruteando run build
 
+  next:
+    name: Next.js BFF (calidad, pruebas e imagen)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ng-ruteando/.nvmrc
+          cache: pnpm
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+      # next-ruteando tiene su propio ESLint y su propio Prettier (con los plugins de Tailwind): la raíz los ignora
+      - name: Lint
+        run: pnpm --filter next-ruteando run lint
+      - name: Formato
+        run: pnpm --filter next-ruteando run format
+      - name: Tipos
+        run: pnpm --filter next-ruteando run typecheck
+      # Falla por debajo del 80 % de sentencias, ramas, funciones y líneas (vitest.config.mts)
+      - name: Pruebas con cobertura
+        run: pnpm --filter next-ruteando run test:coverage
+      - name: Compilación de producción
+        run: pnpm --filter next-ruteando run build
+      # La imagen se construye de verdad: lo que compila aquí puede fallar dentro del contenedor (contexto: la raíz, por el lockfile único)
+      - name: Imagen de producción
+        run: docker build -f next-ruteando/Dockerfile -t ruteando-next:ci .
+
   server:
     name: Servidor (pruebas)
     runs-on: ubuntu-24.04
@@ -110,7 +142,7 @@ jobs:
   ci:
     name: ci
     if: always()
-    needs: [frontend, server, specs, audit]
+    needs: [frontend, next, server, specs, audit]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

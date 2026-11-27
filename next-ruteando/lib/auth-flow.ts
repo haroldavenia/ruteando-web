@@ -1,5 +1,5 @@
 import { gatewayFetch } from './gateway';
-import { clearSession, readSession, writeSession, type GatewaySession } from './session';
+import { clearSession, type GatewaySession, readSession, writeSession } from './session';
 
 const inflight = new Map<string, Promise<GatewaySession | null>>();
 

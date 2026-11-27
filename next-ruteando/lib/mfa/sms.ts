@@ -40,7 +40,11 @@ function createTwilio(env: Env, fetchImpl: FetchLike) {
   };
   async function post(path: string, params: Record<string, string>) {
     // El cuerpo de error de Twilio no se propaga: podría citar el número o la cuenta
-    const res = await fetchImpl(`${base}/${path}`, { method: 'POST', headers, body: new URLSearchParams(params).toString() });
+    const res = await fetchImpl(`${base}/${path}`, {
+      method: 'POST',
+      headers,
+      body: new URLSearchParams(params).toString(),
+    });
     if (!res.ok && res.status !== 404) throw new Error(`Twilio respondió ${res.status}`);
     return res.ok ? ((await res.json()) as { status?: string }) : null;
   }
@@ -75,7 +79,13 @@ export function createSms({
   codec,
   now = Date.now,
   fetchImpl = fetch,
-}: { env?: Env; mailer: Mailer; codec: Codec; now?: () => number; fetchImpl?: FetchLike }): Sms {
+}: {
+  env?: Env;
+  mailer: Mailer;
+  codec: Codec;
+  now?: () => number;
+  fetchImpl?: FetchLike;
+}): Sms {
   const choice = (env.SMS_PROVIDER || '').trim().toLowerCase();
   if (choice === 'twilio') {
     if (env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_VERIFY_SERVICE_SID) {

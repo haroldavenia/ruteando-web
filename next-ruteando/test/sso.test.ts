@@ -7,11 +7,11 @@ import { DatabaseSync } from 'node:sqlite';
 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+import type { GatewaySession, SessionUser } from '@/lib/session';
 import { signEs256, verifyJwt } from '@/lib/sso/jwt';
 import { isPrivateAddress } from '@/lib/sso/safe-fetch';
-import { createSso, SSO_COOKIE, type SsoOverrides } from '@/lib/sso/service';
+import { createSso, type SsoOverrides } from '@/lib/sso/service';
 import { openSsoStore } from '@/lib/sso/store';
-import type { GatewaySession, SessionUser } from '@/lib/session';
 
 const KEY = Buffer.alloc(32, 7).toString('base64');
 const ISS = 'https://idp.test';
@@ -34,7 +34,12 @@ const fakeFetch: NonNullable<SsoOverrides['fetchImpl']> = async (url, init) => {
   calls.push(`${init?.method || 'GET'} ${url}`);
   const json = (body: unknown, status = 200) => ({ status, text: async () => JSON.stringify(body) });
   if (url.endsWith('/.well-known/openid-configuration')) {
-    return json({ issuer: ISS, authorization_endpoint: `${ISS}/auth`, token_endpoint: `${ISS}/token`, jwks_uri: `${ISS}/jwks` });
+    return json({
+      issuer: ISS,
+      authorization_endpoint: `${ISS}/auth`,
+      token_endpoint: `${ISS}/token`,
+      jwks_uri: `${ISS}/jwks`,
+    });
   }
   if (url === `${ISS}/jwks`) return json({ keys: [jwk] });
   if (url === `${ISS}/token`) {
@@ -50,7 +55,12 @@ const user = (over: Partial<SessionUser> = {}): SessionUser => ({
   tenantId: 't1',
   ...over,
 });
-const sessionOf = (u: SessionUser): GatewaySession => ({ accessToken: 'tok', refreshToken: 'ref', expiresIn: 3600, user: u });
+const sessionOf = (u: SessionUser): GatewaySession => ({
+  accessToken: 'tok',
+  refreshToken: 'ref',
+  expiresIn: 3600,
+  user: u,
+});
 
 let clock = 1_700_000_000_000;
 let exchangeStatus = 200;
@@ -76,7 +86,9 @@ function build(env: Record<string, string | undefined> = {}, over: SsoOverrides 
       store: openSsoStore(':memory:'),
       gateway: async (_path, init) => {
         exchanged.push(JSON.parse(String(init?.body)));
-        return exchangeStatus === 200 ? Response.json(sessionOf(exchangeUser)) : new Response('{}', { status: exchangeStatus });
+        return exchangeStatus === 200
+          ? Response.json(sessionOf(exchangeUser))
+          : new Response('{}', { status: exchangeStatus });
       },
       ...over,
     }
@@ -138,7 +150,26 @@ describe('primitivas', () => {
   });
 
   test('SSRF: direcciones privadas, locales y reservadas se rechazan; las públicas pasan', () => {
-    for (const ip of ['127.0.0.1', '10.0.0.5', '172.16.0.1', '192.168.1.1', '169.254.169.254', '100.64.0.1', '0.0.0.0', '224.0.0.1', '::1', '::', '::ffff:127.0.0.1', '::ffff:7f00:1', 'fe80::1', 'fc00::1', '64:ff9b::7f00:1', '2002:7f00:1::', '2001:db8::1', 'no-es-ip']) {
+    for (const ip of [
+      '127.0.0.1',
+      '10.0.0.5',
+      '172.16.0.1',
+      '192.168.1.1',
+      '169.254.169.254',
+      '100.64.0.1',
+      '0.0.0.0',
+      '224.0.0.1',
+      '::1',
+      '::',
+      '::ffff:127.0.0.1',
+      '::ffff:7f00:1',
+      'fe80::1',
+      'fc00::1',
+      '64:ff9b::7f00:1',
+      '2002:7f00:1::',
+      '2001:db8::1',
+      'no-es-ip',
+    ]) {
       expect(isPrivateAddress(ip), ip).toBe(true);
     }
     for (const ip of ['8.8.8.8', '1.1.1.1', '2606:4700:4700::1111']) expect(isPrivateAddress(ip), ip).toBe(false);
@@ -151,7 +182,12 @@ describe('apagado', () => {
     ['sin URL de redirección', { SSO_REDIRECT_BASE_URL: '' }],
     ['sin clave maestra', { MFA_SECRET_KEY: '' }],
   ])('%s: lista vacía y todo falla cerrado', async (_n, env) => {
-    const sso = createSso({ SSO_ENABLED_PROVIDERS: 'google', SSO_REDIRECT_BASE_URL: 'https://app.test', MFA_SECRET_KEY: KEY, ...env });
+    const sso = createSso({
+      SSO_ENABLED_PROVIDERS: 'google',
+      SSO_REDIRECT_BASE_URL: 'https://app.test',
+      MFA_SECRET_KEY: KEY,
+      ...env,
+    });
     expect(sso.enabled).toBe(false);
     expect(sso.listProviders().providers).toEqual([]);
     expect((await sso.start('google', undefined)).location).toContain('error=NO_PROVIDER');
@@ -159,7 +195,11 @@ describe('apagado', () => {
   });
 
   test('solo se ofrecen los proveedores con credenciales', () => {
-    const sso = build({ SSO_ENABLED_PROVIDERS: 'google,github,apple', SSO_GITHUB_CLIENT_ID: '', SSO_APPLE_CLIENT_ID: 'x' });
+    const sso = build({
+      SSO_ENABLED_PROVIDERS: 'google,github,apple',
+      SSO_GITHUB_CLIENT_ID: '',
+      SSO_APPLE_CLIENT_ID: 'x',
+    });
     expect(sso.providers).toEqual(['google']);
     expect(sso.listProviders().providers).toEqual([{ id: 'google', label: 'Google' }]);
   });
@@ -169,7 +209,12 @@ describe('flujo de Google', () => {
   test('start: PKCE S256, state, nonce y cookie ligada al navegador', async () => {
     const r = await begin(build());
     expect(r.location.startsWith(`${ISS}/auth`)).toBe(true);
-    expect(r.q).toMatchObject({ response_type: 'code', client_id: 'cid', redirect_uri: REDIRECT, code_challenge_method: 'S256' });
+    expect(r.q).toMatchObject({
+      response_type: 'code',
+      client_id: 'cid',
+      redirect_uri: REDIRECT,
+      code_challenge_method: 'S256',
+    });
     expect(r.q.state).toBeTruthy();
     expect(r.q.nonce).toBeTruthy();
     expect(r.q.code_challenge).toBeTruthy();
@@ -189,7 +234,9 @@ describe('flujo de Google', () => {
     const ticket = hashOf(back.location).ticket;
     expect(ticket).toBeTruthy();
     expect(back.cookie).toContain('Max-Age=0'); // la cookie ligada se borra
-    expect(exchanged).toEqual([{ provider: 'google', subject: 'sub-1', email: 'ada@example.invalid', emailVerified: true }]);
+    expect(exchanged).toEqual([
+      { provider: 'google', subject: 'sub-1', email: 'ada@example.invalid', emailVerified: true },
+    ]);
     expect(sso.store.getIdentity('google', 'sub-1')?.userId).toBe('u1');
 
     const done = sso.complete(ticket);
@@ -228,13 +275,17 @@ describe('flujo de Google', () => {
       const sso = build();
       expect(errorOf(await sso.callback('google', { state: 'nope', code: 'c' }, 'x'))).toBe('STATE_INVALID');
       const a = await begin(sso);
-      expect(errorOf(await sso.callback('google', { state: a.q.state, code: 'c' }, 'cookie-de-otro'))).toBe('STATE_INVALID');
+      expect(errorOf(await sso.callback('google', { state: a.q.state, code: 'c' }, 'cookie-de-otro'))).toBe(
+        'STATE_INVALID'
+      );
       // el state se gasta aunque falle: no se puede reintentar con la cookie buena
       nextClaims = claimsFor(a.q);
       expect(errorOf(await sso.callback('google', { state: a.q.state, code: 'c' }, a.cookie))).toBe('STATE_INVALID');
       const b = await begin(sso);
       nextClaims = claimsFor(b.q);
-      expect(hashOf((await sso.callback('google', { state: b.q.state, code: 'c' }, b.cookie)).location).ticket).toBeTruthy();
+      expect(
+        hashOf((await sso.callback('google', { state: b.q.state, code: 'c' }, b.cookie)).location).ticket
+      ).toBeTruthy();
       expect(errorOf(await sso.callback('google', { state: b.q.state, code: 'c' }, b.cookie))).toBe('STATE_INVALID');
     });
 
@@ -268,14 +319,20 @@ describe('flujo de Google', () => {
       tokenStatus = 400;
       expect(errorOf(await sso.callback('google', { state: a.q.state, code: 'c' }, a.cookie))).toBe('PROVIDER_ERROR');
       const b = await begin(sso);
-      expect(errorOf(await sso.callback('google', { state: b.q.state, error: 'access_denied' }, b.cookie))).toBe('DENIED');
+      expect(errorOf(await sso.callback('google', { state: b.q.state, error: 'access_denied' }, b.cookie))).toBe(
+        'DENIED'
+      );
       const c = await begin(sso);
       expect(errorOf(await sso.callback('google', { state: c.q.state }, c.cookie))).toBe('PROVIDER_ERROR');
     });
 
     test('el gateway: sin cuenta (404), cuenta desactivada (403) o caído', async () => {
       const sso = build();
-      for (const [status, code] of [[404, 'NO_ACCOUNT'], [403, 'ACCOUNT_DISABLED'], [500, 'GATEWAY_ERROR']] as const) {
+      for (const [status, code] of [
+        [404, 'NO_ACCOUNT'],
+        [403, 'ACCOUNT_DISABLED'],
+        [500, 'GATEWAY_ERROR'],
+      ] as const) {
         exchangeStatus = status;
         const { q, cookie } = await begin(sso);
         nextClaims = claimsFor(q);
@@ -285,7 +342,13 @@ describe('flujo de Google', () => {
 
     test('identidad ya enlazada a otra persona: IDENTITY_MISMATCH y no se reasigna', async () => {
       const sso = build();
-      sso.store.putIdentity({ provider: 'google', subject: 'sub-1', userId: 'otra-persona', tenantId: 't1', email: 'x@x.co' });
+      sso.store.putIdentity({
+        provider: 'google',
+        subject: 'sub-1',
+        userId: 'otra-persona',
+        tenantId: 't1',
+        email: 'x@x.co',
+      });
       const { q, cookie } = await begin(sso);
       nextClaims = claimsFor(q);
       expect(errorOf(await sso.callback('google', { state: q.state, code: 'c' }, cookie))).toBe('IDENTITY_MISMATCH');
@@ -305,13 +368,22 @@ describe('flujo de Google', () => {
 describe('proveedor de empresa', () => {
   const admin = { user: user(), accessToken: 'tok' };
   const put = (sso: ReturnType<typeof build>, body: object, auth = admin, tenant = '') =>
-    sso.manage(new Request(`http://app.test/m${tenant}`, { method: 'PUT', body: JSON.stringify(body) }), '/enterprise', auth);
+    sso.manage(
+      new Request(`http://app.test/m${tenant}`, { method: 'PUT', body: JSON.stringify(body) }),
+      '/enterprise',
+      auth
+    );
   const config = { name: 'Acme', issuer: ISS, clientId: 'cid', clientSecret: 's3cr3t', domains: ['acme.test'] };
   type DomainView = { domain: string; verified: boolean; txtHost: string; txtValue: string };
   const view = async (sso: ReturnType<typeof build>, auth = admin) =>
-    ((await sso.manage(new Request('http://app.test/m'), '/enterprise', auth)).json as { domains: DomainView[] }).domains;
+    ((await sso.manage(new Request('http://app.test/m'), '/enterprise', auth)).json as { domains: DomainView[] })
+      .domains;
   const verifyReq = (sso: ReturnType<typeof build>, domain: string, auth = admin) =>
-    sso.manage(new Request('http://app.test/m', { method: 'POST', body: JSON.stringify({ domain }) }), '/enterprise/verify', auth);
+    sso.manage(
+      new Request('http://app.test/m', { method: 'POST', body: JSON.stringify({ domain }) }),
+      '/enterprise/verify',
+      auth
+    );
   /** Hace lo que haría el administrador: publica el TXT que pide la vista y pulsa «Verificar». */
   async function verify(sso: ReturnType<typeof build>, domain = 'acme.test', auth = admin) {
     const d = (await view(sso, auth)).find((x) => x.domain === domain)!;
@@ -364,11 +436,17 @@ describe('proveedor de empresa', () => {
     const sso = build();
     expect((await put(sso, config, { user: user({ role: 'agent' }), accessToken: 't' })).status).toBe(403);
     expect((await put(sso, config, admin, '?tenantId=t9')).status).toBe(403);
-    expect((await put(sso, config, { user: user({ role: 'super_admin' }), accessToken: 't' }, '?tenantId=t9')).status).toBe(200);
+    expect(
+      (await put(sso, config, { user: user({ role: 'super_admin' }), accessToken: 't' }, '?tenantId=t9')).status
+    ).toBe(200);
     expect(sso.store.getEnterprise('t9')).toBeTruthy();
   });
 
-  async function enterpriseLogin(over: Record<string, unknown> = {}, who: Partial<SessionUser> = {}, email = 'ada@acme.test') {
+  async function enterpriseLogin(
+    over: Record<string, unknown> = {},
+    who: Partial<SessionUser> = {},
+    email = 'ada@acme.test'
+  ) {
     const sso = build();
     await put(sso, config);
     await verify(sso);
@@ -401,7 +479,12 @@ describe('proveedor de empresa', () => {
     ['correo de otro dominio', { email: 'ada@otro.test' }, {}, 'WRONG_DOMAIN'],
     ['correo marcado sin verificar', { email_verified: false }, {}, 'EMAIL_NOT_VERIFIED'],
     ['persona de otra empresa', {}, { tenantId: 't2' }, 'WRONG_TENANT'],
-    ['un super_admin no entra por el proveedor de una empresa', {}, { role: 'super_admin' as const }, 'ROLE_NOT_ALLOWED'],
+    [
+      'un super_admin no entra por el proveedor de una empresa',
+      {},
+      { role: 'super_admin' as const },
+      'ROLE_NOT_ALLOWED',
+    ],
   ])('%s', async (_n, claims, who, code) => {
     const { back } = await enterpriseLogin(claims, who);
     expect(hashOf(back.location).error).toBe(code);
@@ -411,10 +494,22 @@ describe('proveedor de empresa', () => {
   test('cambiar de emisor desenlaza las identidades y borrar el proveedor las quita todas', async () => {
     const sso = build();
     await put(sso, config);
-    sso.store.putIdentity({ provider: 'enterprise:t1', subject: 's', userId: 'u1', tenantId: 't1', email: 'a@acme.test' });
+    sso.store.putIdentity({
+      provider: 'enterprise:t1',
+      subject: 's',
+      userId: 'u1',
+      tenantId: 't1',
+      email: 'a@acme.test',
+    });
     await put(sso, { ...config, issuer: 'https://otro-idp.test' });
     expect(sso.store.getIdentity('enterprise:t1', 's')).toBeNull();
-    sso.store.putIdentity({ provider: 'enterprise:t1', subject: 's', userId: 'u1', tenantId: 't1', email: 'a@acme.test' });
+    sso.store.putIdentity({
+      provider: 'enterprise:t1',
+      subject: 's',
+      userId: 'u1',
+      tenantId: 't1',
+      email: 'a@acme.test',
+    });
     const del = await sso.manage(new Request('http://app.test/m', { method: 'DELETE' }), '/enterprise', admin);
     expect(del.status).toBe(200);
     expect(sso.store.getEnterprise('t1')).toBeNull();
@@ -430,9 +525,17 @@ describe('verificación de dominios', () => {
   const put = (sso: ReturnType<typeof build>, body: object, auth = t1) =>
     sso.manage(new Request('http://app.test/m', { method: 'PUT', body: JSON.stringify(body) }), '/enterprise', auth);
   const get = async (sso: ReturnType<typeof build>, auth = t1) =>
-    ((await sso.manage(new Request('http://app.test/m'), '/enterprise', auth)).json as { domains: { domain: string; verified: boolean; txtHost: string; txtValue: string }[] }).domains;
+    (
+      (await sso.manage(new Request('http://app.test/m'), '/enterprise', auth)).json as {
+        domains: { domain: string; verified: boolean; txtHost: string; txtValue: string }[];
+      }
+    ).domains;
   const verifyReq = (sso: ReturnType<typeof build>, domain: string, auth = t1) =>
-    sso.manage(new Request('http://app.test/m', { method: 'POST', body: JSON.stringify({ domain }) }), '/enterprise/verify', auth);
+    sso.manage(
+      new Request('http://app.test/m', { method: 'POST', body: JSON.stringify({ domain }) }),
+      '/enterprise/verify',
+      auth
+    );
   const publish = async (sso: ReturnType<typeof build>, auth = t1, domain = 'acme.test') => {
     const d = (await get(sso, auth)).find((x) => x.domain === domain)!;
     txt[d.txtHost] = [[d.txtValue]];
@@ -513,7 +616,10 @@ describe('verificación de dominios', () => {
     await verifyReq(sso, 'acme.test');
     await put(sso, { ...config, domains: ['acme.test', 'nuevo.test'] });
     const now = await get(sso);
-    expect(now.map((d) => [d.domain, d.verified])).toEqual([['acme.test', true], ['nuevo.test', false]]);
+    expect(now.map((d) => [d.domain, d.verified])).toEqual([
+      ['acme.test', true],
+      ['nuevo.test', false],
+    ]);
     // verificar dos veces es inofensivo
     expect((await verifyReq(sso, 'acme.test')).status).toBe(200);
   });
@@ -583,23 +689,50 @@ describe('migración del almacén', () => {
 });
 
 describe('gestión con sesión', () => {
-  const call = (sso: ReturnType<typeof build>, method: string, path: string, body?: unknown, auth = { user: user(), accessToken: 't' }) =>
-    sso.manage(new Request('http://app.test/m', { method, body: body === undefined ? undefined : JSON.stringify(body) }), path, auth);
+  const call = (
+    sso: ReturnType<typeof build>,
+    method: string,
+    path: string,
+    body?: unknown,
+    auth = { user: user(), accessToken: 't' }
+  ) =>
+    sso.manage(
+      new Request('http://app.test/m', { method, body: body === undefined ? undefined : JSON.stringify(body) }),
+      path,
+      auth
+    );
 
   test('sin sesión: 401 en todo', async () => {
     const sso = build();
-    for (const [m, p] of [['GET', '/identities'], ['DELETE', '/identities/google'], ['GET', '/policy'], ['PUT', '/policy'], ['GET', '/enterprise']] as const) {
-      expect((await call(sso, m, p, undefined, { user: null as never, accessToken: '' })).status, `${m} ${p}`).toBe(401);
+    for (const [m, p] of [
+      ['GET', '/identities'],
+      ['DELETE', '/identities/google'],
+      ['GET', '/policy'],
+      ['PUT', '/policy'],
+      ['GET', '/enterprise'],
+    ] as const) {
+      expect((await call(sso, m, p, undefined, { user: null as never, accessToken: '' })).status, `${m} ${p}`).toBe(
+        401
+      );
     }
   });
 
   test('identidades: se listan sin el sujeto y se desvinculan', async () => {
     const sso = build();
-    sso.store.putIdentity({ provider: 'google', subject: 'secreto-sub', userId: 'u1', tenantId: 't1', email: 'a@b.co' });
+    sso.store.putIdentity({
+      provider: 'google',
+      subject: 'secreto-sub',
+      userId: 'u1',
+      tenantId: 't1',
+      email: 'a@b.co',
+    });
     sso.store.putIdentity({ provider: 'enterprise:t1', subject: 'e', userId: 'u1', tenantId: 't1', email: 'a@b.co' });
     const list = await call(sso, 'GET', '/identities');
     expect(JSON.stringify(list.json)).not.toContain('secreto-sub');
-    expect((list.json as { identities: { provider: string }[] }).identities.map((i) => i.provider)).toEqual(['google', 'enterprise']);
+    expect((list.json as { identities: { provider: string }[] }).identities.map((i) => i.provider)).toEqual([
+      'google',
+      'enterprise',
+    ]);
     expect((await call(sso, 'DELETE', '/identities/google')).status).toBe(200);
     expect((await call(sso, 'DELETE', '/identities/google')).status).toBe(404);
     expect((await call(sso, 'DELETE', '/identities/enterprise')).status).toBe(200);
@@ -608,7 +741,10 @@ describe('gestión con sesión', () => {
 
   test('política: solo administradores y valida el tipo', async () => {
     const sso = build();
-    expect((await call(sso, 'PUT', '/policy', { enabled: false }, { user: user({ role: 'agent' }), accessToken: 't' })).status).toBe(403);
+    expect(
+      (await call(sso, 'PUT', '/policy', { enabled: false }, { user: user({ role: 'agent' }), accessToken: 't' }))
+        .status
+    ).toBe(403);
     expect((await call(sso, 'PUT', '/policy', { enabled: 'no' })).status).toBe(400);
     expect((await call(sso, 'PUT', '/policy', { enabled: false })).status).toBe(200);
     expect(sso.store.getPolicy('t1').enabled).toBe(false);

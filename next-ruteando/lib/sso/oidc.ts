@@ -3,8 +3,8 @@
  * endpoints en `/.well-known/openid-configuration`, canjea el código y valida el `id_token`: firma (JWKS), `iss`, `aud`, `exp` y `nonce`.
  * El resultado es una identidad `{ subject, email, emailVerified, name }`; decidir si el correo basta es de quien llama.
  */
-import { request, SsoError, type FetchLike } from './http';
-import { verifyJwt, type Jwks } from './jwt';
+import { type FetchLike, request, SsoError } from './http';
+import { type Jwks, verifyJwt } from './jwt';
 
 const LEEWAY_S = 60;
 const CACHE_MS = 60 * 60 * 1000;
@@ -40,7 +40,11 @@ export function checkIssuer(issuer: unknown, allowInsecure: boolean): boolean {
   const host = url.hostname;
   const literalIp = /^[\d.]+$/.test(host) || host.includes(':');
   return (
-    url.protocol === 'https:' && !literalIp && host !== 'localhost' && !host.endsWith('.localhost') && !host.endsWith('.internal')
+    url.protocol === 'https:' &&
+    !literalIp &&
+    host !== 'localhost' &&
+    !host.endsWith('.localhost') &&
+    !host.endsWith('.internal')
   );
 }
 
@@ -132,7 +136,12 @@ export function createOidcClient({
       const headers: Record<string, string> = {};
       const secret = await getClientSecret();
       const methods = doc.token_endpoint_auth_methods_supported;
-      if (secret && Array.isArray(methods) && !methods.includes('client_secret_post') && methods.includes('client_secret_basic')) {
+      if (
+        secret &&
+        Array.isArray(methods) &&
+        !methods.includes('client_secret_post') &&
+        methods.includes('client_secret_basic')
+      ) {
         headers.Authorization = `Basic ${Buffer.from(`${encodeURIComponent(clientId)}:${encodeURIComponent(secret)}`).toString('base64')}`;
       } else if (secret) {
         form.client_secret = secret;

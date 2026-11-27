@@ -18,11 +18,11 @@ import { createCrypto, parseMasterKey } from '../mfa/crypto';
 import { getMfa, type MfaAuth, type MfaOut } from '../mfa/service';
 import type { GatewaySession } from '../session';
 import { createGithubClient } from './github';
-import { SsoError, type FetchLike } from './http';
+import { type FetchLike, SsoError } from './http';
 import { signEs256 } from './jwt';
 import { checkIssuer, createOidcClient, type SsoClient } from './oidc';
 import { safeFetch } from './safe-fetch';
-import { openSsoStore, type Enterprise, type SsoStore } from './store';
+import { type Enterprise, openSsoStore, type SsoStore } from './store';
 
 const ADMIN_ROLES = ['tenant_admin', 'super_admin'];
 const KNOWN = ['google', 'github', 'apple', 'enterprise'];
@@ -33,9 +33,33 @@ const MAX_PENDING = 500;
 export const SSO_COOKIE = 'ruteando_sso';
 /** Dominios de correo públicos: nadie puede ser «dueño» de ellos, así que nunca se aceptan (ni verificables por casualidad). */
 const PUBLIC_DOMAINS = new Set([
-  'gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com', 'yahoo.com', 'yahoo.es', 'ymail.com',
-  'icloud.com', 'me.com', 'mac.com', 'proton.me', 'protonmail.com', 'aol.com', 'gmx.com', 'gmx.net', 'mail.com', 'zoho.com',
-  'yandex.com', 'yandex.ru', 'qq.com', '163.com', 'hotmail.es', 'outlook.es', 'live.com.mx', 'hotmail.com.mx',
+  'gmail.com',
+  'googlemail.com',
+  'outlook.com',
+  'hotmail.com',
+  'live.com',
+  'msn.com',
+  'yahoo.com',
+  'yahoo.es',
+  'ymail.com',
+  'icloud.com',
+  'me.com',
+  'mac.com',
+  'proton.me',
+  'protonmail.com',
+  'aol.com',
+  'gmx.com',
+  'gmx.net',
+  'mail.com',
+  'zoho.com',
+  'yandex.com',
+  'yandex.ru',
+  'qq.com',
+  '163.com',
+  'hotmail.es',
+  'outlook.es',
+  'live.com.mx',
+  'hotmail.com.mx',
 ]);
 /** Para demostrar que controla el dominio, el administrador publica `ruteando-verify=<valor>` como TXT en `_ruteando-verify.<dominio>`. */
 const VERIFY_LABEL = '_ruteando-verify';
@@ -124,7 +148,9 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
     .map((p) => p.trim().toLowerCase())
     .filter((p) => KNOWN.includes(p));
   const masterKey = parseMasterKey(env.MFA_SECRET_KEY);
-  const rawBase = String(env.SSO_REDIRECT_BASE_URL || '').trim().replace(/\/+$/, '');
+  const rawBase = String(env.SSO_REDIRECT_BASE_URL || '')
+    .trim()
+    .replace(/\/+$/, '');
   const baseOk = /^https?:\/\/[^/]+$/i.test(rawBase);
   const reason = !requested.length
     ? 'Falta SSO_ENABLED_PROVIDERS'
@@ -145,7 +171,8 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       listProviders: () => ({ providers: [] as { id: string; label: string }[] }),
       start: async (): Promise<SsoRedirect> => goto('error=NO_PROVIDER'),
       callback: async (): Promise<SsoRedirect> => goto('error=NO_PROVIDER'),
-      complete: (_ticket?: unknown) => failOut(new Fail(503, 'SSO_DISABLED', 'El inicio de sesión único no está activado.')),
+      complete: (_ticket?: unknown) =>
+        failOut(new Fail(503, 'SSO_DISABLED', 'El inicio de sesión único no está activado.')),
       manage: disabled as (r: Request, p: string, a: MfaAuth) => Promise<MfaOut>,
     };
   }
@@ -161,7 +188,11 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
   const mfa = overrides.mfa || null;
   const resolveTxt =
     overrides.resolveTxt ||
-    ((host: string) => Promise.race([dns.promises.resolveTxt(host), new Promise<string[][]>((_, no) => setTimeout(() => no(new Error('dns')), DNS_TIMEOUT_MS))]));
+    ((host: string) =>
+      Promise.race([
+        dns.promises.resolveTxt(host),
+        new Promise<string[][]>((_, no) => setTimeout(() => no(new Error('dns')), DNS_TIMEOUT_MS)),
+      ]));
   const flows = createExpiringMap<Flow>(FLOW_TTL_MS, now);
   const tickets = createExpiringMap<GatewaySession>(TICKET_TTL_MS, now);
   const secureCookie = rawBase.startsWith('https:');
@@ -245,7 +276,9 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       let tenantId: string | null = null;
       let enterprise: Enterprise | null = null;
       if (name === 'enterprise') {
-        const email = String(emailParam || '').trim().toLowerCase();
+        const email = String(emailParam || '')
+          .trim()
+          .toLowerCase();
         const owner = store.domainOwner(email.split('@')[1] || '');
         enterprise = owner ? store.getEnterprise(owner) : null;
         // Mismo error para «dominio desconocido» y «SSO apagado»: no se revela qué empresas lo tienen
@@ -270,7 +303,10 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       // sitios: solo viaja con SameSite=None, que exige Secure.
       const sameSite = client.usesFormPost ? 'None' : 'Lax';
       const secure = secureCookie || client.usesFormPost ? '; Secure' : '';
-      return { location: url, cookie: `${SSO_COOKIE}=${binding}; Path=/gateway/sso; HttpOnly; SameSite=${sameSite}; Max-Age=600${secure}` };
+      return {
+        location: url,
+        cookie: `${SSO_COOKIE}=${binding}; Path=/gateway/sso; HttpOnly; SameSite=${sameSite}; Max-Age=600${secure}`,
+      };
     } catch (err) {
       if (!(err instanceof SsoError)) console.error('[sso]', err instanceof Error ? err.name : typeof err);
       return failTo(err instanceof SsoError ? err.code : 'PROVIDER_ERROR');
@@ -292,7 +328,11 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
   }
 
   /** `params` es la consulta (GET) o el formulario (POST, Apple); `binding` la cookie `ruteando_sso` del navegador. */
-  async function callback(name: string, params: Record<string, string | undefined>, binding: string): Promise<SsoRedirect> {
+  async function callback(
+    name: string,
+    params: Record<string, string | undefined>,
+    binding: string
+  ): Promise<SsoRedirect> {
     const flow = flows.take(params.state);
     const bound = flow && equal(binding, flow.binding);
     const redirect = (r: SsoRedirect): SsoRedirect => ({ ...r, cookie: clearCookie });
@@ -332,8 +372,19 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       // Una identidad ya enlazada a otra persona no se reasigna sola (el correo pudo cambiar de dueño en el proveedor)
       const linked = store.getIdentity(key, identity.subject);
       if (linked && linked.userId !== user.id) return redirect(failTo('IDENTITY_MISMATCH', user));
-      store.putIdentity({ provider: key, subject: identity.subject, userId: user.id, tenantId: user.tenantId, email: identity.email });
-      store.addEvent({ userId: user.id, tenantId: user.tenantId, kind: linked ? 'login_ok' : 'identity_linked', detail: key });
+      store.putIdentity({
+        provider: key,
+        subject: identity.subject,
+        userId: user.id,
+        tenantId: user.tenantId,
+        email: identity.email,
+      });
+      store.addEvent({
+        userId: user.id,
+        tenantId: user.tenantId,
+        kind: linked ? 'login_ok' : 'identity_linked',
+        detail: key,
+      });
       const ticket = rand();
       tickets.put(ticket, ex.session);
       return redirect(goto(`ticket=${ticket}`));
@@ -365,7 +416,8 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
   }
 
   /** Valor del TXT: derivado de la clave maestra, la empresa y el dominio (no hay nada que guardar y no se puede adivinar ni copiar de otra empresa). */
-  const domainProof = (tenantId: string, domain: string) => `ruteando-verify=${codec.hash('sso-domain', `${tenantId}:${domain}`).slice(0, 48)}`;
+  const domainProof = (tenantId: string, domain: string) =>
+    `ruteando-verify=${codec.hash('sso-domain', `${tenantId}:${domain}`).slice(0, 48)}`;
 
   const enterpriseView = (tenantId: string) => {
     const e = store.getEnterprise(tenantId);
@@ -407,7 +459,8 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       if (!ADMIN_ROLES.includes(user.role)) throw new Fail(403, 'FORBIDDEN', 'No tienes permiso para esta acción.');
     };
     const needEnterprise = () => {
-      if (!providers.includes('enterprise')) throw new Fail(503, 'SSO_DISABLED', 'El SSO empresarial no está activado en el servidor.');
+      if (!providers.includes('enterprise'))
+        throw new Fail(503, 'SSO_DISABLED', 'El SSO empresarial no está activado en el servidor.');
     };
 
     if (method === 'GET' && p === '/identities') {
@@ -433,7 +486,10 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
 
     if (method === 'GET' && p === '/policy') {
       adminOnly();
-      return out(200, { ...store.getPolicy(targetTenant(user, query.get('tenantId'))), providers: providerList(providers) });
+      return out(200, {
+        ...store.getPolicy(targetTenant(user, query.get('tenantId'))),
+        providers: providerList(providers),
+      });
     }
     if (method === 'PUT' && p === '/policy') {
       adminOnly();
@@ -454,10 +510,14 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       const tenantId = targetTenant(user, query.get('tenantId') || body.tenantId);
       const current = store.getEnterprise(tenantId);
       const name = String(body.name || '').trim();
-      const issuer = String(body.issuer || '').trim().replace(/\/+$/, '');
+      const issuer = String(body.issuer || '')
+        .trim()
+        .replace(/\/+$/, '');
       const clientId = String(body.clientId || '').trim();
       const secret = String(body.clientSecret || '');
-      const domains = [...new Set((Array.isArray(body.domains) ? body.domains : []).map((d) => String(d).trim().toLowerCase()))];
+      const domains = [
+        ...new Set((Array.isArray(body.domains) ? body.domains : []).map((d) => String(d).trim().toLowerCase())),
+      ];
       const invalid = (message: string) => new Fail(400, 'INVALID_PROVIDER', message);
       if (!name || name.length > 80) throw invalid('Escribe un nombre de hasta 80 caracteres.');
       if (!checkIssuer(issuer, allowInsecure)) throw invalid('El emisor debe ser una dirección https pública.');
@@ -468,7 +528,8 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
         throw invalid('Escribe entre 1 y 10 dominios de correo válidos, por ejemplo empresa.com.');
       }
       const publicDomain = domains.find((d) => PUBLIC_DOMAINS.has(d));
-      if (publicDomain) throw invalid(`${publicDomain} es un correo público: solo se admiten dominios propios de la empresa.`);
+      if (publicDomain)
+        throw invalid(`${publicDomain} es un correo público: solo se admiten dominios propios de la empresa.`);
       // Solo choca con un dominio que otra empresa ya VERIFICÓ; reclamar es libre pero no sirve de nada hasta demostrarlo
       const taken = domains.find((d) => {
         const owner = store.domainOwner(d);
@@ -493,17 +554,25 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       adminOnly();
       needEnterprise();
       const tenantId = targetTenant(user, query.get('tenantId') || body.tenantId);
-      const domain = String(body.domain || '').trim().toLowerCase();
+      const domain = String(body.domain || '')
+        .trim()
+        .toLowerCase();
       const current = store.getEnterprise(tenantId);
-      if (!current?.domains.includes(domain)) throw new Fail(404, 'NOT_FOUND', 'Ese dominio no está en la lista de la empresa.');
+      if (!current?.domains.includes(domain))
+        throw new Fail(404, 'NOT_FOUND', 'Ese dominio no está en la lista de la empresa.');
       if (current.verifiedDomains.includes(domain)) return out(200, enterpriseView(tenantId));
       const expected = domainProof(tenantId, domain);
       const records = await resolveTxt(`${VERIFY_LABEL}.${domain}`).catch(() => [] as string[][]);
       // Cada registro TXT llega partido en trozos de 255 bytes: se unen antes de comparar
       if (!records.some((chunks) => equal(chunks.join('').trim(), expected))) {
-        throw new Fail(409, 'DOMAIN_NOT_VERIFIED', `No se encontró el registro TXT. Publica ${expected} en ${VERIFY_LABEL}.${domain} y vuelve a intentarlo (el DNS puede tardar unos minutos).`);
+        throw new Fail(
+          409,
+          'DOMAIN_NOT_VERIFIED',
+          `No se encontró el registro TXT. Publica ${expected} en ${VERIFY_LABEL}.${domain} y vuelve a intentarlo (el DNS puede tardar unos minutos).`
+        );
       }
-      if (!store.verifyDomain(tenantId, domain)) throw new Fail(409, 'DOMAIN_TAKEN', `El dominio ${domain} ya lo verificó otra empresa.`);
+      if (!store.verifyDomain(tenantId, domain))
+        throw new Fail(409, 'DOMAIN_TAKEN', `El dominio ${domain} ya lo verificó otra empresa.`);
       store.addEvent({ userId: user.id, tenantId, kind: 'domain_verified', detail: domain });
       return out(200, enterpriseView(tenantId));
     }
@@ -533,7 +602,8 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
         return await route(request, p, auth);
       } catch (err) {
         if (err instanceof Fail) return failOut(err);
-        if (err instanceof GatewayUnavailable) return failOut(new Fail(err.status, 'GATEWAY_ERROR', 'El servicio no está disponible.'));
+        if (err instanceof GatewayUnavailable)
+          return failOut(new Fail(err.status, 'GATEWAY_ERROR', 'El servicio no está disponible.'));
         // Solo la clase: el mensaje puede citar direcciones o credenciales
         console.error('[sso]', err instanceof Error ? err.name : typeof err);
         return failOut(new Fail(500, 'SSO_ERROR', 'No se pudo completar la operación.'));

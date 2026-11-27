@@ -68,6 +68,9 @@ export function safeFetch(url: string, init: RequestInit = {}): Promise<{ status
       return reject(err);
     }
     if (target.protocol !== 'https:') return reject(new Error('Solo https'));
+    // Con una IP literal Node no llama al `lookup` (no hay nombre que resolver): se comprueba aquí, para que la guardia valga por sí sola
+    const literal = target.hostname.replace(/^\[|\]$/g, '');
+    if (net.isIP(literal) && isPrivateAddress(literal)) return reject(new Error('Dirección no permitida'));
     const req = https.request(
       target,
       {

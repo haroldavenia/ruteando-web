@@ -15,7 +15,12 @@ const user = (over: Partial<SessionUser> = {}): SessionUser => ({
   tenantId: 't1',
   ...over,
 });
-const sessionOf = (u: SessionUser): GatewaySession => ({ accessToken: 'tok', refreshToken: 'ref', expiresIn: 3600, user: u });
+const sessionOf = (u: SessionUser): GatewaySession => ({
+  accessToken: 'tok',
+  refreshToken: 'ref',
+  expiresIn: 3600,
+  user: u,
+});
 
 let clock = 1_700_000_000_000;
 let sent: string[] = [];
@@ -33,9 +38,19 @@ function build(env: Record<string, string | undefined> = {}, over: MfaOverrides 
   return mfa;
 }
 const req = (method: string, body?: unknown, headers: Record<string, string> = {}) =>
-  new Request('http://app.test/middleware/mfa/x', { method, headers, body: body === undefined || method === 'GET' ? undefined : JSON.stringify(body) });
-const call = (mfa: ReturnType<typeof build>, method: string, path: string, body?: unknown, auth: MfaAuth = { user: null }, headers = {}) =>
-  mfa.handle(req(method, body, headers), path, auth);
+  new Request('http://app.test/middleware/mfa/x', {
+    method,
+    headers,
+    body: body === undefined || method === 'GET' ? undefined : JSON.stringify(body),
+  });
+const call = (
+  mfa: ReturnType<typeof build>,
+  method: string,
+  path: string,
+  body?: unknown,
+  auth: MfaAuth = { user: null },
+  headers = {}
+) => mfa.handle(req(method, body, headers), path, auth);
 const lastCode = () => /es (\d{6})/.exec(sent.at(-1) ?? '')![1];
 
 beforeEach(() => {
@@ -109,12 +124,20 @@ describe('activación y login con segundo factor', () => {
     expect(j.methods.map((m) => m.method)).toEqual(['totp', 'recovery']);
 
     clock += 31_000; // paso nuevo: el de la activación ya está gastado
-    const ok = await call(mfa, 'POST', '/login/verify', { challengeId: j.challengeId, method: 'totp', code: totpAt(secret, clock) });
+    const ok = await call(mfa, 'POST', '/login/verify', {
+      challengeId: j.challengeId,
+      method: 'totp',
+      code: totpAt(secret, clock),
+    });
     expect(ok.status).toBe(200);
     expect(ok.session?.accessToken).toBe('tok'); // la sesión viaja aparte, para cookies
     expect(JSON.stringify(ok.json)).not.toContain('tok');
     // el reto es de un solo uso
-    const again = await call(mfa, 'POST', '/login/verify', { challengeId: j.challengeId, method: 'totp', code: totpAt(secret, clock) });
+    const again = await call(mfa, 'POST', '/login/verify', {
+      challengeId: j.challengeId,
+      method: 'totp',
+      code: totpAt(secret, clock),
+    });
     expect(again.status).toBe(401);
   });
 
@@ -124,11 +147,17 @@ describe('activación y login con segundo factor', () => {
     const id = (mfa.afterLogin(sessionOf(user()))!.json as { challengeId: string }).challengeId;
     const statuses: number[] = [];
     for (let i = 0; i < 5; i++) {
-      statuses.push((await call(mfa, 'POST', '/login/verify', { challengeId: id, method: 'totp', code: '000000' })).status);
+      statuses.push(
+        (await call(mfa, 'POST', '/login/verify', { challengeId: id, method: 'totp', code: '000000' })).status
+      );
     }
     expect(statuses).toEqual([401, 401, 401, 401, 429]);
     clock += 31_000;
-    const good = await call(mfa, 'POST', '/login/verify', { challengeId: id, method: 'totp', code: totpAt(secret, clock) });
+    const good = await call(mfa, 'POST', '/login/verify', {
+      challengeId: id,
+      method: 'totp',
+      code: totpAt(secret, clock),
+    });
     expect(good.status).toBe(429);
     expect(good.session).toBeUndefined();
   });
@@ -138,7 +167,8 @@ describe('activación y login con segundo factor', () => {
     await enrollTotp(mfa);
     for (let i = 0; i < 2; i++) {
       const id = (mfa.afterLogin(sessionOf(user()))!.json as { challengeId: string }).challengeId;
-      for (let k = 0; k < 5; k++) await call(mfa, 'POST', '/login/verify', { challengeId: id, method: 'totp', code: '000000' });
+      for (let k = 0; k < 5; k++)
+        await call(mfa, 'POST', '/login/verify', { challengeId: id, method: 'totp', code: '000000' });
     }
     const blocked = mfa.afterLogin(sessionOf(user()))!;
     expect(blocked.status).toBe(429);
@@ -152,7 +182,11 @@ describe('activación y login con segundo factor', () => {
     const { done } = await enrollTotp(mfa);
     const [code] = (done.json as { recoveryCodes: string[] }).recoveryCodes;
     const id1 = (mfa.afterLogin(sessionOf(user()))!.json as { challengeId: string }).challengeId;
-    const ok = await call(mfa, 'POST', '/login/verify', { challengeId: id1, method: 'recovery', code: code.toLowerCase().replace('-', ' ') });
+    const ok = await call(mfa, 'POST', '/login/verify', {
+      challengeId: id1,
+      method: 'recovery',
+      code: code.toLowerCase().replace('-', ' '),
+    });
     expect(ok.status).toBe(200);
     expect((ok.json as { mfa: { recoveryCodesLeft: number } }).mfa.recoveryCodesLeft).toBe(9);
     const id2 = (mfa.afterLogin(sessionOf(user()))!.json as { challengeId: string }).challengeId;
@@ -171,7 +205,12 @@ describe('activación y login con segundo factor', () => {
 describe('activación obligatoria', () => {
   function required() {
     const mfa = build();
-    mfa.store.setPolicy({ tenantId: 't1', methods: { email: false, sms: false, totp: true }, required: 'all', roles: [] });
+    mfa.store.setPolicy({
+      tenantId: 't1',
+      methods: { email: false, sms: false, totp: true },
+      required: 'all',
+      roles: [],
+    });
     return mfa;
   }
 
@@ -179,7 +218,12 @@ describe('activación obligatoria', () => {
     const pending = required().afterLogin(sessionOf(user()))!;
     expect(pending.json).toMatchObject({ mfaEnrollRequired: true, methods: ['totp'] });
     const none = build();
-    none.store.setPolicy({ tenantId: 't1', methods: { email: false, sms: false, totp: false }, required: 'all', roles: [] });
+    none.store.setPolicy({
+      tenantId: 't1',
+      methods: { email: false, sms: false, totp: false },
+      required: 'all',
+      roles: [],
+    });
     expect(none.afterLogin(sessionOf(user()))!.status).toBe(503);
   });
 
@@ -202,7 +246,9 @@ describe('activación obligatoria', () => {
 
     const setup = await call(mfa, 'POST', '/totp/setup', {}, { user: null }, h);
     const { secret } = setup.json as { secret: string };
-    expect((await call(mfa, 'POST', '/totp/confirm', { code: totpAt(secret, clock) }, { user: null }, h)).status).toBe(200);
+    expect((await call(mfa, 'POST', '/totp/confirm', { code: totpAt(secret, clock) }, { user: null }, h)).status).toBe(
+      200
+    );
     const done = await call(mfa, 'POST', '/login/complete', { challengeId: id });
     expect(done.status).toBe(200);
     expect(done.session?.accessToken).toBe('tok');
@@ -219,14 +265,22 @@ describe('activación obligatoria', () => {
     void secret;
     const verifyId = (mfa.afterLogin(sessionOf(user()))!.json as { challengeId: string }).challengeId;
     expect((await call(mfa, 'POST', '/login/complete', { challengeId: verifyId })).status).toBe(401);
-    expect((await call(mfa, 'POST', '/totp/setup', {}, { user: null }, { 'x-mfa-challenge': verifyId })).status).toBe(401);
+    expect((await call(mfa, 'POST', '/totp/setup', {}, { user: null }, { 'x-mfa-challenge': verifyId })).status).toBe(
+      401
+    );
   });
 
   test('no se quita el último método si la empresa lo exige', async () => {
     const mfa = required();
     const u = user();
     const s = await call(mfa, 'POST', '/totp/setup', {}, { user: u });
-    await call(mfa, 'POST', '/totp/confirm', { code: totpAt((s.json as { secret: string }).secret, clock) }, { user: u });
+    await call(
+      mfa,
+      'POST',
+      '/totp/confirm',
+      { code: totpAt((s.json as { secret: string }).secret, clock) },
+      { user: u }
+    );
     const res = await call(mfa, 'DELETE', '/methods/totp', { via: 'recovery', code: 'x' }, { user: u });
     expect(res.status).toBe(409);
   });
@@ -235,7 +289,12 @@ describe('activación obligatoria', () => {
 describe('sin sesión y administración', () => {
   test('rutas con sesión sin sesión: 401', async () => {
     const mfa = build();
-    for (const [m, p] of [['GET', '/status'], ['POST', '/totp/setup'], ['PUT', '/policy'], ['DELETE', '/methods/email']] as const) {
+    for (const [m, p] of [
+      ['GET', '/status'],
+      ['POST', '/totp/setup'],
+      ['PUT', '/policy'],
+      ['DELETE', '/methods/email'],
+    ] as const) {
       expect((await call(mfa, m, p)).status, `${m} ${p}`).toBe(401);
     }
   });
@@ -281,7 +340,10 @@ describe('sin sesión y administración', () => {
     expect((await call(mfa, 'POST', '/users/u2/reset', {}, { user: user({ role: 'agent' }) })).status).toBe(403);
     expect((await call(mfa, 'POST', '/users/u2/reset', {}, admin)).status).toBe(200);
     expect(mfa.store.getFactors('u2')).toHaveLength(0);
-    expect((await call(mfa, 'POST', '/users/u3/reset', {}, { user: user({ role: 'super_admin' }), accessToken: 'tok' })).status).toBe(200);
+    expect(
+      (await call(mfa, 'POST', '/users/u3/reset', {}, { user: user({ role: 'super_admin' }), accessToken: 'tok' }))
+        .status
+    ).toBe(200);
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });

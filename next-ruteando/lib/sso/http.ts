@@ -21,7 +21,11 @@ interface RequestOptions {
   form?: Record<string, string>;
 }
 
-export async function request(fetchImpl: FetchLike, url: string, { method = 'GET', headers = {}, form }: RequestOptions = {}) {
+export async function request(
+  fetchImpl: FetchLike,
+  url: string,
+  { method = 'GET', headers = {}, form }: RequestOptions = {}
+) {
   let res;
   try {
     res = await fetchImpl(url, {

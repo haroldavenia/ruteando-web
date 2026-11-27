@@ -3,9 +3,9 @@ import { NextRequest } from 'next/server';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { validateConfig } from '@/lib/config';
-import { proxy } from '@/proxy';
 import { safeReturnUrl } from '@/lib/return-url';
 import { packUser, type SessionUser } from '@/lib/session-token';
+import { proxy } from '@/proxy';
 
 const user: SessionUser = { id: 'u1', email: 'a@b.co', role: 'agent', tenantId: 't1' };
 const req = (path: string, cookie = '', headers: Record<string, string> = {}) =>
@@ -77,7 +77,10 @@ describe('proxy: guardia de acceso', () => {
 
   test.each([
     ['cookie inventada', 'rt_refresh=basura'],
-    ['rt_user sin firma', `rt_user=${Buffer.from(JSON.stringify({ ...user, role: 'super_admin' })).toString('base64url')}.AAAA; rt_refresh=r`],
+    [
+      'rt_user sin firma',
+      `rt_user=${Buffer.from(JSON.stringify({ ...user, role: 'super_admin' })).toString('base64url')}.AAAA; rt_refresh=r`,
+    ],
     ['rt_user válida pero sin token', `rt_user=${packUser(user)}`],
     ['solo tokens, sin rt_user', 'rt_refresh=r; rt_access=a'],
   ])('rechaza %s', (_n, cookie) => {
@@ -91,7 +94,13 @@ describe('proxy: guardia de acceso', () => {
   });
 
   test('las rutas públicas y los handlers no redirigen', () => {
-    for (const p of ['/access', '/access/register', '/legal/privacy', '/middleware/auth/me', '/gateway/sso/google/start']) {
+    for (const p of [
+      '/access',
+      '/access/register',
+      '/legal/privacy',
+      '/middleware/auth/me',
+      '/gateway/sso/google/start',
+    ]) {
       expect(proxy(req(p)).status, p).toBe(200);
     }
   });
@@ -111,7 +120,9 @@ describe('proxy: cabeceras', () => {
 
   test('HSTS solo cuando la petición llegó por https', () => {
     expect(proxy(req('/access')).headers.get('strict-transport-security')).toBeNull();
-    expect(proxy(req('/access', '', { 'x-forwarded-proto': 'https' })).headers.get('strict-transport-security')).toContain('max-age=');
+    expect(
+      proxy(req('/access', '', { 'x-forwarded-proto': 'https' })).headers.get('strict-transport-security')
+    ).toContain('max-age=');
   });
 
   test('las respuestas de autenticación y SSO no se cachean', () => {

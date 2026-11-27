@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 
 import { readConfig } from './config';
-import { packUser, unpackUser, type SessionUser } from './session-token';
+import { packUser, type SessionUser, unpackUser } from './session-token';
 
 export { packUser, unpackUser };
 export type { SessionUser, UserRole } from './session-token';

@@ -12,7 +12,11 @@ interface WindowOptions {
 }
 
 /** `hit(key)` consume un cupo y dice si cabía; `now` se inyecta para poder probarlo con un reloj simulado. */
-export function createLimiter({ max = SEND_LIMIT.max, windowMs = SEND_LIMIT.windowMs, now = Date.now }: WindowOptions = {}) {
+export function createLimiter({
+  max = SEND_LIMIT.max,
+  windowMs = SEND_LIMIT.windowMs,
+  now = Date.now,
+}: WindowOptions = {}) {
   const hits = new Map<string, number[]>();
   return {
     hit(key: string) {
@@ -37,7 +41,11 @@ export const FAILURE_LIMIT = { max: 10, windowMs: 15 * 60 * 1000 };
  * Cuenta los códigos erróneos de una persona en una ventana deslizante. Sin esto, quien conoce la contraseña podría abrir retos nuevos
  * sin fin y probar 5 códigos en cada uno. `state(key).blocked` no consume nada; `record` anota un fallo; `clear` lo olvida al acertar.
  */
-export function createFailureTracker({ max = FAILURE_LIMIT.max, windowMs = FAILURE_LIMIT.windowMs, now = Date.now }: WindowOptions = {}) {
+export function createFailureTracker({
+  max = FAILURE_LIMIT.max,
+  windowMs = FAILURE_LIMIT.windowMs,
+  now = Date.now,
+}: WindowOptions = {}) {
   const failures = new Map<string, number[]>();
   const recent = (key: string) => (failures.get(key) || []).filter((at) => now() - at < windowMs);
   return {

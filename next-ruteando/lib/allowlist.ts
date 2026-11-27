@@ -41,6 +41,7 @@ export const RULES: Rule[] = [
 export function safeSegments(segments: string[]): string[] | null {
   if (!segments.length) return null;
   for (const s of segments) {
+    // eslint-disable-next-line no-control-regex -- los caracteres de control son justo lo que se rechaza
     if (!s || s === '.' || s === '..' || /[\\/;%?#\u0000-\u001f]/.test(s)) return null;
   }
   return segments.map((s) => s.toLowerCase());

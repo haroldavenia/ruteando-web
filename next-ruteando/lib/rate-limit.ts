@@ -20,6 +20,9 @@ export const resetRateLimits = () => hits.clear();
  */
 export function clientIp(request: Request, hops = Number(process.env.TRUSTED_PROXY_HOPS ?? 1)): string {
   if (!(hops > 0)) return 'local';
-  const chain = (request.headers.get('x-forwarded-for') ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+  const chain = (request.headers.get('x-forwarded-for') ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
   return chain[chain.length - hops] ?? 'local';
 }

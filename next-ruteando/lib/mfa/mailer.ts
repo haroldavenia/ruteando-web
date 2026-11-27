@@ -11,7 +11,13 @@ const DEFAULT_FROM = 'Ruteando <no-responder@ruteando.local>';
 
 export interface Mailer {
   available: boolean;
-  send(message: { to: string; subject: string; text: string; html?: string; attachments?: Mail.Attachment[] }): Promise<void>;
+  send(message: {
+    to: string;
+    subject: string;
+    text: string;
+    html?: string;
+    attachments?: Mail.Attachment[];
+  }): Promise<void>;
 }
 
 export function createMailer(env: Record<string, string | undefined> = process.env): Mailer {

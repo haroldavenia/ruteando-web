@@ -34,7 +34,17 @@ const STYLE = `
   }`;
 
 /** Marco común: franja de marca, tarjeta con `body` y pie. `preheader` es el resumen que muestra la bandeja de entrada. */
-function layout({ preheader, title, body, footer }: { preheader: string; title: string; body: string; footer: string }) {
+function layout({
+  preheader,
+  title,
+  body,
+  footer,
+}: {
+  preheader: string;
+  title: string;
+  body: string;
+  footer: string;
+}) {
   return `<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark">
@@ -67,7 +77,17 @@ const chip = (cls: string, bg: string, fg: string, text: string) =>
 const divider = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="line" style="border-top:1px solid #e6e1e6;font-size:0;line-height:0;padding-top:22px;">&nbsp;</td></tr></table>`;
 
 /** Correo con el código de verificación (inicio de sesión y activación del método «correo»). */
-export function codeEmail({ code, to, issuer = 'Ruteando', minutes = 5 }: { code: string; to?: string; issuer?: string; minutes?: number }) {
+export function codeEmail({
+  code,
+  to,
+  issuer = 'Ruteando',
+  minutes = 5,
+}: {
+  code: string;
+  to?: string;
+  issuer?: string;
+  minutes?: number;
+}) {
   const body = `
       ${h1('Tu código de verificación')}
       ${p(`Usa este código para continuar en ${escapeHtml(issuer)}. Es de un solo uso.`)}
@@ -93,7 +113,17 @@ export function codeEmail({ code, to, issuer = 'Ruteando', minutes = 5 }: { code
 }
 
 /** Solo desarrollo (`SMS_PROVIDER=dev`): el «SMS» llega por correo; se dibuja como un mensaje para que se vea qué recibiría la persona. */
-export function smsDevEmail({ code, maskedPhone, issuer = 'Ruteando', minutes = 5 }: { code: string; maskedPhone: string; issuer?: string; minutes?: number }) {
+export function smsDevEmail({
+  code,
+  maskedPhone,
+  issuer = 'Ruteando',
+  minutes = 5,
+}: {
+  code: string;
+  maskedPhone: string;
+  issuer?: string;
+  minutes?: number;
+}) {
   const sms = `${issuer}: tu código de verificación es ${code}. Caduca en ${minutes} minutos.`;
   const body = `
       <p style="margin:0 0 14px;">${chip('chip-info', '#dcebfa', '#0a5496', 'Simulación de desarrollo')}</p>
@@ -114,5 +144,3 @@ export function smsDevEmail({ code, maskedPhone, issuer = 'Ruteando', minutes = 
     attachments: [LOGO],
   };
 }
-
-

@@ -74,4 +74,4 @@ async function handle(request: Request, { params }: { params: Promise<{ path: st
   return Response.json(result.json, { status: result.status });
 }
 
-export { handle as GET, handle as POST, handle as PUT, handle as DELETE };
+export { handle as DELETE, handle as GET, handle as POST, handle as PUT };

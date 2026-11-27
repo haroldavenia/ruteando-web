@@ -8,7 +8,15 @@ export const TTL_MS = 5 * 60 * 1000;
 /** Intentos erróneos tras los que el código emitido se descarta. */
 export const MAX_WRONG = 5;
 
-export function createCodeStore({ codec, now = Date.now, ttlMs = TTL_MS }: { codec: Codec; now?: () => number; ttlMs?: number }) {
+export function createCodeStore({
+  codec,
+  now = Date.now,
+  ttlMs = TTL_MS,
+}: {
+  codec: Codec;
+  now?: () => number;
+  ttlMs?: number;
+}) {
   const codes = new Map<string, { hash: string; expiresAt: number; wrong: number }>();
   return {
     /** Emite un código nuevo para la clave (sustituye al anterior) y lo devuelve para enviarlo. */

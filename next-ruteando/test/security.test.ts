@@ -5,7 +5,7 @@ import { isAllowed, safeSegments } from '@/lib/allowlist';
 import { verifySameOrigin } from '@/lib/csrf';
 import { gatewayFetch } from '@/lib/gateway';
 import { rateLimit, resetRateLimits } from '@/lib/rate-limit';
-import { packUser, unpackUser, type SessionUser } from '@/lib/session';
+import { packUser, type SessionUser, unpackUser } from '@/lib/session';
 
 const admin: SessionUser = { id: '1', email: 'a@b.c', role: 'tenant_admin', tenantId: 't' };
 

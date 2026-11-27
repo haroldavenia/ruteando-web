@@ -8,17 +8,17 @@
  */
 import path from 'node:path';
 
-import { gatewayFetch, GatewayUnavailable } from '../gateway';
 import { readCapped } from '../body';
+import { gatewayFetch, GatewayUnavailable } from '../gateway';
 import type { GatewaySession, SessionUser } from '../session';
-import { createChallenges, type Challenge } from './challenges';
+import { type Challenge, createChallenges } from './challenges';
 import { createCodeStore } from './codes';
 import { createCrypto, normalizeRecoveryCode, parseMasterKey } from './crypto';
 import { codeEmail } from './email-templates';
 import { createFailureTracker, createLimiter } from './limits';
 import { createMailer, type Mailer } from './mailer';
 import { createSms, isValidPhone, maskPhone, type Sms } from './sms';
-import { METHODS, openStore, REQUIRED_MODES, type Method, type Policy, type Store } from './store';
+import { type Method, METHODS, openStore, type Policy, REQUIRED_MODES, type Store } from './store';
 import { generateSecret, otpauthUri, verifyTotp } from './totp';
 
 const ISSUER = 'Ruteando';
@@ -26,7 +26,15 @@ const ADMIN_ROLES = ['tenant_admin', 'super_admin'];
 const KNOWN_ROLES = ['tenant_admin', 'super_admin', 'agent', 'driver'];
 const RECOVERY_COUNT = 10;
 /** Rutas que admite el reto de activación obligatoria (todas las demás exigen una sesión de verdad). */
-const CHALLENGE_ROUTES = new Set(['/status', '/email/setup', '/email/confirm', '/sms/setup', '/sms/confirm', '/totp/setup', '/totp/confirm']);
+const CHALLENGE_ROUTES = new Set([
+  '/status',
+  '/email/setup',
+  '/email/confirm',
+  '/sms/setup',
+  '/sms/confirm',
+  '/totp/setup',
+  '/totp/confirm',
+]);
 
 export interface MfaOut {
   status: number;
@@ -71,7 +79,8 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
       enabled: false as const,
       reason: 'Falta MFA_SECRET_KEY (32 bytes en base64)',
       afterLogin: (_session?: GatewaySession): MfaOut | null => null,
-      handle: async (): Promise<MfaOut> => failOut(new Fail(503, 'MFA_DISABLED', 'El segundo factor no está activado en el servidor.')),
+      handle: async (): Promise<MfaOut> =>
+        failOut(new Fail(503, 'MFA_DISABLED', 'El segundo factor no está activado en el servidor.')),
     };
   }
 
@@ -105,11 +114,20 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
     policy.required === 'all' || (policy.required === 'roles' && policy.roles.includes(role));
   /** Métodos que la persona tiene verificados y que la empresa permite y el servidor puede usar. */
   function activeMethods(user: SessionUser, policy: Policy): Method[] {
-    const verified = new Set(store.getFactors(user.id).filter((f) => f.verified).map((f) => f.type));
+    const verified = new Set(
+      store
+        .getFactors(user.id)
+        .filter((f) => f.verified)
+        .map((f) => f.type)
+    );
     return offered(policy).filter((m) => verified.has(m));
   }
   const destinationOf = (user: SessionUser, method: string) =>
-    method === 'email' ? maskEmail(user.email) : method === 'sms' ? maskPhone(store.getFactor(user.id, 'sms')?.destination) : null;
+    method === 'email'
+      ? maskEmail(user.email)
+      : method === 'sms'
+        ? maskPhone(store.getFactor(user.id, 'sms')?.destination)
+        : null;
 
   const event = (user: { id?: string; tenantId?: string } | null, kind: string, detail?: string) =>
     store.addEvent({ userId: user?.id, tenantId: user?.tenantId, kind, detail });
@@ -139,7 +157,8 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
   }
 
   async function rawCheck(user: SessionUser, method: string, code: unknown): Promise<boolean> {
-    if (method === 'recovery') return store.consumeRecoveryCode(user.id, codec.hash('recovery', normalizeRecoveryCode(code)));
+    if (method === 'recovery')
+      return store.consumeRecoveryCode(user.id, codec.hash('recovery', normalizeRecoveryCode(code)));
     if (method === 'totp') {
       const factor = store.getFactor(user.id, 'totp');
       if (!factor?.secretEnc) return false;
@@ -158,7 +177,10 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
 
   function newRecoveryCodes(user: SessionUser) {
     const list = Array.from({ length: RECOVERY_COUNT }, () => codec.recoveryCode());
-    store.replaceRecoveryCodes(user.id, list.map((c) => codec.hash('recovery', normalizeRecoveryCode(c))));
+    store.replaceRecoveryCodes(
+      user.id,
+      list.map((c) => codec.hash('recovery', normalizeRecoveryCode(c)))
+    );
     return list;
   }
 
@@ -193,10 +215,17 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
     if (requiredFor(policy, user.role)) {
       const allowed = offered(policy);
       if (allowed.length === 0) {
-        return failOut(new Fail(503, 'MFA_UNAVAILABLE', 'El segundo factor es obligatorio pero ningún método está disponible.'));
+        return failOut(
+          new Fail(503, 'MFA_UNAVAILABLE', 'El segundo factor es obligatorio pero ningún método está disponible.')
+        );
       }
       const c = challenges.create({ session, mode: 'enroll', methods: allowed });
-      return out(200, { mfaEnrollRequired: true, challengeId: c.id, methods: allowed, expiresInSeconds: c.expiresInSeconds });
+      return out(200, {
+        mfaEnrollRequired: true,
+        challengeId: c.id,
+        methods: allowed,
+        expiresInSeconds: c.expiresInSeconds,
+      });
     }
     return null;
   }
@@ -207,18 +236,21 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
   /** Reto de verificación válido para esta petición, o lanza el error adecuado. */
   function verifyChallenge(body: Body): Challenge {
     const c = challenges.get(body.challengeId);
-    if (!c || c.mode !== 'verify') throw new Fail(401, 'CHALLENGE_EXPIRED', 'El reto no es válido o caducó. Inicia sesión de nuevo.');
+    if (!c || c.mode !== 'verify')
+      throw new Fail(401, 'CHALLENGE_EXPIRED', 'El reto no es válido o caducó. Inicia sesión de nuevo.');
     if (c.locked) throw new Fail(429, 'TOO_MANY_ATTEMPTS', 'Demasiados intentos. Inicia sesión de nuevo.');
     return c;
   }
 
   function requireAllowed(user: SessionUser, method: Method) {
-    if (!store.getPolicy(user.tenantId).methods[method]) throw new Fail(403, 'METHOD_NOT_ALLOWED', 'Tu empresa no permite este método.');
+    if (!store.getPolicy(user.tenantId).methods[method])
+      throw new Fail(403, 'METHOD_NOT_ALLOWED', 'Tu empresa no permite este método.');
     if (!available[method]) throw new Fail(503, 'METHOD_UNAVAILABLE', 'Este método no está disponible en el servidor.');
   }
 
   /** Un método ya verificado no se pisa con una activación nueva sin verificar: se desactiva antes, y eso pide un código. */
-  const alreadyActive = (what: string) => new Fail(409, 'ALREADY_ACTIVE', `${what} ya está activo. Desactívalo con un código antes de cambiarlo.`);
+  const alreadyActive = (what: string) =>
+    new Fail(409, 'ALREADY_ACTIVE', `${what} ya está activo. Desactívalo con un código antes de cambiarlo.`);
 
   /** Si era el primer método activo, genera y devuelve los códigos de recuperación (se muestran una sola vez). */
   function afterEnable(user: SessionUser, method: string) {
@@ -273,7 +305,8 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
     if (is('POST', '/login/send')) {
       const c = verifyChallenge(body);
       const m = str(body.method);
-      if (!['email', 'sms'].includes(m) || !c.methods.includes(m)) throw new Fail(400, 'METHOD_UNAVAILABLE', 'Ese método no está disponible.');
+      if (!['email', 'sms'].includes(m) || !c.methods.includes(m))
+        throw new Fail(400, 'METHOD_UNAVAILABLE', 'Ese método no está disponible.');
       await sendCode(c.user, m);
       return out(200, { sent: true, method: m, destination: destinationOf(c.user, m), expiresInSeconds: 300 });
     }
@@ -302,7 +335,8 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
     /** Cierra el inicio de sesión de una activación obligatoria cuando ya hay un método activo. */
     if (is('POST', '/login/complete')) {
       const c = challenges.get(body.challengeId);
-      if (!c || c.locked || c.mode !== 'enroll') throw new Fail(401, 'CHALLENGE_EXPIRED', 'El reto no es válido o caducó.');
+      if (!c || c.locked || c.mode !== 'enroll')
+        throw new Fail(401, 'CHALLENGE_EXPIRED', 'El reto no es válido o caducó.');
       if (activeMethods(c.user, store.getPolicy(c.user.tenantId)).length === 0) {
         throw new Fail(409, 'ENROLL_PENDING', 'Activa un método antes de entrar.');
       }
@@ -315,10 +349,12 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
     const challengeId = request.headers.get('x-mfa-challenge');
     if (challengeId) {
       const c = challenges.get(challengeId);
-      if (!c || c.locked || c.mode !== 'enroll') throw new Fail(401, 'CHALLENGE_EXPIRED', 'El reto no es válido o caducó.');
+      if (!c || c.locked || c.mode !== 'enroll')
+        throw new Fail(401, 'CHALLENGE_EXPIRED', 'El reto no es válido o caducó.');
       // El reto de activación NO es una sesión: si valiera para la política, los restablecimientos o las bajas, quien solo conoce la
       // contraseña se saltaría el segundo factor que la empresa exige.
-      if (!CHALLENGE_ROUTES.has(p)) throw new Fail(403, 'FORBIDDEN', 'Con el reto de activación solo se pueden activar métodos.');
+      if (!CHALLENGE_ROUTES.has(p))
+        throw new Fail(403, 'FORBIDDEN', 'Con el reto de activación solo se pueden activar métodos.');
       user = c.user;
     } else {
       if (!auth.user) throw new Fail(401, 'UNAUTHORIZED', 'Hace falta iniciar sesión.');
@@ -355,7 +391,13 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
     if (is('POST', '/email/setup')) {
       requireAllowed(user, 'email');
       if (store.getFactor(user.id, 'email')?.verified) throw alreadyActive('El correo');
-      store.putFactor({ userId: user.id, tenantId: user.tenantId, type: 'email', destination: user.email, verified: false });
+      store.putFactor({
+        userId: user.id,
+        tenantId: user.tenantId,
+        type: 'email',
+        destination: user.email,
+        verified: false,
+      });
       await sendCode(user, 'email').catch((err) => {
         store.deleteFactor(user.id, 'email');
         throw err;
@@ -376,7 +418,11 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
       if (store.getFactor(user.id, 'sms')?.verified) throw alreadyActive('El SMS');
       const phone = str(body.phone).replace(/[\s()-]/g, '');
       if (!isValidPhone(phone)) {
-        throw new Fail(400, 'INVALID_PHONE', 'Escribe el teléfono en formato internacional, por ejemplo +573001234567.');
+        throw new Fail(
+          400,
+          'INVALID_PHONE',
+          'Escribe el teléfono en formato internacional, por ejemplo +573001234567.'
+        );
       }
       const previous = store.getFactor(user.id, 'sms');
       store.putFactor({ userId: user.id, tenantId: user.tenantId, type: 'sms', destination: phone, verified: false });
@@ -400,7 +446,13 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
       requireAllowed(user, 'totp');
       if (store.getFactor(user.id, 'totp')?.verified) throw alreadyActive('La aplicación autenticadora');
       const secret = generateSecret();
-      store.putFactor({ userId: user.id, tenantId: user.tenantId, type: 'totp', secretEnc: codec.encrypt(secret), verified: false });
+      store.putFactor({
+        userId: user.id,
+        tenantId: user.tenantId,
+        type: 'totp',
+        secretEnc: codec.encrypt(secret),
+        verified: false,
+      });
       return out(200, { secret, otpauthUri: otpauthUri(ISSUER, user.email, secret) });
     }
     if (is('POST', '/totp/confirm')) {
@@ -420,7 +472,10 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
     /** Envía un código a quien ya tiene sesión, para poder confirmar con correo o SMS al desactivar o regenerar. */
     if (is('POST', '/session/send')) {
       const via = str(body.via);
-      if (!['email', 'sms'].includes(via) || !(activeMethods(user, store.getPolicy(user.tenantId)) as string[]).includes(via)) {
+      if (
+        !['email', 'sms'].includes(via) ||
+        !(activeMethods(user, store.getPolicy(user.tenantId)) as string[]).includes(via)
+      ) {
         throw new Fail(400, 'METHOD_UNAVAILABLE', 'Ese método no está disponible.');
       }
       await sendCode(user, via);
@@ -470,14 +525,20 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
         required: body.required as Policy['required'],
         roles: Array.isArray(body.roles) ? (body.roles as string[]) : [],
       };
-      if (!REQUIRED_MODES.includes(policy.required)) throw new Fail(400, 'INVALID_POLICY', 'El modo de obligatoriedad no es válido.');
-      if (policy.roles.some((r) => !KNOWN_ROLES.includes(r))) throw new Fail(400, 'INVALID_POLICY', 'Hay un rol desconocido.');
+      if (!REQUIRED_MODES.includes(policy.required))
+        throw new Fail(400, 'INVALID_POLICY', 'El modo de obligatoriedad no es válido.');
+      if (policy.roles.some((r) => !KNOWN_ROLES.includes(r)))
+        throw new Fail(400, 'INVALID_POLICY', 'Hay un rol desconocido.');
       if (policy.required === 'roles' && policy.roles.length === 0) {
         throw new Fail(400, 'INVALID_POLICY', 'Elige al menos un rol o cambia la obligatoriedad.');
       }
       if (policy.required !== 'roles') policy.roles = [];
       if (policy.required !== 'none' && !METHODS.some((x) => policy.methods[x])) {
-        throw new Fail(400, 'NO_METHOD_ALLOWED', 'Para exigir el segundo factor hace falta permitir al menos un método.');
+        throw new Fail(
+          400,
+          'NO_METHOD_ALLOWED',
+          'Para exigir el segundo factor hace falta permitir al menos un método.'
+        );
       }
       store.setPolicy(policy);
       event(user, 'policy_changed', policy.required);
@@ -494,7 +555,8 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
     if (method === 'POST' && reset) {
       adminOnly();
       const res = await gatewayFetch(`/users/${encodeURIComponent(reset[1])}`, { token: auth.accessToken });
-      const target = res.status === 200 ? ((await res.json().catch(() => null)) as { id?: string; tenantId?: string } | null) : null;
+      const target =
+        res.status === 200 ? ((await res.json().catch(() => null)) as { id?: string; tenantId?: string } | null) : null;
       // La persona debe existir para quien llama (el gateway ya limita lo que ve) y ser de su empresa, salvo `super_admin`
       if (!target?.id) throw new Fail(404, 'NOT_FOUND', 'No se encontró a esa persona.');
       if (user.role !== 'super_admin' && target.tenantId !== user.tenantId) {
@@ -519,7 +581,8 @@ export function createMfa(env: Record<string, string | undefined> = process.env,
         return await route(request, p, auth);
       } catch (err) {
         if (err instanceof Fail) return failOut(err);
-        if (err instanceof GatewayUnavailable) return failOut(new Fail(err.status, 'GATEWAY_ERROR', 'El servicio no está disponible.'));
+        if (err instanceof GatewayUnavailable)
+          return failOut(new Fail(err.status, 'GATEWAY_ERROR', 'El servicio no está disponible.'));
         // Mensaje genérico: ni el SMTP, ni Twilio, ni nada interno llegan al navegador
         // Solo la clase y el código: el mensaje de nodemailer/Twilio puede citar destinatarios, números o credenciales.
         const code = (err as { code?: unknown })?.code;

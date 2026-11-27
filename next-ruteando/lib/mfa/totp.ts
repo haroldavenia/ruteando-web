@@ -56,7 +56,12 @@ export const totpAt = (secret: string, nowMs: number) => hotp(secret, stepAt(now
  * Comprueba un código. Devuelve el paso aceptado (para guardarlo como `lastStep`) o `null` si no vale. Un paso igual o anterior
  * a `lastStep` se rechaza: un mismo código no sirve dos veces.
  */
-export function verifyTotp(secret: string, code: unknown, nowMs: number, lastStep: number | null | undefined): number | null {
+export function verifyTotp(
+  secret: string,
+  code: unknown,
+  nowMs: number,
+  lastStep: number | null | undefined
+): number | null {
   const given = String(code || '').replace(/\s/g, '');
   if (!/^\d{6}$/.test(given)) return null;
   const current = stepAt(nowMs);

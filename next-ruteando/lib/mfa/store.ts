@@ -212,7 +212,8 @@ export function openStore(file: string, { now = () => new Date() }: { now?: () =
     addEvent: (e: { userId?: string; tenantId?: string; kind: string; detail?: string }) =>
       void q.addEvent.run(stamp(), e.userId ?? null, e.tenantId ?? null, e.kind, e.detail ?? null),
     events: (userId: string, limit = 50) => q.events.all(userId, limit) as Row[],
-    usersWithFactors: (tenantId: string) => (q.usersWithFactors.all(tenantId) as { user_id: string }[]).map((r) => r.user_id),
+    usersWithFactors: (tenantId: string) =>
+      (q.usersWithFactors.all(tenantId) as { user_id: string }[]).map((r) => r.user_id),
 
     schemaVersion: () => (db.prepare('PRAGMA user_version').get() as { user_version: number }).user_version,
     close: () => db.close(),

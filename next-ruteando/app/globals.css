@@ -1,6 +1,127 @@
 @import 'tailwindcss';
 
-/* Los tokens M3 de ng-ruteando/src/styles.scss se migran aquí (fase 4). */
+/*
+ * Tokens de Ruteando: los mismos valores que la aplicación Angular (Material 3, semilla violeta y rosa; ver «Ruteando - Guia de diseno»).
+ * Cada rol es un par claro | oscuro con `light-dark()`, así que el tema sigue al sistema sin duplicar utilidades con `dark:`; la elección
+ * manual (Claro u Oscuro) cambia solo `color-scheme` en <html data-theme>.
+ * La paleta de Tailwind se vacía: lo que no sea un rol de esta hoja no existe como clase (el lint también lo exige).
+ */
 @theme {
-  --color-primary: #3f51b5;
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentcolor;
+
+  --color-primary: light-dark(#7d00fa, #d5baff);
+  --color-on-primary: light-dark(#ffffff, #42008a);
+  --color-primary-container: light-dark(#ecdcff, #5f00c0);
+  --color-on-primary-container: light-dark(#5f00c0, #ecdcff);
+  --color-secondary: light-dark(#645b70, #cec2db);
+  --color-secondary-container: light-dark(#eadef7, #4b4357);
+  --color-on-secondary-container: light-dark(#4b4357, #eadef7);
+  --color-tertiary: light-dark(#ba005c, #ffb1c5);
+  --color-tertiary-container: light-dark(#ffd9e1, #8f0045);
+  --color-on-tertiary-container: light-dark(#8f0045, #ffd9e1);
+  --color-error: light-dark(#ba1a1a, #ffb4ab);
+  --color-error-container: light-dark(#ffdad6, #93000a);
+  --color-on-error-container: light-dark(#93000a, #ffdad6);
+  --color-surface: light-dark(#fef8fc, #151316);
+  --color-surface-container-lowest: light-dark(#ffffff, #0f0d11);
+  --color-surface-container-low: light-dark(#f8f2f6, #1d1b1e);
+  --color-surface-container: light-dark(#f2ecf1, #211f22);
+  --color-surface-container-high: light-dark(#ede6eb, #2b292d);
+  --color-surface-container-highest: light-dark(#e6e1e6, #363437);
+  --color-on-surface: light-dark(#1d1b1e, #e6e1e6);
+  --color-on-surface-variant: light-dark(#49454e, #e8e0eb);
+  --color-outline: light-dark(#7b757f, #958e99);
+  --color-outline-variant: light-dark(#cbc4cf, #49454e);
+
+  /* Estados con significado propio (Material no trae verde, azul ni ámbar); cada par supera 4,5:1 en los dos temas */
+  --color-success-container: light-dark(#ddf3e7, #0f3a28);
+  --color-on-success-container: light-dark(#0b6b42, #6fdda8);
+  --color-info-container: light-dark(#dcebfa, #0c3157);
+  --color-on-info-container: light-dark(#0a5496, #8ac8ff);
+  --color-warning-container: light-dark(#ffebc2, #402d00);
+  --color-on-warning-container: light-dark(#7a4b00, #f6c964);
+
+  /* Tipografía: Manrope para marca, títulos y cifras; Roboto para texto y controles (next/font las aloja; ver app/layout.tsx) */
+  --font-brand: var(--font-manrope), system-ui, sans-serif;
+  --font-sans: var(--font-roboto), system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Roboto Mono', monospace;
+
+  /* Forma: 12 controles y avisos, 20 tarjetas, 24 diálogos (los demás radios usan la escala de Tailwind) */
+  --radius-control: 12px;
+  --radius-card: 20px;
+  --radius-dialog: 24px;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06);
+
+  /* Puntos de corte de la guía de diseño (base móvil y mejoras por min-width) */
+  --breakpoint-*: initial;
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 720px;
+  --breakpoint-lg: 960px;
+  --breakpoint-access: 1024px;
+  --breakpoint-xl: 1100px;
+}
+
+/* El hilo de la marca: solo para la acción principal de cada pantalla, barras de progreso y una palabra destacada */
+@utility bg-brand-gradient {
+  background-image: linear-gradient(100deg, var(--color-primary), var(--color-tertiary));
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-brand);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  /* Roboto solo se carga hasta el peso 500: la negrita de texto es 500 (el 700 lo inventaría el navegador) */
+  strong,
+  b {
+    font-weight: 500;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Todo movimiento se apaga con la preferencia del sistema */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }

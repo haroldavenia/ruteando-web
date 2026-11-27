@@ -9,6 +9,7 @@ export function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     console.error(message);
     process.exit(1);
+    return;
   }
   throw new Error(message);
 }

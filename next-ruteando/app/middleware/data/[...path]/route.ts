@@ -49,4 +49,4 @@ async function handle(request: Request, { params }: { params: Promise<{ path: st
   }
 }
 
-export { handle as GET, handle as POST, handle as PUT, handle as PATCH, handle as DELETE };
+export { handle as DELETE,handle as GET, handle as PATCH, handle as POST, handle as PUT };

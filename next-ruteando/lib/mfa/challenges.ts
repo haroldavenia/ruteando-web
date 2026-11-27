@@ -23,7 +23,11 @@ export interface Challenge {
   locked?: boolean;
 }
 
-export function createChallenges({ now = Date.now, ttlMs = TTL_MS, maxAttempts = MAX_ATTEMPTS }: { now?: () => number; ttlMs?: number; maxAttempts?: number } = {}) {
+export function createChallenges({
+  now = Date.now,
+  ttlMs = TTL_MS,
+  maxAttempts = MAX_ATTEMPTS,
+}: { now?: () => number; ttlMs?: number; maxAttempts?: number } = {}) {
   const items = new Map<string, Challenge>();
 
   function sweep() {

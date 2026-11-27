@@ -2,7 +2,7 @@
  * GitHub (OAuth 2.0, no OIDC): no hay `id_token`, así que el correo verificado se lee de la API (`/user/emails`, el principal y
  * verificado). El `subject` es el id numérico del usuario (el login puede cambiar; el id no).
  */
-import { request, SsoError, type FetchLike } from './http';
+import { type FetchLike, request, SsoError } from './http';
 import type { Identity, SsoClient } from './oidc';
 
 const URLS = {
@@ -43,11 +43,18 @@ export function createGithubClient({
     async complete({ code, redirectUri, codeVerifier }): Promise<Identity> {
       const tokens = await request(fetchImpl, u.token, {
         method: 'POST',
-        form: { client_id: clientId, client_secret: clientSecret, code, redirect_uri: redirectUri, code_verifier: codeVerifier },
+        form: {
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+          redirect_uri: redirectUri,
+          code_verifier: codeVerifier,
+        },
       });
       const accessToken = tokens.json?.access_token;
       // GitHub responde 200 con `error` en el cuerpo cuando el código no vale
-      if (tokens.status !== 200 || typeof accessToken !== 'string') throw new SsoError('PROVIDER_ERROR', 'GitHub rechazó el código');
+      if (tokens.status !== 200 || typeof accessToken !== 'string')
+        throw new SsoError('PROVIDER_ERROR', 'GitHub rechazó el código');
       const headers = { Authorization: `Bearer ${accessToken}`, 'X-GitHub-Api-Version': '2022-11-28' };
       const [user, emails] = await Promise.all([
         request(fetchImpl, `${u.api}/user`, { headers }),
@@ -56,7 +63,9 @@ export function createGithubClient({
       if (user.status !== 200 || user.json?.id === undefined || emails.status !== 200 || !Array.isArray(emails.json)) {
         throw new SsoError('PROVIDER_ERROR', 'GitHub no entregó el perfil');
       }
-      const primary = (emails.json as { primary?: boolean; verified?: boolean; email: string }[]).find((e) => e.primary && e.verified);
+      const primary = (emails.json as { primary?: boolean; verified?: boolean; email: string }[]).find(
+        (e) => e.primary && e.verified
+      );
       return {
         subject: String(user.json.id),
         email: primary ? String(primary.email).trim().toLowerCase() : '',

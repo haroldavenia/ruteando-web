@@ -18,6 +18,8 @@ module.exports = tseslint.config(
       '**/out-tsc/**',
       'ng-ruteando/src/testing/fixtures/**',
       'qa-visual/**',
+      // Tiene su propia configuración (next-ruteando/eslint.config.mjs): ESLint 9 no anida configuraciones
+      'next-ruteando/**',
       '.claude/**',
       'openspec/**',
       // Línea AngularJS de Hanoit (rama `angularjs-main`): no es código de esta aplicación

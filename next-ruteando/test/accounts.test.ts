@@ -9,10 +9,14 @@ import { POST as verifyEmail } from '@/app/middleware/auth/verify-email/route';
 import { loginGate } from '@/lib/login-flow';
 import { getMfa, resetMfaForTests } from '@/lib/mfa/service';
 import { resetRateLimits } from '@/lib/rate-limit';
+import type * as SessionModule from '@/lib/session';
 import { writeSession } from '@/lib/session';
 
 // `cookies()` solo existe dentro de una petición de Next: se sustituye la escritura de cookies y se comprueba cuándo se llama.
-vi.mock('@/lib/session', async (original) => ({ ...(await original<typeof import('@/lib/session')>()), writeSession: vi.fn() }));
+vi.mock('@/lib/session', async (original) => ({
+  ...(await original<typeof SessionModule>()),
+  writeSession: vi.fn(),
+}));
 
 const KEY = Buffer.alloc(32, 7).toString('base64');
 const session = {
@@ -69,7 +73,13 @@ describe('puerta de acceso', () => {
 
 describe('endpoints públicos: lo común', () => {
   test('exigen el mismo origen (CSRF)', async () => {
-    for (const [fn, path] of [[login, 'login'], [register, 'register'], [forgot, 'forgot-password'], [resetPassword, 'reset-password'], [verifyEmail, 'verify-email']] as const) {
+    for (const [fn, path] of [
+      [login, 'login'],
+      [register, 'register'],
+      [forgot, 'forgot-password'],
+      [resetPassword, 'reset-password'],
+      [verifyEmail, 'verify-email'],
+    ] as const) {
       expect((await fn(post(path, {}, {}))).status, path).toBe(403);
       expect((await fn(post(path, {}, { origin: 'http://evil.test' }))).status, path).toBe(403);
     }
@@ -87,16 +97,36 @@ describe('endpoints públicos: lo común', () => {
   });
 
   test('solo reenvían los campos esperados', async () => {
-    await register(post('register', { email: 'a@b.co', password: 'p', firstName: 'A', lastName: 'B', tenantName: 'T', role: 'super_admin', tenantId: 'otra' }));
-    expect(Object.keys(gatewayCalls[0].body).sort()).toEqual(['email', 'firstName', 'lastName', 'password', 'tenantName']);
+    await register(
+      post('register', {
+        email: 'a@b.co',
+        password: 'p',
+        firstName: 'A',
+        lastName: 'B',
+        tenantName: 'T',
+        role: 'super_admin',
+        tenantId: 'otra',
+      })
+    );
+    expect(Object.keys(gatewayCalls[0].body).sort()).toEqual([
+      'email',
+      'firstName',
+      'lastName',
+      'password',
+      'tenantName',
+    ]);
   });
 
   test('los fallos del gateway no se filtran: 5xx genérico, 4xx solo error y mensaje', async () => {
-    gatewayReply = () => new Response(JSON.stringify({ error: 'X', trace: 'at secret.java:1', message: 'detalle interno' }), { status: 500 });
+    gatewayReply = () =>
+      new Response(JSON.stringify({ error: 'X', trace: 'at secret.java:1', message: 'detalle interno' }), {
+        status: 500,
+      });
     const five = await forgot(post('forgot-password', { email: 'a@b.co' }));
     expect(five.status).toBe(502);
     expect(JSON.stringify(await five.json())).not.toContain('secret');
-    gatewayReply = () => new Response(JSON.stringify({ error: 'BAD_REQUEST', message: 'Token inválido', trace: 'at x' }), { status: 400 });
+    gatewayReply = () =>
+      new Response(JSON.stringify({ error: 'BAD_REQUEST', message: 'Token inválido', trace: 'at x' }), { status: 400 });
     const four = await resetPassword(post('reset-password', { token: 't', newPassword: 'p' }));
     expect(four.status).toBe(400);
     expect(await four.json()).toEqual({ error: 'BAD_REQUEST', message: 'Token inválido' });
@@ -121,7 +151,9 @@ describe('endpoints que no abren sesión no devuelven tokens', () => {
 
   test('registro: usuario, empresa y mensaje; sin tokens', async () => {
     gatewayReply = () => Response.json({ ...session, tenant: { id: 't1', name: 'T' }, message: 'ok' });
-    const res = await register(post('register', { email: 'a@b.co', password: 'p', firstName: 'A', lastName: 'B', tenantName: 'T' }));
+    const res = await register(
+      post('register', { email: 'a@b.co', password: 'p', firstName: 'A', lastName: 'B', tenantName: 'T' })
+    );
     const text = JSON.stringify(await res.json());
     expect(text).not.toContain('tok-');
     expect(text).toContain('"tenant"');
@@ -130,7 +162,15 @@ describe('endpoints que no abren sesión no devuelven tokens', () => {
 });
 
 describe('rutas que entregan sesión pasan por el segundo factor', () => {
-  const enroll = () => getMfa().enabled && (getMfa() as ReturnType<typeof getMfa> & { store: { putFactor: (f: object) => void } }).store.putFactor({ userId: 'u1', tenantId: 't1', type: 'totp', secretEnc: 'x', verified: true });
+  const enroll = () =>
+    getMfa().enabled &&
+    (getMfa() as ReturnType<typeof getMfa> & { store: { putFactor: (f: object) => void } }).store.putFactor({
+      userId: 'u1',
+      tenantId: 't1',
+      type: 'totp',
+      secretEnc: 'x',
+      verified: true,
+    });
 
   test.each([
     ['login', login, { email: 'ada@example.invalid', password: 'demo1234' }],

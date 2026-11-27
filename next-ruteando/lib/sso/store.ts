@@ -134,7 +134,9 @@ export function openSsoStore(file: string, { now = () => new Date() }: { now?: (
     domainOwner: db.prepare('SELECT tenant_id FROM sso_enterprise_domain WHERE domain = ? AND verified_at IS NOT NULL'),
     addDomain: db.prepare('INSERT OR IGNORE INTO sso_enterprise_domain (domain, tenant_id) VALUES (?, ?)'),
     delDomain: db.prepare('DELETE FROM sso_enterprise_domain WHERE domain = ? AND tenant_id = ?'),
-    verifyDomain: db.prepare('UPDATE sso_enterprise_domain SET verified_at = ? WHERE domain = ? AND tenant_id = ? AND verified_at IS NULL'),
+    verifyDomain: db.prepare(
+      'UPDATE sso_enterprise_domain SET verified_at = ? WHERE domain = ? AND tenant_id = ? AND verified_at IS NULL'
+    ),
     delDomains: db.prepare('DELETE FROM sso_enterprise_domain WHERE tenant_id = ?'),
     addEvent: db.prepare('INSERT INTO sso_event (at, user_id, tenant_id, kind, detail) VALUES (?, ?, ?, ?, ?)'),
     events: db.prepare('SELECT * FROM sso_event WHERE user_id = ? ORDER BY id DESC LIMIT ?'),
@@ -167,7 +169,8 @@ export function openSsoStore(file: string, { now = () => new Date() }: { now?: (
   return {
     path: file,
 
-    getIdentity: (provider: string, subject: string) => toIdentity(q.identity.get(provider, subject) as Row | undefined),
+    getIdentity: (provider: string, subject: string) =>
+      toIdentity(q.identity.get(provider, subject) as Row | undefined),
     identitiesOf: (userId: string) => (q.identitiesOf.all(userId) as Row[]).map((r) => toIdentity(r)!),
     /** Enlaza (o actualiza el último acceso de) una identidad. */
     putIdentity(i: Identity) {
@@ -177,14 +180,16 @@ export function openSsoStore(file: string, { now = () => new Date() }: { now?: (
     /** Desenlaza todas las identidades de un proveedor de una persona; devuelve cuántas había. */
     deleteIdentities: (userId: string, provider: string) => Number(q.delIdentities.run(userId, provider).changes),
     /** Desenlaza un proveedor para todas las personas de una empresa. */
-    deleteProviderIdentities: (tenantId: string, provider: string) => Number(q.delTenantIdentities.run(tenantId, provider).changes),
+    deleteProviderIdentities: (tenantId: string, provider: string) =>
+      Number(q.delTenantIdentities.run(tenantId, provider).changes),
 
     /** Por defecto el SSO está permitido; el administrador lo apaga por empresa. */
     getPolicy(tenantId: string) {
       const r = q.policy.get(tenantId) as Row | undefined;
       return { tenantId, enabled: r ? r.enabled === 1 : true };
     },
-    setPolicy: (policy: { tenantId: string; enabled: boolean }) => void q.putPolicy.run(policy.tenantId, policy.enabled ? 1 : 0, stamp()),
+    setPolicy: (policy: { tenantId: string; enabled: boolean }) =>
+      void q.putPolicy.run(policy.tenantId, policy.enabled ? 1 : 0, stamp()),
 
     getEnterprise(tenantId: string): Enterprise | null {
       const r = q.enterprise.get(tenantId) as Row | undefined;
@@ -201,7 +206,8 @@ export function openSsoStore(file: string, { now = () => new Date() }: { now?: (
       };
     },
     /** Dueña VERIFICADA de un dominio de correo, o `null` (un dominio solo reclamado no tiene dueña). */
-    domainOwner: (domain: string) => ((q.domainOwner.get(domain) as { tenant_id: string } | undefined)?.tenant_id ?? null),
+    domainOwner: (domain: string) =>
+      (q.domainOwner.get(domain) as { tenant_id: string } | undefined)?.tenant_id ?? null,
     /**
      * Guarda el proveedor de la empresa y sustituye sus dominios: los que ya tenía conservan su verificación, los nuevos quedan
      * pendientes y los que se quitan se borran. El llamador ya comprobó que no son de otra empresa.

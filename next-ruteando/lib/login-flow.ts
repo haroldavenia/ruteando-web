@@ -1,6 +1,6 @@
 import { jsonError } from './errors';
 import { getMfa } from './mfa/service';
-import { writeSession, type GatewaySession } from './session';
+import { type GatewaySession, writeSession } from './session';
 
 /**
  * Puerta común de TODA ruta que acaba entregando una sesión nueva (login, verificar el correo, canje del SSO). Falla CERRADO: sin el
