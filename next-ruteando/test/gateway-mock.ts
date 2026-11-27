@@ -22,7 +22,7 @@ export function mockGateway(routes: Record<string, Reply>) {
       method,
       path,
       body: init?.body ? JSON.parse(String(init.body)) : undefined,
-      headers: Object.fromEntries(new Headers(init?.headers).entries()),
+      headers: Object.fromEntries([...new Headers(init?.headers).entries()].map(([k, v]) => [k.toLowerCase(), v])),
     };
     calls.push(call);
     const entry = routes[`${method} ${path}`];

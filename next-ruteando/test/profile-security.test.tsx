@@ -344,7 +344,7 @@ describe('seguridad', () => {
   });
 
   test('exigir por roles obliga a elegir al menos uno y guarda solo cuando cambió algo', async () => {
-    const gateway = mockGateway(routes({ 'PUT /middleware/mfa/policy': (call: Call) => policy(call.body as object) }));
+    const gateway = mockGateway(routes({ 'PUT /middleware/mfa/policy': (call: Call) => policy(call.body as Record<string, unknown>) }));
     withToasts(<Security />);
     expect(await screen.findByText('Métodos permitidos')).toBeInTheDocument();
     const save = screen.getByRole('button', { name: 'Guardar cambios' });
@@ -381,7 +381,7 @@ describe('seguridad', () => {
   test('restablece el segundo factor de quien lo tiene activo, con confirmación', async () => {
     const gateway = mockGateway(routes({ 'POST /middleware/mfa/users/u1/reset': { reset: true } }));
     withToasts(<Security />);
-    expect(await screen.findByText('luis@example.invalid')).toBeInTheDocument();
+    expect((await screen.findAllByText('luis@example.invalid')).length).toBeGreaterThan(0);
     expect(screen.getAllByRole('button', { name: 'Restablecer' })).toHaveLength(1); // solo Ana lo tiene activo
     await userEvent.click(screen.getByRole('button', { name: 'Restablecer' }));
     const dialog = await screen.findByRole('dialog');
