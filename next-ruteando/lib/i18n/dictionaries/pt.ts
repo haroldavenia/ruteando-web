@@ -1333,4 +1333,5 @@ export const PT: Readonly<Record<string, string>> = {
   'Elígela aquí.': 'Escolha-o aqui.',
   'Antes de importar verás cuántas filas son válidas, cuáles se rechazan y cuáles hay que ubicar.':
     'Antes de importar você verá quantas linhas são válidas, quais são rejeitadas e quais precisam ser localizadas.',
+  'Saltar al contenido': 'Ir para o conteúdo',
 };

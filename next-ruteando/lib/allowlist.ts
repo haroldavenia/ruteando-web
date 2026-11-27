@@ -1,15 +1,12 @@
+import { ADMIN_ROLES as ADMIN, ALL_ROLES as ANY, OPERATIONS_ROLES as OPS } from './roles';
 import type { UserRole } from './session';
-
-const ADMIN: UserRole[] = ['tenant_admin', 'super_admin'];
-const OPS: UserRole[] = [...ADMIN, 'agent'];
-const ANY: UserRole[] = [...OPS, 'driver'];
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 interface Rule {
   /** Segmentos de la ruta; `*` casa un segmento cualquiera y `**` el resto (incluso nada). */
   path: string;
   methods: Method[];
-  roles: UserRole[];
+  roles: readonly UserRole[];
 }
 
 const READ: Method[] = ['GET'];

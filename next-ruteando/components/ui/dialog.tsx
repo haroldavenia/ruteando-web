@@ -18,6 +18,8 @@ interface DialogContentProps {
   title: string;
   description?: string;
   className?: string;
+  /** Al cerrarse, Radix devuelve el foco a quien abrió el diálogo; en un diálogo controlado (sin disparador) se indica aquí dónde ponerlo. */
+  onCloseAutoFocus?: (event: Event) => void;
   children: ReactNode;
 }
 
@@ -25,12 +27,13 @@ interface DialogContentProps {
  * Diálogo modal (Radix: foco atrapado y devuelto al cerrar, Escape y clic fuera cierran, el resto de la página queda inerte). Esquina
  * de 24px de la guía de diseño; el botón de cerrar es un `IconButton`, así que lleva `title` y `aria-label`.
  */
-export function DialogContent({ title, description, className, children }: DialogContentProps) {
+export function DialogContent({ title, description, className, onCloseAutoFocus, children }: DialogContentProps) {
   const t = useT();
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-scrim/40" />
       <DialogPrimitive.Content
+        onCloseAutoFocus={onCloseAutoFocus}
         // Sin descripción se declara explícitamente (si no, Radix avisa en consola); con ella, Radix enlaza la suya
         {...(description ? {} : { 'aria-describedby': undefined })}
         className={cn(
