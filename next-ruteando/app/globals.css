@@ -34,6 +34,8 @@
   --color-on-surface-variant: light-dark(#49454e, #e8e0eb);
   --color-outline: light-dark(#7b757f, #958e99);
   --color-outline-variant: light-dark(#cbc4cf, #49454e);
+  /* Telón de los diálogos (en M3, `scrim`): negro con la opacidad que ponga cada uso, `bg-scrim/40` */
+  --color-scrim: #000000;
 
   /* Estados con significado propio (Material no trae verde, azul ni ámbar); cada par supera 4,5:1 en los dos temas */
   --color-success-container: light-dark(#ddf3e7, #0f3a28);

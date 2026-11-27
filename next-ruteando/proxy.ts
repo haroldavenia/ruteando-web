@@ -2,7 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import { unpackUser } from '@/lib/session-token';
 
-const PUBLIC = [/^\/access(\/|$)/, /^\/legal(\/|$)/, /^\/middleware(\/|$)/, /^\/gateway\/sso(\/|$)/];
+// /design es el muestrario de componentes: público porque no muestra datos, y en producción responde 404
+const PUBLIC = [/^\/access(\/|$)/, /^\/legal(\/|$)/, /^\/design$/, /^\/middleware(\/|$)/, /^\/gateway\/sso(\/|$)/];
 /** Respuestas de autenticación y de datos: nunca se guardan en cachés (del navegador ni compartidas). */
 const NO_STORE = [/^\/middleware(\/|$)/, /^\/gateway\/sso(\/|$)/];
 
@@ -11,9 +12,9 @@ export function buildCsp(nonce: string) {
   return [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
-    // Los estilos en línea de React/Radix se resuelven con nonce; OpenLayers y las fuentes de Google se añaden en la fase 4/5.
-    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
-    "font-src 'self' https://fonts.gstatic.com",
+    // Las fuentes las aloja next/font (mismo origen): no se permite ningún origen externo de estilos ni de fuentes.
+    `style-src 'self' 'nonce-${nonce}'`,
+    "font-src 'self'",
     "img-src 'self' data: blob: https://*.tile.openstreetmap.org",
     "connect-src 'self'",
     "worker-src 'self'",

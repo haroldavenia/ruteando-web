@@ -142,3 +142,20 @@ describe('proxy: cabeceras', () => {
     expect(off.headers.get('content-security-policy-report-only')).toBeNull();
   });
 });
+
+describe('CSP', () => {
+  test('scripts, estilos y fuentes solo del propio origen (las fuentes las aloja next/font)', async () => {
+    const { buildCsp } = await import('@/proxy');
+    const csp = buildCsp('NONCE');
+    const directive = (name: string) => csp.split('; ').find((d) => d.startsWith(`${name} `)) ?? '';
+    expect(directive('script-src')).toBe("script-src 'self' 'nonce-NONCE' 'strict-dynamic'");
+    expect(directive('style-src')).toBe("style-src 'self' 'nonce-NONCE'");
+    expect(directive('font-src')).toBe("font-src 'self'");
+    expect(directive('connect-src')).toBe("connect-src 'self'");
+    expect(csp).not.toMatch(/googleapis|gstatic|unsafe-inline|unsafe-eval/);
+    // lo único externo son las teselas del mapa (imágenes)
+    expect(directive('img-src')).toContain('https://*.tile.openstreetmap.org');
+    expect(csp).toContain("frame-ancestors 'none'");
+    expect(csp).toContain("object-src 'none'");
+  });
+});
