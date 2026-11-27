@@ -45,7 +45,6 @@ export const metadata: Metadata = {
     'jornadas',
     'entregas',
   ],
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     siteName: SITE_NAME,

@@ -98,7 +98,8 @@ describe('página /legal/[doc]', () => {
   test('el título de la pestaña lleva el documento; uno desconocido no lleva título', async () => {
     jar.set('rt_lang', 'es');
     expect(await generateMetadata({ params: Promise.resolve({ doc: 'sms' }) })).toEqual({
-      title: 'Verificación por SMS · Ruteando',
+      title: 'Verificación por SMS',
+      alternates: { canonical: '/legal/sms' },
     });
     expect(await generateMetadata({ params: Promise.resolve({ doc: 'x' }) })).toEqual({});
   });

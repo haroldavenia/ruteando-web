@@ -83,7 +83,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
 
-  if (url.hostname.endsWith('.tile.openstreetmap.org')) {
+  if (url.hostname === 'tile.openstreetmap.org' || url.hostname.endsWith('.tile.openstreetmap.org')) {
     event.respondWith(tile(request));
     return;
   }

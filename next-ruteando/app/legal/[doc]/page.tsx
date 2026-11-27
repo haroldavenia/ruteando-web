@@ -17,7 +17,7 @@ type Props = { params: Promise<{ doc: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { doc } = await params;
   if (!isLegalDoc(doc)) return {};
-  return { title: `${legalTitle(doc, await getT())} · Ruteando` };
+  return { title: legalTitle(doc, await getT()), alternates: { canonical: `/legal/${doc}` } };
 }
 
 /**

@@ -78,3 +78,18 @@ describe('contenido de /about', () => {
     for (const path of ['/about', '/access', '/legal/privacy']) expect(llms).toContain(`(${path})`);
   });
 });
+
+describe('páginas públicas sin sesión', () => {
+  test.each(['/about', '/offline', '/access', '/legal/privacy'])('%s no lleva a /access', async (path) => {
+    const { NextRequest } = await import('next/server');
+    const { proxy } = await import('@/proxy');
+    const response = proxy(new NextRequest(`http://localhost:3000${path}`));
+    expect(response.status).toBe(200);
+  });
+  test('una página privada sin sesión sí lleva a /access', async () => {
+    const { NextRequest } = await import('next/server');
+    const { proxy } = await import('@/proxy');
+    const response = proxy(new NextRequest('http://localhost:3000/journeys'));
+    expect(response.status).toBe(307);
+  });
+});

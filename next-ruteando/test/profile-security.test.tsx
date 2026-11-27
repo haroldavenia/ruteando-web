@@ -460,3 +460,54 @@ describe('seguridad', () => {
     expect(parseDomains('')).toEqual([]);
   });
 });
+
+describe('activar un método: atrás y errores', () => {
+  test('desde la confirmación, «Atrás» vuelve a la lista de métodos', async () => {
+    mockGateway({ 'POST /middleware/mfa/email/setup': { sent: true, destination: 'a•••', expiresInSeconds: 600 } });
+    renderWithI18n(<MfaEnroll methods={['email', 'totp']} onEnrolled={vi.fn()} />);
+    await userEvent.click(screen.getByRole('button', { name: /Correo electrónico/ }));
+    await screen.findByLabelText('Código');
+    await userEvent.click(screen.getByRole('button', { name: 'Atrás' }));
+    expect(await screen.findByRole('button', { name: /Aplicación autenticadora/ })).toBeInTheDocument();
+  });
+
+  test('con un método elegido de antemano, «Atrás» avisa en lugar de mostrar la lista', async () => {
+    const onCancelled = vi.fn();
+    mockGateway({ 'POST /middleware/mfa/email/setup': { sent: true, destination: 'a•••', expiresInSeconds: 600 } });
+    renderWithI18n(<MfaEnroll methods={['email']} initial="email" onEnrolled={vi.fn()} onCancelled={onCancelled} />);
+    await screen.findByLabelText('Código');
+    await userEvent.click(screen.getByRole('button', { name: 'Atrás' }));
+    expect(onCancelled).toHaveBeenCalled();
+  });
+
+  test('por SMS, «Atrás» desde el código vuelve al teléfono', async () => {
+    mockGateway({ 'POST /middleware/mfa/sms/setup': { sent: true, destination: '+57•••', expiresInSeconds: 600 } });
+    renderWithI18n(<MfaEnroll methods={['sms']} initial="sms" onEnrolled={vi.fn()} />);
+    await userEvent.type(screen.getByLabelText('Teléfono'), '+573001234567');
+    await userEvent.click(screen.getByRole('button', { name: 'Enviar código' }));
+    await screen.findByLabelText('Código');
+    await userEvent.click(screen.getByRole('button', { name: 'Atrás' }));
+    expect(await screen.findByLabelText('Teléfono')).toBeInTheDocument();
+  });
+
+  test('si el servidor no puede enviar el código lo dice y se puede volver', async () => {
+    mockGateway({
+      'POST /middleware/mfa/email/setup': { status: 503, body: { code: 'MFA_UNAVAILABLE', message: 'sin correo' } },
+    });
+    renderWithI18n(<MfaEnroll methods={['email']} onEnrolled={vi.fn()} />);
+    await userEvent.click(screen.getByRole('button', { name: /Correo electrónico/ }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+  });
+
+  test('un código de recuperación que no llega no impide terminar la activación', async () => {
+    const onEnrolled = vi.fn();
+    mockGateway({
+      'POST /middleware/mfa/email/setup': { sent: true, destination: 'a•••', expiresInSeconds: 600 },
+      'POST /middleware/mfa/email/confirm': { active: true },
+    });
+    renderWithI18n(<MfaEnroll methods={['email']} initial="email" onEnrolled={onEnrolled} />);
+    await userEvent.type(await screen.findByLabelText('Código'), '123456');
+    await userEvent.click(screen.getByRole('button', { name: 'Activar' }));
+    await waitFor(() => expect(onEnrolled).toHaveBeenCalledWith({ method: 'email', recoveryCodes: null }));
+  });
+});

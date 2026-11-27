@@ -150,11 +150,15 @@ describe('CSP', () => {
     const directive = (name: string) => csp.split('; ').find((d) => d.startsWith(`${name} `)) ?? '';
     expect(directive('script-src')).toBe("script-src 'self' 'nonce-NONCE' 'strict-dynamic'");
     expect(directive('style-src')).toBe("style-src 'self' 'nonce-NONCE'");
+    expect(directive('style-src-attr')).toBe("style-src-attr 'unsafe-inline'");
     expect(directive('font-src')).toBe("font-src 'self'");
     expect(directive('connect-src')).toBe("connect-src 'self'");
-    expect(csp).not.toMatch(/googleapis|gstatic|unsafe-inline|unsafe-eval/);
+    // el único `unsafe-inline` es el de los atributos style (ver proxy.ts); nunca en script-src ni en style-src
+    expect(csp.replace("style-src-attr 'unsafe-inline'", '')).not.toMatch(
+      /googleapis|gstatic|unsafe-inline|unsafe-eval/
+    );
     // lo único externo son las teselas del mapa (imágenes)
-    expect(directive('img-src')).toContain('https://*.tile.openstreetmap.org');
+    expect(directive('img-src')).toContain('https://tile.openstreetmap.org');
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).toContain("object-src 'none'");
   });

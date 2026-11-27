@@ -288,3 +288,36 @@ describe('vehículos', () => {
     await waitFor(() => expect(gateway.sent('PUT', '/middleware/data/resources/v1/driver/d1')).toHaveLength(1));
   });
 });
+
+describe('formulario de tipo de vehículo: edición y errores', () => {
+  test('editar solo el nombre conserva la capacidad que ya traía y envía el consumo vacío como null', async () => {
+    const gateway = mockGateway({
+      'GET /middleware/data/resource-types/t1': type({ gasMileage: null }),
+      'PUT /middleware/data/resource-types/t1': type(),
+    });
+    withToasts(<ResourceTypeForm id="t1" returnTo={null} />);
+    const name = await screen.findByDisplayValue('Furgón');
+    await userEvent.clear(name);
+    await userEvent.type(name, 'Furgón grande');
+    await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/fleet/types'));
+    expect(gateway.sent('PUT', '/middleware/data/resource-types/t1')[0].body).toMatchObject({
+      name: 'Furgón grande',
+      gasMileage: null,
+      capacity: { weight: 500, volume: 12_000_000 },
+    });
+  });
+
+  test('un consumo negativo se rechaza y un fallo del gateway al guardar se muestra', async () => {
+    mockGateway({ 'POST /middleware/data/resource-types': { status: 500, body: { message: 'caído' } } });
+    withToasts(<ResourceTypeForm id={null} returnTo={null} />);
+    await userEvent.type(screen.getByLabelText('Nombre'), 'Moto');
+    await userEvent.type(screen.getByLabelText('Categoría'), 'bike');
+    await userEvent.type(screen.getByLabelText(/Consumo/), '-3');
+    await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+    expect(await screen.findByText('No puede ser negativo')).toBeInTheDocument();
+    await userEvent.clear(screen.getByLabelText(/Consumo/));
+    await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+  });
+});

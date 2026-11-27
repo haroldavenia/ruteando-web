@@ -3,7 +3,15 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { unpackUser } from '@/lib/session-token';
 
 // /design es el muestrario de componentes: público porque no muestra datos, y en producción responde 404
-const PUBLIC = [/^\/access(\/|$)/, /^\/legal(\/|$)/, /^\/design$/, /^\/middleware(\/|$)/, /^\/gateway\/sso(\/|$)/];
+const PUBLIC = [
+  /^\/access(\/|$)/,
+  /^\/legal(\/|$)/,
+  /^\/about$/,
+  /^\/offline$/,
+  /^\/design$/,
+  /^\/middleware(\/|$)/,
+  /^\/gateway\/sso(\/|$)/,
+];
 /** Respuestas de autenticación y de datos: nunca se guardan en cachés (del navegador ni compartidas). */
 const NO_STORE = [/^\/middleware(\/|$)/, /^\/gateway\/sso(\/|$)/];
 
@@ -14,8 +22,11 @@ export function buildCsp(nonce: string) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
     // Las fuentes las aloja next/font (mismo origen): no se permite ningún origen externo de estilos ni de fuentes.
     `style-src 'self' 'nonce-${nonce}'`,
+    // Solo ATRIBUTOS style (no hojas ni etiquetas <style>, que siguen con nonce): Next marca así su anunciador de rutas y Radix sus capas
+    // (`pointer-events:none`). Un atributo style no ejecuta código; sin esto, `enforce` los bloquea y ensucia la consola en cada página.
+    "style-src-attr 'unsafe-inline'",
     "font-src 'self'",
-    "img-src 'self' data: blob: https://*.tile.openstreetmap.org",
+    "img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org",
     "connect-src 'self'",
     "worker-src 'self'",
     "manifest-src 'self'",
