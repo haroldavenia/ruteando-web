@@ -53,8 +53,15 @@ export interface EntityListProps<T extends { id: string }> extends Pick<
   csv?: (rows: readonly T[]) => string;
   /** Acciones de fila extra (antes de editar y borrar). */
   extraActions?: (row: T) => ReactNode;
-  /** Acciones extra sobre la cabecera (junto a «Nuevo»). */
+  /** Acciones extra sobre la cabecera (antes de «Nuevo»). */
   headActions?: ReactNode;
+  /** Acciones extra sobre las filas elegidas (antes de «Eliminar»); `clear` quita la selección. */
+  selectionExtra?: (rows: readonly T[], clear: () => void) => ReactNode;
+  /** Con `true` hay casillas aunque no se pueda borrar ni exportar (las acciones de la selección son solo las extra). */
+  selectable?: boolean;
+  /** Más botones en el estado vacío, junto a «Crear el primero». */
+  emptyExtra?: ReactNode;
+  /** Lo que se exporta con «Exportar CSV» de la cabecera y de la selección: por defecto, las filas. */
   /** Contenido bajo la tabla (un mapa que acompaña a la lista). */
   below?: ReactNode;
 }
@@ -79,9 +86,10 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
     },
     [onFiltered]
   );
+  const facetProp = props.facet;
   const facet = useMemo(
-    () => (typeof props.facet === 'function' ? props.facet(list.rows) : props.facet),
-    [props.facet, list.rows]
+    () => (typeof facetProp === 'function' ? facetProp(list.rows) : facetProp),
+    [facetProp, list.rows]
   );
 
   const remover = props.remove;
@@ -109,6 +117,7 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
   const subtitle = list.status === 'ready' ? `${total} ${total === 1 ? props.singular : props.plural}` : undefined;
   const canExport = !!props.csv;
   const canDelete = !!remover;
+  const selectable = canDelete || canExport || !!props.selectionExtra || !!props.selectable;
 
   return (
     <>
@@ -149,7 +158,7 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
           searchPlaceholder={props.searchPlaceholder}
           facet={facet}
           card={props.card}
-          selectable={canDelete || canExport}
+          selectable={selectable}
           filter={props.filter}
           onFilterChange={props.onFilterChange}
           facetKey={props.facetKey}
