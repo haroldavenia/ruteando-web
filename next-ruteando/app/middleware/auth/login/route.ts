@@ -1,16 +1,20 @@
 import { verifySameOrigin } from '@/lib/csrf';
 import { GENERIC_5XX, jsonError } from '@/lib/errors';
 import { gatewayErrorResponse, gatewayFetch } from '@/lib/gateway';
+import { getMfa } from '@/lib/mfa/service';
 import { clientIp, rateLimit } from '@/lib/rate-limit';
 import { writeSession, type GatewaySession } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-// Fase 3: aquí se intercepta el login para imponer el segundo factor (lib/mfa) antes de entregar la sesión. Hasta entonces falla CERRADO:
-// sin el segundo factor este endpoint entregaría la sesión con solo la contraseña, así que solo abre con ALLOW_LOGIN_WITHOUT_MFA=true
-// (desarrollo y simulado). Al portar lib/mfa se quita esa variable.
 export async function POST(request: Request) {
-  if (process.env.ALLOW_LOGIN_WITHOUT_MFA !== 'true') return jsonError(503, 'El acceso no está habilitado todavía.');
+  // Falla CERRADO: sin el módulo de segundo factor (MFA_SECRET_KEY) este endpoint entregaría la sesión con solo la contraseña, así que
+  // solo abre con ALLOW_LOGIN_WITHOUT_MFA=true (desarrollo, simulado o un despliegue que decide no usar el 2FA).
+  const mfa = getMfa();
+  if (!mfa.enabled && process.env.ALLOW_LOGIN_WITHOUT_MFA !== 'true') {
+    return jsonError(503, 'El acceso no está habilitado todavía.');
+  }
   if (!verifySameOrigin(request)) return jsonError(403, 'Origen no permitido.');
   if (!rateLimit(`login:${clientIp(request)}`, 20, 15 * 60_000)) return jsonError(429, 'Demasiados intentos. Prueba más tarde.');
 
@@ -35,8 +39,15 @@ export async function POST(request: Request) {
     if (res.status >= 500) return jsonError(502, GENERIC_5XX);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) return Response.json({ error: data.error, message: data.message }, { status: res.status });
-    await writeSession(data as GatewaySession);
-    return Response.json({ user: (data as GatewaySession).user });
+
+    const session = data as GatewaySession;
+    if (!session?.accessToken || !session.user?.id) return jsonError(502, GENERIC_5XX);
+    // Segundo factor: la sesión se retiene en el servidor (en el reto) y no se escribe en cookies hasta superarlo.
+    const pending = mfa.afterLogin(session);
+    if (pending) return Response.json(pending.json, { status: pending.status });
+
+    await writeSession(session);
+    return Response.json({ user: session.user });
   } catch (err) {
     return gatewayErrorResponse(err);
   }
