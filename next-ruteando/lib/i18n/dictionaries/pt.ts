@@ -1334,4 +1334,9 @@ export const PT: Readonly<Record<string, string>> = {
   'Antes de importar verás cuántas filas son válidas, cuáles se rechazan y cuáles hay que ubicar.':
     'Antes de importar você verá quantas linhas são válidas, quais são rejeitadas e quais precisam ser localizadas.',
   'Saltar al contenido': 'Ir para o conteúdo',
+  'Página no encontrada': 'Página não encontrada',
+  'La dirección no existe o ya no está disponible.': 'O endereço não existe ou não está mais disponível.',
+  'Algo salió mal': 'Algo deu errado',
+  'No se pudo mostrar esta pantalla. Puedes intentarlo de nuevo.':
+    'Não foi possível exibir esta tela. Você pode tentar novamente.',
 };

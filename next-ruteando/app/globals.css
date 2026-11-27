@@ -72,6 +72,21 @@
   background-image: linear-gradient(100deg, var(--color-primary), var(--color-tertiary));
 }
 
+/* Fondo de las pantallas de acceso: un resplandor suave del color de marca desde arriba (en claro y oscuro, por `light-dark()` de los tokens) */
+@utility bg-route-glow {
+  background-image:
+    radial-gradient(
+      60rem 36rem at 15% -10%,
+      color-mix(in oklab, var(--color-primary-container) 70%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      48rem 30rem at 100% 100%,
+      color-mix(in oklab, var(--color-tertiary-container) 55%, transparent),
+      transparent
+    );
+}
+
 @layer base {
   :root {
     color-scheme: light dark;

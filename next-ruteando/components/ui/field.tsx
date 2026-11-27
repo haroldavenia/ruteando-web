@@ -1,4 +1,4 @@
-import { RiArrowDownSLine } from '@remixicon/react';
+import { type RemixiconComponentType, RiArrowDownSLine } from '@remixicon/react';
 import { type ComponentProps, type ReactNode, useId } from 'react';
 
 import { cn } from '@/lib/cn';
@@ -51,14 +51,14 @@ function Shell({
   );
 }
 
-export function Input({
-  label,
-  hint,
-  error,
-  className,
-  id,
-  ...props
-}: FieldProps & Omit<ComponentProps<'input'>, 'placeholder'>) {
+export interface InputProps extends FieldProps, Omit<ComponentProps<'input'>, 'placeholder'> {
+  /** Icono decorativo a la izquierda (la etiqueta se desplaza para no taparlo). */
+  leading?: RemixiconComponentType;
+  /** Contenido a la derecha dentro del campo (el botón de mostrar la contraseña): debe ser interactivo por sí mismo. */
+  trailing?: ReactNode;
+}
+
+export function Input({ label, hint, error, className, id, leading, trailing, ...props }: InputProps) {
   const generated = useId();
   const fieldId = id ?? generated;
   return (
@@ -69,12 +69,16 @@ export function Input({
         placeholder=" "
         aria-invalid={error ? true : undefined}
         aria-describedby={error || hint ? `${fieldId}-msg` : undefined}
-        className={control}
+        className={cn(control, leading && 'pl-12', trailing && 'pr-14')}
         {...props}
       />
-      <label htmlFor={fieldId} className={floating}>
+      <label htmlFor={fieldId} className={cn(floating, leading && 'left-12')}>
         {label}
       </label>
+      {leading ? (
+        <Icon icon={leading} className="pointer-events-none absolute top-4 left-4 text-on-surface-variant" />
+      ) : null}
+      {trailing ? <div className="absolute top-1.5 right-1.5">{trailing}</div> : null}
     </Shell>
   );
 }

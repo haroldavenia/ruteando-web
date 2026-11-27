@@ -1,8 +1,7 @@
-// Marcador: la pantalla de acceso se porta en la fase 3/5a.
-export default function Access() {
-  return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1 className="text-2xl font-medium">Acceso</h1>
-    </main>
-  );
+import { LoginForm } from '@/components/access/login-form';
+
+export default async function Access({ searchParams }: { searchParams: Promise<{ returnUrl?: string | string[] }> }) {
+  const { returnUrl } = await searchParams;
+  // Se pasa tal cual: se valida con `safeReturnUrl` justo al usarlo, que es lo que importa
+  return <LoginForm returnUrl={typeof returnUrl === 'string' ? returnUrl : null} />;
 }
