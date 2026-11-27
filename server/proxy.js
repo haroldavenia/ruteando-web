@@ -44,7 +44,7 @@ function isPlan(req) {
 function createProxy(options) {
   const backendUrl = (options.backendUrl || '').replace(/\/+$/, '');
   const timeoutMs = Number(options.timeoutMs) || 60000;
-  const planTimeoutMs = Number(options.planTimeoutMs) || 180000;
+  const planTimeoutMs = Number(options.planTimeoutMs) || 240000;
   const target = backendUrl ? new URL(backendUrl) : null;
   const client = target && target.protocol === 'https:' ? https : http;
   const agent = target && target.protocol === 'https:' ? backendAgent(options.caFile) : undefined;

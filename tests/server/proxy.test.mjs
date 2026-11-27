@@ -2,6 +2,7 @@
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
+import { PassThrough } from 'node:stream';
 import { createRequire } from 'node:module';
 import { startStack, listen, shut } from './helpers.mjs';
 
@@ -114,6 +115,41 @@ describe('errores del proxy', () => {
     const other = await fetch(`${stack.webUrl}/api/v1/journeys`, { headers: { ...auth, 'x-mock-delay': '500' } });
     assert.equal(other.status, 504);
     await stack.close();
+  });
+
+  test('[FND-002 CA-15] sin BACKEND_PLAN_TIMEOUT_MS el plan corta a los 240 000 ms y el resto a los 60 000 ms', async (t) => {
+    // Backend que acepta la petición y nunca responde; reloj simulado para no esperar 240 s.
+    const backend = http.createServer(() => {});
+    const b = await listen(backend);
+    try {
+      t.mock.timers.enable({ apis: ['setTimeout'] });
+      const env = { BACKEND_URL: b.url }; // BACKEND_TIMEOUT_MS y BACKEND_PLAN_TIMEOUT_MS sin definir
+      const proxy = createProxy({ backendUrl: env.BACKEND_URL, timeoutMs: env.BACKEND_TIMEOUT_MS, planTimeoutMs: env.BACKEND_PLAN_TIMEOUT_MS });
+      const call = (method, url) => {
+        const req = new PassThrough();
+        Object.assign(req, { method, url, originalUrl: url, headers: { 'content-type': 'application/json' } });
+        req.end();
+        const res = { status: null, body: null, writeHead(s) { this.status = s; }, end(b2) { this.body = b2; }, destroy() {} };
+        proxy(req, res);
+        return res;
+      };
+      const plan = call('POST', '/api/v1/journeys/plan');
+      const other = call('GET', '/api/v1/journeys');
+      t.mock.timers.tick(59999);
+      assert.equal(other.status, null);
+      t.mock.timers.tick(1);
+      assert.equal(other.status, 504);
+      assert.match(JSON.parse(other.body).message, /60000 ms/);
+      t.mock.timers.tick(239999 - 60000);
+      assert.equal(plan.status, null, 'el plan no debe cortarse antes de 240 000 ms');
+      t.mock.timers.tick(1);
+      assert.equal(plan.status, 504);
+      assert.equal(JSON.parse(plan.body).error, 'GATEWAY_TIMEOUT');
+      assert.match(JSON.parse(plan.body).message, /240000 ms/);
+    } finally {
+      t.mock.timers.reset();
+      await shut(b.server);
+    }
   });
 
   test('[FND-002 CA-5] si el backend corta tras enviar cabeceras se cierra la conexión', async () => {
