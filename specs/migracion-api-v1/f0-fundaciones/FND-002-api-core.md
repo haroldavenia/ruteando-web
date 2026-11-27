@@ -2,12 +2,12 @@
 
 | Campo | Valor |
 | --- | --- |
-| Estado | Lista |
+| Estado | En progreso |
 | Iniciativa / Fase | `migracion-api-v1` / `f0-fundaciones` |
 | Clave anterior | F0-02 · `API-CORE` |
 | Depende de | FND-001 |
 | Issue | #80 |
-| Rama | `feat/<n>-api-core` |
+| Rama | `feat/80-api-core` |
 | Pull Request | #<n> (pendiente) |
 | Repo / componente | `master/js`, `master/jade`, `server/` |
 | Endpoints `/api/v1` | — |
