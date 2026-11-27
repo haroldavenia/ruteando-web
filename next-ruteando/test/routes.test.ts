@@ -18,7 +18,7 @@ import { resetRateLimits } from '@/lib/rate-limit';
 import { ACCESS, type GatewaySession, REFRESH, USER, writeSession } from '@/lib/session';
 import { resetSsoForTests } from '@/lib/sso/service';
 
-import { clearJar, jar, names } from './cookie-jar';
+import { clearJar, history, jar, names } from './cookie-jar';
 
 vi.mock('next/headers', async () => ({ cookies: async () => (await import('./cookie-jar')).jar }));
 
@@ -422,6 +422,21 @@ describe('/middleware/sso (pegamento con las cookies y el origen)', () => {
     resetMfaForTests();
     resetSsoForTests();
     expect((await ssoPost(json('POST', '/x', { ticket: 't' }), ctx('complete'))).status).toBe(503);
+  });
+
+  test('complete sin la cookie del ticket no entra, y la respuesta siempre borra esa cookie (el ticket ya se gastó)', async () => {
+    ssoEnv();
+    const res = await ssoPost(
+      json('POST', '/x', { ticket: 'cualquiera' }, { cookie: 'ruteando_sso_ticket=inventada' }),
+      ctx('complete')
+    );
+    expect(res.status).toBe(401);
+    expect(history).toContainEqual({
+      name: 'ruteando_sso_ticket',
+      value: '',
+      options: { path: '/middleware/sso', httpOnly: true, maxAge: 0 },
+    });
+    expect(names()).toEqual([]); // ninguna cookie de sesión
   });
 
   test('la gestión exige sesión; con sesión responde', async () => {

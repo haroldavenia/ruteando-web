@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers';
+
 import { ensureAccess } from '@/lib/auth-flow';
 import { readCapped } from '@/lib/body';
 import { verifySameOrigin } from '@/lib/csrf';
@@ -5,14 +7,14 @@ import { jsonError } from '@/lib/errors';
 import { loginGate } from '@/lib/login-flow';
 import { clientIp, rateLimit } from '@/lib/rate-limit';
 import { writeSession } from '@/lib/session';
-import { getSso, SSO_COOKIE, type SsoRedirect } from '@/lib/sso/service';
+import { getSso, SSO_COOKIE, SSO_TICKET_COOKIE, SSO_TICKET_PATH, type SsoRedirect } from '@/lib/sso/service';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 function redirect({ location, cookie }: SsoRedirect) {
   const headers = new Headers({ Location: location, 'Cache-Control': 'no-store' });
-  if (cookie) headers.append('Set-Cookie', cookie);
+  for (const value of ([] as string[]).concat(cookie ?? [])) headers.append('Set-Cookie', value);
   return new Response(null, { status: 302, headers });
 }
 
@@ -63,8 +65,12 @@ async function handle(request: Request, { params }: { params: Promise<{ path: st
     } catch {
       return jsonError(400, 'Solicitud no válida.');
     }
-    const result = sso.complete(ticket);
+    // El ticket solo vale en el navegador que hizo el flujo: la cookie la puso el servidor al volver del proveedor
+    const result = sso.complete(ticket, cookieOf(request, SSO_TICKET_COOKIE));
     if (result.session) await writeSession(result.session); // los tokens no viajan en el JSON
+    // Sea cual sea el resultado el ticket ya se gastó: su cookie ya no sirve. Por el almacén de cookies de Next (si se pusiera a mano en
+    // la respuesta, Next la sustituiría por las que escribe `writeSession`).
+    (await cookies()).set(SSO_TICKET_COOKIE, '', { path: SSO_TICKET_PATH, httpOnly: true, maxAge: 0 });
     return Response.json(result.json, { status: result.status });
   }
 

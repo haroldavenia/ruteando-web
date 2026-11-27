@@ -99,7 +99,10 @@ function build(env: Record<string, string | undefined> = {}, over: SsoOverrides 
 
 const queryOf = (location: string) => Object.fromEntries(new URL(location).searchParams);
 const hashOf = (location: string) => Object.fromEntries(new URLSearchParams(location.split('#')[1]));
-const binding = (cookie?: string) => /ruteando_sso=([^;]+)/.exec(cookie || '')?.[1] || '';
+const cookies = (cookie?: string | string[]) => ([] as string[]).concat(cookie ?? []).join('; ');
+const binding = (cookie?: string | string[]) => /ruteando_sso=([^;]+)/.exec(cookies(cookie))?.[1] || '';
+/** Valor de la cookie que liga el TICKET al navegador (se pone al volver del proveedor). */
+const bindOf = (cookie?: string | string[]) => /ruteando_sso_ticket=([^;]+)/.exec(cookies(cookie))?.[1] || '';
 
 /** Hace el viaje de ida a Google y devuelve lo que el proveedor recibió. */
 async function begin(sso: ReturnType<typeof build>, provider = 'google', email?: string) {
@@ -191,7 +194,7 @@ describe('apagado', () => {
     expect(sso.enabled).toBe(false);
     expect(sso.listProviders().providers).toEqual([]);
     expect((await sso.start('google', undefined)).location).toContain('error=NO_PROVIDER');
-    expect(sso.complete('t').status).toBe(503);
+    expect(sso.complete('t', 'x').status).toBe(503);
   });
 
   test('solo se ofrecen los proveedores con credenciales', () => {
@@ -232,27 +235,29 @@ describe('flujo de Google', () => {
     nextClaims = claimsFor(q);
     const back = await sso.callback('google', { state: q.state, code: 'abc' }, cookie);
     const ticket = hashOf(back.location).ticket;
+    const bind = bindOf(back.cookie);
     expect(ticket).toBeTruthy();
-    expect(back.cookie).toContain('Max-Age=0'); // la cookie ligada se borra
+    expect(bind).toBeTruthy();
+    expect(cookies(back.cookie)).toContain('ruteando_sso=; Path=/gateway/sso; HttpOnly; Max-Age=0'); // la cookie de ida y vuelta se borra
     expect(exchanged).toEqual([
       { provider: 'google', subject: 'sub-1', email: 'ada@example.invalid', emailVerified: true },
     ]);
     expect(sso.store.getIdentity('google', 'sub-1')?.userId).toBe('u1');
 
-    const done = sso.complete(ticket);
+    const done = sso.complete(ticket, bind);
     expect(done.status).toBe(200);
     expect(done.session?.accessToken).toBe('tok'); // la sesión va aparte, para cookies
     expect(JSON.stringify(done.json)).not.toContain('tok');
-    expect(sso.complete(ticket).status).toBe(401); // un solo uso
+    expect(sso.complete(ticket, bind).status).toBe(401); // un solo uso
   });
 
   test('el ticket caduca a los 5 minutos', async () => {
     const sso = build();
     const { q, cookie } = await begin(sso);
     nextClaims = claimsFor(q);
-    const ticket = hashOf((await sso.callback('google', { state: q.state, code: 'c' }, cookie)).location).ticket;
+    const back = await sso.callback('google', { state: q.state, code: 'c' }, cookie);
     clock += 5 * 60_000 + 1;
-    expect(sso.complete(ticket).status).toBe(401);
+    expect(sso.complete(hashOf(back.location).ticket, bindOf(back.cookie)).status).toBe(401);
   });
 
   test('con el segundo factor activo el ticket da el reto, no la sesión: el SSO no lo sustituye', async () => {
@@ -261,11 +266,65 @@ describe('flujo de Google', () => {
     const sso = build({}, { mfa: { enabled: true, afterLogin } });
     const { q, cookie } = await begin(sso);
     nextClaims = claimsFor(q);
-    const ticket = hashOf((await sso.callback('google', { state: q.state, code: 'c' }, cookie)).location).ticket;
-    const done = sso.complete(ticket);
+    const back = await sso.callback('google', { state: q.state, code: 'c' }, cookie);
+    const done = sso.complete(hashOf(back.location).ticket, bindOf(back.cookie));
     expect(done.json).toEqual(pending.json);
     expect(done.session).toBeUndefined();
     expect(afterLogin).toHaveBeenCalledWith(expect.objectContaining({ accessToken: 'tok' }));
+  });
+
+  describe('el ticket queda ligado al navegador que hizo el flujo (login CSRF)', () => {
+    async function flow(sso: ReturnType<typeof build>, sub = 'sub-1') {
+      const { q, cookie } = await begin(sso);
+      nextClaims = claimsFor(q, { sub });
+      const back = await sso.callback('google', { state: q.state, code: 'c' }, cookie);
+      return { ticket: hashOf(back.location).ticket, bind: bindOf(back.cookie), cookie: back.cookie };
+    }
+
+    test('al volver del proveedor se pone una cookie propia del ticket: httpOnly, solo para /middleware/sso y de la vida del ticket', async () => {
+      const { cookie } = await flow(build());
+      const set = ([] as string[]).concat(cookie ?? []).find((c) => c.startsWith('ruteando_sso_ticket='))!;
+      expect(set).toMatch(/HttpOnly/);
+      expect(set).toMatch(/Path=\/middleware\/sso/);
+      expect(set).toMatch(/SameSite=Lax/);
+      expect(set).toMatch(/Max-Age=300/);
+      expect(set).toMatch(/Secure/); // la URL base de la prueba es https
+    });
+
+    test('la dirección con el ticket, abierta en OTRO navegador (sin la cookie), no entra: es lo que haría la víctima de un login CSRF', async () => {
+      const sso = build();
+      const attacker = await flow(sso, 'sub-atacante');
+      // La víctima abre la dirección del atacante: tiene el ticket pero no la cookie
+      expect(sso.complete(attacker.ticket, undefined).status).toBe(401);
+      expect(sso.complete(attacker.ticket, '').status).toBe(401);
+      // ... ni con una cookie inventada
+      expect(sso.complete(attacker.ticket, 'inventada').status).toBe(401);
+    });
+
+    test('un ticket ajeno se quema: tampoco sirve después con la cookie buena (no se puede probar a ciegas)', async () => {
+      const sso = build();
+      const { ticket, bind } = await flow(sso);
+      expect(sso.complete(ticket, 'otra-persona').status).toBe(401);
+      expect(sso.complete(ticket, bind).status).toBe(401);
+    });
+
+    test('con su cookie, el ticket entra; y la cookie de un flujo no vale para el ticket de otro', async () => {
+      const sso = build();
+      const a = await flow(sso, 'sub-a');
+      const b = await flow(sso, 'sub-b');
+      expect(sso.complete(a.ticket, b.bind).status).toBe(401); // cruzados
+      const ok = sso.complete(b.ticket, b.bind);
+      expect(ok.status).toBe(200);
+      expect(ok.session?.accessToken).toBe('tok');
+    });
+
+    test('«no existe», «caducó» y «no es tuyo» dan el mismo mensaje (no se distingue)', async () => {
+      const sso = build();
+      const { ticket } = await flow(sso);
+      const foreign = sso.complete(ticket, 'x');
+      const unknown = sso.complete('no-existe', 'x');
+      expect(foreign.json).toEqual(unknown.json);
+    });
   });
 
   describe('rechazos', () => {

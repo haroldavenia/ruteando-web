@@ -31,6 +31,13 @@ const FLOW_TTL_MS = 10 * 60 * 1000;
 const TICKET_TTL_MS = 5 * 60 * 1000;
 const MAX_PENDING = 500;
 export const SSO_COOKIE = 'ruteando_sso';
+/**
+ * Liga el ticket al navegador que hizo el flujo (la cookie `ruteando_sso` ya ligó la ida y la vuelta, pero se borra al volver). Sin esto, quien
+ * completa el SSO con SU cuenta podría mandar a otra persona la dirección `/access/sso#ticket=…` y su navegador entraría en la cuenta del
+ * atacante (login CSRF). Solo viaja a `/middleware/sso` (donde se canjea el ticket) y vive lo que el ticket.
+ */
+export const SSO_TICKET_COOKIE = 'ruteando_sso_ticket';
+export const SSO_TICKET_PATH = '/middleware/sso';
 /** Dominios de correo públicos: nadie puede ser «dueño» de ellos, así que nunca se aceptan (ni verificables por casualidad). */
 const PUBLIC_DOMAINS = new Set([
   'gmail.com',
@@ -83,8 +90,8 @@ export interface SsoOverrides {
 /** Redirección que el Route Handler traduce a una respuesta 302 con su cookie. */
 export interface SsoRedirect {
   location: string;
-  /** Valor completo de `Set-Cookie`. */
-  cookie?: string;
+  /** Valor(es) completo(s) de `Set-Cookie`. */
+  cookie?: string | string[];
 }
 
 class Fail extends Error {
@@ -171,7 +178,7 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
       listProviders: () => ({ providers: [] as { id: string; label: string }[] }),
       start: async (): Promise<SsoRedirect> => goto('error=NO_PROVIDER'),
       callback: async (): Promise<SsoRedirect> => goto('error=NO_PROVIDER'),
-      complete: (_ticket?: unknown) =>
+      complete: (_ticket?: unknown, _binding?: unknown) =>
         failOut(new Fail(503, 'SSO_DISABLED', 'El inicio de sesión único no está activado.')),
       manage: disabled as (r: Request, p: string, a: MfaAuth) => Promise<MfaOut>,
     };
@@ -194,7 +201,7 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
         new Promise<string[][]>((_, no) => setTimeout(() => no(new Error('dns')), DNS_TIMEOUT_MS)),
       ]));
   const flows = createExpiringMap<Flow>(FLOW_TTL_MS, now);
-  const tickets = createExpiringMap<GatewaySession>(TICKET_TTL_MS, now);
+  const tickets = createExpiringMap<{ session: GatewaySession; bind: string }>(TICKET_TTL_MS, now);
   const secureCookie = rawBase.startsWith('https:');
 
   // ---------- proveedores ----------
@@ -335,7 +342,11 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
   ): Promise<SsoRedirect> {
     const flow = flows.take(params.state);
     const bound = flow && equal(binding, flow.binding);
-    const redirect = (r: SsoRedirect): SsoRedirect => ({ ...r, cookie: clearCookie });
+    // La cookie que ligó la ida y la vuelta ya cumplió: se borra (y se añade la del ticket si la hay)
+    const redirect = (r: SsoRedirect): SsoRedirect => ({
+      ...r,
+      cookie: [clearCookie, ...([] as string[]).concat(r.cookie ?? [])],
+    });
     // `:provider` de la dirección debe ser el del flujo: un código de un proveedor no se canjea en otro
     if (!flow || !bound || flow.name !== name) return redirect(failTo('STATE_INVALID'));
     if (params.error) return redirect(failTo(params.error === 'access_denied' ? 'DENIED' : 'PROVIDER_ERROR'));
@@ -386,8 +397,12 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
         detail: key,
       });
       const ticket = rand();
-      tickets.put(ticket, ex.session);
-      return redirect(goto(`ticket=${ticket}`));
+      const bind = rand();
+      tickets.put(ticket, { session: ex.session, bind });
+      return redirect({
+        ...goto(`ticket=${ticket}`),
+        cookie: `${SSO_TICKET_COOKIE}=${bind}; Path=${SSO_TICKET_PATH}; HttpOnly; SameSite=Lax; Max-Age=${TICKET_TTL_MS / 1000}${secureCookie ? '; Secure' : ''}`,
+      });
     } catch (err) {
       if (err instanceof SsoError) return redirect(failTo(err.code));
       if (err instanceof GatewayUnavailable) return redirect(failTo('GATEWAY_ERROR'));
@@ -397,11 +412,15 @@ export function createSso(env: Env = process.env, overrides: SsoOverrides = {}) 
   }
 
   /** Canjea el ticket del regreso por lo mismo que daría un login: sesión (que el Route Handler vuelve cookies), reto de segundo factor o activación obligatoria. */
-  function complete(ticket: unknown): MfaOut {
-    const session = tickets.take(ticket);
-    if (!session) return failOut(new Fail(401, 'TICKET_EXPIRED', 'El inicio de sesión caducó. Inténtalo de nuevo.'));
-    const next = mfa?.enabled ? mfa.afterLogin(session) : null;
-    return next ?? out(200, { user: session.user }, session);
+  function complete(ticket: unknown, binding: unknown): MfaOut {
+    const entry = tickets.take(ticket);
+    // El ticket solo vale en el navegador que hizo el flujo (la cookie que se puso al volver del proveedor). Un ticket ajeno se quema: no
+    // se puede reintentar. Mismo mensaje que un ticket caducado: no se distingue «no existe» de «no es tuyo».
+    if (!entry || !equal(String(binding || ''), entry.bind)) {
+      return failOut(new Fail(401, 'TICKET_EXPIRED', 'El inicio de sesión caducó. Inténtalo de nuevo.'));
+    }
+    const next = mfa?.enabled ? mfa.afterLogin(entry.session) : null;
+    return next ?? out(200, { user: entry.session.user }, entry.session);
   }
 
   // ---------- gestión (con sesión) ----------
