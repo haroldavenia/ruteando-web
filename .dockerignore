@@ -1,8 +1,11 @@
 node_modules
-ng-ruteando/node_modules
-ng-ruteando/dist
-ng-ruteando/.angular
 .git
 .env
 .claude
 .idea
+# next-ruteando: lo generado y lo local no entran al contexto (el Dockerfile instala y compila por su cuenta)
+next-ruteando/node_modules
+next-ruteando/.next
+next-ruteando/data
+next-ruteando/coverage
+next-ruteando/.env*

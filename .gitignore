@@ -12,7 +12,7 @@ package-lock.json
 /data/
 
 # Salidas de pruebas y cobertura del arnés
-reports/
+/reports/
 coverage/
 test-results/
 .tmp/

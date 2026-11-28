@@ -2,7 +2,7 @@ version: 2
 
 # Revisión semanal de dependencias. Los pull requests de Dependabot pasan por el mismo CI.
 # El ecosistema `npm` también cubre pnpm: con un workspace (pnpm-workspace.yaml) basta UNA entrada en la raíz;
-# actualiza servidor y ng-ruteando sobre el único pnpm-lock.yaml (una entrada por carpeta duplicaba los pull requests).
+# actualiza next-ruteando sobre el único pnpm-lock.yaml (una entrada por carpeta duplicaba los pull requests).
 updates:
   - package-ecosystem: npm
     directory: /
@@ -13,42 +13,16 @@ updates:
     commit-message:
       prefix: chore(deps)
     groups:
-      # Parches y menores de Angular juntos, para no mezclar versiones
-      angular:
-        patterns: ['@angular/*', '@angular-devkit/*']
-        update-types: [minor, patch]
       menores-y-parches:
         update-types: [minor, patch]
     ignore:
-      # Las versiones mayores de Angular se suben a mano y todas a la vez (`ng update`): un pull
-      # request suelto de un solo paquete deja versiones mezcladas y rompe las pruebas.
-      - dependency-name: '@angular/*'
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@angular-devkit/*'
-        update-types: ['version-update:semver-major']
-      # karma-jasmine 5.1 (la última) no funciona con jasmine-core 7 y con la 6 ensucia la salida de las pruebas
-      - dependency-name: jasmine-core
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@types/jasmine'
-        update-types: ['version-update:semver-major']
-      # TypeScript lo fija Angular: la 22 acepta `>=6.0 <6.1` (parches sí; la 6.1 y la 7, el compilador nativo, no)
-      - dependency-name: typescript
-        update-types: ['version-update:semver-major', 'version-update:semver-minor']
-      # ESLint 10: `eslint-plugin-import` (la última, 2.32) solo admite hasta ESLint 9, y `@eslint/js` 10 exige ESLint 10
-      - dependency-name: eslint
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@eslint/js'
-        update-types: ['version-update:semver-major']
-      # angular-eslint acompaña a Angular: su versión mayor sube con `ng update`, no por separado
-      - dependency-name: angular-eslint
-        update-types: ['version-update:semver-major']
       # Los tipos de Node siguen al mínimo que se soporta (`engines`: 22), no a la última versión de Node
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
-      # Express 5 cambia la sintaxis de rutas (`*` -> `/{*splat}`) y el 2FA y el SSO viven en esas rutas: es un change aparte
-      - dependency-name: express
+      # ESLint 10 y `@eslint/js` 10 se suben juntos y a mano: los plugins de next-ruteando aún no lo admiten
+      - dependency-name: eslint
         update-types: ['version-update:semver-major']
-      - dependency-name: '@types/express'
+      - dependency-name: '@eslint/js'
         update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions

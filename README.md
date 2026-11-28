@@ -1,25 +1,25 @@
 # ruteando-web
 
-Aplicación web de planificación de rutas. El frontend es Angular (`ng-ruteando/`) y se apoya en el HanoIT Gateway; un pequeño servidor Express publica la compilación y reenvía las peticiones al gateway sin exponer su clave.
+Aplicación web de planificación de rutas. Es una aplicación Next.js (`next-ruteando/`) que actúa como BFF del HanoIT Gateway: guarda la sesión en cookies `httpOnly`, reenvía las peticiones al gateway sin exponer su clave ni sus tokens al navegador, e impone el segundo factor y el inicio de sesión único.
 
 ## Requisitos
 
-- Node `^22.22.3 || ^24.15 || >=26` para el frontend y el servidor (el servidor usa `node:sqlite`); en `ng-ruteando/.nvmrc` está la 26: `nvm use`.
+- Node `^22.22.3 || ^24.15 || >=26` (el 2FA y el SSO usan `node:sqlite`); en `.nvmrc` está la 26: `nvm use`.
 - pnpm 10 (la versión exacta está en `packageManager` de `package.json`): `corepack enable` (viene con Node hasta la 24; desde la 25 se instala con `npm install -g corepack`) o `npm install -g pnpm`; con pnpm 10 instalado, descarga solo la versión que pide el proyecto.
 - Dirección y clave de API del HanoIT Gateway.
 
 ## Puesta en marcha
 
 ```
-pnpm install --frozen-lockfile          # servidor (raíz) y frontend (un solo pnpm-lock.yaml)
-cp .env.example .env                    # y rellena GATEWAY_URL y GATEWAY_API_KEY
-pnpm run build:web                       # compila ng-ruteando
+pnpm install --frozen-lockfile
+cp next-ruteando/.env.example next-ruteando/.env.local   # y rellena GATEWAY_URL, GATEWAY_API_KEY y SESSION_SECRET
+pnpm run build
 pnpm start                               # http://localhost:3000
 ```
 
-Sin `.env` el servidor arranca y avisa, pero `/gateway/**` responde 503. `PORT` cambia el puerto y `WEB_DIST` el directorio que se publica.
+Las variables (todas comentadas) están en `next-ruteando/.env.example`; en local se leen de `next-ruteando/.env.local` (o `.env`) y las del entorno tienen prioridad. **Al desplegar se definen en la plataforma, no en un archivo: la lista completa, qué es obligatorio y los pasos para Render y Docker están en [Despliegue](#despliegue).** `pnpm start` es el lanzador `scripts/start.mjs`: con `GATEWAY_MODE=mock` levanta antes el gateway simulado y después la aplicación.
 
-El servidor añade cabeceras de seguridad a todas las respuestas (`server/security-headers.js`). La política de contenido (CSP) va por defecto en modo solo informe (`CSP_MODE=report-only`: el navegador anota las violaciones en la consola y no bloquea nada); `CSP_MODE=enforce` la aplica y `off` la quita. Si cambias el proveedor de teselas del mapa, añade su origen a `CSP_IMG_SRC` (varios, separados por espacios). La compilación de producción no lleva manejadores en línea (`optimization.styles.inlineCritical = false` en `angular.json`), así que `enforce` no rompe nada hoy; tras añadir recursos externos o scripts en línea, recorre la aplicación con `report-only` y sin violaciones antes de usarlo.
+`proxy.ts` añade cabeceras de seguridad a todas las respuestas. La política de contenido (CSP, con nonce por petición) va por defecto en modo solo informe (`CSP_MODE=report-only`: el navegador anota las violaciones y no bloquea nada); `CSP_MODE=enforce` la aplica y `off` la quita. Si cambias el proveedor de teselas del mapa, actualiza `img-src` en `proxy.ts`. Verificada en navegador con `enforce` y sin violaciones; tras añadir recursos externos o scripts en línea, recorre la aplicación con `report-only` antes de usarlo.
 
 ## Probar sin el gateway real
 
@@ -27,7 +27,7 @@ El servidor añade cabeceras de seguridad a todas las respuestas (`server/securi
 
 ```
 pnpm run mock:gateway                                              # puerto 4010 (MOCK_GATEWAY_PORT)
-GATEWAY_URL=http://localhost:4010 GATEWAY_API_KEY=mock pnpm start  # la app contra el mock, en otra terminal
+GATEWAY_MODE=mock pnpm start   # la app contra el mock (o GATEWAY_URL=http://localhost:4010 GATEWAY_API_KEY=mock)
 ```
 
 Usuarios (contraseña `demo1234`): `admin@example.invalid` (administración), `agente@example.invalid` (agente) y `conductor@example.invalid` (conductor, sin áreas). Las variables del entorno tienen prioridad sobre `.env`.
@@ -42,7 +42,6 @@ El inicio de sesión admite un segundo factor: código por correo, código por S
 |---|---|---|---|
 | `MFA_SECRET_KEY` | Clave de 32 bytes en base64 que cifra los secretos TOTP. **Secreto.** Sin ella el módulo está apagado. Cambiarla invalida los TOTP ya activados. | Genera una (con Docker ya viene una de pruebas) | **Una propia y guardada en el gestor de secretos** |
 | `MFA_DB_PATH` | Fichero SQLite con la política, los factores y los códigos de recuperación (`data/mfa.sqlite`, ignorado por git). | Por defecto | **Volumen persistente**: si se pierde, todo el mundo tiene que volver a activar sus métodos |
-| `MFA_DEV_PORT` | Solo `ng serve`: puerto del módulo (4020). | Opcional | No se usa |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Correo de los códigos (y de los «SMS» de desarrollo). Sin `SMTP_HOST` no hay método de correo. | Mailpit: `localhost` / `1025` | Tu proveedor SMTP (ver abajo) |
 | `SMS_PROVIDER` | `dev` (el «SMS» llega como correo a Mailpit, no se envía nada real) o `twilio`. Con otro valor el SMS no se ofrece. | `dev` | `twilio` |
 | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_VERIFY_SERVICE_SID` | Credenciales de Twilio Verify. **El token es un secreto.** Si falta alguna, el SMS no se ofrece a nadie. | Vacías | Las tres, de la cuenta **Live** |
@@ -52,7 +51,7 @@ Generar la clave: `node -e "console.log(require('crypto').randomBytes(32).toStri
 ### Desarrollo (sin enviar nada real)
 
 - **Con Docker** (lo más simple): `docker compose up` levanta Mailpit (http://localhost:8025) con una `MFA_SECRET_KEY` de pruebas. Los correos con códigos y, con `SMS_PROVIDER=dev`, los «SMS» llegan a esa bandeja. Para activar SMS en `/profile` usa cualquier número en formato internacional (por ejemplo `+573001234567`): no sale del equipo.
-- **Sin Docker**: `docker compose up mailpit` y en el `.env` `MFA_SECRET_KEY=<la que generaste>`, `SMTP_HOST=127.0.0.1`, `SMTP_PORT=1025` y `SMS_PROVIDER=dev`; reinicia `pnpm start` o `ng serve`.
+- **Sin Docker**: `docker compose up mailpit` y en el `.env` `MFA_SECRET_KEY=<la que generaste>`, `SMTP_HOST=127.0.0.1`, `SMTP_PORT=1025` y `SMS_PROVIDER=dev`; reinicia `pnpm start`.
 - Docker toma `SMS_PROVIDER` y `TWILIO_*` del `.env` (por defecto `dev`). Tras cambiarlos: `docker compose restart web`.
 - Con el gateway simulado los usuarios cambian de id en cada arranque: tras reiniciarlo hay que volver a activar los métodos.
 - Límites (también en desarrollo): 5 intentos por código, 10 códigos erróneos por persona cada 15 minutos y 3 envíos por persona y método cada 10 minutos; al superarlos responde 429.
@@ -100,7 +99,7 @@ Entrar con Google, GitHub, Apple o con el proveedor OpenID Connect de la empresa
 | Variable | Qué es |
 |---|---|
 | `SSO_ENABLED_PROVIDERS` | Lista separada por comas: `google`, `github`, `apple`, `enterprise` |
-| `SSO_REDIRECT_BASE_URL` | Dirección pública de la aplicación, sin barra final (`https://ruteando.example.com`; en `ng serve`, `http://localhost:4200`) |
+| `SSO_REDIRECT_BASE_URL` | Dirección pública de la aplicación, sin barra final (`https://ruteando.example.com`; en local, `http://localhost:3000`) |
 | `SSO_GOOGLE_CLIENT_ID`, `SSO_GOOGLE_CLIENT_SECRET` | Cliente OAuth de Google Cloud («Aplicación web») |
 | `SSO_GITHUB_CLIENT_ID`, `SSO_GITHUB_CLIENT_SECRET` | OAuth App de GitHub |
 | `SSO_APPLE_CLIENT_ID`, `SSO_APPLE_TEAM_ID`, `SSO_APPLE_KEY_ID`, `SSO_APPLE_PRIVATE_KEY` | Services ID, equipo, clave y su PEM (con `\n` en una sola línea) de «Sign in with Apple» |
@@ -116,7 +115,7 @@ node scripts/mock-oidc-provider.cjs          # proveedor OIDC simulado en :4030
 GATEWAY_MODE=mock
 MFA_SECRET_KEY=<la de siempre>
 SSO_ENABLED_PROVIDERS=google
-SSO_REDIRECT_BASE_URL=http://localhost:4200
+SSO_REDIRECT_BASE_URL=http://localhost:3000
 SSO_ALLOW_INSECURE=true
 SSO_GOOGLE_ISSUER=http://127.0.0.1:4030
 SSO_GOOGLE_CLIENT_ID=mock
@@ -132,14 +131,76 @@ Con `pnpm start` y «Continuar con Google» el proveedor simulado pide un correo
 3. El gateway debe ofrecer `POST /auth/sso/exchange`.
 4. Si usas el SSO de empresa, el proveedor debe ser `https` con nombre público (no se admiten IP ni `localhost`).
 
-## Con Docker (desarrollo)
+## Despliegue
 
-Sin instalar Node ni copiar `.env`: `docker compose up` (o `pnpm run docker:dev`) levanta el gateway simulado y `ng serve` en http://localhost:4200 (usuarios y contraseña como en la sección anterior). La primera vez instala las dependencias en volúmenes de Docker y tarda unos minutos; después solo reinstala si cambia el `pnpm-lock.yaml`. Tras la migración a pnpm (que cambia `Dockerfile.dev`), reconstruye las imágenes una vez: `docker compose --profile prod-like --profile test build` (o `docker compose up --build`); si una imagen vieja se queda con `pnpm: not found`, es eso. Los volúmenes con `node_modules` de npm se reinstalan solos (el hash del lock cambió); si algo queda raro, `docker compose down -v`. El código se monta desde el equipo y recarga al guardar.
+**Dónde van las variables.** En local, en `.env.local` (Next lo lee solo; ignorado por git y por Docker). En un despliegue (Render, Docker, Coolify…) no hay archivo `.env`: cada variable se define en el panel de la plataforma (o con `--env-file` / `-e` en Docker) y **tiene prioridad** sobre cualquier archivo. `next-ruteando/.env.example` lista todas, comentadas, y `render.yaml` es el mismo inventario en formato Blueprint de Render.
+
+### Variables
+
+| Variable | Obligatoria | Valor | Notas |
+|---|---|---|---|
+| `SESSION_SECRET` | **Sí** | `openssl rand -base64 32` (32 caracteres o más) | Firma la cookie de sesión. Sin ella el servidor **no arranca** (sale con código 1). Cambiarla cierra todas las sesiones. |
+| `SITE_URL` | **Sí** | `https://tu-dominio` (sin barra final) | Direcciones absolutas del manifiesto, `sitemap.xml`, `robots.txt` y datos estructurados. Sin ella, `http://localhost:3000`. |
+| `GATEWAY_MODE` | **Sí** | `real` (por defecto) o `mock` | `mock` usa el gateway simulado (datos ficticios, se pierden al reiniciar). Cualquier otro valor impide arrancar. |
+| `GATEWAY_URL`, `GATEWAY_API_KEY` | Con `real` | Dirección base y clave del HanoIT Gateway | La clave es un **secreto**: solo en la plataforma, nunca en git ni en el navegador. |
+| `GATEWAY_TIMEOUT_MS` | No | `30000` | Súbelo si planificar jornadas agota el tiempo. |
+| `MOCK_GATEWAY_PASSWORD` | **Sí** con `mock` y un `SITE_URL` público | Una contraseña propia (no `demo1234`) | Con `mock` y un `SITE_URL` público, sin ella (o con `demo1234`) el servidor **no arranca**: cualquiera entraría con los usuarios de prueba. En local se admite `demo1234`. `MOCK_GATEWAY_PORT` (4010) casi nunca se toca. |
+| `MFA_SECRET_KEY` | Para el 2FA y el SSO | `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` | Sin ella el segundo factor y el SSO quedan apagados, y el acceso **falla cerrado** salvo `ALLOW_LOGIN_WITHOUT_MFA=true`. Guárdala: cambiarla invalida los TOTP. |
+| `MFA_DB_PATH`, `SSO_DB_PATH` | No | `/data/mfa.sqlite`, `/data/sso.sqlite` (Docker), `/var/data/…` (disco de Render) | Bases SQLite del 2FA y del SSO. **Necesitan un volumen persistente**: sin él se pierden y hay que reactivar los métodos. |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Para el 2FA por correo | Ver [Segundo factor](#segundo-factor-opcional) | `587` con `SMTP_SECURE=false` o `465` con `true`. |
+| `SMS_PROVIDER`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_VERIFY_SERVICE_SID` | Para el 2FA por SMS | `twilio` y las tres de una cuenta **Live** | `dev` no envía SMS reales: no lo uses en producción. |
+| `SSO_ENABLED_PROVIDERS`, `SSO_REDIRECT_BASE_URL`, `SSO_GOOGLE_*`, `SSO_GITHUB_*`, `SSO_APPLE_*` | Para el SSO | Ver [Inicio de sesión único](#inicio-de-sesión-único-opcional) | Apagado sin proveedores, dirección pública y `MFA_SECRET_KEY`. |
+| `CSP_MODE` | No | `report-only` (por defecto), `enforce` u `off` | Pasa a `enforce` tras recorrer la aplicación sin violaciones. |
+| `TRUSTED_PROXY_HOPS` | No | `1` (por defecto) | Proxys de confianza delante, para la IP del cliente (límites de intentos). `0` = no confiar en `X-Forwarded-For`. |
+| `COOKIE_SECURE` | No | vacío | Las cookies son `Secure` en producción; solo se pone `false` en local con `http://`. |
+| `PORT`, `HOSTNAME` | No | `3000`, `0.0.0.0` | La imagen de Docker ya los fija; Render define `PORT` solo. |
+
+**Nunca en un despliegue**: `SSO_ALLOW_INSECURE=true` (el servidor no arranca: desactiva la defensa contra SSRF), `SSO_GOOGLE_ISSUER` (proveedor simulado) ni `ALLOW_LOGIN_WITHOUT_MFA=true` si el 2FA debe cumplirse. Los secretos (`SESSION_SECRET`, `GATEWAY_API_KEY`, `MFA_SECRET_KEY`, `SMTP_PASS`, `TWILIO_AUTH_TOKEN`, `SSO_*_SECRET`) solo viven en la plataforma.
+
+### Render (Node, sin Docker)
+
+Servicio web con estos valores (los mismos de `render.yaml`):
+
+| Ajuste | Valor |
+|---|---|
+| Build Command | `pnpm install --frozen-lockfile && pnpm run build` |
+| Start Command | `pnpm start` |
+| Health Check Path | `/healthCheck` |
+| Rama | `main` |
+| Node | Render elige el más alto que cumple `engines` (hoy 26); pnpm sale de `packageManager`. Para fijarlo, variable `NODE_VERSION`. |
+
+1. **Servicio nuevo**: New → Blueprint apuntando al repositorio (Render lee `render.yaml` y pide los secretos); o New → Web Service con la tabla de arriba y las variables de la sección anterior.
+2. **Servicio que ya existía** (creado cuando el repositorio tenía Angular): cambia el *Build Command*, que seguía llamando a `pnpm run build:web` (ya no existe), y confirma que el *Start Command* es `pnpm start` (o `npm start`, que ejecuta lo mismo).
+3. **Una sola instancia**: los retos de acceso del 2FA y los flujos del SSO viven en memoria.
+4. **Base de datos del 2FA y del SSO**: el plan Free no tiene disco, así que `MFA_DB_PATH=/tmp/mfa.sqlite` y `SSO_DB_PATH=/tmp/sso.sqlite` se pierden al dormirse o redesplegar (cada persona reactiva sus métodos). Con un plan de pago: disco montado en `/var/data` y `MFA_DB_PATH=/var/data/mfa.sqlite`, `SSO_DB_PATH=/var/data/sso.sqlite`.
+5. **Guardar variables o el comando de build dispara un despliegue**, salvo que se elija «Save only». Si el despliegue automático por commit no se dispara tras un merge, lanza *Manual Deploy → Deploy latest commit*.
+6. **HTTPS y proxy**: Render ya termina TLS y envía `X-Forwarded-Proto` (activa HSTS). Si pones otro proxy delante (nginx, Traefik, Cloudflare), debe conservar `Host` (o enviar `X-Forwarded-Host`) y `Origin`: la protección CSRF compara el `Origin` de cada petición que cambia datos con el host público, y sin esa cabecera responde 403.
+
+### Docker (imagen de producción)
 
 ```
-docker compose up                              # app en :4200 + gateway simulado en :4010
-docker compose --profile prod-like up app      # compilación + servidor Express en :3000, como en producción
-docker compose --profile test run --rm test    # pruebas del frontend (pnpm run docker:test)
+docker build -f next-ruteando/Dockerfile -t ruteando-next .          # desde la raíz del repositorio
+docker run -d --name ruteando -p 3000:3000 -v ruteando-data:/data --env-file next-ruteando/.env.local ruteando-next
+```
+
+El contenedor corre sin root, trae su propio `HEALTHCHECK` (`/healthCheck`) y guarda las bases SQLite del 2FA y del SSO en el volumen `/data` (`MFA_DB_PATH` y `SSO_DB_PATH` ya apuntan allí): **sin volumen se pierden al recrearlo**. Con `GATEWAY_MODE=mock` el contenedor levanta además el gateway simulado en `127.0.0.1` (`MOCK_GATEWAY_PASSWORD` es obligatoria con un `SITE_URL` público). En Coolify u otro orquestador: construir con ese `Dockerfile` (contexto = raíz), puerto 3000, volumen en `/data`, las variables de la tabla y el *health check* en `/healthCheck`.
+
+### Antes de dar el sitio por bueno
+
+1. `curl -i https://<dominio>/healthCheck` → `200` con `{"status":"ok"}` (y no pide sesión).
+2. `curl -i https://<dominio>/robots.txt` y `/sitemap.xml` muestran el dominio de `SITE_URL`, no `localhost`.
+3. En el registro del arranque no aparece «Configuración no válida» (si falta `SESSION_SECRET` o `GATEWAY_MODE` es inválido, el servidor sale con código 1 y lo dice).
+4. Entrar con una persona real: el acceso pide el segundo factor (si `MFA_SECRET_KEY` está definida) y, con una sesión, `GET /gateway/mfa/status` muestra los métodos disponibles (correo y SMS en `available: true` si están configurados).
+5. Una pantalla con mapa (Lugares o Zonas) carga las teselas y la consola del navegador no muestra violaciones de la CSP (con `CSP_MODE=report-only` solo se anotan).
+6. Todo detrás del proxy real y por HTTPS: el service worker de la PWA solo se registra con HTTPS y las cookies de sesión son `Secure`.
+
+## Con Docker (desarrollo)
+
+Sin instalar Node ni copiar `.env`: `docker compose up` (o `pnpm run docker:dev`) levanta el gateway simulado, Mailpit y `next-ruteando` compilado y servido en http://localhost:3000 (usuarios y contraseña como en la sección anterior). La primera vez instala las dependencias en volúmenes de Docker y compila, y tarda unos minutos; después solo reinstala si cambia el `pnpm-lock.yaml`. Si algo queda raro, `docker compose down -v`. No hay recarga al guardar (`next dev` no hidrata detrás de `proxy.ts`): tras cambiar código, `docker compose restart web`.
+
+```
+docker compose up                              # app en :3000 + gateway simulado en :4010 + Mailpit en :8025
+docker compose --profile test run --rm test    # pruebas de next-ruteando (pnpm run docker:test)
 docker compose down                            # parar (pnpm run docker:down); `down -v` borra también las dependencias
 ```
 
@@ -147,11 +208,11 @@ Para usar otro gateway define `DOCKER_GATEWAY_URL` y `DOCKER_GATEWAY_API_KEY` (e
 
 ## Desarrollo
 
-Desde `ng-ruteando/`: `pnpm start` (puerto 4200, con el mismo proxy `/gateway` y las mismas variables), `pnpm run test:ci` (Karma con Chrome sin interfaz) y `pnpm run build`.
+Desde la raíz: `pnpm run build` y `pnpm start` (puerto 3000), y `pnpm --filter next-ruteando run test` (Vitest) o `... run test:coverage` (umbral del 80 %). Lint, formato y tipos del BFF: `pnpm --filter next-ruteando run lint`, `format` y `typecheck`. `next dev` no hidrata detrás de `proxy.ts`: verifica en navegador contra `build` + `start`.
 
 ## Instalar como aplicación (PWA)
 
-La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar aplicación» en el menú de usuario (y en la barra de direcciones); en iPhone/iPad, «Compartir → Añadir a pantalla de inicio». Carga desde caché y avisa cuando hay una versión nueva; los datos siempre vienen del gateway (sin conexión se ve la carcasa, no los datos). Se prueba con `pnpm run build:web && pnpm start` (en `ng serve` no hay service worker). Requiere HTTPS salvo en `localhost`.
+La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar aplicación» en la barra de direcciones; en iPhone/iPad, «Compartir → Añadir a pantalla de inicio». El service worker (`next-ruteando/public/sw.js`) guarda la carcasa estática, los iconos y las teselas del mapa; los datos y la sesión siempre vienen de la red y sin conexión se muestra `/offline`. Se registra solo en producción (en `next dev` no hay service worker). Requiere HTTPS salvo en `localhost`. `SITE_URL` define las direcciones absolutas del manifiesto, el `sitemap.xml`, el `robots.txt` y los datos estructurados de `/about`.
 
 ## Vigilancia con Jenkins (`/healthCheck`)
 
@@ -162,9 +223,9 @@ La compilación de producción es una PWA: en Chrome o Edge aparece «Instalar a
 | Ruta | `GET /healthCheck` (también responde `HEAD`) |
 | Acceso | Público: sin sesión, sin `X-Api-Key` y sin pasar por el gateway |
 | Producción | `https://<tu-dominio>/healthCheck` (la misma dirección y puerto que la aplicación) |
-| Local | `http://localhost:3000/healthCheck` con `pnpm run build:web && pnpm start` (con `PORT` cambia el puerto) |
-| Docker | `http://localhost:3000/healthCheck` con `docker compose --profile prod-like up app`; el servicio `web` de desarrollo (`ng serve`) no la tiene |
-| Cabeceras | `Cache-Control: no-store`, `Content-Type: application/json` |
+| Local | `http://localhost:3000/healthCheck` con `pnpm run build && pnpm start` |
+| Docker | `http://localhost:3000/healthCheck` con `docker compose up` |
+| Cabeceras | `Content-Type: application/json` |
 
 ```
 curl -i https://<tu-dominio>/healthCheck
@@ -172,8 +233,7 @@ curl -i https://<tu-dominio>/healthCheck
 
 | Respuesta | Cuerpo | Significa |
 |---|---|---|
-| `200` | `{"status":"ok","frontend":"ok","uptime":3600}` | El servidor atiende y el frontend está compilado. `uptime` son los segundos desde que arrancó el proceso. |
-| `503` | `{"status":"error","frontend":"sin compilar","uptime":12}` | El servidor atiende pero falta la compilación (`pnpm run build:web`): los usuarios no ven la aplicación. |
+| `200` | `{"status":"ok"}` | El servidor atiende. |
 | sin respuesta, `502`/`504` del proxy | | El servidor está caído o el proxy inverso no lo alcanza. |
 
 No consulta el gateway (una caída del gateway no es una caída de esta aplicación), no se cachea y no se registra en el log. Si un proxy inverso (nginx, Traefik, Coolify) va delante, comprueba que no pida autenticación en esa ruta y que la reenvía a la aplicación.
@@ -192,26 +252,20 @@ Requisitos: Jenkins debe alcanzar la URL pública (si está en otra red, usa un 
 
 ## Integración continua
 
-`.github/workflows/ci.yml` verifica cada pull request (a cualquier rama base) y cada push a `main` con cinco trabajos: `Frontend` (lint con ESLint, formato con Prettier, pruebas con Chrome sin interfaz y compilación de producción), `Servidor` (pruebas), `Specs` (`openspec validate --specs --strict`), `Auditoría` (`pnpm audit` de las dependencias de producción, nivel alto) y `ci`, que resume los anteriores. **La comprobación obligatoria de `main` es `ci`.** Usa el Node de `ng-ruteando/.nvmrc`, pnpm (versión de `packageManager`) y `pnpm install --frozen-lockfile`, y no necesita secretos ni el gateway real.
+`.github/workflows/ci.yml` verifica cada pull request (a cualquier rama base) y cada push a `main` con cuatro trabajos: `Next.js BFF` (lint, formato, tipos, pruebas con cobertura del 80 %, compilación de producción e imagen de Docker), `Specs` (`openspec validate --specs --strict`), `Auditoría` (`pnpm audit` de las dependencias de producción, nivel alto) y `ci`, que resume los anteriores. **La comprobación obligatoria de `main` es `ci`.** Usa el Node de `.nvmrc`, pnpm (versión de `packageManager`) y `pnpm install --frozen-lockfile`, y no necesita secretos ni el gateway real.
 
 Lo mismo en local:
 
 ```
-pnpm install --frozen-lockfile && pnpm lint && pnpm format
-pnpm --filter ng-ruteando run test:ci && pnpm --filter ng-ruteando run build
-pnpm run test:server
+pnpm install --frozen-lockfile
+pnpm --filter next-ruteando run lint && pnpm --filter next-ruteando run format && pnpm --filter next-ruteando run typecheck
+pnpm --filter next-ruteando run test:coverage && pnpm --filter next-ruteando run build
 npx --yes @fission-ai/openspec@1.14.3 validate --specs --strict
 pnpm audit --prod --audit-level=high
 ```
 
-Dependabot propone cada semana las actualizaciones de las dependencias (raíz y frontend, ecosistema `npm` de Dependabot, que lee `pnpm-lock.yaml`) y de las acciones, que pasan por el mismo CI. La versión del CLI de OpenSpec (`OPENSPEC_VERSION` en el flujo) y los SHA de las acciones se actualizan a mano o con esos pull requests.
-
-## Pruebas del servidor
-
-```
-pnpm run test:server
-```
+Dependabot propone cada semana las actualizaciones de las dependencias (ecosistema `npm` de Dependabot, que lee `pnpm-lock.yaml`) y de las acciones, que pasan por el mismo CI. La versión del CLI de OpenSpec (`OPENSPEC_VERSION` en el flujo) y los SHA de las acciones se actualizan a mano o con esos pull requests.
 
 ## Más información
 
-`CLAUDE.md` describe la arquitectura, y las decisiones y requisitos están en `openspec/`. El código de la aplicación AngularJS anterior sigue en el historial de git (último commit que lo contiene: `19b1cb4`).
+`CLAUDE.md` describe la arquitectura, y las decisiones y requisitos están en `openspec/`. El frontend Angular (`ng-ruteando/`) y el servidor Express (`server/`) se retiraron al migrar a Next.js: siguen en el historial de git (último commit que los contiene: `75d5dc78`; el de la aplicación AngularJS, `19b1cb4`).

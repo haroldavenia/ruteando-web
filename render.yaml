@@ -1,0 +1,73 @@
+# Blueprint de Render para ruteando-web (README.md, «Despliegue»). Se usa con New → Blueprint, o como referencia de lo que lleva un
+# servicio web creado a mano: comandos de build y arranque, comprobación de salud y variables.
+#
+# Las variables con `sync: false` las pide Render al crear el servicio (secretos: nunca van en este archivo). Las demás ya llevan valor.
+services:
+  - type: web
+    name: ruteando-web
+    runtime: node
+    region: oregon
+    # Plan Free: se duerme tras 15 minutos y NO tiene disco, así que las bases del 2FA y del SSO (SQLite) se pierden al dormir o
+    # redesplegar. En un plan de pago añade un disco y apunta MFA_DB_PATH y SSO_DB_PATH a él (ver `disk` más abajo).
+    plan: free
+    branch: main
+    # Render elige el Node más alto que cumple `engines` (hoy 26) y pnpm sale de `packageManager`
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build
+    # Lanzador: con GATEWAY_MODE=mock levanta antes el gateway simulado; con el real solo arranca la aplicación
+    startCommand: pnpm start
+    healthCheckPath: /healthCheck
+    autoDeploy: true
+    envVars:
+      # --- Obligatorias
+      - key: SESSION_SECRET # firma la cookie de sesión (32 caracteres o más); sin ella el servidor no arranca
+        generateValue: true
+      - key: SITE_URL # dirección pública, sin barra final: https://<tu-servicio>.onrender.com
+        sync: false
+      - key: GATEWAY_MODE # real, o mock (gateway simulado: datos ficticios, solo para pruebas)
+        value: real
+      - key: GATEWAY_URL # con GATEWAY_MODE=real
+        sync: false
+      - key: GATEWAY_API_KEY # con GATEWAY_MODE=real (secreto)
+        sync: false
+      # --- Con GATEWAY_MODE=mock define además MOCK_GATEWAY_PASSWORD (si no, cualquiera entra con demo1234)
+      # - key: MOCK_GATEWAY_PASSWORD
+      #   sync: false
+      # --- Segundo factor (sin MFA_SECRET_KEY queda apagado)
+      - key: MFA_SECRET_KEY # 32 bytes en base64 (secreto); cambiarla invalida los TOTP guardados
+        sync: false
+      - key: MFA_DB_PATH
+        value: /tmp/mfa.sqlite # con disco: /var/data/mfa.sqlite
+      - key: SSO_DB_PATH
+        value: /tmp/sso.sqlite # con disco: /var/data/sso.sqlite
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: '587'
+      - key: SMTP_SECURE
+        value: 'false'
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: SMS_PROVIDER # twilio (o dev solo en desarrollo)
+        value: twilio
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_VERIFY_SERVICE_SID
+        sync: false
+      # --- Seguridad y red
+      - key: CSP_MODE # report-only (por defecto) o enforce
+        value: report-only
+      - key: TRUSTED_PROXY_HOPS # Render pone un proxy delante
+        value: '1'
+      - key: GATEWAY_TIMEOUT_MS
+        value: '30000'
+    # Plan de pago: descomenta para conservar las bases SQLite entre reinicios
+    # disk:
+    #   name: ruteando-data
+    #   mountPath: /var/data
+    #   sizeGB: 1

@@ -1,0 +1,422 @@
+@import 'tailwindcss';
+@import 'ol/ol.css';
+
+/*
+ * Tokens de Ruteando: los mismos valores que la aplicación Angular (Material 3, semilla violeta y rosa; ver «Ruteando - Guia de diseno»).
+ * Cada rol es un par claro | oscuro con `light-dark()`, así que el tema sigue al sistema sin duplicar utilidades con `dark:`; la elección
+ * manual (Claro u Oscuro) cambia solo `color-scheme` en <html data-theme>.
+ * La paleta de Tailwind se vacía: lo que no sea un rol de esta hoja no existe como clase (el lint también lo exige).
+ */
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentcolor;
+
+  --color-primary: light-dark(#7d00fa, #d5baff);
+  --color-on-primary: light-dark(#ffffff, #42008a);
+  --color-primary-container: light-dark(#ecdcff, #5f00c0);
+  --color-on-primary-container: light-dark(#5f00c0, #ecdcff);
+  --color-secondary: light-dark(#645b70, #cec2db);
+  --color-secondary-container: light-dark(#eadef7, #4b4357);
+  --color-on-secondary-container: light-dark(#4b4357, #eadef7);
+  --color-tertiary: light-dark(#ba005c, #ffb1c5);
+  --color-tertiary-container: light-dark(#ffd9e1, #8f0045);
+  --color-on-tertiary-container: light-dark(#8f0045, #ffd9e1);
+  --color-error: light-dark(#ba1a1a, #ffb4ab);
+  --color-error-container: light-dark(#ffdad6, #93000a);
+  --color-on-error-container: light-dark(#93000a, #ffdad6);
+  --color-surface: light-dark(#fef8fc, #151316);
+  --color-surface-container-lowest: light-dark(#ffffff, #0f0d11);
+  --color-surface-container-low: light-dark(#f8f2f6, #1d1b1e);
+  --color-surface-container: light-dark(#f2ecf1, #211f22);
+  --color-surface-container-high: light-dark(#ede6eb, #2b292d);
+  --color-surface-container-highest: light-dark(#e6e1e6, #363437);
+  --color-on-surface: light-dark(#1d1b1e, #e6e1e6);
+  --color-on-surface-variant: light-dark(#49454e, #e8e0eb);
+  --color-inverse-surface: light-dark(#323033, #e6e1e6);
+  --color-inverse-on-surface: light-dark(#f5eff4, #323033);
+  --color-inverse-primary: light-dark(#d5baff, #7d00fa);
+  --color-outline: light-dark(#7b757f, #958e99);
+  --color-outline-variant: light-dark(#cbc4cf, #49454e);
+  /* Telón de los diálogos (en M3, `scrim`): negro con la opacidad que ponga cada uso, `bg-scrim/40` */
+  --color-scrim: #000000;
+
+  /* Estados con significado propio (Material no trae verde, azul ni ámbar); cada par supera 4,5:1 en los dos temas */
+  --color-success-container: light-dark(#ddf3e7, #0f3a28);
+  --color-on-success-container: light-dark(#0b6b42, #6fdda8);
+  --color-info-container: light-dark(#dcebfa, #0c3157);
+  --color-on-info-container: light-dark(#0a5496, #8ac8ff);
+  --color-warning-container: light-dark(#ffebc2, #402d00);
+  --color-on-warning-container: light-dark(#7a4b00, #f6c964);
+
+  /* Tipografía: Manrope para marca, títulos y cifras; Roboto para texto y controles (next/font las aloja; ver app/layout.tsx) */
+  --font-brand: var(--font-manrope), system-ui, sans-serif;
+  --font-sans: var(--font-roboto), system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Roboto Mono', monospace;
+
+  /* Forma: 12 controles y avisos, 20 tarjetas, 24 diálogos (los demás radios usan la escala de Tailwind) */
+  --radius-control: 12px;
+  --radius-card: 20px;
+  --radius-dialog: 24px;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06);
+
+  /* Puntos de corte de la guía de diseño (base móvil y mejoras por min-width) */
+  --breakpoint-*: initial;
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 720px;
+  --breakpoint-lg: 960px;
+  --breakpoint-access: 1024px;
+  --breakpoint-xl: 1100px;
+}
+
+/* El hilo de la marca: solo para la acción principal de cada pantalla, barras de progreso y una palabra destacada */
+@utility bg-brand-gradient {
+  background-image: linear-gradient(100deg, var(--color-primary), var(--color-tertiary));
+}
+
+/* Fondo de las pantallas de acceso: un resplandor suave del color de marca desde arriba (en claro y oscuro, por `light-dark()` de los tokens) */
+@utility bg-route-glow {
+  background-image:
+    radial-gradient(
+      60rem 36rem at 15% -10%,
+      color-mix(in oklab, var(--color-primary-container) 70%, transparent),
+      transparent
+    ),
+    radial-gradient(
+      48rem 30rem at 100% 100%,
+      color-mix(in oklab, var(--color-tertiary-container) 55%, transparent),
+      transparent
+    );
+}
+
+/* Título de pantalla (el `.page h1` de Angular): 28/36, Manrope 700 y con el aire justo; una palabra larga se parte antes que desbordar */
+@utility page-title {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+    /* Color de la superficie donde está un campo: la etiqueta que sube sobre el borde lo usa para tapar la línea (los diálogos y el acceso lo cambian) */
+    --field-bg: var(--color-surface-container-low);
+  }
+
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-brand);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  /* Roboto solo se carga hasta el peso 500: la negrita de texto es 500 (el 700 lo inventaría el navegador) */
+  strong,
+  b {
+    font-weight: 500;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Todo movimiento se apaga con la preferencia del sistema */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/*
+ * Mapas (OpenLayers). Sus controles y su capa de teselas se crean fuera de React, así que se ajustan aquí con los tokens del tema y las
+ * variables `--ol-*` de su hoja (importada arriba, antes que estas reglas).
+ */
+:root {
+  --ol-background-color: var(--color-surface-container-high);
+  --ol-accent-background-color: var(--color-surface-container);
+  --ol-subtle-background-color: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  /* La atribución del proveedor va sobre este fondo: con casi toda la superficie del tema se lee igual sobre cualquier tesela */
+  --ol-partial-background-color: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  --ol-foreground-color: var(--color-on-surface);
+  --ol-subtle-foreground-color: var(--color-on-surface-variant);
+  --ol-brand-color: var(--color-primary);
+}
+
+/*
+ * Teselas oscurecidas con el tema oscuro, elegido a mano o del sistema. Solo la capa base lleva la clase (`className: 'app-tiles'`): las
+ * rutas, las paradas, los marcadores y los polígonos conservan sus colores. Se invierte la luminosidad y se devuelve el tono.
+ */
+html[data-theme='dark'] .app-tiles {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .app-tiles {
+    filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92);
+  }
+}
+
+/* Zoom con botones de 44px (los de OpenLayers miden 22px) y esquinas del sistema */
+.ol-viewport .ol-zoom {
+  top: 12px;
+  left: 12px;
+  border-radius: 12px;
+}
+
+.ol-viewport .ol-control button {
+  width: 44px;
+  height: 44px;
+  margin: 1px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 10px;
+}
+
+.ol-viewport .ol-zoom .ol-zoom-in {
+  border-radius: 11px 11px 2px 2px;
+}
+
+.ol-viewport .ol-zoom .ol-zoom-out {
+  border-radius: 2px 2px 11px 11px;
+}
+
+.ol-viewport .ol-control button:hover {
+  outline: none;
+  background-color: color-mix(in srgb, var(--color-primary) 12%, var(--ol-background-color));
+}
+
+/* El foco del teclado, como el del resto de la aplicación */
+.ol-viewport .ol-control button:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.ol-viewport .ol-control button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Los enlaces de la atribución se distinguen del texto sin depender del color */
+.ol-viewport .ol-attribution a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Ilustración de rutas de las pantallas de acceso (RouteBackdrop): fondo con el resplandor de marca y rutas que se dibujan al entrar */
+[data-route-backdrop] {
+  background:
+    radial-gradient(60% 55% at 85% 10%, color-mix(in srgb, var(--color-primary) 16%, transparent), transparent),
+    radial-gradient(50% 50% at 5% 95%, color-mix(in srgb, var(--color-tertiary) 12%, transparent), transparent),
+    var(--color-surface-container-low);
+}
+[data-route-backdrop] [data-rb='zone'] {
+  fill: color-mix(in srgb, var(--color-primary) 9%, transparent);
+  stroke: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+[data-route-backdrop] [data-rb='route'] {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+}
+[data-route-backdrop] [data-rb='stop'] circle {
+  fill: var(--c);
+  stroke: var(--color-surface);
+  stroke-width: 3;
+}
+[data-route-backdrop] [data-rb='depot'] circle {
+  fill: var(--color-surface);
+  stroke: var(--color-primary);
+  stroke-width: 5;
+}
+[data-route-backdrop] text {
+  font:
+    700 11px var(--font-roboto),
+    Roboto,
+    sans-serif;
+  text-anchor: middle;
+  dominant-baseline: central;
+  /* Sobre el color de la ruta: blanco en claro y casi negro en oscuro, donde los tonos son más luminosos */
+  fill: light-dark(#fff, #1d1b1e);
+}
+[data-route-backdrop] [data-rb='depot'] text {
+  font-size: 24px;
+  fill: var(--color-primary);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-route-backdrop] [data-rb='route'] {
+    animation: rb-draw 1.4s ease-out both;
+  }
+  [data-route-backdrop] [data-rb='stop'],
+  [data-route-backdrop] [data-rb='depot'] {
+    animation: rb-appear 0.6s ease-out 0.9s both;
+  }
+  @keyframes rb-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes rb-appear {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+/* Ilustración de ciudad de la cabecera de Inicio (CityMap): colores claro y oscuro como los de las rutas; las rutas se dibujan al entrar */
+[data-city-map] [data-cm='land'] {
+  fill: light-dark(#eeeae3, #1b1826);
+}
+[data-city-map] [data-cm='park'] {
+  fill: light-dark(#ddebd2, #1c2a25);
+}
+[data-city-map] [data-cm='water'] {
+  fill: none;
+  stroke: light-dark(#cce3f1, #142a3d);
+  stroke-width: 24;
+  stroke-linecap: round;
+}
+[data-city-map] [data-cm='street'] {
+  fill: none;
+  stroke: light-dark(#fff, #26223a);
+  stroke-width: 3;
+}
+[data-city-map] [data-cm='avenue'] {
+  fill: none;
+  stroke: light-dark(#fbf8f3, #2e2945);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+[data-city-map] [data-cm='casing'],
+[data-city-map] [data-cm='route'] {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[data-city-map] [data-cm='casing'] {
+  stroke: light-dark(#fff, #0f0d14);
+  stroke-width: 8;
+  opacity: 0.9;
+}
+[data-city-map] [data-cm='route'] {
+  stroke: var(--c);
+  stroke-width: 4;
+  stroke-dasharray: 1;
+}
+[data-city-map] [data-cm='stop'] circle {
+  fill: var(--c);
+  stroke: light-dark(#fff, #0f0d14);
+  stroke-width: 2;
+}
+[data-city-map] [data-cm='depot'] circle {
+  fill: var(--color-surface);
+  stroke: var(--color-primary);
+  stroke-width: 4;
+}
+[data-city-map] text {
+  font:
+    800 8.5px var(--font-manrope),
+    Roboto,
+    sans-serif;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: light-dark(#fff, #1d1b1e);
+  paint-order: stroke;
+  stroke: light-dark(rgb(0 0 0 / 0.5), transparent);
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+}
+[data-city-map] [data-cm='depot'] text {
+  font-size: 15px;
+  fill: var(--color-primary);
+  stroke: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-city-map] [data-cm='route'] {
+    animation: rb-draw 1.6s ease-out 0.1s both;
+  }
+  [data-city-map] [data-cm='stop'],
+  [data-city-map] [data-cm='depot'] {
+    animation: cm-appear 0.5s ease-out 0.9s both;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  @keyframes cm-appear {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
+}
+
+/* Las acciones de una fila de un listado aparecen al pasar el cursor o al enfocar (con ratón y en una tabla; apiladas o con pantalla táctil, siempre) */
+@media (hover: hover) and (pointer: fine) {
+  @container (min-width: 840px) {
+    [data-row-actions] > * {
+      opacity: 0;
+    }
+    tr:hover [data-row-actions] > *,
+    tr:focus-within [data-row-actions] > *,
+    tr[data-selected] [data-row-actions] > *,
+    [data-row-actions] [aria-expanded='true'] {
+      opacity: 1;
+    }
+  }
+}
+
+/* Color de un tipo de acción de auditoría (reparto por tipo): el glifo y la barra lo toman de `--tone` */
+[data-tone] {
+  --tone: var(--color-outline);
+}
+[data-tone='success'] {
+  --tone: var(--color-on-success-container);
+}
+[data-tone='info'] {
+  --tone: var(--color-on-info-container);
+}
+[data-tone='warning'] {
+  --tone: var(--color-on-warning-container);
+}
+[data-tone='danger'] {
+  --tone: var(--color-error);
+}
