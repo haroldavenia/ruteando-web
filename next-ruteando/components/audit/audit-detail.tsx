@@ -48,7 +48,7 @@ import { useLang, useT } from '@/lib/i18n/client';
 import type { UserRole } from '@/lib/session-token';
 import { useStoredPref } from '@/lib/stored-pref';
 
-const TILE = 'flex flex-col rounded-2xl border border-outline-variant bg-surface-container-low p-4';
+const TILE = 'flex flex-col rounded-2xl border border-outline-variant bg-surface-container-low p-3.5 text-sm';
 const TILE_ICON =
   'grid size-10 flex-none place-items-center rounded-xl bg-primary-container/60 p-2 text-on-primary-container';
 const TECH_KEY = 'ruteando-audit-tech';
