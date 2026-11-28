@@ -97,7 +97,7 @@ export function AuditFiltersBar({
   return (
     <section
       aria-labelledby="audit-filters-title"
-      className="flex flex-col gap-1.5 rounded-card border border-outline-variant bg-surface-container-low px-5 pt-4 pb-[9px] text-on-surface shadow-card max-sm:px-4"
+      className="mt-0.5 flex flex-col gap-1.5 rounded-card border border-outline-variant bg-surface-container-low px-5 pt-4 pb-[10px] text-on-surface shadow-card max-sm:px-4"
     >
       <h2 id="audit-filters-title" className="sr-only">
         {t('Filtros')}

@@ -164,7 +164,7 @@ function ZoneFields({
             error={errors.code?.message}
             {...register('code')}
           />
-          <fieldset className="-mt-1.5 mb-4 flex flex-wrap gap-2 rounded-control border border-outline-variant px-3 pt-2 pb-4 md:col-span-2">
+          <fieldset className="-mt-1.5 mb-3 flex flex-wrap gap-2 rounded-control border border-outline-variant px-3 pt-2 pb-4 md:col-span-2">
             <legend className="px-1 text-sm font-medium">{t('Color')}</legend>
             {colors.map((option) => {
               const on = color === option.value;

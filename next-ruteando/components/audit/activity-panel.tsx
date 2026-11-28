@@ -261,7 +261,7 @@ function ActivityBars({
               <th scope="col" className="w-[53%] px-3 py-3.5 text-start font-semibold">
                 {weekly ? t('Semana') : t('Día')}
               </th>
-              <th scope="col" className="w-[20%] px-3 py-3.5 text-start font-semibold">
+              <th scope="col" className="w-[19%] px-3 py-3.5 text-start font-semibold">
                 {t('Eventos')}
               </th>
               <th scope="col" className="px-3 py-3.5">
@@ -272,7 +272,7 @@ function ActivityBars({
           <tbody>
             {buckets.map((bucket) => (
               <tr key={bucket.from} className="border-b border-outline-variant">
-                <th scope="row" className="px-3 py-1.5 text-start font-semibold">
+                <th scope="row" className="px-3 py-1.5 text-start font-medium">
                   {label(bucket)}
                   {bucket.partial ? ' (hoy)' : ''}
                 </th>
