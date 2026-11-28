@@ -144,7 +144,7 @@ Con `pnpm start` y «Continuar con Google» el proveedor simulado pide un correo
 | `GATEWAY_MODE` | **Sí** | `real` (por defecto) o `mock` | `mock` usa el gateway simulado (datos ficticios, se pierden al reiniciar). Cualquier otro valor impide arrancar. |
 | `GATEWAY_URL`, `GATEWAY_API_KEY` | Con `real` | Dirección base y clave del HanoIT Gateway | La clave es un **secreto**: solo en la plataforma, nunca en git ni en el navegador. |
 | `GATEWAY_TIMEOUT_MS` | No | `30000` | Súbelo si planificar jornadas agota el tiempo. |
-| `MOCK_GATEWAY_PASSWORD` | Con `mock` en un servidor público | Una contraseña propia | Sin ella los tres usuarios de prueba entran con `demo1234`. `MOCK_GATEWAY_PORT` (4010) casi nunca se toca. |
+| `MOCK_GATEWAY_PASSWORD` | **Sí** con `mock` y un `SITE_URL` público | Una contraseña propia (no `demo1234`) | Con `mock` y un `SITE_URL` público, sin ella (o con `demo1234`) el servidor **no arranca**: cualquiera entraría con los usuarios de prueba. En local se admite `demo1234`. `MOCK_GATEWAY_PORT` (4010) casi nunca se toca. |
 | `MFA_SECRET_KEY` | Para el 2FA y el SSO | `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` | Sin ella el segundo factor y el SSO quedan apagados, y el acceso **falla cerrado** salvo `ALLOW_LOGIN_WITHOUT_MFA=true`. Guárdala: cambiarla invalida los TOTP. |
 | `MFA_DB_PATH`, `SSO_DB_PATH` | No | `/data/mfa.sqlite`, `/data/sso.sqlite` (Docker), `/var/data/…` (disco de Render) | Bases SQLite del 2FA y del SSO. **Necesitan un volumen persistente**: sin él se pierden y hay que reactivar los métodos. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Para el 2FA por correo | Ver [Segundo factor](#segundo-factor-opcional) | `587` con `SMTP_SECURE=false` o `465` con `true`. |
@@ -183,7 +183,7 @@ docker build -f next-ruteando/Dockerfile -t ruteando-next .          # desde la 
 docker run -d --name ruteando -p 3000:3000 -v ruteando-data:/data --env-file next-ruteando/.env.local ruteando-next
 ```
 
-El contenedor corre sin root, trae su propio `HEALTHCHECK` (`/healthCheck`) y guarda las bases SQLite del 2FA y del SSO en el volumen `/data` (`MFA_DB_PATH` y `SSO_DB_PATH` ya apuntan allí): **sin volumen se pierden al recrearlo**. Con `GATEWAY_MODE=mock` el contenedor levanta además el gateway simulado en `127.0.0.1` (define `MOCK_GATEWAY_PASSWORD`). En Coolify u otro orquestador: construir con ese `Dockerfile` (contexto = raíz), puerto 3000, volumen en `/data`, las variables de la tabla y el *health check* en `/healthCheck`.
+El contenedor corre sin root, trae su propio `HEALTHCHECK` (`/healthCheck`) y guarda las bases SQLite del 2FA y del SSO en el volumen `/data` (`MFA_DB_PATH` y `SSO_DB_PATH` ya apuntan allí): **sin volumen se pierden al recrearlo**. Con `GATEWAY_MODE=mock` el contenedor levanta además el gateway simulado en `127.0.0.1` (`MOCK_GATEWAY_PASSWORD` es obligatoria con un `SITE_URL` público). En Coolify u otro orquestador: construir con ese `Dockerfile` (contexto = raíz), puerto 3000, volumen en `/data`, las variables de la tabla y el *health check* en `/healthCheck`.
 
 ### Antes de dar el sitio por bueno
 

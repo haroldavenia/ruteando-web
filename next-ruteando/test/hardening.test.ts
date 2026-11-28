@@ -60,6 +60,24 @@ describe('validateConfig', () => {
     expect(validateConfig({ ...ok, SSO_ALLOW_INSECURE: 'true' })).toHaveLength(1);
   });
 
+  test('el gateway simulado en un servidor público exige su propia contraseña', () => {
+    const mock = { ...ok, GATEWAY_MODE: 'mock' };
+    // en local (sin SITE_URL o con localhost) se admite la contraseña de siempre
+    expect(validateConfig(mock)).toEqual([]);
+    expect(validateConfig({ ...mock, SITE_URL: 'http://localhost:3000' })).toEqual([]);
+    // público: sin contraseña, con la de siempre, o con una dirección ilegible que no cuenta como pública
+    expect(validateConfig({ ...mock, SITE_URL: 'https://ruteando.example.com' })).toHaveLength(1);
+    expect(
+      validateConfig({ ...mock, SITE_URL: 'https://ruteando.example.com', MOCK_GATEWAY_PASSWORD: 'demo1234' })
+    ).toHaveLength(1);
+    expect(
+      validateConfig({ ...mock, SITE_URL: 'https://ruteando.example.com', MOCK_GATEWAY_PASSWORD: 'una-propia-larga' })
+    ).toEqual([]);
+    expect(validateConfig({ ...mock, SITE_URL: 'no es una dirección' })).toEqual([]);
+    // con el gateway real no aplica
+    expect(validateConfig({ ...ok, SITE_URL: 'https://ruteando.example.com' })).toEqual([]);
+  });
+
   test('sin SESSION_SECRET la firma falla cerrada en producción', () => {
     vi.stubEnv('NODE_ENV', 'production');
     vi.stubEnv('SESSION_SECRET', '');

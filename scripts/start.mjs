@@ -19,7 +19,7 @@ if (process.env.GATEWAY_MODE === 'mock') {
   if (!process.env.MOCK_GATEWAY_PASSWORD) {
     console.warn(
       'AVISO: GATEWAY_MODE=mock sin MOCK_GATEWAY_PASSWORD: los tres usuarios de prueba entran con «demo1234». ' +
-        'Si el servidor es accesible desde fuera, define MOCK_GATEWAY_PASSWORD.'
+        'Solo vale en tu máquina: con un SITE_URL público el servidor se niega a arrancar (lib/config.ts).'
     );
   }
   await import('./mock-gateway.mjs');

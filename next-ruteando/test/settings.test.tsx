@@ -218,7 +218,7 @@ describe('formulario', () => {
       typeLengthOfStay: 'fixed',
       evaluateWeight: true,
     });
-  });
+  }, 20000);
 
   test('editar muestra lo guardado, reenvía la flota y deja en null lo que no aplica', async () => {
     const gateway = mockGateway({

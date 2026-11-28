@@ -417,6 +417,52 @@ describe('pantalla', () => {
     expect(await screen.findByText('Estado de paquete cambiado')).toBeInTheDocument();
   });
 
+  test('un evento que no se puede abrir directamente explica por qué (sin permiso o ya no existe)', async () => {
+    vi.useRealTimers();
+    setup('tenant_admin', {
+      'GET /middleware/data/audit-logs/prohibido': { status: 403, body: {} },
+      'GET /middleware/data/audit-logs/borrado': { status: 404, body: {} },
+    });
+    window.history.replaceState(null, '', '/audit?evento=prohibido');
+    const first = withToasts(<AuditScreen role="tenant_admin" />);
+    expect(
+      await within(await screen.findByRole('dialog')).findByText(
+        'No tienes permiso para abrir este evento directamente. Ábrelo desde la lista de tu actividad.'
+      )
+    ).toBeInTheDocument();
+    first.unmount();
+    window.history.replaceState(null, '', '/audit?evento=borrado');
+    withToasts(<AuditScreen role="tenant_admin" />);
+    expect(
+      await within(await screen.findByRole('dialog')).findByText('Este evento ya no existe o no está disponible.')
+    ).toBeInTheDocument();
+  });
+
+  test('el detalle de una eliminación: sin valores, entidad eliminada, datos técnicos y copiar el enlace', async () => {
+    vi.useRealTimers();
+    const writeText = vi.fn().mockResolvedValueOnce(undefined).mockRejectedValueOnce(new Error('sin permiso'));
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    setup();
+    withToasts(<AuditScreen role="tenant_admin" />);
+    await screen.findByText('Jornada eliminada');
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Ver el detalle de «Jornada eliminada» de luis@example.invalid' })
+    );
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByText('Este evento no registra valores.')).toBeInTheDocument();
+    expect(within(dialog).getByText('Esta entidad fue eliminada')).toBeInTheDocument();
+    expect(within(dialog).queryByRole('link', { name: /Abrir/ })).toBeNull();
+    await userEvent.click(within(dialog).getByText('Datos técnicos'));
+    expect(within(dialog).getByText('journey.deleted')).toBeInTheDocument();
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Copiar enlace' }));
+    expect(await screen.findByText('Enlace copiado')).toBeInTheDocument();
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Copiar el identificador del evento' }));
+    expect(
+      await screen.findByText('No se pudo copiar automáticamente. Cópialo a mano:', { exact: false })
+    ).toBeInTheDocument();
+    expect(writeText).toHaveBeenCalledTimes(2);
+  });
+
   test('la búsqueda y el chip de entidad también van a la dirección y se exporta lo que se ve', async () => {
     vi.useRealTimers();
     setup();
