@@ -254,30 +254,30 @@ function ActivityBars({
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-medium text-primary">
           {t('Ver los datos en una tabla')}
         </summary>
-        <table className="mt-2 w-full border-collapse text-start text-sm">
+        <table className="mt-2 w-full max-w-160 border-collapse text-start text-sm">
           <caption className="sr-only">{weekly ? t('Eventos por semana') : t('Eventos por día')}</caption>
           <thead>
             <tr className="border-b border-outline-variant">
-              <th scope="col" className="py-1 text-start font-medium">
+              <th scope="col" className="w-[53%] px-3 py-3.5 text-start font-semibold">
                 {weekly ? t('Semana') : t('Día')}
               </th>
-              <th scope="col" className="py-1 text-start font-medium">
+              <th scope="col" className="w-[20%] px-3 py-3.5 text-start font-semibold">
                 {t('Eventos')}
               </th>
-              <th scope="col" className="py-1">
+              <th scope="col" className="px-3 py-3.5">
                 <span className="sr-only">{t('Filtrar')}</span>
               </th>
             </tr>
           </thead>
           <tbody>
             {buckets.map((bucket) => (
-              <tr key={bucket.from} className="border-b border-outline-variant last:border-b-0">
-                <th scope="row" className="py-1 text-start font-normal">
+              <tr key={bucket.from} className="border-b border-outline-variant">
+                <th scope="row" className="px-3 py-1.5 text-start font-semibold">
                   {label(bucket)}
                   {bucket.partial ? ' (hoy)' : ''}
                 </th>
-                <td className="py-1">{bucket.count}</td>
-                <td className="py-1 text-end">
+                <td className="px-3 py-1.5">{bucket.count}</td>
+                <td className="px-1 py-1.5 text-start">
                   <Button
                     variant="text"
                     aria-label={t('Ver solo los eventos de: ') + label(bucket)}
