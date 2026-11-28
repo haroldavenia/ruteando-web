@@ -63,8 +63,10 @@ export function SsoAccounts() {
   return (
     <>
       <Card aria-labelledby="sso-accounts-title" className="flex flex-col gap-3">
-        <CardTitle id="sso-accounts-title">{t('Cuentas vinculadas')}</CardTitle>
-        <p className="text-on-surface-variant">
+        <CardTitle id="sso-accounts-title" compact>
+          {t('Cuentas vinculadas')}
+        </CardTitle>
+        <p className="m-0 text-sm text-on-surface-variant">
           {t('Cuentas de otros proveedores con las que entras sin contraseña.')}
         </p>
         <FormResult error={error} success={notice} />
@@ -77,7 +79,7 @@ export function SsoAccounts() {
               <Icon icon={RiLinksLine} />
               <div className="flex min-w-56 flex-1 flex-col gap-0.5">
                 <strong>{item.label}</strong>
-                <span className="text-on-surface-variant">{item.email}</span>
+                <span className="m-0 text-sm text-on-surface-variant">{item.email}</span>
               </div>
               <Button variant="text" disabled={busy} onClick={() => void unlink(item)}>
                 {t('Desvincular')}

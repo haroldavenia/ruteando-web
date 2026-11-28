@@ -1,13 +1,13 @@
 'use client';
 
+import { RiMapPin2Line, RiMapPinLine } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm, useWatch } from 'react-hook-form';
 
 import { AddressLocator } from '@/components/map/address-locator';
 import { LocationFields } from '@/components/map/location-fields';
-import { FormActions, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
-import { Card } from '@/components/ui/card';
+import { FormActions, FormCard, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
 import { Input } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
@@ -183,11 +183,17 @@ function PlaceFields({
   const dirty = { shouldDirty: true, shouldValidate: true } as const;
 
   return (
-    <Card>
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-        <FormSection title={t('Datos del lugar')}>
-          <Input label={t('Nombre')} autoComplete="off" error={errors.name?.message} {...register('name')} />
-          <FormSelect control={control} name="type" label={t('Tipo')} error={errors.type?.message}>
+    <FormCard>
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <FormSection title={t('Datos del lugar')} icon={RiMapPin2Line}>
+          <Input
+            label={t('Nombre')}
+            requiredMark
+            autoComplete="off"
+            error={errors.name?.message}
+            {...register('name')}
+          />
+          <FormSelect control={control} name="type" label={t('Tipo')} requiredMark error={errors.type?.message}>
             <option value="" />
             {types.map((type) => (
               <option key={type.key} value={type.key}>
@@ -205,7 +211,7 @@ function PlaceFields({
           />
           <Input label={t('Persona de contacto (opcional)')} autoComplete="off" {...register('contactName')} />
         </FormSection>
-        <FormSection title={t('Ubicación')}>
+        <FormSection title={t('Ubicación')} icon={RiMapPinLine}>
           <AddressLocator
             address={address ?? ''}
             lat={lat}
@@ -232,6 +238,6 @@ function PlaceFields({
         <FormResult error={error} />
         <FormActions cancelHref="/places" loading={loading} dirty={isDirty} />
       </Form>
-    </Card>
+    </FormCard>
   );
 }

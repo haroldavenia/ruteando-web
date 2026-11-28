@@ -19,7 +19,7 @@ const entry =
   'relative flex h-16 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl text-xs font-medium text-on-surface-variant transition-colors duration-120 ease-out hover:bg-on-surface/8';
 // El hilo de la marca en el borde del riel marca la entrada activa (además del fondo y de `aria-current`: no solo el color)
 const active =
-  'bg-primary-container/75 text-on-primary-container before:absolute before:inset-y-3 before:-left-2 before:w-1 before:rounded-r-full before:bg-brand-gradient';
+  'bg-primary-container/75 font-bold text-on-primary-container before:absolute before:inset-y-3 before:-left-2 before:w-1 before:rounded-r-full before:bg-brand-gradient';
 
 /**
  * Riel de iconos de las pantallas anchas (desde 960px): la marca arriba y una entrada por área, con su icono sobre su nombre. Una sección

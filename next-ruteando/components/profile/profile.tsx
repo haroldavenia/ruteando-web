@@ -127,7 +127,7 @@ export function Profile({ user }: { user: SessionUser }) {
       <PageHead title={t('Perfil')} subtitle={user.email} />
 
       <Card aria-labelledby="account-title">
-        <CardTitle id="account-title" className="mb-3">
+        <CardTitle id="account-title" compact>
           {t('Tu cuenta')}
         </CardTitle>
         <dl className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -149,8 +149,10 @@ export function Profile({ user }: { user: SessionUser }) {
       </Card>
 
       <Card aria-labelledby="mfa-title" className="flex flex-col gap-3">
-        <CardTitle id="mfa-title">{t('Verificación en dos pasos')}</CardTitle>
-        <p className="text-on-surface-variant">
+        <CardTitle id="mfa-title" compact>
+          {t('Verificación en dos pasos')}
+        </CardTitle>
+        <p className="m-0 text-sm text-on-surface-variant">
           {t('Añade un segundo paso al iniciar sesión: un código además de tu contraseña.')}
         </p>
         <FormResult error={loadError} success={notice} />
@@ -181,7 +183,7 @@ export function Profile({ user }: { user: SessionUser }) {
                   <Icon icon={MFA_ICON[row.method]} />
                   <div className="flex min-w-56 flex-1 flex-col gap-0.5">
                     <strong>{t(MFA_LABEL[row.method])}</strong>
-                    <span className="text-on-surface-variant">
+                    <span className="m-0 text-sm text-on-surface-variant">
                       {row.active && row.destination ? row.destination : t(MFA_HINT[row.method])}
                     </span>
                   </div>
@@ -203,7 +205,7 @@ export function Profile({ user }: { user: SessionUser }) {
                 </li>
               ))}
             </ul>
-            {lastLocked ? <p className="text-on-surface-variant">{lockedHint}</p> : null}
+            {lastLocked ? <p className="m-0 text-sm text-on-surface-variant">{lockedHint}</p> : null}
 
             {panel ? (
               <div
@@ -262,7 +264,7 @@ export function Profile({ user }: { user: SessionUser }) {
                 <Icon icon={RiKeyLine} />
                 <div className="flex min-w-56 flex-1 flex-col gap-0.5">
                   <strong>{t('Códigos de recuperación')}</strong>
-                  <span className="text-on-surface-variant">
+                  <span className="m-0 text-sm text-on-surface-variant">
                     {status.recoveryCodesLeft === 1
                       ? t('Te queda 1 código sin usar')
                       : t('Te quedan {0} códigos sin usar', [status.recoveryCodesLeft])}
@@ -281,7 +283,7 @@ export function Profile({ user }: { user: SessionUser }) {
 
       {codes ? (
         <Card aria-labelledby="codes-title">
-          <CardTitle id="codes-title" className="mb-3">
+          <CardTitle id="codes-title" compact>
             {t('Guarda tus códigos de recuperación')}
           </CardTitle>
           <RecoveryCodes codes={codes} onSaved={() => setCodes(null)} />

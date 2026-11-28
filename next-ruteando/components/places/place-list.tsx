@@ -66,7 +66,7 @@ export function PlaceList() {
         const selected = rows.find((p) => p.id === selectedId) ?? null;
         return (
           <Card aria-labelledby="places-map-title">
-            <CardTitle id="places-map-title" className="mb-3">
+            <CardTitle id="places-map-title" compact>
               {t('Mapa de los lugares')}
             </CardTitle>
             <PlacesMap places={filtered} selectedId={selected?.id ?? null} onSelect={setSelectedId} />

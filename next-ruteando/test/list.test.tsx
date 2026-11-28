@@ -265,17 +265,20 @@ describe('DataTable', () => {
 
   test('pagina, cambia las filas por página y vuelve a la primera al filtrar', async () => {
     const user = userEvent.setup();
-    renderWithI18n(table({ list: ready({ rows: many(25), total: 25 }) }));
-    expect(screen.getByText('1 – 10 de 25')).toBeInTheDocument();
+    renderWithI18n(table({ list: ready({ rows: many(45), total: 45 }) }));
+    // Como en Angular: 20 filas por página y solo anterior y siguiente
+    expect(screen.getByText('1 – 20 de 45')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Primera página' })).toBeNull();
     await user.click(screen.getByRole('button', { name: 'Página siguiente' }));
-    expect(screen.getByText('11 – 20 de 25')).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Última página' }));
-    expect(screen.getByText('21 – 25 de 25')).toBeInTheDocument();
+    expect(screen.getByText('21 – 40 de 45')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Página siguiente' }));
+    expect(screen.getByText('41 – 45 de 45')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Página siguiente' })).toBeDisabled();
-    await user.click(screen.getByRole('button', { name: 'Primera página' }));
-    await user.selectOptions(screen.getByLabelText('Filas por página'), '20');
-    expect(screen.getByText('1 – 20 de 25')).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Última página' }));
+    await user.click(screen.getByRole('button', { name: 'Página anterior' }));
+    await user.click(screen.getByRole('button', { name: 'Página anterior' }));
+    await user.selectOptions(screen.getByLabelText('Filas por página'), '10');
+    expect(screen.getByText('1 – 10 de 45')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Página siguiente' }));
     await user.type(screen.getByRole('searchbox'), 'Vehículo 1');
     expect(screen.getByText(/^1 – \d+ de \d+$/)).toBeInTheDocument(); // volvió a la página 1
   });

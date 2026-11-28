@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm, useWatch } from 'react-hook-form';
 
-import { FormActions, FormHead } from '@/components/page/form-kit';
+import { FormActions, FormCard, FormHead, FormSection } from '@/components/page/form-kit';
 import { Card, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
@@ -113,40 +113,39 @@ export function JourneyForm() {
   return (
     <>
       <FormHead title={t('Planificar jornada')} backLabel={t('Jornadas')} backHref="/journeys" />
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <Card>
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
+        <FormCard>
           <Form
             onSubmit={(event) => {
               setSelectionTouched(true);
               return handleSubmit((values) => (selectedIds.length === 0 ? undefined : plan(values)))(event);
             }}
-            className="flex flex-col gap-8"
+            className="flex flex-col gap-2"
           >
-            <section className="flex flex-col gap-4">
-              <h2 className="font-brand text-lg font-bold">1. {t('Configuración')}</h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Input
-                  label={t('Nombre de la jornada')}
-                  autoComplete="off"
-                  error={errors.name?.message}
-                  {...register('name')}
-                />
-                <FormSelect
-                  control={control}
-                  name="settingsId"
-                  label={t('Configuración')}
-                  error={errors.settingsId?.message}
-                >
-                  <option value="" />
-                  {settings.rows.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.description}
-                    </option>
-                  ))}
-                </FormSelect>
-              </div>
+            <FormSection title={t('Configuración')} step={1}>
+              <Input
+                label={t('Nombre de la jornada')}
+                requiredMark
+                autoComplete="off"
+                error={errors.name?.message}
+                {...register('name')}
+              />
+              <FormSelect
+                control={control}
+                name="settingsId"
+                label={t('Configuración')}
+                requiredMark
+                error={errors.settingsId?.message}
+              >
+                <option value="" />
+                {settings.rows.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.description}
+                  </option>
+                ))}
+              </FormSelect>
               {settings.loaded && settings.rows.length === 0 ? (
-                <p className="text-sm text-on-surface-variant">
+                <p className="m-0 text-sm text-on-surface-variant md:col-span-2">
                   {t('Todavía no hay configuraciones. Primero')}{' '}
                   <Link href="/settings/new" className="text-primary underline">
                     {t('crea una configuración')}
@@ -155,30 +154,31 @@ export function JourneyForm() {
                 </p>
               ) : null}
               {settings.truncated ? (
-                <p role="status" className="text-sm text-on-surface-variant">
+                <p role="status" className="m-0 text-sm text-on-surface-variant md:col-span-2">
                   {t('Se muestran solo las primeras {0} configuraciones.', [SELECT_LIMIT])}
                 </p>
               ) : null}
-            </section>
+            </FormSection>
 
-            <section className="flex flex-col gap-4">
-              <h2 className="font-brand text-lg font-bold">2. {t('Paquetes')}</h2>
-              {noPackages ? (
-                <p className="text-sm text-on-surface-variant">
-                  {t('Todavía no hay paquetes. Primero')}{' '}
-                  <Link href="/packages/new" className="text-primary underline">
-                    {t('crea un paquete')}
-                  </Link>
-                  .
-                </p>
-              ) : null}
-              <PackagePicker selectedIds={selectedIds} onChange={setSelectedIds} onEmpty={setNoPackages} />
-              {selectionError ? (
-                <p role="alert" className="text-error">
-                  {selectionError}
-                </p>
-              ) : null}
-            </section>
+            <FormSection title={t('Paquetes')} step={2}>
+              <div className="flex flex-col gap-3 md:col-span-2">
+                {noPackages ? (
+                  <p className="m-0 text-sm text-on-surface-variant">
+                    {t('Todavía no hay paquetes. Primero')}{' '}
+                    <Link href="/packages/new" className="text-primary underline">
+                      {t('crea un paquete')}
+                    </Link>
+                    .
+                  </p>
+                ) : null}
+                <PackagePicker selectedIds={selectedIds} onChange={setSelectedIds} onEmpty={setNoPackages} />
+                {selectionError ? (
+                  <p role="alert" className="m-0 text-error">
+                    {selectionError}
+                  </p>
+                ) : null}
+              </div>
+            </FormSection>
 
             {loading ? (
               <Loading label={t('Planificando la jornada')} className="flex flex-col gap-2">
@@ -194,14 +194,20 @@ export function JourneyForm() {
               saveLabel={t('Planificar')}
             />
           </Form>
-        </Card>
+        </FormCard>
 
         <aside aria-labelledby="review-title">
-          <Card className="xl:sticky xl:top-4">
-            <CardTitle id="review-title" className="mb-3">
-              3. {t('Revisa')}
+          <Card className="xl:sticky xl:top-6">
+            <CardTitle id="review-title" className="mb-3 flex items-center gap-3">
+              <span
+                aria-hidden
+                className="grid size-9 flex-none place-items-center rounded-xl bg-primary-container font-brand text-base font-bold text-on-primary-container"
+              >
+                3
+              </span>
+              {t('Revisa')}
             </CardTitle>
-            <dl className="flex flex-col gap-3">
+            <dl className="m-0 flex flex-col gap-3">
               {(
                 [
                   [t('Nombre'), review.name, t('Sin escribir')],

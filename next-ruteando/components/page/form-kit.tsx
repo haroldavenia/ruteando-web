@@ -1,8 +1,8 @@
 'use client';
 
-import { RiArrowLeftLine } from '@remixicon/react';
+import { type RemixiconComponentType, RiArrowLeftLine, RiEditLine } from '@remixicon/react';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -13,38 +13,80 @@ import { cn } from '@/lib/cn';
 import type { RecordState } from '@/lib/hooks/use-record';
 import { useT } from '@/lib/i18n/client';
 
-/** Cabecera de un formulario: botón de vuelta al listado y título. */
+/** Cabecera de un formulario (`app-form-head`): botón de vuelta al listado, del color del texto (es navegación, no una acción), sobre el título. */
 export function FormHead({ title, backLabel, backHref }: { title: string; backLabel: string; backHref: string }) {
   return (
-    <div className="mb-4 flex flex-col items-start gap-3">
-      <Link href={backHref} className={buttonVariants({ variant: 'outlined' })}>
-        <Icon icon={RiArrowLeftLine} size={20} />
+    <div className="flex flex-col items-start gap-3">
+      <Link
+        href={backHref}
+        className={buttonVariants({ variant: 'outlined', className: 'text-on-surface hover:bg-on-surface/8' })}
+      >
+        <Icon icon={RiArrowLeftLine} size={18} className="-ml-1" />
         {backLabel}
       </Link>
-      <h1 className="font-brand text-2xl font-bold">{title}</h1>
+      <h1 className="page-title">{title}</h1>
     </div>
   );
 }
 
-/** Una sección del formulario: título y rejilla de campos (de dos columnas desde 640px). */
+/**
+ * La tarjeta de un formulario (`form.card`): hasta 880px de ancho, relleno 24/28 y los campos en una columna con 8px entre bloques.
+ * Dentro van `FormSection`, el resultado del envío y `FormActions`.
+ */
+export function FormCard({ className, ...props }: ComponentProps<typeof Card>) {
+  return <Card className={cn('flex max-w-[880px] flex-col gap-2 px-7 py-6', className)} {...props} />;
+}
+
+/**
+ * Una sección del formulario (`.form-section`): un título con su icono en un cuadro tonal y los campos, en dos columnas desde 720px (lo
+ * que debe ocupar las dos lleva `md:col-span-2`). Una sección tras otra se separa con una línea. El espacio entre filas deja sitio a la
+ * pista o el error del campo de arriba: la etiqueta del de abajo asoma media línea sobre su borde.
+ */
 export function FormSection({
   title,
+  icon,
+  step,
   children,
   className,
 }: {
   title: string;
+  icon?: RemixiconComponentType;
+  /** Número de paso (1, 2, 3…): ocupa el cuadro tonal en lugar del icono. */
+  step?: number;
   children: ReactNode;
   className?: string;
 }) {
   return (
-    <section className="flex flex-col gap-4">
-      <h2 className="font-brand text-lg font-bold">{title}</h2>
-      <div className={cn('grid gap-4 sm:grid-cols-2', className)}>{children}</div>
+    <section className="[--field-reserve:22px] [section+&]:mt-4 [section+&]:border-t [section+&]:border-outline-variant [section+&]:pt-6">
+      <h2 className="m-0 mb-4 flex items-center gap-3 font-brand text-base font-bold">
+        {icon || step ? (
+          <span
+            aria-hidden
+            className="grid size-9 flex-none place-items-center rounded-xl bg-primary-container text-on-primary-container"
+          >
+            {step ? <span className="font-brand text-base font-bold">{step}</span> : <Icon icon={icon!} size={20} />}
+          </span>
+        ) : null}
+        {title}
+      </h2>
+      <div className={cn('grid gap-x-5 gap-y-3 md:grid-cols-2', className)}>{children}</div>
     </section>
   );
 }
 
-/** Pie de un formulario: cancelar, guardar y el aviso de cambios sin guardar; queda fijo al pie en pantallas estrechas. */
+/** Una fila de campos que se reparten el ancho (`.row`): tantas columnas de 160px como quepan. */
+export function FormRow({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={cn('grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-x-4 gap-y-3 md:col-span-2', className)}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Pie de un formulario (`app-form-actions`): al final, separado por una línea; avisa de los cambios sin guardar y, en pantallas
+ * estrechas, queda fijo al pie para que «Guardar» esté siempre a mano.
+ */
 export function FormActions({
   cancelHref,
   loading,
@@ -58,8 +100,15 @@ export function FormActions({
 }) {
   const t = useT();
   return (
-    <div className="sticky bottom-0 -mx-6 -mb-5 flex flex-wrap items-center justify-end gap-3 border-t border-outline-variant bg-surface-container-low px-6 py-3 max-sm:z-10">
-      {dirty ? <span className="mr-auto text-sm text-on-surface-variant">{t('Cambios sin guardar')}</span> : null}
+    <div className="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-outline-variant pt-4 max-md:sticky max-md:bottom-0 max-md:z-10 max-md:-mx-7 max-md:-mb-6 max-md:bg-surface-container-low max-md:px-7 max-md:pt-4 max-md:pb-3 max-md:shadow-[0_-10px_12px_-10px_rgb(0_0_0/0.25)]">
+      <span role="status" className="mr-auto empty:hidden">
+        {dirty ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-warning-container px-3 py-1.5 text-sm font-medium text-on-warning-container">
+            <Icon icon={RiEditLine} size={18} />
+            {t('Cambios sin guardar')}
+          </span>
+        ) : null}
+      </span>
       <Link href={cancelHref} className={buttonVariants({ variant: 'text' })}>
         {t('Cancelar')}
       </Link>

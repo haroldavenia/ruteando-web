@@ -30,6 +30,7 @@ export function ResourceTypeList() {
 
   return (
     <EntityList<ResourceType>
+      selectable
       title={t('Tipos de vehículo')}
       singular={t('tipo')}
       plural={t('tipos')}

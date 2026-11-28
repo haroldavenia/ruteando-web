@@ -17,7 +17,7 @@ export function FleetTabs() {
   const t = useT();
   const pathname = usePathname();
   return (
-    <nav aria-label={t('Flota')} className="mb-4 flex gap-1 border-b border-outline-variant">
+    <nav aria-label={t('Flota')} className="flex gap-1 border-b border-outline-variant">
       {TABS.map((tab) => {
         const on = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
         return (

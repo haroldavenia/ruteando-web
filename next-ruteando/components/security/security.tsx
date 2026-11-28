@@ -165,8 +165,10 @@ export function Security() {
       ) : policy ? (
         <>
           <Card aria-labelledby="methods-title" className="flex flex-col gap-3">
-            <CardTitle id="methods-title">{t('Métodos permitidos')}</CardTitle>
-            <p className="text-on-surface-variant">
+            <CardTitle id="methods-title" compact>
+              {t('Métodos permitidos')}
+            </CardTitle>
+            <p className="m-0 text-sm text-on-surface-variant">
               {t('Las personas solo pueden activar los métodos que permitas aquí.')}
             </p>
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
@@ -175,7 +177,7 @@ export function Security() {
                   <Icon icon={MFA_ICON[m]} />
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <strong>{t(MFA_LABEL[m])}</strong>
-                    <span className="text-on-surface-variant">
+                    <span className="m-0 text-sm text-on-surface-variant">
                       {available[m] ? t(MFA_HINT[m]) : t('El servidor no lo tiene configurado todavía.')}
                     </span>
                   </div>
@@ -183,6 +185,7 @@ export function Security() {
                     checked={allowed[m]}
                     disabled={!available[m] && !allowed[m]}
                     label={t(MFA_LABEL[m])}
+                    hideLabel
                     onChange={(checked) => setAllowed((current) => ({ ...current, [m]: checked }))}
                   />
                 </li>
@@ -191,7 +194,9 @@ export function Security() {
           </Card>
 
           <Card aria-labelledby="required-title" className="flex flex-col gap-3">
-            <CardTitle id="required-title">{t('Exigir la verificación en dos pasos')}</CardTitle>
+            <CardTitle id="required-title" compact>
+              {t('Exigir la verificación en dos pasos')}
+            </CardTitle>
             <div role="radiogroup" aria-label={t('Quién debe usarla')} className="flex flex-col">
               {(
                 [
@@ -200,7 +205,7 @@ export function Security() {
                   ['roles', t('Solo ciertos roles')],
                 ] as const
               ).map(([value, label]) => (
-                <label key={value} className="flex min-h-11 cursor-pointer items-center gap-3">
+                <label key={value} className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
                   <input
                     type="radio"
                     name="mfa-required"
@@ -215,7 +220,7 @@ export function Security() {
             {required === 'roles' ? (
               <div role="group" aria-label={t('Roles obligados')} className="flex flex-col pl-8">
                 {ROLES.map((r) => (
-                  <label key={r} className="flex min-h-11 cursor-pointer items-center gap-3">
+                  <label key={r} className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
                     <input
                       type="checkbox"
                       checked={selectedRoles.includes(r)}
@@ -245,9 +250,11 @@ export function Security() {
           </Card>
 
           <Card aria-labelledby="people-title" className="flex flex-col gap-3">
-            <CardTitle id="people-title">{t('Personas')}</CardTitle>
+            <CardTitle id="people-title" compact>
+              {t('Personas')}
+            </CardTitle>
             {users.length === 0 ? (
-              <p className="text-on-surface-variant">
+              <p className="m-0 text-sm text-on-surface-variant">
                 {usersFailed ? t('No se pudo cargar la lista de personas.') : t('Todavía no hay personas.')}
               </p>
             ) : (
@@ -279,7 +286,7 @@ export function Security() {
                           <td className="px-3 py-2">
                             <strong>{fullName(u)}</strong>
                             <br />
-                            <span className="text-on-surface-variant">{u.email}</span>
+                            <span className="m-0 text-sm text-on-surface-variant">{u.email}</span>
                           </td>
                           <td className="px-3 py-2">{roleLabel(u.role, t)}</td>
                           <td className="px-3 py-2">
@@ -300,7 +307,9 @@ export function Security() {
                   </table>
                 </div>
                 {total > users.length ? (
-                  <p className="text-on-surface-variant">{t('Mostrando {0} de {1}', [users.length, total])}</p>
+                  <p className="m-0 text-sm text-on-surface-variant">
+                    {t('Mostrando {0} de {1}', [users.length, total])}
+                  </p>
                 ) : null}
               </>
             )}

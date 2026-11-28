@@ -1,12 +1,12 @@
 'use client';
 
+import { RiHexagonLine } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm, useWatch } from 'react-hook-form';
 
 import { PolygonEditor } from '@/components/map/polygon-editor';
-import { FormActions, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
-import { Card } from '@/components/ui/card';
+import { FormActions, FormCard, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
 import { Input } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
@@ -144,7 +144,7 @@ function ZoneFields({
   ];
 
   return (
-    <Card>
+    <FormCard>
       <Form
         onSubmit={(event) => {
           setPolygonTouched(true);
@@ -153,18 +153,25 @@ function ZoneFields({
             return onSubmit(values, vertices);
           })(event);
         }}
-        className="flex flex-col gap-8"
+        className="flex flex-col gap-2"
       >
-        <FormSection title={t('Datos de la zona')}>
-          <Input label={t('Nombre')} autoComplete="off" error={errors.name?.message} {...register('name')} />
+        <FormSection title={t('Datos de la zona')} icon={RiHexagonLine}>
+          <Input
+            label={t('Nombre')}
+            requiredMark
+            autoComplete="off"
+            error={errors.name?.message}
+            {...register('name')}
+          />
           <Input
             label={t('Código')}
+            requiredMark
             autoComplete="off"
             hint={t('Sin espacios, hasta 20 caracteres')}
             error={errors.code?.message}
             {...register('code')}
           />
-          <fieldset className="flex flex-wrap items-center gap-2 sm:col-span-2">
+          <fieldset className="flex flex-wrap items-center gap-2 md:col-span-2">
             <legend className="mb-2 text-sm text-on-surface-variant">{t('Color')}</legend>
             {colors.map((option) => {
               const on = color === option.value;
@@ -208,6 +215,6 @@ function ZoneFields({
         <FormResult error={error} />
         <FormActions cancelHref="/zones" loading={loading} dirty={isDirty || polygonDirty} />
       </Form>
-    </Card>
+    </FormCard>
   );
 }

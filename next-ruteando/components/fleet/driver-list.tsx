@@ -59,6 +59,7 @@ export function DriverList() {
   return (
     <>
       <EntityList<User>
+        selectable
         title={t('Conductores')}
         singular={t('conductor')}
         plural={t('conductores')}
@@ -67,10 +68,7 @@ export function DriverList() {
           <>
             <FleetTabs />
             {error ? (
-              <p
-                role="alert"
-                className="mb-3 rounded-control bg-error-container px-4 py-3 text-sm text-on-error-container"
-              >
+              <p role="alert" className="rounded-control bg-error-container px-4 py-3 text-sm text-on-error-container">
                 {error}
               </p>
             ) : null}

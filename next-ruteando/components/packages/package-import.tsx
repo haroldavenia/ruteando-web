@@ -39,18 +39,18 @@ const MAX_ERRORS_SHOWN = 200;
 
 type Phase = 'empty' | 'reading' | 'preview' | 'locating' | 'review' | 'importing' | 'done';
 
-const TABLE = 'w-full border-collapse text-start';
-const TH = 'px-3 py-2 text-start font-mono text-xs font-medium tracking-wide text-on-surface-variant uppercase';
-const TD = 'px-3 py-2 align-top';
+const TABLE = 'w-full border-collapse text-start text-sm';
+const TH = 'border-b border-outline-variant px-3 py-1.5 text-start font-bold';
+const TD = 'border-b border-outline-variant px-3 py-1.5 align-top';
 
 /** Una tabla pequeña de la pantalla (columnas, errores, vista previa, fallidas): sin desplazamiento horizontal propio. */
 function SimpleTable({ caption, head, children }: { caption: string; head: string[]; children: React.ReactNode }) {
   return (
-    <div className="overflow-x-auto rounded-control border border-outline-variant">
+    <div className="overflow-x-auto">
       <table className={TABLE}>
-        <caption className="sr-only">{caption}</caption>
+        <caption className="py-2 text-start text-sm font-medium">{caption}</caption>
         <thead>
-          <tr className="border-b border-outline-variant">
+          <tr>
             {head.map((label) => (
               <th key={label} scope="col" className={TH}>
                 {label}
@@ -247,18 +247,21 @@ export function PackageImport() {
   };
 
   const stepsEl = (
-    <ol aria-label={t('Pasos de la importación')} className="mb-4 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
+    <ol
+      aria-label={t('Pasos de la importación')}
+      className="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-sm font-medium text-on-surface-variant"
+    >
       {steps.map((step) => (
         <li
           key={step.number}
           aria-current={step.state === 'current' ? 'step' : undefined}
-          className={`inline-flex items-center gap-2 text-sm ${step.state === 'todo' ? 'text-on-surface-variant' : 'font-medium text-on-surface'}`}
+          className={`inline-flex items-center gap-2 ${step.state === 'current' ? 'font-bold text-on-surface' : ''}`}
         >
           <span
             aria-hidden="true"
-            className={`grid size-7 place-items-center rounded-full border text-xs ${step.state === 'done' ? 'border-transparent bg-primary text-on-primary' : step.state === 'current' ? 'border-primary text-primary' : 'border-outline'}`}
+            className={`grid size-7 place-items-center rounded-full border text-[13px] ${step.state === 'done' ? 'border-transparent bg-success-container text-on-success-container' : step.state === 'current' ? 'border-transparent bg-brand-gradient text-on-primary' : 'border-outline'}`}
           >
-            {step.state === 'done' ? <Icon icon={RiCheckLine} size={16} /> : step.number}
+            {step.state === 'done' ? <Icon icon={RiCheckLine} size={18} /> : step.number}
           </span>
           {step.label}
         </li>
@@ -272,7 +275,7 @@ export function PackageImport() {
   const percent = progress.total ? (progress.done / progress.total) * 100 : 0;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <FormHead title={t('Importar paquetes')} backLabel={t('Paquetes')} backHref="/packages" />
       {stepsEl}
 
@@ -292,8 +295,8 @@ export function PackageImport() {
             {t('Descargar plantilla')}
           </Button>
         </div>
-        <details className="rounded-control border border-outline-variant p-3">
-          <summary className="cursor-pointer font-medium">{t('Cómo crear el archivo, paso a paso')}</summary>
+        <details className="my-1">
+          <summary className="cursor-pointer text-sm font-medium">{t('Cómo crear el archivo, paso a paso')}</summary>
           <ol className="mt-2 flex list-decimal flex-col gap-1 pl-6">
             <li>
               <strong>{t('Descarga la plantilla.')}</strong>{' '}
@@ -326,7 +329,7 @@ export function PackageImport() {
         >
           {columns.map((column) => (
             <tr key={column.key} className="border-b border-outline-variant last:border-b-0">
-              <th scope="row" className={`${TD} text-start font-mono text-sm font-medium`}>
+              <th scope="row" className={`${TD} text-start font-medium whitespace-nowrap`}>
                 {column.header}
               </th>
               <td className={TD}>{column.required ? t('Sí') : 'No'}</td>

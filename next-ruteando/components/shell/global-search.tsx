@@ -104,11 +104,11 @@ export function GlobalSearch({ items, actions }: { items: readonly NavItem[]; ac
   }
 
   return (
-    <div role="search" className="relative w-full max-w-md">
+    <div role="search" className="relative w-full">
       <Icon
         icon={RiSearchLine}
         size={20}
-        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-on-surface-variant"
+        className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-on-surface-variant"
       />
       <input
         ref={inputRef}
@@ -131,14 +131,14 @@ export function GlobalSearch({ items, actions }: { items: readonly NavItem[]; ac
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onKeyDown={onKeyDown}
-        className="min-h-11 w-full rounded-full border border-outline-variant bg-surface-container pr-20 pl-10 text-sm text-on-surface outline-none placeholder:text-on-surface-variant focus:border-primary focus:ring-1 focus:ring-primary"
+        className="h-11 w-full rounded-full border border-outline bg-surface-container-low pr-22 pl-10 text-base text-on-surface outline-none placeholder:text-on-surface-variant focus:border-primary focus:outline-3 focus:outline-offset-2 focus:outline-primary"
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute top-1/2 right-3 flex -translate-y-1/2 gap-1 text-[11px] text-on-surface-variant"
+        className="pointer-events-none absolute top-1/2 right-3.5 flex -translate-y-1/2 gap-1 text-[11px]/4 font-medium text-on-surface-variant"
       >
-        <kbd className="rounded-sm border border-outline-variant px-1.5 font-mono">{t('Ctrl')}</kbd>
-        <kbd className="rounded-sm border border-outline-variant px-1.5 font-mono">{t('K')}</kbd>
+        <kbd className="rounded-md border border-outline-variant bg-surface px-1.5 py-[3px] font-sans">{t('Ctrl')}</kbd>
+        <kbd className="rounded-md border border-outline-variant bg-surface px-1.5 py-[3px] font-sans">{t('K')}</kbd>
       </span>
       {open ? (
         <ul

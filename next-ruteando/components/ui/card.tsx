@@ -15,6 +15,18 @@ export function Card({ className, ...props }: ComponentProps<'div'>) {
   );
 }
 
-export function CardTitle({ className, ...props }: ComponentProps<'h2'>) {
-  return <h2 className={cn('font-brand text-[22px]/7 font-bold', className)} {...props} />;
+/**
+ * Título de una tarjeta. Por defecto el `h2` de página de Angular (22px, Manrope 700); con `compact` el `.card-title` (16px, Roboto 500, con
+ * 12px debajo), el de Perfil, Seguridad, el SSO y el mapa de lugares.
+ */
+export function CardTitle({ className, compact = false, ...props }: ComponentProps<'h2'> & { compact?: boolean }) {
+  return (
+    <h2
+      className={cn(
+        compact ? 'm-0 mb-3 font-sans text-base/6 font-medium' : 'font-brand text-[22px]/7 font-bold',
+        className
+      )}
+      {...props}
+    />
+  );
 }

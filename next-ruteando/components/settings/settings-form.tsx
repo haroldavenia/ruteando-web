@@ -1,12 +1,12 @@
 'use client';
 
+import { RiEqualizerLine, RiMapPin2Line, RiRouteLine, RiTimerLine } from '@remixicon/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm, useWatch } from 'react-hook-form';
 
-import { FormActions, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
-import { Card, CardTitle } from '@/components/ui/card';
+import { FormActions, FormCard, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
 import { Input } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
@@ -343,10 +343,11 @@ function SettingsFields({
   const hint = t('Usa este formato: 2h 45m (h = horas, m = minutos)');
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <Card className="flex flex-col gap-8">
-        <FormSection title={t('Ruta')}>
+      <FormCard>
+        <FormSection title={t('Ruta')} icon={RiRouteLine}>
           <Input
             label={t('Descripción')}
+            requiredMark
             autoComplete="off"
             error={errors.description?.message}
             {...register('description')}
@@ -355,6 +356,7 @@ function SettingsFields({
             control={control}
             name="restrictionType"
             label={t('Tipo de restricción')}
+            requiredMark
             error={errors.restrictionType?.message}
           >
             <option value="" />
@@ -367,6 +369,7 @@ function SettingsFields({
           {fixed ? (
             <Input
               label={t('Número de rutas')}
+              requiredMark
               type="number"
               step={1}
               min={1}
@@ -379,6 +382,7 @@ function SettingsFields({
             <>
               <Input
                 label={t('Inicio del turno')}
+                requiredMark
                 type="time"
                 hint={t('Hora local de tu navegador')}
                 error={errors.shiftStart?.message}
@@ -386,6 +390,7 @@ function SettingsFields({
               />
               <Input
                 label={t('Duración del turno')}
+                requiredMark
                 autoComplete="off"
                 hint={hint}
                 error={errors.shiftDurationMin?.message}
@@ -393,6 +398,7 @@ function SettingsFields({
               />
               <Input
                 label={t('Descanso')}
+                requiredMark
                 autoComplete="off"
                 hint={hint}
                 error={errors.breakDurationMin?.message}
@@ -402,11 +408,12 @@ function SettingsFields({
           ) : null}
         </FormSection>
 
-        <FormSection title={t('Lugares')}>
+        <FormSection title={t('Lugares')} icon={RiMapPin2Line}>
           <FormSelect
             control={control}
             name="routeTopology"
             label={t('Topología de la ruta')}
+            requiredMark
             error={errors.routeTopology?.message}
           >
             <option value="" />
@@ -420,6 +427,7 @@ function SettingsFields({
             control={control}
             name="placeStartId"
             label={t('Lugar de salida')}
+            requiredMark
             error={errors.placeStartId?.message}
           >
             <option value="" />
@@ -438,7 +446,7 @@ function SettingsFields({
             ))}
           </FormSelect>
           {places.loaded && places.rows.length === 0 ? (
-            <p className="text-sm text-on-surface-variant sm:col-span-2">
+            <p className="text-sm text-on-surface-variant md:col-span-2">
               {t('Todavía no hay lugares. Primero')}{' '}
               <Link href="/places/new" className="text-primary underline">
                 {t('crea un lugar')}
@@ -447,26 +455,28 @@ function SettingsFields({
             </p>
           ) : null}
           {places.truncated ? (
-            <p role="status" className="text-sm text-on-surface-variant sm:col-span-2">
+            <p role="status" className="text-sm text-on-surface-variant md:col-span-2">
               {t('Se muestran solo los primeros {0} lugares.', [SELECT_LIMIT])}
             </p>
           ) : null}
         </FormSection>
-      </Card>
 
-      <aside aria-labelledby="summary-title">
-        <Card className="bg-secondary-container text-on-secondary-container">
-          <CardTitle id="summary-title" className="mb-1">
+        <aside
+          aria-labelledby="summary-title"
+          className="my-1 rounded-card border border-outline-variant bg-surface-container-low px-6 py-5 text-on-surface shadow-card"
+        >
+          <h2 id="summary-title" className="m-0 mb-3 font-brand text-[22px]/7 font-bold">
             {t('Así quedará')}
-          </CardTitle>
-          <p>{summary}</p>
-        </Card>
-      </aside>
+          </h2>
+          <p className="m-0 font-brand text-base/[1.45] font-bold">{summary}</p>
+        </aside>
 
-      <Card className="flex flex-col gap-8">
-        <section className="flex flex-col gap-4">
-          <h2 className="font-brand text-lg font-bold">{t('Qué evalúa la planificación')}</h2>
-          <div role="group" aria-label={t('Qué evalúa la planificación')} className="flex flex-col gap-3">
+        <FormSection title={t('Qué evalúa la planificación')} icon={RiEqualizerLine}>
+          <div
+            role="group"
+            aria-label={t('Qué evalúa la planificación')}
+            className="grid grid-cols-[repeat(auto-fit,minmax(min(14rem,100%),1fr))] gap-x-4 gap-y-2 md:col-span-2"
+          >
             {!fixed ? (
               <Switch
                 checked={!!value.evaluateWeight}
@@ -487,9 +497,9 @@ function SettingsFields({
               label={t('Evaluar zona del itinerario')}
             />
           </div>
-        </section>
+        </FormSection>
 
-        <FormSection title={t('Estancia en cada parada')}>
+        <FormSection title={t('Estancia en cada parada')} icon={RiTimerLine}>
           <FormSelect control={control} name="typeLengthOfStay" label={t('Estancia en cada parada (opcional)')}>
             <option value="">{t('Sin definir')}</option>
             {stayTypes.map((option) => (
@@ -501,6 +511,7 @@ function SettingsFields({
           {value.typeLengthOfStay === FIXED_STAY ? (
             <Input
               label={t('Estancia')}
+              requiredMark
               autoComplete="off"
               hint={hint}
               error={errors.lengthOfStay?.message}
@@ -511,7 +522,7 @@ function SettingsFields({
 
         <FormResult error={error} />
         <FormActions cancelHref="/settings" loading={loading} dirty={isDirty} />
-      </Card>
+      </FormCard>
     </Form>
   );
 }

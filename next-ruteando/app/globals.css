@@ -33,6 +33,9 @@
   --color-surface-container-highest: light-dark(#e6e1e6, #363437);
   --color-on-surface: light-dark(#1d1b1e, #e6e1e6);
   --color-on-surface-variant: light-dark(#49454e, #e8e0eb);
+  --color-inverse-surface: light-dark(#323033, #e6e1e6);
+  --color-inverse-on-surface: light-dark(#f5eff4, #323033);
+  --color-inverse-primary: light-dark(#d5baff, #7d00fa);
   --color-outline: light-dark(#7b757f, #958e99);
   --color-outline-variant: light-dark(#cbc4cf, #49454e);
   /* Telón de los diálogos (en M3, `scrim`): negro con la opacidad que ponga cada uso, `bg-scrim/40` */
@@ -88,9 +91,22 @@
     );
 }
 
+/* Título de pantalla (el `.page h1` de Angular): 28/36, Manrope 700 y con el aire justo; una palabra larga se parte antes que desbordar */
+@utility page-title {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
 @layer base {
   :root {
     color-scheme: light dark;
+    /* Color de la superficie donde está un campo: la etiqueta que sube sobre el borde lo usa para tapar la línea (los diálogos y el acceso lo cambian) */
+    --field-bg: var(--color-surface-container-low);
   }
 
   :root[data-theme='light'] {
@@ -283,6 +299,107 @@ html[data-theme='dark'] .app-tiles {
   @keyframes rb-appear {
     from {
       opacity: 0;
+    }
+  }
+}
+
+/* Ilustración de ciudad de la cabecera de Inicio (CityMap): colores claro y oscuro como los de las rutas; las rutas se dibujan al entrar */
+[data-city-map] [data-cm='land'] {
+  fill: light-dark(#eeeae3, #1b1826);
+}
+[data-city-map] [data-cm='park'] {
+  fill: light-dark(#ddebd2, #1c2a25);
+}
+[data-city-map] [data-cm='water'] {
+  fill: none;
+  stroke: light-dark(#cce3f1, #142a3d);
+  stroke-width: 24;
+  stroke-linecap: round;
+}
+[data-city-map] [data-cm='street'] {
+  fill: none;
+  stroke: light-dark(#fff, #26223a);
+  stroke-width: 3;
+}
+[data-city-map] [data-cm='avenue'] {
+  fill: none;
+  stroke: light-dark(#fbf8f3, #2e2945);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+[data-city-map] [data-cm='casing'],
+[data-city-map] [data-cm='route'] {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[data-city-map] [data-cm='casing'] {
+  stroke: light-dark(#fff, #0f0d14);
+  stroke-width: 8;
+  opacity: 0.9;
+}
+[data-city-map] [data-cm='route'] {
+  stroke: var(--c);
+  stroke-width: 4;
+  stroke-dasharray: 1;
+}
+[data-city-map] [data-cm='stop'] circle {
+  fill: var(--c);
+  stroke: light-dark(#fff, #0f0d14);
+  stroke-width: 2;
+}
+[data-city-map] [data-cm='depot'] circle {
+  fill: var(--color-surface);
+  stroke: var(--color-primary);
+  stroke-width: 4;
+}
+[data-city-map] text {
+  font:
+    800 8.5px var(--font-manrope),
+    Roboto,
+    sans-serif;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: light-dark(#fff, #1d1b1e);
+  paint-order: stroke;
+  stroke: light-dark(rgb(0 0 0 / 0.5), transparent);
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+}
+[data-city-map] [data-cm='depot'] text {
+  font-size: 15px;
+  fill: var(--color-primary);
+  stroke: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-city-map] [data-cm='route'] {
+    animation: rb-draw 1.6s ease-out 0.1s both;
+  }
+  [data-city-map] [data-cm='stop'],
+  [data-city-map] [data-cm='depot'] {
+    animation: cm-appear 0.5s ease-out 0.9s both;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  @keyframes cm-appear {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
+}
+
+/* Las acciones de una fila de un listado aparecen al pasar el cursor o al enfocar (con ratón y en una tabla; apiladas o con pantalla táctil, siempre) */
+@media (hover: hover) and (pointer: fine) {
+  @container (min-width: 840px) {
+    [data-row-actions] > * {
+      opacity: 0;
+    }
+    tr:hover [data-row-actions] > *,
+    tr:focus-within [data-row-actions] > *,
+    tr[data-selected] [data-row-actions] > *,
+    [data-row-actions] [aria-expanded='true'] {
+      opacity: 1;
     }
   }
 }

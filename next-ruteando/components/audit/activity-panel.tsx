@@ -89,7 +89,7 @@ export function ActivityPanel({
   );
 
   return (
-    <Card aria-labelledby="audit-panel-title" className="mb-4">
+    <Card aria-labelledby="audit-panel-title">
       <div className="flex items-center justify-between gap-2">
         <h2 id="audit-panel-title" className="font-brand text-lg font-bold">
           {t('Resumen de la actividad')}

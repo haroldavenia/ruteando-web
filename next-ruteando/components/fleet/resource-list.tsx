@@ -1,7 +1,13 @@
 'use client';
 
-import { RiTruckLine, RiUserAddLine, RiUserUnfollowLine } from '@remixicon/react';
-import Link from 'next/link';
+import {
+  RiDeleteBinLine,
+  RiEdit2Line,
+  RiTruckLine,
+  RiUserAddLine,
+  RiUserLine,
+  RiUserUnfollowLine,
+} from '@remixicon/react';
 import { useMemo, useState } from 'react';
 
 import { EntityList } from '@/components/page/entity-list';
@@ -9,9 +15,11 @@ import { StatusBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { IconButton } from '@/components/ui/icon-button';
+import { IconLink } from '@/components/ui/icon-link';
 import { useNotify } from '@/components/ui/toast';
 import type { Resource, ResourceInput } from '@/lib/api/models';
 import { requestJson } from '@/lib/api-client';
+import { cn } from '@/lib/cn';
 import { vehiclesToCsv } from '@/lib/fleet/export';
 import { driverName, vehicleLabel } from '@/lib/fleet/labels';
 import { useConfirm } from '@/lib/hooks/use-confirm';
@@ -99,6 +107,7 @@ export function ResourceList() {
   return (
     <>
       <EntityList<Resource>
+        selectable
         key={version}
         title={t('Vehículos')}
         singular={t('vehículo')}
@@ -110,7 +119,7 @@ export function ResourceList() {
             {error ? (
               <p
                 role="alert"
-                className="mb-3 rounded-control bg-error-container px-4 py-3 text-sm text-on-error-container"
+                className="mt-6 rounded-control bg-error-container px-4 py-3 text-sm text-on-error-container"
               >
                 {error}
               </p>
@@ -148,40 +157,55 @@ export function ResourceList() {
             />
           </>
         )}
-        card={({ row, selectable, selected, toggle }) => (
+        card={({ row, selectable, selected, toggle, remove }) => (
           <article
-            className={`flex h-full flex-col gap-3 rounded-card border p-4 ${selected ? 'border-primary bg-primary-container/40' : 'border-outline-variant bg-surface'}`}
+            className={cn(
+              'flex h-full flex-col gap-3 rounded-2xl border p-4',
+              selected
+                ? 'border-primary bg-[color-mix(in_srgb,var(--color-primary)_6%,var(--color-surface))]'
+                : 'border-outline-variant bg-surface'
+            )}
           >
             <header className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-full bg-secondary-container text-on-secondary-container">
-                <Icon icon={RiTruckLine} />
+              <span className="grid size-11 flex-none place-items-center rounded-xl bg-primary-container text-on-primary-container">
+                <Icon icon={RiTruckLine} size={24} />
               </span>
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate font-medium">{row.name}</h3>
-                <span className="text-sm text-on-surface-variant">{row.resourceType?.name ?? ''}</span>
+              <div className="grid min-w-0 flex-1">
+                <h3 className="m-0 truncate font-brand text-base font-bold">{row.name}</h3>
+                <span className="text-xs text-on-surface-variant">{row.resourceType?.name ?? ''}</span>
               </div>
               {row.licensePlate ? (
-                <span className="rounded-sm border border-outline px-1.5 font-mono text-sm">{row.licensePlate}</span>
+                <span className="rounded-lg border border-outline px-2.5 py-0.5 font-mono text-[13px] font-semibold tracking-[0.04em] whitespace-nowrap">
+                  {row.licensePlate}
+                </span>
               ) : null}
             </header>
-            <div className="flex items-center gap-3">
+            <div className="flex min-h-11 flex-wrap items-center gap-x-3 gap-y-2">
               {row.assignedUser ? (
                 <>
                   <span
                     aria-hidden="true"
-                    className="grid size-9 place-items-center rounded-full bg-primary-container text-sm font-medium text-on-primary-container"
+                    className="grid size-9 flex-none place-items-center rounded-full bg-tertiary-container font-brand text-[13px] font-bold text-on-tertiary-container"
                   >
                     {initialsOf(driverName(row.assignedUser))}
                   </span>
-                  <span className="flex min-w-0 flex-1 flex-col text-sm">
+                  <span className="grid min-w-0 flex-[1_1_8rem] font-medium wrap-anywhere">
                     {driverName(row.assignedUser)}
-                    <small className="truncate text-on-surface-variant">{row.assignedUser.email}</small>
+                    <small className="text-xs font-normal text-on-surface-variant">{row.assignedUser.email}</small>
                   </span>
                   {!row.active ? <StatusBadge>{t('Inactivo')}</StatusBadge> : null}
                 </>
               ) : (
                 <>
-                  <span className="flex-1 text-sm text-on-surface-variant">{t('Sin conductor')}</span>
+                  <span
+                    aria-hidden="true"
+                    className="grid size-9 flex-none place-items-center rounded-full bg-surface-container-high text-on-surface-variant"
+                  >
+                    <Icon icon={RiUserLine} size={20} />
+                  </span>
+                  <span className="min-w-0 flex-[1_1_8rem] wrap-anywhere text-on-surface-variant">
+                    {t('Sin conductor')}
+                  </span>
                   <Button
                     variant="outlined"
                     aria-label={t('Asignar conductor al vehículo ') + vehicleLabel(row)}
@@ -192,7 +216,7 @@ export function ResourceList() {
                 </>
               )}
             </div>
-            <footer className="mt-auto flex items-center gap-1">
+            <footer className="mt-auto flex flex-wrap items-center justify-end gap-1">
               {selectable ? (
                 <input
                   type="checkbox"
@@ -200,15 +224,35 @@ export function ResourceList() {
                   onChange={toggle}
                   aria-label={t('Elegir vehículo ') + vehicleLabel(row)}
                   title={t('Elegir')}
-                  className="size-5 cursor-pointer accent-primary"
+                  className="mr-auto ml-2.5 size-5 cursor-pointer accent-primary"
                 />
               ) : null}
-              <Link
+              <IconLink
                 href={`/fleet/vehicles/${encodeURIComponent(row.id)}`}
-                className="ml-auto rounded-control px-3 py-2 text-sm text-primary hover:bg-primary/8"
-              >
-                {t('Editar')}
-              </Link>
+                icon={RiEdit2Line}
+                label={t('Editar vehículo ') + vehicleLabel(row)}
+              />
+              {row.assignedUser ? (
+                <>
+                  <IconButton
+                    icon={RiUserUnfollowLine}
+                    label={t('Retirar conductor del vehículo ') + vehicleLabel(row)}
+                    onClick={() => void unassign(row)}
+                  />
+                  <IconButton
+                    icon={RiUserAddLine}
+                    label={t('Cambiar conductor del vehículo ') + vehicleLabel(row)}
+                    onClick={() => setAssigning(row)}
+                  />
+                </>
+              ) : null}
+              {remove ? (
+                <IconButton
+                  icon={RiDeleteBinLine}
+                  label={t('Eliminar vehículo ') + vehicleLabel(row)}
+                  onClick={remove}
+                />
+              ) : null}
             </footer>
           </article>
         )}

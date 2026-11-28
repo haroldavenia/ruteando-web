@@ -334,7 +334,7 @@ describe('listado de vehículos: retirar conductor y tarjetas', () => {
     expect(await screen.findByText('ana@example.invalid')).toBeInTheDocument();
     expect(screen.getByText('Sin conductor')).toBeInTheDocument();
     expect(screen.getByText('ABC123')).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: 'Editar' })).toHaveLength(2);
+    expect(screen.getAllByRole('link', { name: /^Editar vehículo / })).toHaveLength(2);
     await userEvent.click(screen.getByRole('button', { name: 'Asignar conductor al vehículo Moto' }));
     expect(await screen.findByRole('dialog')).toBeInTheDocument();
   });

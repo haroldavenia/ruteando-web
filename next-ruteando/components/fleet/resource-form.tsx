@@ -1,14 +1,14 @@
 'use client';
 
+import { RiCarLine, RiTimeLine } from '@remixicon/react';
 import { RiAddLine } from '@remixicon/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm } from 'react-hook-form';
 
-import { FormActions, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
+import { FormActions, FormCard, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
@@ -296,15 +296,22 @@ function VehicleFields({
   }, [restoreDraft, createdTypeId, reset, onAnchor]);
 
   return (
-    <Card>
-      <Form onSubmit={handleSubmit((values) => onSubmit(values, anchorDate))} className="flex flex-col gap-8">
-        <FormSection title={t('Identificación')}>
-          <Input label={t('Nombre')} autoComplete="off" error={errors.name?.message} {...register('name')} />
+    <FormCard>
+      <Form onSubmit={handleSubmit((values) => onSubmit(values, anchorDate))} className="flex flex-col gap-2">
+        <FormSection title={t('Identificación')} icon={RiCarLine}>
+          <Input
+            label={t('Nombre')}
+            requiredMark
+            autoComplete="off"
+            error={errors.name?.message}
+            {...register('name')}
+          />
           <Input label={t('Matrícula (opcional)')} autoComplete="off" {...register('licensePlate')} />
           <FormSelect
             control={control}
             name="resourceTypeId"
             label={t('Tipo de vehículo')}
+            requiredMark
             error={errors.resourceTypeId?.message}
           >
             <option value="" />
@@ -327,7 +334,7 @@ function VehicleFields({
             </Button>
           </div>
           {types.loaded && types.rows.length === 0 ? (
-            <p className="text-sm text-on-surface-variant sm:col-span-2">
+            <p className="text-sm text-on-surface-variant md:col-span-2">
               {t('Todavía no hay tipos de vehículo. Primero')}{' '}
               <Link href="/fleet/types" className="text-primary underline">
                 {t('crea un tipo')}
@@ -336,14 +343,20 @@ function VehicleFields({
             </p>
           ) : null}
           {types.truncated ? (
-            <p role="status" className="text-sm text-on-surface-variant sm:col-span-2">
+            <p role="status" className="text-sm text-on-surface-variant md:col-span-2">
               {t('Se muestran solo los primeros {0} tipos.', [SELECT_LIMIT])}
             </p>
           ) : null}
         </FormSection>
 
-        <FormSection title={t('Depósito y turno')}>
-          <FormSelect control={control} name="depotId" label={t('Depósito')} error={errors.depotId?.message}>
+        <FormSection title={t('Depósito y turno')} icon={RiTimeLine}>
+          <FormSelect
+            control={control}
+            name="depotId"
+            label={t('Depósito')}
+            requiredMark
+            error={errors.depotId?.message}
+          >
             <option value="" />
             {places.rows.map((place) => (
               <option key={place.id} value={place.id}>
@@ -352,7 +365,7 @@ function VehicleFields({
             ))}
           </FormSelect>
           {places.loaded && places.rows.length === 0 ? (
-            <p className="text-sm text-on-surface-variant sm:col-span-2">
+            <p className="text-sm text-on-surface-variant md:col-span-2">
               {t('Todavía no hay lugares que usar como depósito. Primero')}{' '}
               <Link href="/places/new" className="text-primary underline">
                 {t('crea un lugar')}
@@ -361,12 +374,13 @@ function VehicleFields({
             </p>
           ) : null}
           {places.truncated ? (
-            <p role="status" className="text-sm text-on-surface-variant sm:col-span-2">
+            <p role="status" className="text-sm text-on-surface-variant md:col-span-2">
               {t('Se muestran solo los primeros {0} lugares.', [SELECT_LIMIT])}
             </p>
           ) : null}
           <Input
             label={t('Inicio del turno')}
+            requiredMark
             type="time"
             hint={t('Hora local de tu navegador')}
             error={errors.shiftStart?.message}
@@ -374,6 +388,7 @@ function VehicleFields({
           />
           <Input
             label={t('Duración del turno (minutos)')}
+            requiredMark
             type="number"
             step={1}
             autoComplete="off"
@@ -382,6 +397,7 @@ function VehicleFields({
           />
           <Input
             label={t('Duración del descanso (minutos)')}
+            requiredMark
             type="number"
             step={1}
             autoComplete="off"
@@ -390,6 +406,7 @@ function VehicleFields({
           />
           <Input
             label={t('Cantidad')}
+            requiredMark
             type="number"
             step={1}
             min={1}
@@ -402,6 +419,6 @@ function VehicleFields({
         <FormResult error={error} />
         <FormActions cancelHref="/fleet/vehicles" loading={loading} dirty={isDirty} />
       </Form>
-    </Card>
+    </FormCard>
   );
 }

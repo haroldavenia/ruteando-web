@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 
 import { Icon } from '@/components/ui/icon';
 import { IconButton } from '@/components/ui/icon-button';
-import { LanguageToggle } from '@/components/ui/language-toggle';
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/cn';
 import { useT } from '@/lib/i18n/client';
@@ -55,10 +54,6 @@ export function MobileMenu({ items }: { items: readonly NavItem[] }) {
             )}
           </ul>
         </nav>
-        {/* Bajo 640px el selector de idioma no cabe en la barra: aquí no se pierde */}
-        <div className="mt-auto px-3 pt-4">
-          <LanguageToggle />
-        </div>
       </SheetContent>
     </Sheet>
   );

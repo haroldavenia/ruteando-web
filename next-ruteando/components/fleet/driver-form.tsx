@@ -1,11 +1,11 @@
 'use client';
 
+import { RiLockLine, RiUserLine } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm } from 'react-hook-form';
 
-import { FormActions, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
-import { Card } from '@/components/ui/card';
+import { FormActions, FormCard, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
 import { Input } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
@@ -193,13 +193,26 @@ function DriverFields({
   useUnsavedWarning(isDirty && !loading);
 
   return (
-    <Card>
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-        <FormSection title={t('Datos del conductor')}>
-          <Input label={t('Nombre')} autoComplete="off" error={errors.firstName?.message} {...register('firstName')} />
-          <Input label={t('Apellidos')} autoComplete="off" error={errors.lastName?.message} {...register('lastName')} />
+    <FormCard>
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <FormSection title={t('Datos del conductor')} icon={RiUserLine}>
+          <Input
+            label={t('Nombre')}
+            requiredMark
+            autoComplete="off"
+            error={errors.firstName?.message}
+            {...register('firstName')}
+          />
+          <Input
+            label={t('Apellidos')}
+            requiredMark
+            autoComplete="off"
+            error={errors.lastName?.message}
+            {...register('lastName')}
+          />
           <Input
             label={t('Correo electrónico')}
+            requiredMark
             type="email"
             autoComplete="off"
             error={errors.email?.message}
@@ -227,15 +240,17 @@ function DriverFields({
           />
         </FormSection>
         {isNew ? (
-          <FormSection title={t('Acceso')}>
+          <FormSection title={t('Acceso')} icon={RiLockLine}>
             <PasswordField
               label={t('Contraseña inicial')}
+              requiredMark
               autoComplete="new-password"
               error={errors.password?.message}
               {...register('password')}
             />
             <PasswordField
               label={t('Repetir contraseña')}
+              requiredMark
               autoComplete="new-password"
               error={errors.repeatPassword?.message}
               {...register('repeatPassword')}
@@ -245,6 +260,6 @@ function DriverFields({
         <FormResult error={error} />
         <FormActions cancelHref="/fleet/drivers" loading={loading} dirty={isDirty} />
       </Form>
-    </Card>
+    </FormCard>
   );
 }

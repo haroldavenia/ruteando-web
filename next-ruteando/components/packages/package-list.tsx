@@ -132,6 +132,7 @@ export function PackageList() {
   return (
     <>
       <EntityList<Package>
+        selectable
         key={version}
         title={t('Paquetes')}
         singular={t('paquete')}
@@ -139,17 +140,14 @@ export function PackageList() {
         fetchPage={api.list}
         above={
           error ? (
-            <p
-              role="alert"
-              className="mb-3 rounded-control bg-error-container px-4 py-3 text-sm text-on-error-container"
-            >
+            <p role="alert" className="rounded-control bg-error-container px-4 py-3 text-sm text-on-error-container">
               {error}
             </p>
           ) : null
         }
         columns={columns}
         facet={facet}
-        headActions={
+        leadActions={
           <Link href="/packages/import" className={buttonVariants({ variant: 'outlined' })}>
             <Icon icon={RiFileUploadLine} size={20} />
             {t('Importar CSV')}

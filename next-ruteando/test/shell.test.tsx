@@ -133,8 +133,6 @@ describe('MobileMenu', () => {
     const panel = await screen.findByRole('dialog', { name: 'Menú principal' });
     expect(within(panel).getByRole('heading', { name: 'Flota' })).toBeInTheDocument();
     expect(within(panel).getByRole('link', { name: 'Vehículos' })).toHaveAttribute('href', '/fleet/vehicles');
-    // el idioma no cabe en la barra bajo 640px: el menú lo ofrece
-    expect(within(panel).getByRole('radiogroup', { name: 'Idioma' })).toBeInTheDocument();
     await user.click(within(panel).getByRole('link', { name: 'Jornadas' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   });
@@ -314,9 +312,9 @@ describe('Shell', () => {
     expect(screen.getByRole('link', { name: 'Saltar al contenido' })).toHaveAttribute('href', '#contenido');
     expect(screen.getByRole('main')).toHaveAttribute('id', 'contenido');
     expect(screen.getByRole('main')).toHaveTextContent('contenido');
-    expect(screen.getByRole('heading', { level: 1, name: 'Jornadas' })).toBeInTheDocument();
+    expect(within(screen.getByRole('banner')).getByText('Jornadas')).toBeInTheDocument();
     expect(screen.getByRole('radiogroup', { name: 'Tema de color' })).toBeInTheDocument();
-    expect(screen.getByRole('radiogroup', { name: 'Idioma' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Idioma' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Menú de usuario' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Buscar o ir a una pantalla' })).toBeInTheDocument();
   });
@@ -336,6 +334,6 @@ describe('Shell', () => {
       'en'
     );
     expect(screen.getByRole('link', { name: 'Skip to content' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1, name: 'Audit' })).toBeInTheDocument();
+    expect(within(screen.getByRole('banner')).getByText('Audit')).toBeInTheDocument();
   });
 });

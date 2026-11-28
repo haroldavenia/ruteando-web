@@ -14,6 +14,7 @@ import { DataTable } from '@/components/data/data-table';
 import { PageHead } from '@/components/page/page-head';
 import { StatusBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/field';
 import { Icon } from '@/components/ui/icon';
 import { IconButton } from '@/components/ui/icon-button';
 import { useNotify } from '@/components/ui/toast';
@@ -275,14 +276,18 @@ export function AuditScreen({ role }: { role: UserRole }) {
         </Button>
       </PageHead>
 
-      <p className="mb-3 text-on-surface-variant">{intro}</p>
+      <p className="m-0 max-w-[70ch] text-base text-on-surface-variant">{intro}</p>
       <p className="sr-only" role="status" aria-live="polite">
         {countText}
       </p>
 
       {scopes.length > 1 ? (
-        <div className="mb-3 flex flex-wrap items-end gap-3">
-          <div role="group" aria-label={t('Qué eventos ver')} className="flex rounded-full border border-outline p-0.5">
+        <div className="flex flex-wrap items-start gap-x-4 gap-y-3">
+          <div
+            role="group"
+            aria-label={t('Qué eventos ver')}
+            className="flex max-w-full overflow-hidden rounded-full bg-surface-container outline -outline-offset-1 outline-outline-variant"
+          >
             {scopes.map((item) => (
               <button
                 key={item}
@@ -290,9 +295,9 @@ export function AuditScreen({ role }: { role: UserRole }) {
                 aria-pressed={scope === item}
                 onClick={() => patch({ scope: item })}
                 className={cn(
-                  'min-h-10 cursor-pointer rounded-full px-4 text-sm',
+                  'h-11 cursor-pointer rounded-full px-3 text-sm font-medium',
                   scope === item
-                    ? 'bg-secondary-container text-on-secondary-container'
+                    ? 'bg-primary-container text-on-primary-container'
                     : 'text-on-surface-variant hover:bg-on-surface/8'
                 )}
               >
@@ -304,24 +309,23 @@ export function AuditScreen({ role }: { role: UserRole }) {
             <form
               method="post"
               noValidate
-              className="flex flex-wrap items-end gap-2"
+              className="flex flex-wrap items-start gap-2"
               onSubmit={(event) => {
                 event.preventDefault();
                 patch({ tenant: tenantDraft.trim() });
               }}
             >
-              <label className="flex flex-col gap-1 text-sm text-on-surface-variant">
-                {t('Empresa (opcional)')}
-                <input
-                  type="text"
-                  autoComplete="off"
-                  spellCheck={false}
-                  value={tenantDraft}
-                  onChange={(event) => setTenantDraft(event.target.value)}
-                  className="h-11 rounded-control border border-outline bg-transparent px-3 text-base text-on-surface"
-                />
-                <span className="text-xs">{t('Identificador de la empresa; vacío = todas')}</span>
-              </label>
+              <Input
+                dense
+                type="text"
+                label={t('Empresa (opcional)')}
+                hint={t('Identificador de la empresa; vacío = todas')}
+                autoComplete="off"
+                spellCheck={false}
+                value={tenantDraft}
+                onChange={(event) => setTenantDraft(event.target.value)}
+                className="max-w-104 min-w-0 flex-[1_1_16rem]"
+              />
               <Button type="submit" variant="outlined">
                 <Icon icon={RiFilterLine} size={20} />
                 {t('Aplicar')}
@@ -332,7 +336,7 @@ export function AuditScreen({ role }: { role: UserRole }) {
       ) : null}
 
       {truncated ? (
-        <p role="status" className="mb-3 flex items-center gap-2 text-on-surface-variant">
+        <p role="status" className="m-0 flex items-center gap-2 text-on-surface-variant">
           <Icon icon={RiInformationLine} size={20} />
           {t('Se muestran los {0} eventos más recientes de {1}', [
             audit.number(list.rows.length),
@@ -343,7 +347,7 @@ export function AuditScreen({ role }: { role: UserRole }) {
       {forbidden ? (
         <div
           role="alert"
-          className="mb-3 flex flex-wrap items-center gap-3 rounded-control bg-warning-container px-4 py-3 text-on-warning-container"
+          className="flex flex-wrap items-center gap-3 rounded-control bg-warning-container px-4 py-3 text-on-warning-container"
         >
           <Icon icon={RiLockLine} size={20} />
           <span>{t('Tu rol no puede consultar estos eventos. Tu propia actividad sí está disponible.')}</span>

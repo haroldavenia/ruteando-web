@@ -37,7 +37,7 @@ export function DialogContent({ title, description, className, onCloseAutoFocus,
         // Sin descripción se declara explícitamente (si no, Radix avisa en consola); con ella, Radix enlaza la suya
         {...(description ? {} : { 'aria-describedby': undefined })}
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg -translate-1/2 overflow-y-auto rounded-dialog border border-outline-variant bg-surface-container-high p-6 text-on-surface shadow-card outline-none',
+          'fixed top-1/2 left-1/2 z-50 max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg -translate-1/2 overflow-y-auto rounded-dialog border border-outline-variant bg-surface-container-high p-6 text-on-surface shadow-card outline-none [--field-bg:var(--color-surface-container-high)]',
           className
         )}
       >

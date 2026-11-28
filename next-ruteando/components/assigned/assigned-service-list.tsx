@@ -74,6 +74,7 @@ export function AssignedServiceList() {
 
   return (
     <EntityList<AssignedService>
+      selectable
       title={t('Servicios asignados')}
       singular={t('servicio asignado')}
       plural={t('servicios asignados')}

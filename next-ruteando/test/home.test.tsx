@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 
-import { HomeDashboard } from '@/components/home/home-dashboard';
+import { HomeScreen } from '@/components/home/home-screen';
 import type { Journey, Package } from '@/lib/api/models';
 import { fetchLatestJourneys, latestJourneys, packageFigures } from '@/lib/home/figures';
 
@@ -66,14 +66,39 @@ describe('Inicio con datos', () => {
       ]),
       'GET /middleware/data/journeys?page=0&size=5': page([journey('j1', '2026-11-01T10:00:00Z', 'in_progress')]),
     });
-    renderWithI18n(<HomeDashboard />);
+    renderWithI18n(<HomeScreen name="Ada" canOperate noAreas={false} serverMinute={0} />);
     expect(await screen.findByText('2 de 4 paquetes')).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Paquetes atendidos: 2 de 4 paquetes' })).toBeInTheDocument();
-    expect(screen.getByText('50 %')).toBeInTheDocument();
-    expect(screen.getByText('2 atendidos')).toBeInTheDocument();
+    expect(screen.getByText('50%')).toBeInTheDocument();
     expect(screen.getByText('1 pendientes')).toBeInTheDocument();
+    expect(screen.getByText('1 sin atender')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: /^Buen(os días|as tardes|as noches), Ada$/ })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('1 de las últimas jornadas está en curso y hay 1 paquete esperando ruta.')
+    ).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'Jornada j1' })).toHaveAttribute('href', '/journeys/j1');
     expect(screen.getByText(/12 servicios · 3 vehículos/)).toBeInTheDocument();
+  });
+
+  test('la frase resume lo que hay en curso y lo pendiente, y quien no opera no pide nada', async () => {
+    mockGateway({
+      'GET /middleware/data/packages?page=0&size=100': page([pkg('pending'), pkg('pending')]),
+      'GET /middleware/data/journeys?page=0&size=5': page([journey('j1', '2026-11-01T10:00:00Z', 'in_progress')]),
+    });
+    renderWithI18n(<HomeScreen name="Ada" canOperate noAreas={false} serverMinute={0} />);
+    expect(
+      await screen.findByText('1 de las últimas jornadas está en curso y hay 2 paquetes esperando ruta.')
+    ).toBeInTheDocument();
+  });
+
+  test('quien no opera ve el saludo y el aviso de un rol sin áreas, sin cifras', () => {
+    const gateway = mockGateway({});
+    renderWithI18n(<HomeScreen name="ada@example.invalid" canOperate={false} noAreas serverMinute={0} />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('ada@example.invalid');
+    expect(screen.getByText('Tu rol no tiene áreas disponibles en la aplicación web.')).toBeInTheDocument();
+    expect(screen.queryByText('Paquetes atendidos')).not.toBeInTheDocument();
+    expect(gateway.sent('GET', '/middleware/data/packages?page=0&size=100')).toHaveLength(0);
   });
 
   test('sin paquetes ni jornadas invita a crear el primero; un fallo se puede reintentar', async () => {
@@ -81,7 +106,7 @@ describe('Inicio con datos', () => {
       'GET /middleware/data/packages?page=0&size=100': page([]),
       'GET /middleware/data/journeys?page=0&size=5': { status: 500, body: { message: 'caído' } },
     });
-    renderWithI18n(<HomeDashboard />);
+    renderWithI18n(<HomeScreen name="Ada" canOperate noAreas={false} serverMinute={0} />);
     expect(await screen.findByText('Todavía no hay paquetes.')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Crear el primer paquete' })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByRole('button', { name: 'Reintentar' })).toBeInTheDocument());

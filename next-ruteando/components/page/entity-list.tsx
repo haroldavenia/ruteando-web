@@ -53,8 +53,10 @@ export interface EntityListProps<T extends { id: string }> extends Pick<
   csv?: (rows: readonly T[]) => string;
   /** Acciones de fila extra (antes de editar y borrar). */
   extraActions?: (row: T) => ReactNode;
-  /** Acciones extra sobre la cabecera (antes de «Nuevo»). */
+  /** Acciones extra sobre la cabecera, después de «Exportar CSV» y antes de «Nuevo». */
   headActions?: ReactNode;
+  /** Acciones extra sobre la cabecera, antes de «Exportar CSV» (la importación de paquetes). */
+  leadActions?: ReactNode;
   /** Acciones extra sobre las filas elegidas (antes de «Eliminar»); `clear` quita la selección. */
   selectionExtra?: (rows: readonly T[], clear: () => void) => ReactNode;
   /** Con `true` hay casillas aunque no se pueda borrar ni exportar (las acciones de la selección son solo las extra). */
@@ -117,11 +119,13 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
   const subtitle = list.status === 'ready' ? `${total} ${total === 1 ? props.singular : props.plural}` : undefined;
   const canExport = !!props.csv;
   const canDelete = !!remover;
-  const selectable = canDelete || canExport || !!props.selectionExtra || !!props.selectable;
+  // Como en Angular, solo las pantallas que lo piden llevan casillas (vehículos, conductores, tipos, paquetes y servicios asignados)
+  const selectable = !!props.selectable;
 
   return (
     <>
       <PageHead title={props.title} subtitle={subtitle}>
+        {props.leadActions}
         {canExport ? (
           <Button variant="outlined" disabled={total === 0} onClick={() => exportRows(filtered)}>
             <Icon icon={RiDownloadLine} size={20} />
@@ -137,18 +141,16 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
         ) : null}
       </PageHead>
       {props.above}
-      <div className="mb-3 empty:hidden">
-        <FormResult error={deleter.error} />
-      </div>
+      <FormResult error={deleter.error} />
       <div
         className={
           props.aside && list.rows.length > 0
-            ? 'grid items-start gap-4 xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]'
+            ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]'
             : undefined
         }
       >
         {props.aside && list.rows.length > 0 ? (
-          <div className="xl:sticky xl:top-4">{props.aside({ rows: list.rows, filtered, reload: list.reload })}</div>
+          <div className="xl:sticky xl:top-6">{props.aside({ rows: list.rows, filtered, reload: list.reload })}</div>
         ) : null}
         <DataTable
           list={list}
@@ -157,7 +159,12 @@ export function EntityList<T extends { id: string }>(props: EntityListProps<T>) 
           emptyMessage={props.emptyMessage}
           searchPlaceholder={props.searchPlaceholder}
           facet={facet}
-          card={props.card}
+          card={
+            props.card
+              ? (context) =>
+                  props.card!({ ...context, remove: canDelete ? () => void deleter.one(context.row) : undefined })
+              : undefined
+          }
           selectable={selectable}
           filter={props.filter}
           onFilterChange={props.onFilterChange}

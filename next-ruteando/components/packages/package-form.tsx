@@ -1,13 +1,13 @@
 'use client';
 
+import { RiArchiveLine, RiHome5Line, RiMapPinLine, RiScales3Line } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm, useWatch } from 'react-hook-form';
 
 import { AddressLocator } from '@/components/map/address-locator';
 import { LocationFields } from '@/components/map/location-fields';
-import { FormActions, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
-import { Card } from '@/components/ui/card';
+import { FormActions, FormCard, FormHead, FormRow, FormSection, RecordGate } from '@/components/page/form-kit';
 import { Input, Textarea } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
@@ -238,20 +238,27 @@ function PackageFields({
   };
 
   return (
-    <Card>
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-        <FormSection title={t('Identificación')}>
+    <FormCard>
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <FormSection title={t('Identificación')} icon={RiArchiveLine}>
           <Input
             label={t('Número de guía (opcional)')}
             hint={t('Único en tu empresa')}
             autoComplete="off"
             {...register('guideNumber')}
           />
-          <Input label={t('Nombre')} autoComplete="off" error={errors.name?.message} {...register('name')} />
+          <Input
+            label={t('Nombre')}
+            requiredMark
+            autoComplete="off"
+            error={errors.name?.message}
+            {...register('name')}
+          />
           <FormSelect
             control={control}
             name="serviceType"
             label={t('Tipo de servicio')}
+            requiredMark
             error={errors.serviceType?.message}
           >
             <option value="" />
@@ -263,56 +270,63 @@ function PackageFields({
           </FormSelect>
         </FormSection>
 
-        <FormSection title={t('Dirección')}>
+        <FormSection title={t('Dirección')} icon={RiHome5Line}>
           <Input
             label={t('Dirección')}
+            requiredMark
             autoComplete="off"
-            className="sm:col-span-2"
             error={errors.address?.message}
             {...register('address')}
           />
-          <Input label={t('Ciudad (opcional)')} autoComplete="off" {...register('city')} />
-          <Input label={t('País (opcional)')} autoComplete="off" {...register('country')} />
-          <Input label={t('Código postal (opcional)')} autoComplete="off" {...register('postalCode')} />
+          <FormRow>
+            <Input label={t('Ciudad (opcional)')} autoComplete="off" {...register('city')} />
+            <Input label={t('País (opcional)')} autoComplete="off" {...register('country')} />
+            <Input label={t('Código postal (opcional)')} autoComplete="off" {...register('postalCode')} />
+          </FormRow>
         </FormSection>
 
-        <FormSection title={t('Carga')}>
-          <Input
-            label={t('Peso')}
-            type="number"
-            step="any"
-            min={0}
-            autoComplete="off"
-            error={errors.weight?.message}
-            {...register('weight')}
-          />
-          <Input
-            label={t('Volumen')}
-            type="number"
-            step="any"
-            min={0}
-            autoComplete="off"
-            error={errors.volume?.message}
-            {...register('volume')}
-          />
-          <Input
-            label={t('Número de piezas')}
-            type="number"
-            step={1}
-            min={1}
-            autoComplete="off"
-            error={errors.pieceNumber?.message}
-            {...register('pieceNumber')}
-          />
+        <FormSection title={t('Carga')} icon={RiScales3Line}>
+          <FormRow>
+            <Input
+              label={t('Peso')}
+              requiredMark
+              type="number"
+              step="any"
+              min={0}
+              autoComplete="off"
+              error={errors.weight?.message}
+              {...register('weight')}
+            />
+            <Input
+              label={t('Volumen')}
+              requiredMark
+              type="number"
+              step="any"
+              min={0}
+              autoComplete="off"
+              error={errors.volume?.message}
+              {...register('volume')}
+            />
+            <Input
+              label={t('Número de piezas')}
+              requiredMark
+              type="number"
+              step={1}
+              min={1}
+              autoComplete="off"
+              error={errors.pieceNumber?.message}
+              {...register('pieceNumber')}
+            />
+          </FormRow>
           <Textarea
             label={t('Observación (opcional)')}
             rows={2}
-            className="sm:col-span-2"
+            className="md:col-span-2"
             {...register('observation')}
           />
         </FormSection>
 
-        <FormSection title={t('Ubicación')}>
+        <FormSection title={t('Ubicación')} icon={RiMapPinLine}>
           <AddressLocator
             address={address ?? ''}
             city={city}
@@ -338,6 +352,6 @@ function PackageFields({
         <FormResult error={error} />
         <FormActions cancelHref="/packages" loading={loading} dirty={isDirty} />
       </Form>
-    </Card>
+    </FormCard>
   );
 }

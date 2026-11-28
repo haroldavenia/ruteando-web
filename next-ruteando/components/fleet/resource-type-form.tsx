@@ -1,11 +1,11 @@
 'use client';
 
+import { RiArchiveLine, RiListCheck2, RiTruckLine } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm, useWatch } from 'react-hook-form';
 
-import { FormActions, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
-import { Card } from '@/components/ui/card';
+import { FormActions, FormCard, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
 import { Input, Select } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
@@ -253,12 +253,19 @@ function TypeFields({
   const categories = useMemo(() => [...RESOURCE_CATEGORIES], []);
 
   return (
-    <Card>
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-        <FormSection title={t('Datos del tipo')}>
-          <Input label={t('Nombre')} autoComplete="off" error={errors.name?.message} {...register('name')} />
+    <FormCard>
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <FormSection title={t('Datos del tipo')} icon={RiTruckLine}>
+          <Input
+            label={t('Nombre')}
+            requiredMark
+            autoComplete="off"
+            error={errors.name?.message}
+            {...register('name')}
+          />
           <Input
             label={t('Categoría')}
+            requiredMark
             autoComplete="off"
             list="resource-categories"
             error={errors.category?.message}
@@ -273,6 +280,7 @@ function TypeFields({
             control={control}
             name="osrmProfile"
             label={t('Perfil de ruteo')}
+            requiredMark
             error={errors.osrmProfile?.message}
           >
             {profiles.map((p) => (
@@ -292,8 +300,8 @@ function TypeFields({
           />
         </FormSection>
 
-        <FormSection title={t('Capacidad')}>
-          <p className="text-sm text-on-surface-variant sm:col-span-2">
+        <FormSection title={t('Capacidad')} icon={RiArchiveLine}>
+          <p className="text-sm text-on-surface-variant md:col-span-2">
             {t('Opcional. La planificación la usa cuando su configuración evalúa el peso y el volumen.')}
           </p>
           {field('weight', t('Peso que carga'), t('kg'))}
@@ -322,8 +330,8 @@ function TypeFields({
           )}
         </FormSection>
 
-        <FormSection title={t('Restricciones de carga')}>
-          <p className="text-sm text-on-surface-variant sm:col-span-2">
+        <FormSection title={t('Restricciones de carga')} icon={RiListCheck2}>
+          <p className="text-sm text-on-surface-variant md:col-span-2">
             {t('Opcional. Límites de carga que respeta el vehículo; no pueden superar su capacidad.')}
           </p>
           {field('minWeight', t('Peso mínimo'), t('kg'))}
@@ -335,6 +343,6 @@ function TypeFields({
         <FormResult error={error} />
         <FormActions cancelHref={cancelHref} loading={loading} dirty={isDirty} />
       </Form>
-    </Card>
+    </FormCard>
   );
 }

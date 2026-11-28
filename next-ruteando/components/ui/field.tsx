@@ -1,20 +1,27 @@
-import { type RemixiconComponentType, RiArrowDownSLine } from '@remixicon/react';
-import { type ComponentProps, type ReactNode, useId } from 'react';
+import { type RemixiconComponentType, RiArrowDropDownFill } from '@remixicon/react';
+import { Children, type ComponentProps, isValidElement, type ReactNode, useId } from 'react';
 
 import { cn } from '@/lib/cn';
 
 import { Icon } from './icon';
 
 /**
- * Campos con contorno de la guía de diseño: 56px de alto, 12px de esquina y etiqueta flotante. El enfoque (2px y color primario) se
- * dibuja con un anillo de 1px sobre el borde de 1px para que el campo no cambie de tamaño. La etiqueta es obligatoria (accesibilidad);
+ * Campos con contorno de la guía de diseño (los `mat-form-field` outline de Angular): 56px de alto, 12px de esquina y etiqueta que, al
+ * subir, queda SOBRE el borde con una muesca (el fondo `--field-bg` de la superficie donde está el campo tapa la línea). El enfoque (2px y
+ * color primario) se dibuja con un anillo de 1px sobre el borde de 1px para que el campo no cambie de tamaño. La etiqueta es obligatoria (accesibilidad);
  * `hint` es la pista y `error` el mensaje de validación (enlazados con `aria-describedby`; el error marca el campo con `aria-invalid`).
  */
 const control =
-  'peer block w-full min-h-14 rounded-control border border-outline bg-transparent px-4 pt-5 pb-1 text-base text-on-surface outline-none placeholder:text-transparent focus:border-primary focus:ring-1 focus:ring-primary aria-invalid:border-error aria-invalid:focus:ring-error disabled:opacity-50';
+  'peer block w-full min-h-14 rounded-control border border-outline bg-transparent px-4 py-[15px] text-base text-on-surface outline-none placeholder:text-transparent hover:border-on-surface focus:border-primary focus:ring-1 focus:ring-primary aria-invalid:border-error aria-invalid:focus:ring-error disabled:opacity-50';
 
-const floating =
-  'pointer-events-none absolute left-4 top-1.5 origin-left text-xs text-on-surface-variant transition-all duration-120 ease-out peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-primary peer-aria-invalid:text-error';
+/** La etiqueta arriba, sobre el borde y con la muesca. */
+const raisedLabel = 'top-0 -translate-y-1/2 bg-(--field-bg) text-xs';
+
+const floating = cn(
+  'pointer-events-none absolute top-4 left-3 max-w-[calc(100%-1.5rem)] truncate px-1 text-base text-on-surface-variant transition-all duration-120 ease-out peer-focus:text-primary peer-aria-invalid:text-error',
+  'peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:bg-(--field-bg) peer-focus:text-xs',
+  'peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-1/2 peer-not-placeholder-shown:bg-(--field-bg) peer-not-placeholder-shown:text-xs'
+);
 
 interface FieldProps {
   label: string;
@@ -23,18 +30,27 @@ interface FieldProps {
   hint?: string;
   error?: string;
   className?: string;
+  /** Campo compacto de 44px (los filtros de un listado), como `--mat-form-field-container-height: 44px` de Angular. */
+  dense?: boolean;
 }
 
+/**
+ * La pista o el error bajo el campo. Dentro de un `FormSection` (`--field-reserve: 22px`) deja SIEMPRE su sitio, como la zona de
+ * subíndice fija de `mat-form-field`: el error no mueve lo de abajo y las filas respiran igual que en Angular.
+ */
 function Message({ id, hint, error }: { id: string; hint?: string; error?: string }) {
-  if (!error && !hint) return null;
   return (
-    <p
-      id={id}
-      role={error ? 'alert' : undefined}
-      className={cn('mt-1 px-4 text-xs', error ? 'text-error' : 'text-on-surface-variant')}
-    >
-      {error ?? hint}
-    </p>
+    <div className="min-h-(--field-reserve,0px)">
+      {error || hint ? (
+        <p
+          id={id}
+          role={error ? 'alert' : undefined}
+          className={cn('mt-1 mb-0 px-4 text-xs', error ? 'text-error' : 'text-on-surface-variant')}
+        >
+          {error ?? hint}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
@@ -63,7 +79,18 @@ export interface InputProps extends FieldProps, Omit<ComponentProps<'input'>, 'p
 /** Estos tipos siempre muestran algo (`--:--`, `dd/mm/aaaa`): la etiqueta va siempre arriba, como en un `select`. */
 const ALWAYS_FILLED = new Set(['date', 'time', 'datetime-local', 'month', 'week']);
 
-export function Input({ label, requiredMark, hint, error, className, id, leading, trailing, ...props }: InputProps) {
+export function Input({
+  label,
+  requiredMark,
+  hint,
+  error,
+  className,
+  dense,
+  id,
+  leading,
+  trailing,
+  ...props
+}: InputProps) {
   const generated = useId();
   const fieldId = id ?? generated;
   const raised = ALWAYS_FILLED.has(props.type ?? '');
@@ -76,17 +103,18 @@ export function Input({ label, requiredMark, hint, error, className, id, leading
         aria-invalid={error ? true : undefined}
         aria-required={requiredMark || undefined}
         aria-describedby={error || hint ? `${fieldId}-msg` : undefined}
-        className={cn(control, leading && 'pl-[52px]', trailing && 'pr-14')}
+        className={cn(control, dense && 'min-h-11 py-[9px]', leading && 'pl-[52px]', trailing && 'pr-14')}
         {...props}
       />
       <label
         htmlFor={fieldId}
         className={cn(
           floating,
-          leading && 'left-[52px]',
+          dense && 'top-2.5',
+          leading && 'left-12',
           // El asterisco es de adorno (CSS): `aria-required` ya dice que es obligatorio y no ensucia el nombre accesible
           requiredMark && "after:content-['*']",
-          raised && 'top-1.5 text-xs peer-placeholder-shown:top-1.5 peer-placeholder-shown:text-xs'
+          raised && cn(raisedLabel, 'bg-(--field-bg)')
         )}
       >
         {label}
@@ -101,6 +129,7 @@ export function Input({ label, requiredMark, hint, error, className, id, leading
 
 export function Textarea({
   label,
+  requiredMark,
   hint,
   error,
   className,
@@ -115,47 +144,71 @@ export function Textarea({
         id={fieldId}
         placeholder=" "
         aria-invalid={error ? true : undefined}
+        aria-required={requiredMark || undefined}
         aria-describedby={error || hint ? `${fieldId}-msg` : undefined}
         className={cn(control, 'min-h-28 resize-y')}
         {...props}
       />
-      <label htmlFor={fieldId} className={floating}>
+      <label htmlFor={fieldId} className={cn(floating, requiredMark && "after:content-['*']")}>
         {label}
       </label>
     </Shell>
   );
 }
 
+/** ¿Hay una opción con valor vacío y con texto («Igual que la salida»)? Entonces el campo ya muestra algo y la etiqueta sube. */
+function blankOptionHasText(children: ReactNode): boolean {
+  return Children.toArray(children).some(
+    (child) =>
+      isValidElement<{ value?: string; children?: ReactNode }>(child) &&
+      child.props.value === '' &&
+      Children.count(child.props.children) > 0 &&
+      child.props.children !== ''
+  );
+}
+
 /** Selector nativo (accesible y con el teclado y el móvil de serie). La etiqueta va siempre arriba: un `select` nunca está «vacío». */
 export function Select({
   label,
+  requiredMark,
   hint,
   error,
   className,
+  dense,
   id,
   children,
   ...props
 }: FieldProps & ComponentProps<'select'>) {
   const generated = useId();
   const fieldId = id ?? generated;
+  // Como `mat-select`: sin elegir, la etiqueta descansa dentro del campo; con un valor, sube a la muesca (o al enfocarlo)
+  const empty = (props.value ?? props.defaultValue ?? '') === '' && !blankOptionHasText(children);
   return (
     <Shell id={fieldId} hint={hint} error={error} className={className}>
       <select
         id={fieldId}
         aria-invalid={error ? true : undefined}
+        aria-required={requiredMark || undefined}
         aria-describedby={error || hint ? `${fieldId}-msg` : undefined}
-        className={cn(control, 'appearance-none pr-11')}
+        className={cn(control, dense && 'min-h-11 py-[9px]', 'appearance-none pr-11')}
         {...props}
       >
         {children}
       </select>
       <label
         htmlFor={fieldId}
-        className="pointer-events-none absolute top-1.5 left-4 text-xs text-on-surface-variant peer-focus:text-primary peer-aria-invalid:text-error"
+        className={cn(
+          'pointer-events-none absolute left-3 max-w-[calc(100%-3rem)] truncate px-1 text-on-surface-variant transition-all duration-120 ease-out peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:bg-(--field-bg) peer-focus:text-xs peer-focus:text-primary peer-aria-invalid:text-error',
+          requiredMark && "after:content-['*']",
+          empty ? cn('text-base', dense ? 'top-2.5' : 'top-4') : cn('bg-(--field-bg)', raisedLabel)
+        )}
       >
         {label}
       </label>
-      <Icon icon={RiArrowDownSLine} className="pointer-events-none absolute top-4 right-3 text-on-surface-variant" />
+      <Icon
+        icon={RiArrowDropDownFill}
+        className={cn('pointer-events-none absolute right-3 text-on-surface-variant', dense ? 'top-2.5' : 'top-4')}
+      />
     </Shell>
   );
 }

@@ -4,6 +4,7 @@ import { RiCloseLine, RiErrorWarningLine, RiFilterOffLine } from '@remixicon/rea
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Input, Select } from '@/components/ui/field';
 import { Icon } from '@/components/ui/icon';
 import { Switch } from '@/components/ui/switch';
 import { type AuditFilters, type AuditRange, hasActiveFilters, lastSevenDays, NO_PERSON } from '@/lib/audit/filters';
@@ -13,9 +14,6 @@ import { useT } from '@/lib/i18n/client';
 
 /** Valores de las listas desplegables que significan «sin filtro». */
 const ALL = 'todos';
-
-const select =
-  'h-11 w-full rounded-control border border-outline bg-transparent px-3 text-base text-on-surface focus-visible:outline-2 focus-visible:outline-primary';
 
 /**
  * Filtros del listado de auditoría que la tabla no tiene: rango de fechas, tipo de acción, persona y «solo con cambios». No guarda estado
@@ -90,23 +88,23 @@ export function AuditFiltersBar({
 
   const chip = (on: boolean) =>
     cn(
-      'inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border px-3 text-sm',
+      'inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm font-medium',
       on
-        ? 'border-transparent bg-secondary-container text-on-secondary-container'
-        : 'border-outline text-on-surface-variant hover:bg-on-surface/8'
+        ? 'border-transparent bg-primary-container text-on-primary-container'
+        : 'border-outline-variant bg-surface text-on-surface hover:bg-on-surface/8'
     );
 
   return (
     <section
       aria-labelledby="audit-filters-title"
-      className="mb-4 flex flex-col gap-3 rounded-card border border-outline-variant bg-surface-container-low p-4"
+      className="flex flex-col gap-3 rounded-card border border-outline-variant bg-surface-container-low px-5 py-4 text-on-surface shadow-card max-sm:px-4"
     >
       <h2 id="audit-filters-title" className="sr-only">
         {t('Filtros')}
       </h2>
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1">
-          <span id="audit-range-label" className="text-sm text-on-surface-variant">
+      <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <span id="audit-range-label" className="text-xs text-on-surface-variant">
             {t('¿Cuándo?')}
           </span>
           <div role="group" aria-labelledby="audit-range-label" className="flex flex-wrap gap-2">
@@ -123,65 +121,61 @@ export function AuditFiltersBar({
             ))}
           </div>
         </div>
-        <label className="flex min-w-44 flex-col gap-1 text-sm text-on-surface-variant">
-          {t('Tipo de acción')}
-          <select
-            className={select}
-            value={filters.kind ?? ALL}
-            onChange={(event) =>
-              onChange({ kind: event.target.value === ALL ? null : (event.target.value as AuditKind) })
-            }
+        <Select
+          dense
+          label={t('Tipo de acción')}
+          className="max-w-72 min-w-0 flex-[1_1_11rem] max-sm:max-w-none max-sm:basis-full"
+          value={filters.kind ?? ALL}
+          onChange={(event) =>
+            onChange({ kind: event.target.value === ALL ? null : (event.target.value as AuditKind) })
+          }
+        >
+          <option value={ALL}>{t('Todos los tipos')}</option>
+          {AUDIT_KINDS.map((kind) => (
+            <option key={kind} value={kind}>
+              {auditKindLabel(kind, t)}
+            </option>
+          ))}
+        </Select>
+        {showPeople ? (
+          <Select
+            dense
+            label={t('Persona')}
+            className="max-w-72 min-w-0 flex-[1_1_11rem] max-sm:max-w-none max-sm:basis-full"
+            value={filters.person ?? ALL}
+            onChange={(event) => onChange({ person: event.target.value === ALL ? null : event.target.value })}
           >
-            <option value={ALL}>{t('Todos los tipos')}</option>
-            {AUDIT_KINDS.map((kind) => (
-              <option key={kind} value={kind}>
-                {auditKindLabel(kind, t)}
+            <option value={ALL}>{t('Todas las personas')}</option>
+            {hasUnidentified ? <option value={NO_PERSON}>{t('Sin identificar')}</option> : null}
+            {people.map((person) => (
+              <option key={person} value={person}>
+                {person}
               </option>
             ))}
-          </select>
-        </label>
-        {showPeople ? (
-          <label className="flex min-w-44 flex-col gap-1 text-sm text-on-surface-variant">
-            {t('Persona')}
-            <select
-              className={select}
-              value={filters.person ?? ALL}
-              onChange={(event) => onChange({ person: event.target.value === ALL ? null : event.target.value })}
-            >
-              <option value={ALL}>{t('Todas las personas')}</option>
-              {hasUnidentified ? <option value={NO_PERSON}>{t('Sin identificar')}</option> : null}
-              {people.map((person) => (
-                <option key={person} value={person}>
-                  {person}
-                </option>
-              ))}
-            </select>
-          </label>
+          </Select>
         ) : null}
       </div>
 
       {showCustom ? (
         <div className="flex flex-wrap items-end gap-4">
-          <label className="flex flex-col gap-1 text-sm text-on-surface-variant">
-            {t('Desde')}
-            <input
-              type="date"
-              autoComplete="off"
-              className={select}
-              value={filters.from ?? ''}
-              onChange={(event) => setDay('from', event.target.value)}
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-sm text-on-surface-variant">
-            {t('Hasta')}
-            <input
-              type="date"
-              autoComplete="off"
-              className={select}
-              value={filters.to ?? ''}
-              onChange={(event) => setDay('to', event.target.value)}
-            />
-          </label>
+          <Input
+            dense
+            type="date"
+            label={t('Desde')}
+            autoComplete="off"
+            className="max-w-72 min-w-0 flex-[1_1_11rem] max-sm:max-w-none max-sm:basis-full"
+            value={filters.from ?? ''}
+            onChange={(event) => setDay('from', event.target.value)}
+          />
+          <Input
+            dense
+            type="date"
+            label={t('Hasta')}
+            autoComplete="off"
+            className="max-w-72 min-w-0 flex-[1_1_11rem] max-sm:max-w-none max-sm:basis-full"
+            value={filters.to ?? ''}
+            onChange={(event) => setDay('to', event.target.value)}
+          />
           {rangeError ? (
             <p role="alert" className="flex items-center gap-1 text-error">
               <Icon icon={RiErrorWarningLine} size={20} />
@@ -191,7 +185,7 @@ export function AuditFiltersBar({
         </div>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <Switch
           checked={filters.onlyChanges}
           onChange={(on) => onChange({ onlyChanges: on })}

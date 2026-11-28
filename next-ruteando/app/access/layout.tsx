@@ -23,7 +23,7 @@ export default async function AccessLayout({ children }: { children: ReactNode }
   const theme = await getTheme();
   return (
     <main className="relative grid min-h-dvh place-items-center bg-surface-container-low px-4 py-6 text-on-surface access:grid-cols-[minmax(0,1fr)_minmax(440px,34rem)] access:place-items-stretch access:bg-surface access:p-0 access:[grid-template-areas:'art_panel']">
-      <section className="relative z-10 w-full max-w-110 min-w-0 rounded-[28px] border border-outline-variant bg-surface/80 px-5 py-6 shadow-[0_8px_32px_rgb(0_0_0/0.14),0_2px_6px_rgb(0_0_0/0.08)] backdrop-blur-[14px] backdrop-saturate-[1.2] xs:px-7 xs:py-8 access:flex access:min-h-dvh access:max-w-none access:items-center access:justify-center access:rounded-none access:border-0 access:border-s access:bg-surface access:px-[clamp(32px,4vw,64px)] access:py-8 access:shadow-none access:backdrop-blur-none access:[grid-area:panel]">
+      <section className="relative z-10 w-full max-w-110 min-w-0 rounded-[28px] border border-outline-variant bg-surface/80 px-5 py-6 shadow-[0_8px_32px_rgb(0_0_0/0.14),0_2px_6px_rgb(0_0_0/0.08)] backdrop-blur-[14px] backdrop-saturate-[1.2] [--field-bg:var(--color-surface)] xs:px-7 xs:py-8 access:flex access:min-h-dvh access:max-w-none access:items-center access:justify-center access:rounded-none access:border-0 access:border-s access:bg-surface access:px-[clamp(32px,4vw,64px)] access:py-8 access:shadow-none access:backdrop-blur-none access:[grid-area:panel]">
         <div className="w-full access:max-w-100">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
             <LanguageToggle />

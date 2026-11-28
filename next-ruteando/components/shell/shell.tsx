@@ -13,6 +13,7 @@ import type { SessionUser } from '@/lib/session-token';
 import type { Theme } from '@/lib/theme';
 
 import { GlobalSearch } from './global-search';
+import { MfaReminder } from './mfa-reminder';
 import { MobileMenu } from './mobile-menu';
 import { NavRail } from './nav-rail';
 import { UserMenu } from './user-menu';
@@ -38,22 +39,29 @@ export function Shell({ user, theme, children }: { user: SessionUser; theme: The
       </a>
       <NavRail items={items} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-outline-variant bg-surface px-4 lg:h-17 lg:px-6">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-[clamp(8px,calc((100vw-280px)/10),12px)] border-b border-outline-variant bg-surface px-4 sm:h-17">
           <MobileMenu items={items} />
           <Link href="/" className="rounded-lg lg:hidden">
             <Brand size="compact" />
           </Link>
-          <h1 className="hidden font-brand text-xl font-bold lg:block">{title ? t(title) : ''}</h1>
-          <div className="hidden flex-1 lg:block">
+          <span className="hidden min-w-20 text-base font-semibold text-on-surface-variant lg:block">
+            {title ? t(title) : ''}
+          </span>
+          <div className="hidden min-w-0 flex-[0_1_380px] lg:block">
             <GlobalSearch items={items} actions={quickActionsFor(user.role)} />
           </div>
           <div className="ml-auto flex items-center gap-3">
-            <LanguageToggle className="hidden sm:inline-flex" />
+            <LanguageToggle variant="menu" />
             <ThemeToggle initial={theme} />
             <UserMenu user={user} />
           </div>
         </header>
-        <main id="contenido" tabIndex={-1} className="mx-auto w-full max-w-300 flex-1 p-4 outline-none sm:p-6">
+        <MfaReminder />
+        <main
+          id="contenido"
+          tabIndex={-1}
+          className="mx-auto flex w-full max-w-300 flex-1 flex-col gap-6 p-4 outline-none sm:p-6"
+        >
           {children}
         </main>
       </div>

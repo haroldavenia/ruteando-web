@@ -41,6 +41,21 @@ export function DropdownMenuItem({ className, ...props }: ComponentProps<typeof 
   );
 }
 
+/** Grupo de opciones excluyentes (`menuitemradio`): el elegido lleva `data-state="checked"`. */
+export const DropdownMenuRadioGroup = DropdownPrimitive.RadioGroup;
+
+export function DropdownMenuRadioItem({ className, ...props }: ComponentProps<typeof DropdownPrimitive.RadioItem>) {
+  return (
+    <DropdownPrimitive.RadioItem
+      className={cn(
+        'flex min-h-11 cursor-pointer items-center gap-3 rounded-lg px-3 text-sm outline-none select-none data-highlighted:bg-primary-container data-highlighted:text-on-primary-container',
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
 export function DropdownMenuLabel({ className, ...props }: ComponentProps<typeof DropdownPrimitive.Label>) {
   return (
     <DropdownPrimitive.Label

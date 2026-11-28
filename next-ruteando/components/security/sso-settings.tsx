@@ -70,8 +70,10 @@ export function SsoSettings() {
   const names = policy.providers.map((p) => (p.id === 'enterprise' ? t('SSO de empresa') : p.label)).join(', ');
   return (
     <Card aria-labelledby="sso-title" className="flex flex-col gap-3">
-      <CardTitle id="sso-title">{t('Inicio de sesión único')}</CardTitle>
-      <p className="text-on-surface-variant">
+      <CardTitle id="sso-title" compact>
+        {t('Inicio de sesión único')}
+      </CardTitle>
+      <p className="m-0 text-sm text-on-surface-variant">
         {t('Permite que las personas de tu empresa entren con su cuenta de un proveedor, en lugar de la contraseña.')}
       </p>
       <FormResult error={error} success={notice} />
@@ -79,7 +81,7 @@ export function SsoSettings() {
         <Icon icon={RiLinksLine} />
         <div className="flex min-w-56 flex-1 flex-col gap-0.5">
           <strong>{t('Permitir el inicio de sesión único')}</strong>
-          <span className="text-on-surface-variant">{names}</span>
+          <span className="m-0 text-sm text-on-surface-variant">{names}</span>
         </div>
         <Switch
           checked={policy.enabled}
@@ -163,7 +165,7 @@ function EnterpriseForm({
   return (
     <>
       <h3 className="mt-4 font-medium">{t('Proveedor de tu empresa (OpenID Connect)')}</h3>
-      <p className="text-on-surface-variant">
+      <p className="m-0 text-sm text-on-surface-variant">
         {t('Registra esta dirección de regreso en tu proveedor y copia aquí sus datos.')}
         <code className="mt-1 block break-all">{enterprise.redirectUri}</code>
       </p>

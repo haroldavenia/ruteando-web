@@ -1,12 +1,12 @@
 'use client';
 
+import { RiCarLine, RiRouteLine } from '@remixicon/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm } from 'react-hook-form';
 
-import { FormActions, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
-import { Card } from '@/components/ui/card';
+import { FormActions, FormCard, FormHead, FormSection, RecordGate } from '@/components/page/form-kit';
 import { Input } from '@/components/ui/field';
 import { Form } from '@/components/ui/form';
 import { FormResult } from '@/components/ui/form-result';
@@ -255,13 +255,14 @@ function Fields({
   }, []);
 
   return (
-    <Card>
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-        <FormSection title={t('Ruta')}>
+    <FormCard>
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <FormSection title={t('Ruta')} icon={RiRouteLine}>
           <FormSelect
             control={control}
             name="journeyId"
             label={t('Jornada')}
+            requiredMark
             error={errors.journeyId?.message}
             onChange={(event) => {
               setValue('routeIndex', '', dirty);
@@ -276,7 +277,7 @@ function Fields({
             ))}
           </FormSelect>
           {lookupsLoaded && lookups.journeys.length === 0 ? (
-            <p className="text-sm text-on-surface-variant sm:col-span-2">
+            <p className="text-sm text-on-surface-variant md:col-span-2">
               {t('Todavía no hay jornadas. Primero')}{' '}
               <Link href="/journeys/new" className="text-primary underline">
                 {t('planifica una')}
@@ -288,6 +289,7 @@ function Fields({
             control={control}
             name="routeIndex"
             label={t('Ruta')}
+            requiredMark
             error={errors.routeIndex?.message}
             hint={routesLoading ? t('Cargando las rutas…') : undefined}
             onChange={(event) => pickRoute(Number(event.target.value), routes)}
@@ -301,11 +303,12 @@ function Fields({
           </FormSelect>
         </FormSection>
 
-        <FormSection title={t('Vehículo y conductor')}>
+        <FormSection title={t('Vehículo y conductor')} icon={RiCarLine}>
           <FormSelect
             control={control}
             name="vehicleId"
             label={t('Vehículo')}
+            requiredMark
             error={errors.vehicleId?.message}
             onChange={(event) => pickVehicle(event.target.value)}
           >
@@ -316,7 +319,13 @@ function Fields({
               </option>
             ))}
           </FormSelect>
-          <FormSelect control={control} name="driverId" label={t('Conductor')} error={errors.driverId?.message}>
+          <FormSelect
+            control={control}
+            name="driverId"
+            label={t('Conductor')}
+            requiredMark
+            error={errors.driverId?.message}
+          >
             <option value="" />
             {lookups.drivers.map((driver) => (
               <option key={driver.id} value={driver.id}>
@@ -326,6 +335,7 @@ function Fields({
           </FormSelect>
           <Input
             label={t('Fecha del servicio')}
+            requiredMark
             type="date"
             error={errors.executionDate?.message}
             {...register('executionDate')}
@@ -335,6 +345,6 @@ function Fields({
         <FormResult error={error} />
         <FormActions cancelHref="/assigned-services" loading={loading} dirty={isDirty} />
       </Form>
-    </Card>
+    </FormCard>
   );
 }

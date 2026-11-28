@@ -1,6 +1,6 @@
 'use client';
 
-import { RiGlobalLine } from '@remixicon/react';
+import { RiArrowDownSLine, RiCheckLine, RiGlobalLine } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { type KeyboardEvent, useState, useTransition } from 'react';
 
@@ -9,6 +9,13 @@ import { useLang, useT } from '@/lib/i18n/client';
 import { type Language, LANGUAGES } from '@/lib/i18n/core';
 import { applyLanguage } from '@/lib/prefs-client';
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from './dropdown-menu';
 import { Icon } from './icon';
 
 // Nombres propios de cada idioma: no se traducen (quien lo busca tiene que reconocer el suyo aunque la pantalla esté en otro)
@@ -24,7 +31,14 @@ const NAMES: Record<Language, { short: string; name: string }> = {
  * servidor vuelve a pintar el layout con el otro diccionario y todo se actualiza sin recargar la página (en la app Angular era una
  * recarga completa).
  */
-export function LanguageToggle({ className }: { className?: string }) {
+export function LanguageToggle({
+  className,
+  variant = 'segmented',
+}: {
+  className?: string;
+  /** `segmented`: el globo y las tres opciones (acceso y páginas públicas). `menu`: una píldora con el idioma actual que abre la lista (barra de la aplicación). */
+  variant?: 'segmented' | 'menu';
+}) {
   const t = useT();
   const lang = useLang();
   const router = useRouter();
@@ -37,6 +51,46 @@ export function LanguageToggle({ className }: { className?: string }) {
     if (value === lang) return;
     applyLanguage(value);
     startTransition(() => router.refresh());
+  }
+
+  if (variant === 'menu') {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          title={t('Idioma')}
+          aria-label={t('Idioma')}
+          aria-busy={pending || undefined}
+          className={cn(
+            'inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full bg-surface-container pr-2 pl-3 text-[13px]/none font-semibold tracking-[0.06em] text-primary outline -outline-offset-1 outline-outline-variant',
+            className
+          )}
+        >
+          <Icon icon={RiGlobalLine} size={20} />
+          {NAMES[lang].short}
+          <Icon icon={RiArrowDownSLine} size={20} className="text-on-surface-variant max-xs:hidden" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-0">
+          <DropdownMenuRadioGroup value={lang} onValueChange={(value) => choose(value as Language)}>
+            {LANGUAGES.map((value) => (
+              <DropdownMenuRadioItem key={value} value={value} lang={value} className="min-w-47 gap-3.5">
+                <span
+                  className={cn(
+                    'min-w-8 rounded-lg py-1 text-center text-xs/4 font-semibold tracking-[0.06em]',
+                    value === lang
+                      ? 'bg-brand-gradient text-on-primary'
+                      : 'bg-primary-container text-on-primary-container'
+                  )}
+                >
+                  {NAMES[value].short}
+                </span>
+                <span className="flex-1 text-sm text-on-surface">{NAMES[value].name}</span>
+                <Icon icon={RiCheckLine} size={20} className={cn('text-primary', value !== lang && 'invisible')} />
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   }
 
   /** Flechas: pasan al idioma siguiente o anterior (patrón de los grupos de opciones). */
