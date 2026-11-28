@@ -35,7 +35,7 @@ interface FieldProps {
 }
 
 /**
- * La pista o el error bajo el campo. Dentro de un `FormSection` (`--field-reserve: 22px`) deja SIEMPRE su sitio, como la zona de
+ * La pista o el error bajo el campo. Dentro de un `FormSection` (`--field-reserve: 20px`) deja SIEMPRE su sitio, como la zona de
  * subíndice fija de `mat-form-field`: el error no mueve lo de abajo y las filas respiran igual que en Angular.
  */
 function Message({ id, hint, error }: { id: string; hint?: string; error?: string }) {

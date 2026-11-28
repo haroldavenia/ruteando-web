@@ -57,7 +57,7 @@ export function FormSection({
   className?: string;
 }) {
   return (
-    <section className="[--field-reserve:22px] [section+&]:mt-4 [section+&]:border-t [section+&]:border-outline-variant [section+&]:pt-6">
+    <section className="[--field-reserve:20px] [section+&]:mt-5 [section+&]:border-t [section+&]:border-outline-variant [section+&]:pt-6">
       <h2 className={cn('m-0 flex items-center gap-3 font-brand text-base font-bold', step ? 'mb-4' : 'mb-7')}>
         {icon || step ? (
           <span

@@ -240,7 +240,7 @@ function DriverFields({
           />
         </FormSection>
         {isNew ? (
-          <FormSection title={t('Acceso')} icon={RiLockLine}>
+          <FormSection title={t('Acceso')} icon={RiLockLine} className="md:grid-cols-1">
             <PasswordField
               label={t('Contraseña inicial')}
               requiredMark

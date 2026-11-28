@@ -83,9 +83,13 @@ export function VertexTable({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="@container overflow-x-hidden rounded-control border border-outline-variant">
+      <div
+        className={`@container overflow-x-hidden ${rows.length === 0 ? '' : 'rounded-control border border-outline-variant'}`}
+      >
         <table role="table" className="w-full border-collapse text-start">
-          <caption className="sr-only">{t('Vértices del polígono')}</caption>
+          <caption className={rows.length === 0 ? 'mt-2 pb-[10px] text-start text-sm font-medium' : 'sr-only'}>
+            {t('Vértices del polígono')}
+          </caption>
           <thead role="rowgroup" className="@max-[540px]:sr-only">
             <tr
               role="row"
@@ -168,7 +172,7 @@ export function VertexTable({
             })}
             {rows.length === 0 ? (
               <tr role="row">
-                <td role="cell" colSpan={4} className={`${cell} text-on-surface-variant`}>
+                <td role="cell" colSpan={4} className={`${cell} px-4 text-on-surface`}>
                   {t('Todavía no hay vértices. Añade al menos tres o dibuja el polígono en el mapa.')}
                 </td>
               </tr>
