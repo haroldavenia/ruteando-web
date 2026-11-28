@@ -17,7 +17,6 @@ import {
 } from '@remixicon/react';
 import { useMemo } from 'react';
 
-import { toneClasses } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
@@ -40,7 +39,7 @@ export interface PickedDays {
 const PANEL_KEY = 'ruteando-audit-panel';
 const PANEL = ['open', 'closed'] as const;
 
-const KIND_ICONS: Record<AuditKind, RemixiconComponentType> = {
+export const KIND_ICONS: Record<AuditKind, RemixiconComponentType> = {
   creacion: RiAddCircleLine,
   modificacion: RiEdit2Line,
   eliminacion: RiDeleteBinLine,
@@ -77,12 +76,19 @@ export function ActivityPanel({
   const summary = useMemo(() => summarize(rows), [rows]);
   const top = summary.topEntity;
   const kpi = (icon: RemixiconComponentType, value: string, label: string, text = false) => (
-    <li key={label} className="flex items-center gap-3 rounded-control bg-surface-container p-3">
-      <span className="grid size-10 place-items-center rounded-full bg-secondary-container text-on-secondary-container">
-        <Icon icon={icon} />
+    <li key={label} className="flex items-center gap-4">
+      <span className="grid size-12 flex-none place-items-center rounded-[14px] bg-primary-container text-on-primary-container">
+        <Icon icon={icon} size={24} />
       </span>
       <span className="flex min-w-0 flex-col">
-        <span className={cn('font-brand font-bold', text ? 'truncate text-base' : 'text-2xl')}>{value}</span>
+        <span
+          className={cn(
+            'font-brand font-extrabold',
+            text ? 'text-[22px]/7 font-bold wrap-anywhere' : 'text-[32px]/[1.1]'
+          )}
+        >
+          {value}
+        </span>
         <span className="text-sm text-on-surface-variant">{label}</span>
       </span>
     </li>
@@ -90,8 +96,8 @@ export function ActivityPanel({
 
   return (
     <Card aria-labelledby="audit-panel-title">
-      <div className="flex items-center justify-between gap-2">
-        <h2 id="audit-panel-title" className="font-brand text-lg font-bold">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <h2 id="audit-panel-title" className="m-0 font-brand text-[22px]/7 font-bold">
           {t('Resumen de la actividad')}
         </h2>
         <Button
@@ -104,8 +110,8 @@ export function ActivityPanel({
           {open ? t('Ocultar resumen') : t('Mostrar resumen')}
         </Button>
       </div>
-      <div id="audit-panel-body" hidden={!open} className="mt-3 flex flex-col gap-4">
-        <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0 lg:grid-cols-4">
+      <div id="audit-panel-body" hidden={!open}>
+        <ul className="m-0 mt-2 grid list-none grid-cols-[repeat(auto-fit,minmax(min(11rem,100%),1fr))] content-start gap-4 p-0">
           {kpi(RiHistoryLine, String(summary.total), summary.total === 1 ? t('Evento') : t('Eventos'))}
           {showPeople
             ? kpi(
@@ -123,11 +129,11 @@ export function ActivityPanel({
           {kpi(RiTimeLine, summary.last ? format.relativeTime(summary.last) : '—', t('Último evento'), true)}
         </ul>
         {rows.length === 0 ? (
-          <p role="status" className="text-on-surface-variant">
+          <p role="status" className="mt-4 text-sm text-on-surface-variant">
             {t('No hay eventos para resumir con estos filtros.')}
           </p>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <div className="mt-5 grid gap-x-8 gap-y-6 min-[900px]:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
             <ActivityBars rows={rows} filters={filters} onPicked={onDayPicked} />
             <ActivityShares rows={rows} kind={filters.kind} onPicked={onKindPicked} />
           </div>
@@ -204,7 +210,7 @@ function ActivityBars({
         role="group"
         aria-labelledby="audit-bars-title"
         aria-describedby="audit-bars-summary"
-        className="flex h-44 items-end gap-1"
+        className="flex h-49 items-stretch gap-0.5 pt-5"
       >
         {buckets.map((bucket, index) => (
           <button
@@ -214,26 +220,28 @@ function ActivityBars({
             aria-label={title(bucket)}
             title={title(bucket)}
             onClick={() => onPicked({ from: bucket.from, to: bucket.to })}
-            className="group flex h-full min-w-0 flex-1 cursor-pointer flex-col items-stretch gap-1 rounded-sm"
+            className="flex min-w-0 flex-[1_1_0] cursor-pointer flex-col rounded-lg px-px text-on-surface-variant hover:bg-surface-container aria-pressed:bg-primary-container"
           >
-            <span className="flex flex-1 items-end">
+            <span className="flex flex-1 items-end border-b border-outline">
               <span
                 className={cn(
-                  'relative block w-full rounded-t-sm bg-primary group-hover:brightness-110',
-                  bucket.partial && 'opacity-70',
-                  isPicked(bucket) && 'bg-tertiary',
-                  bucket.count === 0 && 'bg-outline-variant'
+                  'relative block w-full rounded-t-md bg-primary',
+                  bucket.partial &&
+                    'bg-[repeating-linear-gradient(135deg,transparent_0_4px,color-mix(in_srgb,var(--color-on-primary)_45%,transparent)_4px_8px)]'
                 )}
-                style={{ height: bucket.count === 0 ? '2px' : `${height(bucket)}%` }}
+                style={{ height: `${height(bucket)}%` }}
               >
                 {showValues && bucket.count > 0 ? (
-                  <span aria-hidden="true" className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs">
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 bottom-full pb-0.5 text-center text-[11px] font-bold text-on-surface"
+                  >
                     {bucket.count}
                   </span>
                 ) : null}
               </span>
             </span>
-            <span aria-hidden="true" className="h-4 truncate text-center text-[11px] text-on-surface-variant">
+            <span aria-hidden="true" className="flex h-5.5 justify-center pt-1 text-[11px] whitespace-nowrap">
               {showTick(index) ? audit.dayKey(bucket.from) : ''}
             </span>
           </button>
@@ -243,7 +251,9 @@ function ActivityBars({
         {summary}
       </p>
       <details>
-        <summary className="cursor-pointer text-sm">{t('Ver los datos en una tabla')}</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-medium text-primary">
+          {t('Ver los datos en una tabla')}
+        </summary>
         <table className="mt-2 w-full border-collapse text-start text-sm">
           <caption className="sr-only">{weekly ? t('Eventos por semana') : t('Eventos por día')}</caption>
           <thead>
@@ -308,15 +318,20 @@ function ActivityShares({
     .join('; ');
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex min-w-0 flex-col gap-3">
       <b id="audit-shares-title">{t('Por tipo de acción')}</b>
       <div
         role="img"
         aria-label={t('Por tipo de acción. ') + summary}
-        className="flex h-3 overflow-hidden rounded-full bg-surface-container-highest"
+        className="flex h-4 gap-0.5 overflow-hidden rounded-full bg-surface-container-highest"
       >
         {shares.map((share) => (
-          <span key={share.kind} className={toneClasses(auditKindTone(share.kind))} style={{ flexGrow: share.count }} />
+          <span
+            key={share.kind}
+            data-tone={auditKindTone(share.kind)}
+            className="min-w-1.5 basis-0 bg-(--tone)"
+            style={{ flexGrow: share.count }}
+          />
         ))}
       </div>
       <ul aria-labelledby="audit-shares-title" className="m-0 flex list-none flex-col gap-1 p-0">
@@ -326,11 +341,10 @@ function ActivityShares({
               type="button"
               aria-pressed={kind === share.kind}
               onClick={() => onPicked(share.kind)}
-              className="flex min-h-11 w-full cursor-pointer items-center gap-2 rounded-control px-2 text-start hover:bg-on-surface/8 aria-pressed:bg-secondary-container"
+              data-tone={auditKindTone(share.kind)}
+              className="grid min-h-11 w-full cursor-pointer grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 rounded-xl px-3 text-start text-sm hover:bg-surface-container aria-pressed:bg-primary-container aria-pressed:text-on-primary-container"
             >
-              <span
-                className={cn('grid size-7 place-items-center rounded-full', toneClasses(auditKindTone(share.kind)))}
-              >
+              <span className="grid size-7 place-items-center rounded-full bg-[color-mix(in_srgb,var(--tone)_18%,transparent)] text-(--tone)">
                 <Icon icon={KIND_ICONS[share.kind]} size={16} />
               </span>
               <span className="flex-1">{auditKindLabel(share.kind, t)}</span>

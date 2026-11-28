@@ -7,6 +7,8 @@ import {
   RiInformationLine,
   RiLockLine,
   RiRefreshLine,
+  RiShapesLine,
+  RiUserLine,
 } from '@remixicon/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -402,27 +404,35 @@ export function AuditScreen({ role }: { role: UserRole }) {
             {t('Exportar selección')}
           </Button>
         )}
+        cardLayout="list"
         card={({ row }) => (
           <button
             type="button"
             aria-label={eyeLabel(row)}
             onClick={() => openDetail(row)}
-            className="flex w-full cursor-pointer flex-col gap-2 rounded-card border border-outline-variant bg-surface p-4 text-start hover:bg-on-surface/4"
+            className="flex w-full cursor-pointer flex-col gap-2 rounded-2xl border border-outline-variant bg-surface px-4 py-3.5 text-start hover:border-outline hover:bg-surface-container-low"
           >
             <span className="flex items-center justify-between gap-2">
               <StatusBadge tone={auditKindTone(auditKind(row.action))}>{auditActionLabel(row.action, t)}</StatusBadge>
               <time
                 dateTime={row.createdAt}
                 title={audit.longDateTime(row.createdAt)}
-                className="text-sm text-on-surface-variant"
+                className="text-xs text-on-surface-variant"
               >
                 {format.relativeTime(row.createdAt)}
               </time>
             </span>
             <span className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-on-surface-variant">
-              <span>{actorText(row)}</span>
-              <span>{auditEntityLabel(row.entityType, t)}</span>
+              <span className="inline-flex min-w-0 items-center gap-1.5 wrap-anywhere">
+                <Icon icon={RiUserLine} size={16} className="flex-none" />
+                {actorText(row)}
+              </span>
+              <span className="inline-flex min-w-0 items-center gap-1.5 wrap-anywhere">
+                <Icon icon={RiShapesLine} size={16} className="flex-none" />
+                {auditEntityLabel(row.entityType, t)}
+              </span>
               {technical === 'on' ? <code>{row.action}</code> : null}
+              <Icon icon={RiEyeLine} size={16} className="ml-auto flex-none text-primary" />
             </span>
           </button>
         )}

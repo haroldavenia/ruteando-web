@@ -6,6 +6,7 @@ import {
   RiCodeLine,
   RiErrorWarningLine,
   RiExternalLinkLine,
+  RiGlobalLine,
   RiHistoryLine,
   RiLinkM,
   RiSearchEyeLine,
@@ -15,9 +16,10 @@ import {
 import Link from 'next/link';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
+import { KIND_ICONS } from '@/components/audit/activity-panel';
 import { StatusBadge, toneClasses } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { Icon } from '@/components/ui/icon';
 import { IconButton } from '@/components/ui/icon-button';
 import { useNotify } from '@/components/ui/toast';
@@ -46,6 +48,9 @@ import { useLang, useT } from '@/lib/i18n/client';
 import type { UserRole } from '@/lib/session-token';
 import { useStoredPref } from '@/lib/stored-pref';
 
+const TILE = 'flex flex-col rounded-2xl border border-outline-variant bg-surface-container-low p-4';
+const TILE_ICON =
+  'grid size-10 flex-none place-items-center rounded-xl bg-primary-container/60 p-2 text-on-primary-container';
 const TECH_KEY = 'ruteando-audit-tech';
 const TECH = ['on', 'off'] as const;
 /** Cuántos eventos de la misma entidad se ofrecen en la línea de tiempo. */
@@ -139,8 +144,13 @@ export function AuditDetail({
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         title={title}
-        description={log ? `${auditKindLabel(kind, t)} · ${format.relativeTime(log.createdAt)}` : undefined}
+        description={log ? format.relativeTime(log.createdAt) : undefined}
         className="max-w-3xl"
+        banner={
+          log
+            ? { icon: <Icon icon={KIND_ICONS[kind]} size={28} />, kicker: auditKindLabel(kind, t).toUpperCase(), tone }
+            : undefined
+        }
       >
         {!log && !problem ? (
           <div aria-busy="true">
@@ -156,16 +166,21 @@ export function AuditDetail({
         {log && actor ? (
           <div className="flex flex-col gap-5">
             {summary !== title ? (
-              <blockquote className={cn('rounded-control px-4 py-3', toneClasses(tone))}>{summary}</blockquote>
+              <blockquote
+                data-tone={tone}
+                className="m-0 rounded-2xl border-l-4 border-(--tone) bg-[color-mix(in_srgb,var(--tone)_10%,var(--color-surface))] p-4 font-medium"
+              >
+                {summary}
+              </blockquote>
             ) : null}
 
-            <dl className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <dt className="text-sm text-on-surface-variant">{t('Quién')}</dt>
-                <dd className="flex items-center gap-3">
+            <dl className="m-0 grid gap-3 sm:grid-cols-3">
+              <div className={TILE}>
+                <dt className="text-xs text-on-surface-variant">{t('Quién')}</dt>
+                <dd className="m-0 mt-2 flex items-center gap-3">
                   <span
                     aria-hidden="true"
-                    className="grid size-10 place-items-center rounded-full bg-primary-container text-on-primary-container"
+                    className="grid size-10 flex-none place-items-center rounded-full bg-primary-container text-on-primary-container"
                   >
                     {actorInitials(actor.person) || <Icon icon={RiUserLine} />}
                   </span>
@@ -182,10 +197,10 @@ export function AuditDetail({
                   </span>
                 </dd>
               </div>
-              <div>
-                <dt className="text-sm text-on-surface-variant">{t('Cuándo')}</dt>
-                <dd className="flex items-center gap-3">
-                  <Icon icon={RiCalendarEventLine} />
+              <div className={TILE}>
+                <dt className="text-xs text-on-surface-variant">{t('Cuándo')}</dt>
+                <dd className="m-0 mt-2 flex items-center gap-3">
+                  <Icon icon={RiCalendarEventLine} className={TILE_ICON} size={24} />
                   <span className="flex flex-col">
                     <b>{format.relativeTime(log.createdAt)}</b>
                     <small className="text-on-surface-variant">
@@ -194,10 +209,10 @@ export function AuditDetail({
                   </span>
                 </dd>
               </div>
-              <div>
-                <dt className="text-sm text-on-surface-variant">{t('Sobre')}</dt>
-                <dd className="flex items-center gap-3">
-                  <Icon icon={RiShapesLine} />
+              <div className={TILE}>
+                <dt className="text-xs text-on-surface-variant">{t('Sobre')}</dt>
+                <dd className="m-0 mt-2 flex items-center gap-3">
+                  <Icon icon={RiShapesLine} className={TILE_ICON} size={24} />
                   <span className="flex flex-col">
                     <b>{auditEntityLabel(log.entityType, t)}</b>
                     <small>
@@ -207,11 +222,12 @@ export function AuditDetail({
                 </dd>
               </div>
               {log.ipAddress ? (
-                <div>
-                  <dt className="text-sm text-on-surface-variant">{t('Desde la IP')}</dt>
-                  <dd>
+                <div className={TILE}>
+                  <dt className="text-xs text-on-surface-variant">{t('Desde la IP')}</dt>
+                  <dd className="m-0 mt-2 flex items-center gap-3">
+                    <Icon icon={RiGlobalLine} className={TILE_ICON} size={24} />
                     <b>
-                      <code>{log.ipAddress}</code>
+                      <code className="text-xs">{log.ipAddress}</code>
                     </b>
                   </dd>
                 </div>
@@ -219,7 +235,7 @@ export function AuditDetail({
             </dl>
 
             <section aria-labelledby="audit-diff-title">
-              <h3 id="audit-diff-title" className="mb-2 font-medium">
+              <h3 id="audit-diff-title" className="m-0 mb-3 text-base font-bold">
                 {t('Qué cambió')}
               </h3>
               {rows.length === 0 ? (
@@ -236,8 +252,8 @@ export function AuditDetail({
                       <li
                         key={row.field}
                         className={cn(
-                          'rounded-control border p-3',
-                          row.changed ? 'border-primary' : 'border-outline-variant'
+                          'rounded-2xl border p-3',
+                          row.changed ? 'border-on-info-container/30 bg-info-container/30' : 'border-outline-variant'
                         )}
                       >
                         <span className="flex flex-wrap items-center gap-2">
@@ -248,7 +264,13 @@ export function AuditDetail({
                           ) : null}
                         </span>
                         <span className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
-                          <span className={cn('flex flex-col', row.beforeEmpty && 'text-on-surface-variant italic')}>
+                          <span
+                            className={cn(
+                              'flex flex-col rounded-xl px-3 py-2',
+                              row.changed && 'bg-error-container/60',
+                              row.beforeEmpty && 'text-on-surface-variant italic'
+                            )}
+                          >
                             <small>{t('Antes')}</small>
                             <span className={row.changed && !row.beforeEmpty ? 'line-through' : undefined}>
                               {row.before}
@@ -257,7 +279,13 @@ export function AuditDetail({
                           <span aria-hidden="true" className="text-on-surface-variant">
                             {row.changed ? '→' : '='}
                           </span>
-                          <span className={cn('flex flex-col', row.afterEmpty && 'text-on-surface-variant italic')}>
+                          <span
+                            className={cn(
+                              'flex flex-col rounded-xl px-3 py-2',
+                              row.changed && 'bg-success-container/80',
+                              row.afterEmpty && 'text-on-surface-variant italic'
+                            )}
+                          >
                             <small>{t('Después')}</small>
                             <span className={row.changed && !row.afterEmpty ? 'font-medium' : undefined}>
                               {row.after}
@@ -315,7 +343,7 @@ export function AuditDetail({
               </section>
             ) : null}
 
-            <details open={technical === 'on'} className="rounded-control border border-outline-variant p-3">
+            <details open={technical === 'on'} className="rounded-2xl border border-outline-variant px-4 py-3">
               <summary className="flex cursor-pointer items-center gap-2 font-medium">
                 <Icon icon={RiCodeLine} size={20} />
                 {t('Datos técnicos')}
@@ -370,7 +398,7 @@ export function AuditDetail({
               </dl>
             </details>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center justify-end gap-2">
               {target ? (
                 <Link href={target.href} onClick={onClose} className={buttonVariants({ variant: 'primary' })}>
                   <Icon icon={RiExternalLinkLine} size={20} />
@@ -387,6 +415,9 @@ export function AuditDetail({
                 <Icon icon={RiLinkM} size={20} />
                 {t('Copiar enlace')}
               </Button>
+              <DialogClose asChild>
+                <Button variant="text">{t('Cerrar')}</Button>
+              </DialogClose>
             </div>
           </div>
         ) : null}

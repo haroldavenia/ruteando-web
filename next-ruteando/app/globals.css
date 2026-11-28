@@ -403,3 +403,20 @@ html[data-theme='dark'] .app-tiles {
     }
   }
 }
+
+/* Color de un tipo de acción de auditoría (reparto por tipo): el glifo y la barra lo toman de `--tone` */
+[data-tone] {
+  --tone: var(--color-outline);
+}
+[data-tone='success'] {
+  --tone: var(--color-on-success-container);
+}
+[data-tone='info'] {
+  --tone: var(--color-on-info-container);
+}
+[data-tone='warning'] {
+  --tone: var(--color-on-warning-container);
+}
+[data-tone='danger'] {
+  --tone: var(--color-error);
+}

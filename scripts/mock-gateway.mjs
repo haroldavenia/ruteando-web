@@ -42,6 +42,29 @@ function fail(status, error, message, path) {
 }
 const notFound = (what, id, path) => fail(404, 'NOT_FOUND', `${what} not found: ${id}`, path);
 
+/** Eventos de auditoría ficticios (el simulado no los genera: son fijos y se reparten en los últimos días). */
+const AUDIT_EVENTS = [
+  ['package.create', 'package', 'Se creó el paquete «Paquete 8»', 'admin@example.invalid', 'tenant_admin', null, { name: 'Paquete 8', status: 'pending' }, 2],
+  ['package.status.change', 'package', 'Cambió el estado del paquete «Paquete 7»', 'agente@example.invalid', 'agent', { status: 'pending' }, { status: 'cancelled' }, 20],
+  ['journey.create', 'journey', 'Se planificó la jornada «Jornada de hoy»', 'admin@example.invalid', 'tenant_admin', null, { name: 'Jornada de hoy', services: 4 }, 45],
+  ['resource.update', 'resource', 'Se editó el vehículo «Vehículo 1»', 'admin@example.invalid', 'tenant_admin', { licensePlate: 'ABC-12' }, { licensePlate: 'ABC-123' }, 180],
+  ['resource.driver.assign', 'resource', 'Se asignó un conductor al vehículo «Vehículo 2»', 'agente@example.invalid', 'agent', null, { driver: 'Carmen Conductora' }, 600],
+  ['place.update', 'place', 'Se editó el lugar «Bodega Norte»', 'admin@example.invalid', 'tenant_admin', { phoneNumber: null }, { phoneNumber: '3001234567' }, 1500],
+  ['zone.delete', 'zone', 'Se eliminó la zona «Zona Norte»', 'admin@example.invalid', 'tenant_admin', { name: 'Zona Norte', code: 'NORTE' }, null, 3000],
+  ['package.create', 'package', 'Se creó el paquete «Paquete 1»', 'agente@example.invalid', 'agent', null, { name: 'Paquete 1', status: 'pending' }, 4300],
+].map(([action, entityType, description, actorEmail, actorRole, before, after, minutesAgo], index) => ({
+  id: `6adf0000000000000000${String(100 + index)}`,
+  action,
+  entityType,
+  entityId: `6adf0000000000000000${String(200 + index)}`,
+  description,
+  actorEmail,
+  actorRole,
+  changes: before || after ? { before, after } : null,
+  createdAt: new Date(Date.now() - minutesAgo * 60000).toISOString(),
+  ipAddress: '127.0.0.1',
+}));
+
 function paged(items, query) {
   const size = Math.max(1, Number(query.get('size') ?? 20));
   const page = Math.max(0, Number(query.get('page') ?? 0));
@@ -584,6 +607,19 @@ function handle(method, path, query, body, headers) {
     pkg.status = m[2];
     pkg.updatedAt = now();
     return { status: 200, body: clone(pkg) };
+  }
+
+  // --- auditoría (datos ficticios: eventos de los últimos días, del más reciente al más antiguo)
+  if (path === '/audit-logs' || path === '/audit-logs/me' || path === '/audit-logs/admin') {
+    if (method !== 'GET') return { status: 405, body: { message: 'Método no permitido' } };
+    const mine = path === '/audit-logs/me';
+    const items = clone(AUDIT_EVENTS).filter((e) => !mine || e.actorEmail === 'admin@example.invalid');
+    return { status: 200, body: paged(items, query) };
+  }
+  m = path.match(/^\/audit-logs\/([^/]+)$/);
+  if (m && method === 'GET') {
+    const event = AUDIT_EVENTS.find((e) => e.id === m[1]);
+    return event ? { status: 200, body: clone(event) } : { status: 404, body: { message: 'Evento no encontrado' } };
   }
 
   // --- jornadas

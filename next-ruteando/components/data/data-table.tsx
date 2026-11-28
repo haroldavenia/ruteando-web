@@ -68,6 +68,8 @@ export interface DataTableProps<T> {
   selectionActions?: (rows: readonly T[], clear: () => void) => ReactNode;
   /** Si se da, hay vista de tarjetas (la preferida por defecto) además de la tabla. */
   card?: (context: CardContext<T>) => ReactNode;
+  /** Cómo se reparten las tarjetas: en rejilla (por defecto) o una por fila (los eventos de auditoría). */
+  cardLayout?: 'grid' | 'list';
   /** Contenido que se muestra solo cuando la lista está vacía («Crear el primero»). */
   emptyAction?: ReactNode;
   /** Búsqueda y estado elegido controlados desde fuera (p. ej. guardados en la dirección). Sin ellos son estado propio. */
@@ -305,7 +307,14 @@ export function DataTable<T>(props: DataTableProps<T>) {
       {list.status === 'ready' ? (
         <>
           {view === 'cards' && card ? (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(17rem,100%),1fr))] gap-4 px-5 pt-2 pb-5">
+            <div
+              className={cn(
+                'grid gap-4 px-5 pt-2 pb-5',
+                props.cardLayout === 'list'
+                  ? 'grid-cols-1'
+                  : 'grid-cols-[repeat(auto-fill,minmax(min(17rem,100%),1fr))]'
+              )}
+            >
               {paged.rows.map((row) => (
                 <div key={rowKey(row)}>
                   {card({

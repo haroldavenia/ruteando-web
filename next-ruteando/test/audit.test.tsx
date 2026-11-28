@@ -401,7 +401,7 @@ describe('pantalla', () => {
     const dialog = await screen.findByRole('dialog');
     expect(await within(dialog).findByText('Zona actualizada')).toBeInTheDocument();
     expect(gateway.sent('GET', '/middleware/data/audit-logs/otro')).toHaveLength(1);
-    await userEvent.click(within(dialog).getByRole('button', { name: 'Cerrar' }));
+    await userEvent.click(within(dialog).getAllByRole('button', { name: 'Cerrar' }).at(-1)!);
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect(window.location.search).toBe('');
   });
