@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = Number(process.env.MOCK_GATEWAY_PORT ?? 4010);
-// Sin MOCK_GATEWAY_HOST escucha en todas las interfaces (Docker lo necesita); dentro del servidor (gateway-mode.js) se acota a loopback.
+// Sin MOCK_GATEWAY_HOST escucha en todas las interfaces (Docker lo necesita); con scripts/start.mjs (GATEWAY_MODE=mock) se acota a loopback.
 const HOST = process.env.MOCK_GATEWAY_HOST || undefined;
 const LATENCY = Number(process.env.MOCK_GATEWAY_LATENCY_MS ?? 120);
 // Contraseña de los tres usuarios: `demo1234` salvo que se defina MOCK_GATEWAY_PASSWORD (obligatorio cambiarla si el simulado
@@ -34,7 +34,7 @@ const TENANT_ID = newId();
 
 /** Los dominios maestros salen del fixture (incluye `returned` inactivo, como el gateway real). */
 const masterDomains = JSON.parse(
-  readFileSync(join(root, 'ng-ruteando/src/testing/fixtures/gateway/get__master-domains.json'), 'utf8')
+  readFileSync(join(root, 'next-ruteando/test/fixtures/gateway/get__master-domains.json'), 'utf8')
 ).response.body;
 
 function fail(status, error, message, path) {
@@ -44,14 +44,86 @@ const notFound = (what, id, path) => fail(404, 'NOT_FOUND', `${what} not found: 
 
 /** Eventos de auditoría ficticios (el simulado no los genera: son fijos y se reparten en los últimos días). */
 const AUDIT_EVENTS = [
-  ['package.create', 'package', 'Se creó el paquete «Paquete 8»', 'admin@example.invalid', 'tenant_admin', null, { name: 'Paquete 8', status: 'pending' }, 2],
-  ['package.status.change', 'package', 'Cambió el estado del paquete «Paquete 7»', 'agente@example.invalid', 'agent', { status: 'pending' }, { status: 'cancelled' }, 20],
-  ['journey.create', 'journey', 'Se planificó la jornada «Jornada de hoy»', 'admin@example.invalid', 'tenant_admin', null, { name: 'Jornada de hoy', services: 4 }, 45],
-  ['resource.update', 'resource', 'Se editó el vehículo «Vehículo 1»', 'admin@example.invalid', 'tenant_admin', { licensePlate: 'ABC-12' }, { licensePlate: 'ABC-123' }, 180],
-  ['resource.driver.assign', 'resource', 'Se asignó un conductor al vehículo «Vehículo 2»', 'agente@example.invalid', 'agent', null, { driver: 'Carmen Conductora' }, 600],
-  ['place.update', 'place', 'Se editó el lugar «Bodega Norte»', 'admin@example.invalid', 'tenant_admin', { phoneNumber: null }, { phoneNumber: '3001234567' }, 1500],
-  ['zone.delete', 'zone', 'Se eliminó la zona «Zona Norte»', 'admin@example.invalid', 'tenant_admin', { name: 'Zona Norte', code: 'NORTE' }, null, 3000],
-  ['package.create', 'package', 'Se creó el paquete «Paquete 1»', 'agente@example.invalid', 'agent', null, { name: 'Paquete 1', status: 'pending' }, 4300],
+  [
+    'package.create',
+    'package',
+    'Se creó el paquete «Paquete 8»',
+    'admin@example.invalid',
+    'tenant_admin',
+    null,
+    { name: 'Paquete 8', status: 'pending' },
+    2,
+  ],
+  [
+    'package.status.change',
+    'package',
+    'Cambió el estado del paquete «Paquete 7»',
+    'agente@example.invalid',
+    'agent',
+    { status: 'pending' },
+    { status: 'cancelled' },
+    20,
+  ],
+  [
+    'journey.create',
+    'journey',
+    'Se planificó la jornada «Jornada de hoy»',
+    'admin@example.invalid',
+    'tenant_admin',
+    null,
+    { name: 'Jornada de hoy', services: 4 },
+    45,
+  ],
+  [
+    'resource.update',
+    'resource',
+    'Se editó el vehículo «Vehículo 1»',
+    'admin@example.invalid',
+    'tenant_admin',
+    { licensePlate: 'ABC-12' },
+    { licensePlate: 'ABC-123' },
+    180,
+  ],
+  [
+    'resource.driver.assign',
+    'resource',
+    'Se asignó un conductor al vehículo «Vehículo 2»',
+    'agente@example.invalid',
+    'agent',
+    null,
+    { driver: 'Carmen Conductora' },
+    600,
+  ],
+  [
+    'place.update',
+    'place',
+    'Se editó el lugar «Bodega Norte»',
+    'admin@example.invalid',
+    'tenant_admin',
+    { phoneNumber: null },
+    { phoneNumber: '3001234567' },
+    1500,
+  ],
+  [
+    'zone.delete',
+    'zone',
+    'Se eliminó la zona «Zona Norte»',
+    'admin@example.invalid',
+    'tenant_admin',
+    { name: 'Zona Norte', code: 'NORTE' },
+    null,
+    3000,
+  ],
+  [
+    'package.create',
+    'package',
+    'Se creó el paquete «Paquete 1»',
+    'agente@example.invalid',
+    'agent',
+    null,
+    { name: 'Paquete 1', status: 'pending' },
+    4300,
+  ],
 ].map(([action, entityType, description, actorEmail, actorRole, before, after, minutesAgo], index) => ({
   id: `6adf0000000000000000${String(100 + index)}`,
   action,
@@ -710,7 +782,7 @@ function handle(method, path, query, body, headers) {
     return { status: 200, body: enrich.resources(resource) };
   }
 
-  // --- geocodificación (el contrato real no está documentado: ver geocoding-contract.ts en ng-ruteando)
+  // --- geocodificación (el contrato real no está documentado: ver next-ruteando/lib/geocoding-contract.ts)
   if (path === '/geocoding' && method === 'POST') {
     const address = String(body?.address ?? '').trim();
     if (!address) return fail(400, 'BAD_REQUEST', 'address is required', path);
@@ -862,5 +934,5 @@ server.listen(PORT, HOST, () => {
   );
 });
 
-// Lo usa server/gateway-mode.js para arrancarlo dentro del mismo proceso (GATEWAY_MODE=mock) y las pruebas para cerrarlo
+// Lo usa scripts/start.mjs para arrancarlo dentro del mismo proceso (GATEWAY_MODE=mock)
 export { server };

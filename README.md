@@ -17,7 +17,7 @@ pnpm run build
 pnpm start                               # http://localhost:3000
 ```
 
-Las variables (todas comentadas) están en `next-ruteando/.env.example`. En producción `SESSION_SECRET` (32 caracteres o más) es obligatoria y el servidor no arranca sin ella. La imagen de producción es `next-ruteando/Dockerfile` (`docker build -f next-ruteando/Dockerfile .` desde la raíz).
+Las variables (todas comentadas) están en `next-ruteando/.env.example`; en local se leen de `next-ruteando/.env.local` (o `.env`) y las del entorno tienen prioridad. **Al desplegar se definen en la plataforma, no en un archivo: la lista completa, qué es obligatorio y los pasos para Render y Docker están en [Despliegue](#despliegue).** `pnpm start` es el lanzador `scripts/start.mjs`: con `GATEWAY_MODE=mock` levanta antes el gateway simulado y después la aplicación.
 
 `proxy.ts` añade cabeceras de seguridad a todas las respuestas. La política de contenido (CSP, con nonce por petición) va por defecto en modo solo informe (`CSP_MODE=report-only`: el navegador anota las violaciones y no bloquea nada); `CSP_MODE=enforce` la aplica y `off` la quita. Si cambias el proveedor de teselas del mapa, actualiza `img-src` en `proxy.ts`. Verificada en navegador con `enforce` y sin violaciones; tras añadir recursos externos o scripts en línea, recorre la aplicación con `report-only` antes de usarlo.
 
@@ -130,6 +130,69 @@ Con `pnpm start` y «Continuar con Google» el proveedor simulado pide un correo
 2. `SSO_DB_PATH` en un volumen persistente y una sola instancia (flujos y tickets viven en memoria).
 3. El gateway debe ofrecer `POST /auth/sso/exchange`.
 4. Si usas el SSO de empresa, el proveedor debe ser `https` con nombre público (no se admiten IP ni `localhost`).
+
+## Despliegue
+
+**Dónde van las variables.** En local, en `.env.local` (Next lo lee solo; ignorado por git y por Docker). En un despliegue (Render, Docker, Coolify…) no hay archivo `.env`: cada variable se define en el panel de la plataforma (o con `--env-file` / `-e` en Docker) y **tiene prioridad** sobre cualquier archivo. `next-ruteando/.env.example` lista todas, comentadas, y `render.yaml` es el mismo inventario en formato Blueprint de Render.
+
+### Variables
+
+| Variable | Obligatoria | Valor | Notas |
+|---|---|---|---|
+| `SESSION_SECRET` | **Sí** | `openssl rand -base64 32` (32 caracteres o más) | Firma la cookie de sesión. Sin ella el servidor **no arranca** (sale con código 1). Cambiarla cierra todas las sesiones. |
+| `SITE_URL` | **Sí** | `https://tu-dominio` (sin barra final) | Direcciones absolutas del manifiesto, `sitemap.xml`, `robots.txt` y datos estructurados. Sin ella, `http://localhost:3000`. |
+| `GATEWAY_MODE` | **Sí** | `real` (por defecto) o `mock` | `mock` usa el gateway simulado (datos ficticios, se pierden al reiniciar). Cualquier otro valor impide arrancar. |
+| `GATEWAY_URL`, `GATEWAY_API_KEY` | Con `real` | Dirección base y clave del HanoIT Gateway | La clave es un **secreto**: solo en la plataforma, nunca en git ni en el navegador. |
+| `GATEWAY_TIMEOUT_MS` | No | `30000` | Súbelo si planificar jornadas agota el tiempo. |
+| `MOCK_GATEWAY_PASSWORD` | Con `mock` en un servidor público | Una contraseña propia | Sin ella los tres usuarios de prueba entran con `demo1234`. `MOCK_GATEWAY_PORT` (4010) casi nunca se toca. |
+| `MFA_SECRET_KEY` | Para el 2FA y el SSO | `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` | Sin ella el segundo factor y el SSO quedan apagados, y el acceso **falla cerrado** salvo `ALLOW_LOGIN_WITHOUT_MFA=true`. Guárdala: cambiarla invalida los TOTP. |
+| `MFA_DB_PATH`, `SSO_DB_PATH` | No | `/data/mfa.sqlite`, `/data/sso.sqlite` (Docker), `/var/data/…` (disco de Render) | Bases SQLite del 2FA y del SSO. **Necesitan un volumen persistente**: sin él se pierden y hay que reactivar los métodos. |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Para el 2FA por correo | Ver [Segundo factor](#segundo-factor-opcional) | `587` con `SMTP_SECURE=false` o `465` con `true`. |
+| `SMS_PROVIDER`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_VERIFY_SERVICE_SID` | Para el 2FA por SMS | `twilio` y las tres de una cuenta **Live** | `dev` no envía SMS reales: no lo uses en producción. |
+| `SSO_ENABLED_PROVIDERS`, `SSO_REDIRECT_BASE_URL`, `SSO_GOOGLE_*`, `SSO_GITHUB_*`, `SSO_APPLE_*` | Para el SSO | Ver [Inicio de sesión único](#inicio-de-sesión-único-opcional) | Apagado sin proveedores, dirección pública y `MFA_SECRET_KEY`. |
+| `CSP_MODE` | No | `report-only` (por defecto), `enforce` u `off` | Pasa a `enforce` tras recorrer la aplicación sin violaciones. |
+| `TRUSTED_PROXY_HOPS` | No | `1` (por defecto) | Proxys de confianza delante, para la IP del cliente (límites de intentos). `0` = no confiar en `X-Forwarded-For`. |
+| `COOKIE_SECURE` | No | vacío | Las cookies son `Secure` en producción; solo se pone `false` en local con `http://`. |
+| `PORT`, `HOSTNAME` | No | `3000`, `0.0.0.0` | La imagen de Docker ya los fija; Render define `PORT` solo. |
+
+**Nunca en un despliegue**: `SSO_ALLOW_INSECURE=true` (el servidor no arranca: desactiva la defensa contra SSRF), `SSO_GOOGLE_ISSUER` (proveedor simulado) ni `ALLOW_LOGIN_WITHOUT_MFA=true` si el 2FA debe cumplirse. Los secretos (`SESSION_SECRET`, `GATEWAY_API_KEY`, `MFA_SECRET_KEY`, `SMTP_PASS`, `TWILIO_AUTH_TOKEN`, `SSO_*_SECRET`) solo viven en la plataforma.
+
+### Render (Node, sin Docker)
+
+Servicio web con estos valores (los mismos de `render.yaml`):
+
+| Ajuste | Valor |
+|---|---|
+| Build Command | `pnpm install --frozen-lockfile && pnpm run build` |
+| Start Command | `pnpm start` |
+| Health Check Path | `/healthCheck` |
+| Rama | `main` |
+| Node | Render elige el más alto que cumple `engines` (hoy 26); pnpm sale de `packageManager`. Para fijarlo, variable `NODE_VERSION`. |
+
+1. **Servicio nuevo**: New → Blueprint apuntando al repositorio (Render lee `render.yaml` y pide los secretos); o New → Web Service con la tabla de arriba y las variables de la sección anterior.
+2. **Servicio que ya existía** (creado cuando el repositorio tenía Angular): cambia el *Build Command*, que seguía llamando a `pnpm run build:web` (ya no existe), y confirma que el *Start Command* es `pnpm start` (o `npm start`, que ejecuta lo mismo).
+3. **Una sola instancia**: los retos de acceso del 2FA y los flujos del SSO viven en memoria.
+4. **Base de datos del 2FA y del SSO**: el plan Free no tiene disco, así que `MFA_DB_PATH=/tmp/mfa.sqlite` y `SSO_DB_PATH=/tmp/sso.sqlite` se pierden al dormirse o redesplegar (cada persona reactiva sus métodos). Con un plan de pago: disco montado en `/var/data` y `MFA_DB_PATH=/var/data/mfa.sqlite`, `SSO_DB_PATH=/var/data/sso.sqlite`.
+5. **Guardar variables o el comando de build dispara un despliegue**, salvo que se elija «Save only». Si el despliegue automático por commit no se dispara tras un merge, lanza *Manual Deploy → Deploy latest commit*.
+6. **HTTPS y proxy**: Render ya termina TLS y envía `X-Forwarded-Proto` (activa HSTS). Si pones otro proxy delante (nginx, Traefik, Cloudflare), debe conservar `Host` (o enviar `X-Forwarded-Host`) y `Origin`: la protección CSRF compara el `Origin` de cada petición que cambia datos con el host público, y sin esa cabecera responde 403.
+
+### Docker (imagen de producción)
+
+```
+docker build -f next-ruteando/Dockerfile -t ruteando-next .          # desde la raíz del repositorio
+docker run -d --name ruteando -p 3000:3000 -v ruteando-data:/data --env-file next-ruteando/.env.local ruteando-next
+```
+
+El contenedor corre sin root, trae su propio `HEALTHCHECK` (`/healthCheck`) y guarda las bases SQLite del 2FA y del SSO en el volumen `/data` (`MFA_DB_PATH` y `SSO_DB_PATH` ya apuntan allí): **sin volumen se pierden al recrearlo**. Con `GATEWAY_MODE=mock` el contenedor levanta además el gateway simulado en `127.0.0.1` (define `MOCK_GATEWAY_PASSWORD`). En Coolify u otro orquestador: construir con ese `Dockerfile` (contexto = raíz), puerto 3000, volumen en `/data`, las variables de la tabla y el *health check* en `/healthCheck`.
+
+### Antes de dar el sitio por bueno
+
+1. `curl -i https://<dominio>/healthCheck` → `200` con `{"status":"ok"}` (y no pide sesión).
+2. `curl -i https://<dominio>/robots.txt` y `/sitemap.xml` muestran el dominio de `SITE_URL`, no `localhost`.
+3. En el registro del arranque no aparece «Configuración no válida» (si falta `SESSION_SECRET` o `GATEWAY_MODE` es inválido, el servidor sale con código 1 y lo dice).
+4. Entrar con una persona real: el acceso pide el segundo factor (si `MFA_SECRET_KEY` está definida) y, con una sesión, `GET /gateway/mfa/status` muestra los métodos disponibles (correo y SMS en `available: true` si están configurados).
+5. Una pantalla con mapa (Lugares o Zonas) carga las teselas y la consola del navegador no muestra violaciones de la CSP (con `CSP_MODE=report-only` solo se anotan).
+6. Todo detrás del proxy real y por HTTPS: el service worker de la PWA solo se registra con HTTPS y las cookies de sesión son `Secure`.
 
 ## Con Docker (desarrollo)
 

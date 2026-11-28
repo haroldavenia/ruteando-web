@@ -9,7 +9,7 @@
     "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
   },
   "scripts": {
-    "start": "pnpm --filter next-ruteando run start",
+    "start": "node scripts/start.mjs",
     "build": "pnpm --filter next-ruteando run build",
     "test": "pnpm --filter next-ruteando run test",
     "mock:gateway": "node scripts/mock-gateway.mjs",
