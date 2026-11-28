@@ -168,11 +168,12 @@ describe('tipos de vehículo', () => {
     });
     withToasts(<ResourceTypeForm id={null} returnTo="/fleet/vehicles/new" />);
     await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
-    expect(await screen.findAllByText('Este campo es obligatorio')).toHaveLength(2);
+    expect(await screen.findAllByText('Este campo es obligatorio')).toHaveLength(3);
     expect(gateway.calls.filter((c) => c.method !== 'GET')).toHaveLength(0);
 
     await userEvent.type(screen.getByLabelText('Nombre'), 'Camión');
     await userEvent.type(screen.getByLabelText('Categoría'), 'truck');
+    await userEvent.selectOptions(screen.getByLabelText('Perfil de ruteo'), 'driving');
     await userEvent.type(screen.getByLabelText('Peso que carga (kg)'), '1000');
     await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
     expect(await screen.findByText('Indica un volumen mayor que 0')).toBeInTheDocument();
@@ -313,6 +314,7 @@ describe('formulario de tipo de vehículo: edición y errores', () => {
     withToasts(<ResourceTypeForm id={null} returnTo={null} />);
     await userEvent.type(screen.getByLabelText('Nombre'), 'Moto');
     await userEvent.type(screen.getByLabelText('Categoría'), 'bike');
+    await userEvent.selectOptions(screen.getByLabelText('Perfil de ruteo'), 'driving');
     await userEvent.type(screen.getByLabelText(/Consumo/), '-3');
     await userEvent.click(screen.getByRole('button', { name: 'Guardar' }));
     expect(await screen.findByText('No puede ser negativo')).toBeInTheDocument();

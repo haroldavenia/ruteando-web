@@ -77,7 +77,7 @@ function capacityOf(v: Values): CapacityValues {
 const EMPTY: Values = {
   name: '',
   category: '',
-  osrmProfile: 'driving',
+  osrmProfile: '',
   gasMileage: '',
   mode: 'volume',
   weight: '',
@@ -238,7 +238,8 @@ function TypeFields({
   const field = useCallback(
     (name: CapacityField, label: string, unit: string) => (
       <Input
-        label={`${label} (${unit})`}
+        label={label}
+        suffix={unit}
         type="number"
         min={0}
         step="any"
@@ -283,6 +284,7 @@ function TypeFields({
             requiredMark
             error={errors.osrmProfile?.message}
           >
+            <option value="" />
             {profiles.map((p) => (
               <option key={p.key} value={p.key}>
                 {p.label}

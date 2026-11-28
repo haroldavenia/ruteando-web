@@ -371,6 +371,9 @@ export function DataTable<T>(props: DataTableProps<T>) {
                             label={t('Seleccionar ') + rowLabel(row)}
                             onChange={() => toggleRow(row)}
                           />
+                          <span aria-hidden className="ml-3 hidden align-middle @max-[840px]:inline">
+                            {t('Seleccionar')}
+                          </span>
                         </td>
                       ) : null}
                       {columns.map((column) => {
@@ -385,7 +388,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
                               'px-4 align-middle',
                               column.id === stickyId
                                 ? '@max-[840px]:col-span-full @max-[840px]:block @max-[840px]:p-0 @max-[840px]:text-base @max-[840px]:font-semibold'
-                                : '@max-[840px]:block @max-[840px]:min-w-0 @max-[840px]:p-0 @max-[840px]:wrap-anywhere @max-[840px]:before:mb-0.5 @max-[840px]:before:block @max-[840px]:before:text-xs @max-[840px]:before:text-on-surface-variant @max-[840px]:before:content-[attr(data-label)]',
+                                : '@max-[840px]:block @max-[840px]:min-w-0 @max-[840px]:p-0 @max-[840px]:wrap-anywhere @max-[840px]:before:mb-0.5 @max-[840px]:before:block @max-[840px]:before:font-sans @max-[840px]:before:text-xs @max-[840px]:before:font-normal @max-[840px]:before:text-on-surface-variant @max-[840px]:before:content-[attr(data-label)]',
                               text === '' && '@max-[840px]:hidden',
                               column.kind === 'id' && 'font-mono text-[13px] font-medium text-on-surface-variant',
                               column.kind === 'strong' && 'font-semibold',

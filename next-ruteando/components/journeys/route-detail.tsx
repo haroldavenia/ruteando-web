@@ -74,32 +74,20 @@ export function RouteDetail({ journeyId, routeIndex }: { journeyId: string; rout
   const vehicle = !resource ? '—' : resource.plate ? `${resource.name} (${resource.plate})` : resource.name;
   const stat = (label: string, value: string) => (
     <div key={label}>
-      <dt className="text-sm text-on-surface-variant">{label}</dt>
-      <dd className="font-medium">{value}</dd>
+      <dt className="text-xs text-on-surface-variant">{label}</dt>
+      <dd className="m-0 font-medium">{value}</dd>
     </div>
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <FormHead title={route.name} backLabel={t('Jornada ') + journey.name} backHref={back} />
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Button variant="outlined" loading={exporter.busy} onClick={() => void exporter.routeXlsx(journey, route)}>
-          <Icon icon={RiFileExcel2Line} size={20} />
-          {t('Exportar a Excel')}
-        </Button>
-        <Button variant="outlined" loading={exporter.busy} onClick={() => void exporter.routePdf(journey, route)}>
-          <Icon icon={RiFilePdf2Line} size={20} />
-          {t('Exportar a PDF')}
-        </Button>
-        <FormResult error={exporter.error} success={exporter.success} />
-      </div>
 
       <Card aria-labelledby="summary-title">
         <CardTitle id="summary-title" className="mb-3">
           {t('Resumen')}
         </CardTitle>
-        <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <dl className="m-0 grid grid-cols-[repeat(auto-fit,minmax(min(9rem,100%),1fr))] gap-x-6 gap-y-4">
           {stat(t('Vehículo'), vehicle)}
           {stat(t('Paradas'), format.count(route.waypoints.length))}
           {stat(t('Distancia'), format.distance(route.distanceTraveled))}
@@ -109,6 +97,27 @@ export function RouteDetail({ journeyId, routeIndex }: { journeyId: string; rout
           {stat(t('Inicio||hora'), format.dateTime(route.startRouteUtc))}
           {stat(t('Fin'), format.dateTime(route.finishRouteUtc))}
         </dl>
+        <FormResult error={exporter.error} success={exporter.success} />
+        <div className="mt-2 flex flex-wrap justify-end gap-2 border-t border-outline-variant pt-4">
+          <Button
+            variant="outlined"
+            loading={exporter.busy}
+            disabled={route.waypoints.length === 0}
+            onClick={() => void exporter.routeXlsx(journey, route)}
+          >
+            <Icon icon={RiFileExcel2Line} size={20} />
+            {t('Exportar a Excel')}
+          </Button>
+          <Button
+            variant="outlined"
+            loading={exporter.busy}
+            disabled={route.waypoints.length === 0}
+            onClick={() => void exporter.routePdf(journey, route)}
+          >
+            <Icon icon={RiFilePdf2Line} size={20} />
+            {t('Exportar a PDF')}
+          </Button>
+        </div>
       </Card>
 
       <Card>

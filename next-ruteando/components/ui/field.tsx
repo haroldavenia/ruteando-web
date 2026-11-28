@@ -72,6 +72,8 @@ function Shell({
 export interface InputProps extends FieldProps, Omit<ComponentProps<'input'>, 'placeholder'> {
   /** Icono decorativo a la izquierda (la etiqueta se desplaza para no taparlo). */
   leading?: RemixiconComponentType;
+  /** Unidad al final del campo («kg», «cm³»), como el `matTextSuffix` de Angular; el nombre accesible la incluye. */
+  suffix?: string;
   /** Contenido a la derecha dentro del campo (el botón de mostrar la contraseña): debe ser interactivo por sí mismo. */
   trailing?: ReactNode;
 }
@@ -89,6 +91,7 @@ export function Input({
   id,
   leading,
   trailing,
+  suffix,
   ...props
 }: InputProps) {
   const generated = useId();
@@ -102,8 +105,9 @@ export function Input({
         placeholder=" "
         aria-invalid={error ? true : undefined}
         aria-required={requiredMark || undefined}
+        aria-label={suffix ? `${label} (${suffix})` : undefined}
         aria-describedby={error || hint ? `${fieldId}-msg` : undefined}
-        className={cn(control, dense && 'min-h-11 py-[9px]', leading && 'pl-[52px]', trailing && 'pr-14')}
+        className={cn(control, dense && 'min-h-11 py-[9px]', leading && 'pl-[52px]', (trailing || suffix) && 'pr-14')}
         {...props}
       />
       <label
@@ -123,6 +127,11 @@ export function Input({
         <Icon icon={leading} className="pointer-events-none absolute top-4 left-3.5 text-on-surface-variant" />
       ) : null}
       {trailing ? <div className="absolute top-1.5 right-1.5">{trailing}</div> : null}
+      {suffix ? (
+        <span aria-hidden className="pointer-events-none absolute top-4 right-4 text-on-surface-variant">
+          {suffix}
+        </span>
+      ) : null}
     </Shell>
   );
 }
@@ -167,6 +176,13 @@ function blankOptionHasText(children: ReactNode): boolean {
   );
 }
 
+/** ¿La primera opción es la en blanco (sin texto)? Sin valor dado, un `select` nativo muestra su primera opción. */
+function firstOptionIsBlank(children: ReactNode): boolean {
+  const first = Children.toArray(children).find((child) => isValidElement(child));
+  if (!isValidElement<{ value?: string; children?: ReactNode }>(first)) return false;
+  return first.props.value === '' && (first.props.children === undefined || first.props.children === '');
+}
+
 /** Selector nativo (accesible y con el teclado y el móvil de serie). La etiqueta va siempre arriba: un `select` nunca está «vacío». */
 export function Select({
   label,
@@ -182,7 +198,9 @@ export function Select({
   const generated = useId();
   const fieldId = id ?? generated;
   // Como `mat-select`: sin elegir, la etiqueta descansa dentro del campo; con un valor, sube a la muesca (o al enfocarlo)
-  const empty = (props.value ?? props.defaultValue ?? '') === '' && !blankOptionHasText(children);
+  const provided = props.value ?? props.defaultValue;
+  const empty =
+    provided === undefined ? firstOptionIsBlank(children) : provided === '' && !blankOptionHasText(children);
   return (
     <Shell id={fieldId} hint={hint} error={error} className={className}>
       <select

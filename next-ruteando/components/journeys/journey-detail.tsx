@@ -67,36 +67,23 @@ export function JourneyDetail({ id }: { id: string }) {
 
   const stat = (label: string, value: string) => (
     <div key={label}>
-      <dt className="text-sm text-on-surface-variant">{label}</dt>
-      <dd className="font-medium">{value}</dd>
+      <dt className="text-xs text-on-surface-variant">{label}</dt>
+      <dd className="m-0 font-medium">{value}</dd>
     </div>
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <FormHead title={journey.name} backLabel={t('Jornadas')} backHref="/journeys" />
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          variant="outlined"
-          loading={exporter.busy}
-          disabled={routes.length === 0}
-          onClick={() => void exporter.journeyXlsx(journey)}
-        >
-          <Icon icon={RiFileExcel2Line} size={20} />
-          {t('Exportar a Excel')}
-        </Button>
-        <FormResult error={exporter.error} success={exporter.success} />
-      </div>
 
       <Card aria-labelledby="summary-title">
         <CardTitle id="summary-title" className="mb-3">
           {t('Resumen')}
         </CardTitle>
-        <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <dl className="m-0 grid grid-cols-[repeat(auto-fit,minmax(min(9rem,100%),1fr))] gap-x-6 gap-y-4">
           <div>
-            <dt className="text-sm text-on-surface-variant">{t('Estado')}</dt>
-            <dd>
+            <dt className="text-xs text-on-surface-variant">{t('Estado')}</dt>
+            <dd className="m-0">
               <StatusBadge tone={statusTone('journey', journey.status)}>
                 {journeyStatusLabel(journey.status, t)}
               </StatusBadge>
@@ -111,13 +98,24 @@ export function JourneyDetail({ id }: { id: string }) {
           {stat(t('Tiempo máximo'), format.duration(journey.stats?.maxTime))}
           {stat(t('Creada'), format.dateTime(journey.createdAt))}
         </dl>
+        {routes.length > 0 ? (
+          <>
+            <FormResult error={exporter.error} success={exporter.success} />
+            <div className="mt-2 flex justify-end gap-2 border-t border-outline-variant pt-4">
+              <Button variant="outlined" loading={exporter.busy} onClick={() => void exporter.journeyXlsx(journey)}>
+                <Icon icon={RiFileExcel2Line} size={20} />
+                {exporter.busy ? t('Preparando…') : t('Exportar a Excel')}
+              </Button>
+            </div>
+          </>
+        ) : null}
       </Card>
 
       <div
-        className={routes.length > 0 ? 'grid items-start gap-4 xl:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]' : undefined}
+        className={routes.length > 0 ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]' : undefined}
       >
         {routes.length > 0 ? (
-          <section ref={mapSection} aria-labelledby="map-title" className="xl:sticky xl:top-4">
+          <section ref={mapSection} aria-labelledby="map-title" className="xl:sticky xl:top-6">
             <Card>
               <CardTitle id="map-title" className="mb-3">
                 {t('Mapa de las rutas')}

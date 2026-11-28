@@ -12,7 +12,7 @@ import { Icon } from './icon';
  * solo debe haber UNO por pantalla. Se exporta `buttonVariants` para dar aspecto de botón a un enlace (`<Link className={buttonVariants()}>`).
  */
 export const buttonVariants = cva(
-  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-control px-6 text-sm font-medium no-underline transition-colors duration-120 ease-out disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress',
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-control px-6 text-sm font-medium no-underline transition-colors duration-120 ease-out disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress [&>svg:first-child:not(:last-child)]:-ml-1 [&>svg:first-child:not(:last-child)]:size-[18px]',
   {
     variants: {
       variant: {
