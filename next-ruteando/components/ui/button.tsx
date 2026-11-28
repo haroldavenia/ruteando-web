@@ -19,7 +19,7 @@ export const buttonVariants = cva(
         primary: 'bg-primary bg-brand-gradient text-on-primary hover:brightness-95',
         tonal: 'bg-secondary-container text-on-secondary-container hover:brightness-95',
         outlined: 'border border-outline bg-transparent text-primary hover:bg-primary/8',
-        text: 'bg-transparent text-primary hover:bg-primary/8',
+        text: 'bg-transparent px-3 text-primary hover:bg-primary/8',
         danger: 'bg-error-container text-on-error-container hover:brightness-95',
       },
       size: { md: 'min-h-11', lg: 'min-h-12' },

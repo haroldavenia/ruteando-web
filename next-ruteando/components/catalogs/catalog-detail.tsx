@@ -201,25 +201,25 @@ export function CatalogDetail({ code }: { code: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <FormHead title={domain.code} backLabel={t('Catálogos')} backHref="/catalogs" />
 
       <Card aria-labelledby="summary-title">
         <CardTitle id="summary-title" className="mb-3">
           {t('Resumen')}
         </CardTitle>
-        <dl className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <dl className="m-0 grid grid-cols-[repeat(auto-fit,minmax(min(9rem,100%),1fr))] gap-x-6 gap-y-4">
           <div>
-            <dt className="text-sm text-on-surface-variant">{t('Descripción')}</dt>
-            <dd className="font-medium">{domain.description}</dd>
+            <dt className="text-xs text-on-surface-variant">{t('Descripción')}</dt>
+            <dd className="m-0 font-medium">{domain.description}</dd>
           </div>
           <div>
-            <dt className="text-sm text-on-surface-variant">{t('Tipo')}</dt>
-            <dd className="font-medium">{domain.system ? t('Del sistema') : t('Propio')}</dd>
+            <dt className="text-xs text-on-surface-variant">{t('Tipo')}</dt>
+            <dd className="m-0 font-medium">{domain.system ? t('Del sistema') : t('Propio')}</dd>
           </div>
           <div>
-            <dt className="text-sm text-on-surface-variant">{t('Valores activos')}</dt>
-            <dd className="font-medium">{valuesText(domain, (a, b) => t('{0} de {1}', [a, b]))}</dd>
+            <dt className="text-xs text-on-surface-variant">{t('Valores activos')}</dt>
+            <dd className="m-0 font-medium">{valuesText(domain, (a, b) => t('{0} de {1}', [a, b]))}</dd>
           </div>
         </dl>
       </Card>
