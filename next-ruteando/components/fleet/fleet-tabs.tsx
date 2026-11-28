@@ -26,8 +26,8 @@ export function FleetTabs() {
             href={tab.href}
             aria-current={on ? 'page' : undefined}
             className={cn(
-              'border-b-2 px-4 py-2.5 text-sm font-medium',
-              on ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'
+              '-mb-px inline-flex h-12 items-center border-b-[3px] px-4 text-sm font-semibold',
+              on ? 'border-primary text-primary' : 'border-transparent text-on-surface hover:bg-on-surface/8'
             )}
           >
             {t(tab.label)}

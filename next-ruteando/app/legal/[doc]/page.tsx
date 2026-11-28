@@ -55,7 +55,7 @@ export default async function LegalPage({ params }: Props) {
         <p className="mt-5 leading-relaxed">{text.intro}</p>
         {text.sections.map((section) => (
           <section key={section.heading}>
-            <h2 className="mt-8 mb-2 font-brand text-xl font-medium">{section.heading}</h2>
+            <h2 className="mt-8 mb-2 font-brand text-[22px]/7 font-medium">{section.heading}</h2>
             {section.paragraphs?.map((p) => (
               <p key={p} className="mb-3 leading-relaxed">
                 {p}
@@ -73,7 +73,7 @@ export default async function LegalPage({ params }: Props) {
           </section>
         ))}
         <section>
-          <h2 className="mt-8 mb-2 font-brand text-xl font-medium">{contact.heading}</h2>
+          <h2 className="mt-8 mb-2 font-brand text-[22px]/7 font-medium">{contact.heading}</h2>
           <p className="leading-relaxed">
             {email ? contact.withEmail.replace('{email}', email) : contact.withoutEmail}
           </p>

@@ -239,8 +239,12 @@ export function PolygonEditor({
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:col-span-2">
-      <div role="group" aria-label={t('Herramientas del polígono')} className="flex flex-wrap items-center gap-2">
+    <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-x-5 gap-y-2 md:col-span-2 xl:grid-cols-[minmax(0,2fr)_minmax(20rem,1fr)]">
+      <div
+        role="group"
+        aria-label={t('Herramientas del polígono')}
+        className="flex flex-wrap items-center gap-2 xl:col-span-2"
+      >
         {drawing ? (
           <>
             <Button variant="primary" onClick={() => draw.current?.finishDrawing()}>
@@ -249,7 +253,7 @@ export function PolygonEditor({
             <Button variant="text" onClick={stopDrawing}>
               {t('Cancelar')}
             </Button>
-            <span role="status" className="text-sm text-on-surface-variant">
+            <span role="status" className="text-xs text-on-surface-variant">
               {t(
                 'Haz clic en el mapa para añadir vértices; doble clic o «Terminar polígono» para cerrarlo. Escape cancela.'
               )}
@@ -270,17 +274,19 @@ export function PolygonEditor({
       <MapFrame
         hostRef={hostRef}
         failed={failed}
-        className="h-96"
+        className="h-110"
         ariaLabel={t('Mapa para dibujar el polígono. También puedes escribir los vértices en la tabla de más abajo.')}
       />
-      <p
-        role="status"
-        aria-live="polite"
-        className={vertices.length > 0 && !valid ? 'text-error' : 'text-on-surface-variant'}
-      >
-        {summary}
-      </p>
-      <VertexTable vertices={vertices} onChange={onChange} />
+      <div className="xl:col-start-2 xl:row-start-2 xl:max-h-110 xl:overflow-y-auto">
+        <p
+          role="status"
+          aria-live="polite"
+          className={`m-0 mb-2 text-sm font-medium ${vertices.length > 0 && !valid ? 'text-error' : ''}`}
+        >
+          {summary}
+        </p>
+        <VertexTable vertices={vertices} onChange={onChange} />
+      </div>
       {dialog}
     </div>
   );

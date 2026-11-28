@@ -64,7 +64,11 @@ export function FormSection({
             aria-hidden
             className="grid size-9 flex-none place-items-center rounded-xl bg-primary-container text-on-primary-container"
           >
-            {step ? <span className="font-brand text-base font-bold">{step}</span> : <Icon icon={icon!} size={20} />}
+            {step ? (
+              <span className="font-brand text-base font-bold">{step}</span>
+            ) : (
+              <Icon icon={icon!} size={20} className="text-on-surface" />
+            )}
           </span>
         ) : null}
         {title}

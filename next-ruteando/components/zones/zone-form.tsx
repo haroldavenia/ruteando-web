@@ -1,6 +1,6 @@
 'use client';
 
-import { RiHexagonLine } from '@remixicon/react';
+import { RiHexagonLine, RiPenNibLine } from '@remixicon/react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { type FieldErrors, type Resolver, useForm, useWatch } from 'react-hook-form';
@@ -144,7 +144,7 @@ function ZoneFields({
   ];
 
   return (
-    <FormCard>
+    <FormCard className="max-w-none">
       <Form
         onSubmit={(event) => {
           setPolygonTouched(true);
@@ -171,14 +171,14 @@ function ZoneFields({
             error={errors.code?.message}
             {...register('code')}
           />
-          <fieldset className="flex flex-wrap items-center gap-2 md:col-span-2">
-            <legend className="mb-2 text-sm text-on-surface-variant">{t('Color')}</legend>
+          <fieldset className="m-0 mb-2 flex flex-wrap gap-2 rounded-control border border-outline-variant px-3 pt-2 pb-3 md:col-span-2">
+            <legend className="px-1 text-sm font-medium">{t('Color')}</legend>
             {colors.map((option) => {
               const on = color === option.value;
               return (
                 <label
                   key={option.label}
-                  className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-sm has-focus-visible:outline-2 has-focus-visible:outline-primary ${on ? 'border-transparent bg-secondary-container text-on-secondary-container' : 'border-outline'}`}
+                  className={`relative inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-control border px-3.5 has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary ${on ? 'border-primary bg-secondary-container' : 'border-outline-variant'}`}
                 >
                   <input
                     type="radio"
@@ -186,11 +186,11 @@ function ZoneFields({
                     value={option.value ?? ''}
                     checked={on}
                     onChange={() => setValue('color', option.value, { shouldDirty: true })}
-                    className="sr-only"
+                    className="absolute inset-0 m-0 size-full cursor-pointer opacity-0"
                   />
                   <span
                     aria-hidden="true"
-                    className="size-4 rounded-full border border-outline"
+                    className={`size-[18px] rounded-[5px] border border-outline ${option.value === null ? 'border-dashed' : ''}`}
                     style={{ background: option.value ?? 'transparent' }}
                   />
                   {option.label}
@@ -200,17 +200,14 @@ function ZoneFields({
           </fieldset>
         </FormSection>
 
-        <section aria-labelledby="polygon-title" className="flex flex-col gap-4">
-          <h2 id="polygon-title" className="font-brand text-lg font-bold">
-            {t('Polígono')}
-          </h2>
+        <FormSection title={t('Polígono')} icon={RiPenNibLine}>
           <PolygonEditor vertices={vertices} onChange={setVertices} color={color} />
           {polygonError ? (
-            <p role="alert" className="text-error">
+            <p role="alert" className="m-0 text-error md:col-span-2">
               {polygonError}
             </p>
           ) : null}
-        </section>
+        </FormSection>
 
         <FormResult error={error} />
         <FormActions cancelHref="/zones" loading={loading} dirty={isDirty || polygonDirty} />
