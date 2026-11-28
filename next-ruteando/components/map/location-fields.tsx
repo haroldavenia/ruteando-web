@@ -42,6 +42,7 @@ export function LocationFields({
       <div className="grid content-start gap-3">
         <Input
           label={t('Latitud')}
+          requiredMark
           type="number"
           step="any"
           inputMode="decimal"
@@ -51,6 +52,7 @@ export function LocationFields({
         />
         <Input
           label={t('Longitud')}
+          requiredMark
           type="number"
           step="any"
           inputMode="decimal"

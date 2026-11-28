@@ -58,11 +58,14 @@ export function FormSection({
 }) {
   return (
     <section className="[--field-reserve:22px] [section+&]:mt-4 [section+&]:border-t [section+&]:border-outline-variant [section+&]:pt-6">
-      <h2 className="m-0 mb-4 flex items-center gap-3 font-brand text-base font-bold">
+      <h2 className={cn('m-0 flex items-center gap-3 font-brand text-base font-bold', step ? 'mb-4' : 'mb-7')}>
         {icon || step ? (
           <span
             aria-hidden
-            className="grid size-9 flex-none place-items-center rounded-xl bg-primary-container text-on-primary-container"
+            className={cn(
+              'grid flex-none place-items-center bg-primary-container text-on-primary-container',
+              step ? 'size-9 rounded-xl' : 'size-6 rounded-full'
+            )}
           >
             {step ? (
               <span className="font-brand text-base font-bold">{step}</span>

@@ -156,16 +156,9 @@ function ZoneFields({
         className="flex flex-col gap-2"
       >
         <FormSection title={t('Datos de la zona')} icon={RiHexagonLine}>
-          <Input
-            label={t('Nombre')}
-            requiredMark
-            autoComplete="off"
-            error={errors.name?.message}
-            {...register('name')}
-          />
+          <Input label={t('Nombre')} autoComplete="off" error={errors.name?.message} {...register('name')} />
           <Input
             label={t('Código')}
-            requiredMark
             autoComplete="off"
             hint={t('Sin espacios, hasta 20 caracteres')}
             error={errors.code?.message}
@@ -178,7 +171,7 @@ function ZoneFields({
               return (
                 <label
                   key={option.label}
-                  className={`relative inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-control border px-3.5 has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary ${on ? 'border-primary bg-secondary-container' : 'border-outline-variant'}`}
+                  className={`relative inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-control border px-[15px] has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary ${on ? 'border-primary bg-secondary-container' : 'border-outline-variant'}`}
                 >
                   <input
                     type="radio"
